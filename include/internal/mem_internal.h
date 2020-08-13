@@ -3,16 +3,16 @@
 
 #include "../mem.h"
 
-struct block_ {
+typedef struct mem_block_t FMemBlock;
+
+struct mem_block_t {
     size_t block_size;
     size_t alloc_offset;
     void *head_ptr;
-    struct block_ *next_block;
+    FMemBlock *next_block;
 };
 
-typedef struct block_ FMemBlock;
-
-struct region_ {
+struct mem_region_t {
     FMemBlock *head_block;
     FMemBlock *cur_block;
 };

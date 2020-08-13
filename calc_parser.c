@@ -235,7 +235,7 @@ calc_node *atom_2(FPegParser *p) {
 //     | ','.sum+ [',']
 calc_node *parameters(FPegParser *p) {
     ENTER_FRAME(p, 10, "paramters");
-    calc_sequence *sum_list_;
+    calc_node *sum_list_;
     FToken *comma;
     if ((sum_list_ = sum_list(p)) &&
         (comma = OPTIONAL(CONSUME_TOKEN(p, 21, ",")))) {
@@ -248,7 +248,7 @@ calc_node *parameters(FPegParser *p) {
 }
 
 // ','.sum+
-calc_sequence *sum_list(FPegParser *p) {
+calc_node *sum_list(FPegParser *p) {
     calc_node *node;
     if (!(node = sum(p))) {
         return ((void *) 0);

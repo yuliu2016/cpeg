@@ -3,7 +3,7 @@
 
 #include "stddef.h"
 
-typedef struct {
+typedef struct allocator_t {
     void *(*malloc)(size_t size);
 
     void *(*calloc)(size_t count, size_t size);
@@ -23,7 +23,7 @@ void *FMem_realloc(void *ptr, size_t size);
 
 void FMem_free(void *ptr);
 
-typedef struct region_ FMemRegion;
+typedef struct mem_region_t FMemRegion;
 
 FMemRegion *FMemRegion_new();
 

@@ -1,7 +1,7 @@
 #ifndef CPEG_TOKEN_H
 #define CPEG_TOKEN_H
 
-typedef struct {
+typedef struct token_str_t {
     char *start;
     int len;
 } FTokenStr;
@@ -13,7 +13,7 @@ typedef struct memo {
     struct memo *next;
 } FTokenMemo;
 
-typedef struct {
+typedef struct token_t {
     int type;
     FTokenStr *str;
     int line_start;
@@ -23,7 +23,7 @@ typedef struct {
     FTokenMemo *memo;
 } FToken;
 
-typedef struct {
+typedef struct token_array_t {
     int len;
     FToken **tokens;
 } FTokenArray;

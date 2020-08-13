@@ -33,12 +33,12 @@ void exit_frame(void *res, int level, int pos, int rule_index, const char *rule_
     }
 }
 
-void mark_token(void *res, int level, int expected, int actual) {
+void mark_token(void *res, int level, int expected, int actual, const char *literal) {
     print_indent_level(level);
     if (res) {
-        printf("Success in token %d", actual);
+        printf("Success in token %s", literal);
     } else {
-        printf("Failure in token %d, expecting %d", actual, expected);
+        printf("Failure in token %d, expecting %s(%d)", actual, literal, expected);
     }
 }
 

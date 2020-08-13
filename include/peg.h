@@ -14,7 +14,7 @@
  * https://github.com/PhilippeSigaud/Pegged/wiki/Left-Recursion
  */
 
-typedef struct {
+typedef struct peg_debug_hook_t {
     void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
 
     void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
@@ -24,13 +24,13 @@ typedef struct {
     void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
 } FPegDebugHook;
 
-typedef struct {
+typedef struct peg_list_t {
     size_t len;
     size_t capacity;
     void **items;
 } FPegList;
 
-typedef struct {
+typedef struct peg_parser_t {
     size_t pos;
     size_t max_reached_pos;
     size_t level;
@@ -57,7 +57,7 @@ typedef struct {
     const char* f_name = name; \
     IF_DEBUG(ENTER_FRAME_D(p)); \
     if (p->pos > p->max_reached_pos) { \
-        p->max_reached_pos = p->pos; \
+    p->max_reached_pos = p->pos; \
     }\
     size_t pos = p->pos \
 
@@ -72,7 +72,7 @@ typedef struct {
 
 #define RETURN_IF_MEMOIZED(p) \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
-    if (!memo) { goto no_memo; } \
+    if (memo) { \
     IF_DEBUG(p->level--;) \
     IF_DEBUG(p->debug_hook->memo_hit(p->level, pos, f_type, f_name);) \
     void *node = memo->node; \
@@ -80,6 +80,7 @@ typedef struct {
         p->pos = memo->end_pos;\
     }\
     return node; \
+    } else goto no_memo; \
     no_memo: \
 
 #define PUT_MEMO(p, type, node, end) FPeg_put_memo(p, type, node, end)
@@ -87,7 +88,6 @@ typedef struct {
 #define ENTER_LEFT_RECURSION(p) \
     void * max = res; \
     size_t lastpos = pos; \
-    \
     left_rec_enter: \
     PUT_MEMO(p, f_type, max, lastpos); \
     p->pos = pos
@@ -98,11 +98,14 @@ typedef struct {
     lastpos = end_pos; \
     max = res; \
     goto left_rec_enter; \
-    \
     left_rec_exit: \
     res = max \
 
 #define OPTIONAL(node) node, 1
+
+#define TEST_MATCH(p, node) node || (p->pos = pos, 0)
+
+#define TEST_NO_MATCH(p, node) !(node || (p->pos = pos, 0))
 
 #define GET_CURR_TOKEN(p) p->tokens[p->pos]
 

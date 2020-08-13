@@ -33,9 +33,18 @@ parameters:
  */
 
 typedef struct calc_node_ calc_node;
-typedef struct calc_sequence_ calc_sequence;
 
 typedef union calc_node_v {
+
+    struct {
+        FToken *tk_val;
+    } token;
+
+    struct {
+        int len;
+        calc_node **items;
+    } sequence;
+
     struct {
         calc_node *sum;
         calc_node *term;
@@ -88,22 +97,14 @@ typedef union calc_node_v {
     } name_lpar_parameters_rpar;
 
     struct {
-        calc_sequence *sum_list;
+        calc_node *sum_list;
         FToken *comma;
     } sum_list_comma;
-
-    FToken *token;
 } calc_node_v;
 
 struct calc_node_ {
     int t;
     calc_node_v v;
-};
-
-struct calc_sequence_ {
-    int t;
-    int len;
-    calc_node **items;
 };
 
 #define ENTER_FRAME(p, type, name) \
@@ -115,31 +116,37 @@ struct calc_sequence_ {
     return res
 
 #define NEW_NODE(p) PARSER_ALLOC(p, sizeof(calc_node))
-#define NEW_SEQ(p) PARSER_ALLOC(p, sizeof(calc_sequence))
 
-#define TOKEN_AS_NODE(p, type, value) peg_node_from_token(p, CONSUME_TOKEN(p, type, value))
+#define TOKEN_AS_NODE(p, type, value) calc_node_from_token(p, CONSUME_TOKEN(p, type, value))
 
-#define COPY_SEQUENCE(p, li) peg_copy_sequence(p, li)
+#define COPY_SEQUENCE(p, li) calc_copy_sequence(p, li)
 
-calc_node *peg_node_from_token(FPegParser *p, FToken *token) {
+FToken *calc_get_token(calc_node *node) {
+    if (node->t != 0) {
+        return NULL;
+    }
+    return node->v.token.tk_val;
+}
+
+calc_node *calc_node_from_token(FPegParser *p, FToken *token) {
     if (token) {
         calc_node *node = NEW_NODE(p);
         if (!node) return NULL;
         node->t = 2;
-        node->v.token = token;
+        node->v.token.tk_val = token;
         return node;
     }
     return NULL;
 }
 
-calc_sequence *peg_copy_sequence(FPegParser *p, FPegList *li) {
+calc_node *calc_copy_sequence(FPegParser *p, FPegList *li) {
     size_t len = LIST_LENGTH(li);
-    calc_sequence *res = NEW_SEQ(p);
+    calc_node *res = NEW_NODE(p);
     res->t = 32;
-    res->len = len;
-    res->items = PARSER_ALLOC(p, sizeof(calc_node));
+    res->v.sequence.len = len;
+    res->v.sequence.items = PARSER_ALLOC(p, sizeof(calc_node));
     for (int i = 0; i < len; ++i) {
-        res->items[i] = (calc_node *) LIST_GET(li, i);
+        res->v.sequence.items[i] = (calc_node *) LIST_GET(li, i);
     }
 
     return res;
@@ -179,7 +186,7 @@ calc_node *atom_2(FPegParser *p);
 
 calc_node *parameters(FPegParser *p);
 
-calc_sequence *sum_list(FPegParser *p);
+calc_node *sum_list(FPegParser *p);
 
 
 #endif //CPEG_CALC_PARSER_H
