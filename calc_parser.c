@@ -1,4 +1,9 @@
-#include "include/calc_parser.h"
+#include "include/internal/calc_parser_internal.h"
+
+calc_node *calc_parse(FPegParser *p, calc_entry_point entry_point) {
+    if (entry_point == calc_entry_sum) return sum(p);
+    return ((void *) 0);
+}
 
 // sum:
 //     | sum '+' term
@@ -8,9 +13,9 @@ calc_node *sum(FPegParser *p) {
     ENTER_FRAME(p, 0, "sum");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    if ((res = sum_1(p)) ||
-        (res = sum_2(p)) ||
-        (res = term(p))) {}
+    (res = sum_1(p)) ||
+    (res = sum_2(p)) ||
+    (res = term(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -54,10 +59,10 @@ calc_node *term(FPegParser *p) {
     ENTER_FRAME(p, 1, "term");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    if ((res = term_1(p)) ||
-        (res = term_2(p)) ||
-        (res = term_3(p)) ||
-        (res = factor(p))) {}
+    (res = term_1(p)) ||
+    (res = term_2(p)) ||
+    (res = term_3(p)) ||
+    (res = factor(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -114,10 +119,10 @@ calc_node *term_3(FPegParser *p) {
 //     | power
 calc_node *factor(FPegParser *p) {
     ENTER_FRAME(p, 8, "factor");
-    if ((res = factor_1(p)) ||
-        (res = factor_2(p)) ||
-        (res = factor_3(p)) ||
-        (res = power(p))) {}
+    (res = factor_1(p)) ||
+    (res = factor_2(p)) ||
+    (res = factor_3(p)) ||
+    (res = power(p));
     EXIT_FRAME(p);
 }
 
@@ -165,8 +170,8 @@ calc_node *factor_3(FPegParser *p) {
 //     | atom
 calc_node *power(FPegParser *p) {
     ENTER_FRAME(p, 9, "power");
-    if ((res = power_1(p)) ||
-        (res = atom(p))) {}
+    (res = power_1(p)) ||
+    (res = atom(p));
     EXIT_FRAME(p);
 }
 
@@ -192,11 +197,10 @@ calc_node *power_1(FPegParser *p) {
 //     | NUMBER
 calc_node *atom(FPegParser *p) {
     ENTER_FRAME(p, 8, "power_2");
-    if ((res = atom_1(p)) ||
-        (res = atom_2(p)) ||
-        (res = TOKEN_AS_NODE(p, 3, "NAME")) ||
-        (res = TOKEN_AS_NODE(p, 8, "NUMBER"))) {
-    }
+    (res = atom_1(p)) ||
+    (res = atom_2(p)) ||
+    (res = TOKEN_AS_NODE(p, 3, "NAME")) ||
+    (res = TOKEN_AS_NODE(p, 8, "NUMBER"));
     EXIT_FRAME(p);
 }
 

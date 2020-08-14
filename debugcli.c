@@ -4,10 +4,9 @@
 
 void input_loop(char *prompt, char *(*func)(char *)) {
     print(prompt);
-    char *line = NULL;
-    size_t size;
+    char line[1024];
     for (;;) {
-        getline(&line, &size, stdin);
+        fgets(line, 1024, stdin);
         if (strcmp(line, "exit") == 0) {
             break;
         }
