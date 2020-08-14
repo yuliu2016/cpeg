@@ -1,5 +1,12 @@
 #include "include/peg.h"
 
+void *FPeg_allocate(FPegParser *p, size_t size) {
+    if (p->region) {
+        return FMemRegion_malloc(p->region, size);
+    }
+    return FMem_malloc(size);
+}
+
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
     FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
     p->pos = 0;
@@ -70,6 +77,11 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type) {
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
         if (memo->type == type) {
+            if (memo->node) {
+                // reset the parser's position to the memo
+                // if it was previously successful
+                p->pos = memo->end_pos;
+            }
             return memo;
         }
         memo = memo->next;

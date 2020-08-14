@@ -42,7 +42,9 @@ typedef struct peg_parser_t {
 
 #define GET_CURR_TOKEN(p) p->tokens[p->pos]
 
-#define PARSER_ALLOC(p, size) FMemRegion_malloc(p->region, size)
+#define PARSER_ALLOC(p, size) FPeg_allocate(p, size)
+
+void *FPeg_allocate(FPegParser *p, size_t size);
 
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh);
 

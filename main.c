@@ -6,6 +6,11 @@ char *idchptr(char * in) {
     return in;
 }
 
+int prt() {
+    print("hi");
+    return 8;
+}
+
 int main() {
     FMem_set_allocator(default_allocator());
     FMemRegion *reg = FMemRegion_from_size(32);
@@ -13,6 +18,7 @@ int main() {
     strcpy(dst, "HelloWorld");
     dst = FMemRegion_malloc(reg, 3);
     strcpy(dst, "Hi");
+    dst = NULL;
 
     char *x = memregion_copy(reg);
     println(x);

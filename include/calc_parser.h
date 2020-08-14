@@ -63,13 +63,13 @@ typedef union calc_node_v {
     } lpar_sum_rpar;
 
     struct {
-        FToken *name;
+        calc_node *name;
         calc_node *parameters;
     } name_lpar_parameters_rpar;
 
     struct {
         calc_node *sum_list;
-        FToken *comma;
+        calc_node *comma;
     } sum_list_comma;
 } calc_node_v;
 
@@ -83,5 +83,7 @@ typedef enum {
 } calc_entry_point;
 
 calc_node *calc_parse(FPegParser *p, calc_entry_point entry_point);
+
+FToken *calc_get_token(calc_node *node);
 
 #endif //CPEG_CALC_PARSER_H
