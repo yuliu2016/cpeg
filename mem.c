@@ -1,4 +1,5 @@
 #include "include/internal/mem_internal.h"
+#include "stdint.h"
 
 static FMemAllocator allocator_;
 
@@ -22,14 +23,26 @@ void FMem_free(void *ptr) {
     allocator_.free(ptr);
 }
 
+void *mem_align_up(void *ptr, uintptr_t align) {
+    uintptr_t aptr = (uintptr_t) (ptr) + (align - 1) & ~(align - 1);
+    return (void *) aptr;
+}
+
+size_t mem_size_up(size_t s, size_t align) {
+    return s + (align - 1) & ~(align - 1);
+}
+
+#define ALIGNMENT sizeof(uintptr_t)
+
 FMemBlock *block_new(size_t size) {
-    void *ptr = FMem_malloc(sizeof(FMemBlock) + size);
-    FMemBlock *block_ptr = ptr;
-    block_ptr->block_size = size;
-    block_ptr->head_ptr = ((char *) ptr) + sizeof(FMemBlock);
-    block_ptr->alloc_offset = 0;
-    block_ptr->next_block = NULL;
-    return block_ptr;
+    FMemBlock *block = FMem_calloc(sizeof(FMemBlock) + size, sizeof(char));
+    if (!block) return NULL;
+    block->block_size = size;
+    block->head_ptr = ((char *) block) + sizeof(FMemBlock);
+    void *aligned_addr = mem_align_up(block->head_ptr, ALIGNMENT);
+    block->alloc_offset = aligned_addr - block->head_ptr;
+    block->next_block = NULL;
+    return block;
 }
 
 #define DEFAULT_BLOCK_SIZE 8192
@@ -38,20 +51,10 @@ FMemRegion *FMemRegion_new() {
     return FMemRegion_from_size(DEFAULT_BLOCK_SIZE);
 }
 
-size_t round2x(size_t v) {
-    v--;
-    v |= v >> 1u;
-    v |= v >> 2u;
-    v |= v >> 4u;
-    v |= v >> 8u;
-    v |= v >> 16u;
-    v++;
-    return v;
-}
-
 FMemRegion *FMemRegion_from_size(size_t initial_size) {
-    FMemBlock *block = block_new(round2x(initial_size));
+    FMemBlock *block = block_new(initial_size);
     FMemRegion *region = FMem_malloc(sizeof(FMemRegion));
+    if (!region) return NULL;
     region->head_block = block;
     region->cur_block = block;
     return region;
@@ -71,9 +74,12 @@ void FMemRegion_free(FMemRegion *region) {
 void *FMemRegion_malloc(FMemRegion *region, size_t size) {
     FMemBlock *b = region->cur_block;
     size_t avail_size = b->block_size - b->alloc_offset;
+    // round up the size needed to multiple of the required alignment
+    size = mem_size_up(size, ALIGNMENT);
     if (avail_size < size) {
         // make a block exactly the right size
         FMemBlock *tail = block_new(size);
+        if (!tail)return NULL;
         b->next_block = tail;
         region->cur_block = tail;
         return tail->head_ptr;

@@ -1,6 +1,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "inttypes.h"
 #include "include/internal/mem_debug.h"
 
 
@@ -38,7 +39,7 @@ char *memregion_copy(FMemRegion *region) {
     return buf;
 }
 
-void printptr(void *head, int size) {
+void print_buf(void *head, int size) {
     char *buf = malloc(size + 1);
     char *acc = head;
     for (int i = 0; i < size; ++i) {
@@ -53,7 +54,10 @@ void printptr(void *head, int size) {
     printf("%s\n", buf);
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 void test_block() {
+    FMem_set_allocator(default_allocator());
     FMemBlock *block = block_new(256);
     char *dest = block->head_ptr;
     block->alloc_offset += 11;
@@ -61,14 +65,52 @@ void test_block() {
     dest = ((char *) block->head_ptr) + block->alloc_offset;
     block->alloc_offset += 3;
     strcpy(dest, "Ho");
-    printptr(block->head_ptr, 256);
+    print_buf(block->head_ptr, 256);
     free(block);
 }
+
+void test_region() {
+    FMem_set_allocator(default_allocator());
+    FMemRegion *reg = FMemRegion_from_size(32);
+    PRINT_ADDR(reg);
+    PRINT_ADDR(reg->cur_block);
+    char *dst = FMemRegion_malloc(reg, 11);
+    PRINT_ADDR(dst);
+    strcpy(dst, "HelloWorld");
+    dst = FMemRegion_malloc(reg, 3);
+    PRINT_ADDR(dst);
+    strcpy(dst, "Hi");
+    dst = NULL;
+    printf("%zu\n", sizeof(char *));
+    char *x = memregion_copy(reg);
+    printf("%s\n", x);
+    FMemRegion_free(reg);
+    FMem_free(x);
+}
+
+#pragma clang diagnostic pop
+
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "ConstantConditionsOC"
+#pragma ide diagnostic ignored "UnreachableCode"
+#pragma clang diagnostic ignored "-Wformat"
+void print_address(void *ptr, const char *name) {
+    uintptr_t i = (uintptr_t) ptr;
+    size_t s = sizeof(char *) / 4;
+    if (s == 1) {
+        printf("%-16s = %#08x\n", name, (unsigned int) i);
+    } else {
+        printf("%-16s = %#016llx = 0b \n", name, (unsigned long long) i);
+    }
+}
+#pragma clang diagnostic pop
+
 
 void *dbmalloc(size_t size) {
     void *r = malloc(size);
     if (r) {
-        printf("Got malloc for size %d\n", size);
+        printf("Got malloc for size %zu\n", size);
     } else {
         printf("malloc returned null\n");
     }
@@ -78,7 +120,7 @@ void *dbmalloc(size_t size) {
 void *dbcalloc(size_t count, size_t size) {
     void *r = calloc(count, size);
     if (r) {
-        printf("Got calloc for size %d and count %d\n", size, count);
+        printf("Got calloc for size %zu and count %zu\n", size, count);
     } else {
         printf("calloc returned null\n");
     }

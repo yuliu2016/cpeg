@@ -86,4 +86,20 @@ calc_node *calc_parse(FPegParser *p, calc_entry_point entry_point);
 
 FToken *calc_get_token(calc_node *node);
 
+
+typedef struct calc_node_xx2 calc_node_xx2;
+
+struct calc_node_xx2 {
+    size_t t;
+    union {
+        struct {
+            size_t len;
+            calc_node_xx2 **items;
+        } sequence;
+
+        FToken *token;
+        calc_node_xx2 *fields[4];
+    }v;
+} calc_node_x2;
+
 #endif //CPEG_CALC_PARSER_H
