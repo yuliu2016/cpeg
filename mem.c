@@ -34,15 +34,18 @@ size_t mem_size_up(size_t s, size_t align) {
 
 #define ALIGNMENT sizeof(uintptr_t)
 
-FMemBlock *block_new(size_t size) {
-    FMemBlock *block = FMem_calloc(sizeof(FMemBlock) + size, sizeof(char));
-    if (!block) return NULL;
-    block->block_size = size;
-    block->head_ptr = ((char *) block) + sizeof(FMemBlock);
-    void *aligned_addr = mem_align_up(block->head_ptr, ALIGNMENT);
-    block->alloc_offset = aligned_addr - block->head_ptr;
-    block->next_block = NULL;
-    return block;
+FMemBlock *mem_block_new(size_t size) {
+    FMemBlock *b = FMem_calloc(sizeof(FMemBlock) + size, sizeof(char));
+    if (!b) return NULL;
+
+    b->block_size = size;
+    b->head_ptr = ((char *) b) + sizeof(FMemBlock);
+
+    char *aligned_addr = mem_align_up(b->head_ptr, ALIGNMENT);
+    b->alloc_offset = aligned_addr - (char *) b->head_ptr;
+    b->next_block = NULL;
+
+    return b;
 }
 
 #define DEFAULT_BLOCK_SIZE 8192
@@ -52,11 +55,12 @@ FMemRegion *FMemRegion_new() {
 }
 
 FMemRegion *FMemRegion_from_size(size_t initial_size) {
-    FMemBlock *block = block_new(initial_size);
     FMemRegion *region = FMem_malloc(sizeof(FMemRegion));
     if (!region) return NULL;
-    region->head_block = block;
-    region->cur_block = block;
+    FMemBlock *b = mem_block_new(initial_size);
+    if (!b) return NULL;
+    region->head_block = b;
+    region->cur_block = b;
     return region;
 }
 
@@ -78,8 +82,8 @@ void *FMemRegion_malloc(FMemRegion *region, size_t size) {
     size = mem_size_up(size, ALIGNMENT);
     if (avail_size < size) {
         // make a block exactly the right size
-        FMemBlock *tail = block_new(size);
-        if (!tail)return NULL;
+        FMemBlock *tail = mem_block_new(size);
+        if (!tail) return NULL;
         b->next_block = tail;
         region->cur_block = tail;
         return tail->head_ptr;

@@ -4,7 +4,7 @@
 #include "../peg.h"
 
 
-#define PEG_DEBUG
+//#define PEG_DEBUG
 
 #ifdef PEG_DEBUG
 #define IF_DEBUG(s) s
@@ -16,7 +16,7 @@
 
 #define ENTER_FRAME_X(p, type, name) \
     const int f_type = type; \
-    const char* f_name = name; \
+    IF_DEBUG(const char* f_name = name;) \
     size_t pos = p->pos; \
     IF_DEBUG(p->debug_hook->enter_frame(++p->level, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; } \

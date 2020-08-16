@@ -6,11 +6,11 @@ typedef struct token_str_t {
     int len;
 } FTokenStr;
 
-typedef struct memo {
+typedef struct token_memo_t {
     int type;
     void *node;
     int end_pos;
-    struct memo *next;
+    struct token_memo_t *next;
 } FTokenMemo;
 
 typedef struct token_t {

@@ -1,12 +1,5 @@
 #include "include/peg.h"
 
-void *FPeg_allocate(FPegParser *p, size_t size) {
-    if (p->region) {
-        return FMemRegion_malloc(p->region, size);
-    }
-    return FMem_malloc(size);
-}
-
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
     FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
     p->pos = 0;
@@ -89,15 +82,15 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type) {
     return NULL;
 }
 
-FPegList *FPeg_new_list() {
-    FPegList *seq = FMem_malloc(sizeof(FPegList));
+FAstList *FPeg_new_list() {
+    FAstList *seq = FMem_malloc(sizeof(FAstList));
     seq->capacity = 0;
     seq->len = 0;
     seq->items = NULL;
     return seq;
 }
 
-void peg_list_resize_double(FPegList *list) {
+void peg_list_resize_double(FAstList *list) {
     if (!list->capacity) {
         list->capacity = 1;
         list->items = FMem_malloc(sizeof(void *));
@@ -107,7 +100,7 @@ void peg_list_resize_double(FPegList *list) {
     }
 }
 
-void FPeg_list_append(FPegList *list, void *item) {
+void FPeg_list_append(FAstList *list, void *item) {
     int i = list->len;
     if (i >= list->capacity) {
         peg_list_resize_double(list);

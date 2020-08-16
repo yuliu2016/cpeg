@@ -56,9 +56,11 @@ void print_buf(void *head, int size) {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 void test_block() {
     FMem_set_allocator(default_allocator());
-    FMemBlock *block = block_new(256);
+    FMemBlock *block = mem_block_new(256);
     char *dest = block->head_ptr;
     block->alloc_offset += 11;
     strcpy(dest, "HelloWorld");
@@ -95,15 +97,17 @@ void test_region() {
 #pragma ide diagnostic ignored "ConstantConditionsOC"
 #pragma ide diagnostic ignored "UnreachableCode"
 #pragma clang diagnostic ignored "-Wformat"
+
 void print_address(void *ptr, const char *name) {
     uintptr_t i = (uintptr_t) ptr;
-    size_t s = sizeof(char *) / 4;
+    size_t s = sizeof(uintptr_t) / 4;
     if (s == 1) {
         printf("%-16s = %#08x\n", name, (unsigned int) i);
     } else {
         printf("%-16s = %#016llx = 0b \n", name, (unsigned long long) i);
     }
 }
+
 #pragma clang diagnostic pop
 
 

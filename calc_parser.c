@@ -211,7 +211,7 @@ calc_node *sum_list(FPegParser *p) {
     if (!(node = sum(p))) {
         return ((void *) 0);
     }
-    FPegList *li = LIST_NEW();
+    FAstList *li = LIST_NEW();
     LIST_APPEND(li, node);
     for (;;) {
         size_t pos = p->pos;

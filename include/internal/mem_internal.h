@@ -17,6 +17,6 @@ struct mem_region_t {
     FMemBlock *cur_block;
 };
 
-FMemBlock *block_new(size_t size);
+FMemBlock *mem_block_new(size_t size);
 
 #endif //CPEG_MEM_INTERNAL_H

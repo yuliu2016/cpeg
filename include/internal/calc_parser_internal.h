@@ -62,7 +62,7 @@ calc_node *calc_node_from_token(FPegParser *p, FToken *token);
 
 #define COPY_SEQUENCE(p, li) calc_copy_sequence(p, li)
 
-calc_node *calc_copy_sequence(FPegParser *p, FPegList *li);
+calc_node *calc_copy_sequence(FPegParser *p, FAstList *li);
 
 #define NODE_1(p, t, a) calc_node_1(p, t, a)
 
@@ -91,7 +91,7 @@ calc_node *calc_node_from_token(FPegParser *p, FToken *token) {
     return NULL;
 }
 
-calc_node *calc_copy_sequence(FPegParser *p, FPegList *li) {
+calc_node *calc_copy_sequence(FPegParser *p, FAstList *li) {
     size_t len = LIST_LENGTH(li);
     calc_node *res = NEW_NODE(p);
     res->t = 32;
