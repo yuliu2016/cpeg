@@ -71,13 +71,13 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type);
 
-#define AST_SEQ_NEW() FAst_new_sequence()
+#define AST_SEQ_NEW(p) FAst_new_sequence(p)
 
-FAstNode *FAst_new_sequence();
+FAstNode *FAst_new_sequence(FPegParser *p);
 
-#define AST_SEQ_APPEND(list, item) FAst_seq_append(list, item)
+#define AST_SEQ_APPEND(p, list, item) FAst_seq_append(p, list, item)
 
-void FAst_seq_append(FAstNode *seq, void *item);
+void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
 #define AST_NODE_1(p, t, a) FAst_node_1(p, t, a)
 

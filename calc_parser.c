@@ -245,19 +245,14 @@ FAstNode *parameters(FPegParser *p) {
 
 // ','.sum+
 FAstNode *sum_list(FPegParser *p) {
-    FAstNode *node;
+    FAstNode *node, *seq;
     if (!(node = sum(p))) { return ((void *) 0); }
-    FAstNode *seq = AST_SEQ_NEW();
-    AST_SEQ_APPEND(seq, node);
-    for (;;) {
-        size_t pos = p->pos;
-        if ((AST_CONSUME(p, 20, ",")) &&
-            (node = sum(p))) {
-            AST_SEQ_APPEND(seq, node);
-        } else {
-            p->pos = pos;
-            break;
-        }
-    }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 20, ",")) &&
+            (node = sum(p)));
+    p->pos = pos;
     return seq;
 }
