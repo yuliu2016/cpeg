@@ -14,7 +14,7 @@
  * https://github.com/PhilippeSigaud/Pegged/wiki/Left-Recursion
  */
 
-typedef struct peg_debug_hook_t {
+typedef struct {
     void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
 
     void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
@@ -28,26 +28,19 @@ typedef struct peg_parser_t {
     size_t pos;
     size_t max_reached_pos;
     size_t level;
-    FToken **tokens;
     size_t token_len;
+    FToken **tokens;
     FPegDebugHook *debug_hook;
     FMemRegion *region;
 } FPegParser;
-
-#define GET_CURR_TOKEN(p) p->tokens[p->pos]
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc(p->region, size)
 
 typedef struct ast_node_t FAstNode;
 
-typedef struct ast_list_t {
-    size_t len;
-    size_t capacity;
-    void **items;
-} FAstList;
-
 typedef struct ast_sequence_t {
     size_t len;
+    size_t capacity;
     FAstNode **items;
 } FAstSequence;
 
@@ -68,19 +61,31 @@ struct ast_node_t {
 
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh);
 
-FToken *FPeg_consume_token(FPegParser *p, int type);
-
-FToken *FPeg_consume_token_debug(FPegParser *p, int type, char *literal);
-
 FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end);
 
 void FPeg_put_memo(FPegParser *p, int type, void *node, int end);
 
 FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 
-FAstList *FPeg_new_list();
+#define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
 
-void FPeg_list_append(FAstList *list, void *item);
+FAstNode *FPeg_consume_token(FPegParser *p, int type);
+
+#define AST_SEQ_NEW() FAst_new_sequence()
+
+FAstNode *FAst_new_sequence();
+
+#define AST_SEQ_APPEND(list, item) FAst_seq_append(list, item)
+
+void FAst_seq_append(FAstNode *seq, void *item);
+
+#define AST_NODE_1(p, t, a) FAst_node_1(p, t, a)
+
+FAstNode *FAst_node_1(FPegParser *p, int t, FAstNode *a);
+
+#define AST_NODE_2(p, t, a, b) FAst_node_2(p, t, a, b)
+
+FAstNode *FAst_node_2(FPegParser *p, int t, FAstNode *a, FAstNode *b);
 
 
 #endif //CPEG_PEG_H

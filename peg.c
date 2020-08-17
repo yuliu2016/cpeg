@@ -1,5 +1,9 @@
 #include "include/peg.h"
 
+#define GET_CURR_TOKEN(p) p->tokens[p->pos]
+
+#define NEW_NODE(p) PARSER_ALLOC(p, sizeof(FAstNode))
+
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
     FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
     p->pos = 0;
@@ -12,19 +16,17 @@ FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *d
     return p;
 }
 
-FToken *FPeg_consume_token(FPegParser *p, int type) {
-    if (p->pos >= p->token_len) {
-        return NULL;
+FAstNode *ast_node_from_token(FPegParser *p, FToken *token) {
+    if (token) {
+        FAstNode *node = NEW_NODE(p);
+        node->ast_t = 1;
+        node->ast_v.token = token;
+        return node;
     }
-    FToken *curr_token = GET_CURR_TOKEN(p);
-    FToken *res = NULL;
-    if (curr_token->type == type) {
-        res = curr_token;
-    }
-    return res;
+    return NULL;
 }
 
-FToken *FPeg_consume_token_debug(FPegParser *p, int type, char *literal) {
+FAstNode *FPeg_consume_token(FPegParser *p, int type) {
     if (p->pos >= p->token_len) {
         return NULL;
     }
@@ -33,8 +35,7 @@ FToken *FPeg_consume_token_debug(FPegParser *p, int type, char *literal) {
     if (curr_token->type == type) {
         res = curr_token;
     }
-    p->debug_hook->mark_token(res, p->level, type, curr_token->type, literal);
-    return res;
+    return ast_node_from_token(p, res);
 }
 
 FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end) {
@@ -82,29 +83,43 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type) {
     return NULL;
 }
 
-FAstList *FPeg_new_list() {
-    FAstList *seq = FMem_malloc(sizeof(FAstList));
+FAstNode *FAst_new_sequence() {
+    FAstNode *node = FMem_malloc(sizeof(FAstNode));
+    node->ast_t = 2;
+    FAstSequence *seq = &node->ast_v.sequence;
     seq->capacity = 0;
     seq->len = 0;
     seq->items = NULL;
-    return seq;
+    return node;
 }
 
-void peg_list_resize_double(FAstList *list) {
-    if (!list->capacity) {
-        list->capacity = 1;
-        list->items = FMem_malloc(sizeof(void *));
-    } else {
-        list->capacity = list->capacity << 1u;
-        list->items = FMem_realloc(list->items, list->capacity * sizeof(void *));
+void FAst_seq_append(FAstNode *node, void *item) {
+    FAstSequence *seq = &node->ast_v.sequence;
+    int i = seq->len;
+    if (i >= seq->capacity) {
+        if (!seq->capacity) {
+            seq->capacity = 1;
+            seq->items = FMem_malloc(sizeof(void *));
+        } else {
+            seq->capacity = seq->capacity << 1u;
+            seq->items = FMem_realloc(seq->items, seq->capacity * sizeof(void *));
+        }
     }
+    seq->items[i] = item;
+    ++seq->len;
 }
 
-void FPeg_list_append(FAstList *list, void *item) {
-    int i = list->len;
-    if (i >= list->capacity) {
-        peg_list_resize_double(list);
-    }
-    list->items[i] = item;
-    ++list->len;
+FAstNode *FAst_node_1(FPegParser *p, int t, FAstNode *a) {
+    FAstNode *res = NEW_NODE(p);
+    res->ast_t = t;
+    res->ast_v.fields[0] = a;
+    return res;
+}
+
+FAstNode *FAst_node_2(FPegParser *p, int t, FAstNode *a, FAstNode *b) {
+    FAstNode *res = NEW_NODE(p);
+    res->ast_t = t;
+    res->ast_v.fields[0] = a;
+    res->ast_v.fields[1] = b;
+    return res;
 }

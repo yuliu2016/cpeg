@@ -3,87 +3,70 @@
 
 #include "peg.h"
 
-typedef struct calc_node_ calc_node;
 
-typedef union calc_node_v {
-
-    struct {
-        FToken *tk_val;
-    } token;
+typedef union calc_ast_node {
 
     struct {
-        int len;
-        calc_node **items;
-    } sequence;
-
-    struct {
-        calc_node *sum;
-        calc_node *term;
+        FAstNode *sum;
+        FAstNode *term;
     } sum_plus_term;
 
     struct {
-        calc_node *sum;
-        calc_node *term;
+        FAstNode *sum;
+        FAstNode *term;
     } sum_minus_term;
 
     struct {
-        calc_node *term;
-        calc_node *factor;
+        FAstNode *term;
+        FAstNode *factor;
     } term_multiply_factor;
 
     struct {
-        calc_node *term;
-        calc_node *factor;
+        FAstNode *term;
+        FAstNode *factor;
     } term_divide_factor;
 
     struct {
-        calc_node *term;
-        calc_node *factor;
+        FAstNode *term;
+        FAstNode *factor;
     } term_modulus_factor;
 
     struct {
-        calc_node *factor;
+        FAstNode *factor;
     } plus_factor;
 
     struct {
-        calc_node *factor;
+        FAstNode *factor;
     } minus_factor;
 
     struct {
-        calc_node *factor;
+        FAstNode *factor;
     } invert_factor;
 
     struct {
-        calc_node *atom;
-        calc_node *factor;
+        FAstNode *atom;
+        FAstNode *factor;
     } atom_power_factor;
 
     struct {
-        calc_node *sum;
+        FAstNode *sum;
     } lpar_sum_rpar;
 
     struct {
-        calc_node *name;
-        calc_node *parameters;
+        FAstNode *name;
+        FAstNode *parameters;
     } name_lpar_parameters_rpar;
 
     struct {
-        calc_node *sum_list;
-        calc_node *comma;
+        FAstNode *sum_list;
+        FAstNode *comma;
     } sum_list_comma;
-} calc_node_v;
-
-struct calc_node_ {
-    int t;
-    calc_node_v v;
-};
+} calc_ast_node;
 
 typedef enum {
     calc_entry_sum
 } calc_entry_point;
 
-calc_node *calc_parse(FPegParser *p, calc_entry_point entry_point);
-
-FToken *calc_get_token(calc_node *node);
+FAstNode *calc_parse(FPegParser *p, calc_entry_point entry_point);
 
 #endif //CPEG_CALC_PARSER_H
