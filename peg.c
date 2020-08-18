@@ -1,4 +1,5 @@
 #include "include/peg.h"
+#include "stdarg.h"
 
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
     FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
@@ -109,17 +110,17 @@ void FAst_seq_append(FPegParser *p, FAstNode *node, void *item) {
     ++seq->len;
 }
 
-FAstNode *FAst_node_1(FPegParser *p, int t, FAstNode *a) {
+FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...) {
+    va_list valist;
+    if (nargs > AST_NODE_MAX_FIELD) {
+        return NULL;
+    }
+    va_start(valist, nargs);
     FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
     res->ast_t = t;
-    res->ast_v.fields[0] = a;
-    return res;
-}
-
-FAstNode *FAst_node_2(FPegParser *p, int t, FAstNode *a, FAstNode *b) {
-    FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
-    res->ast_t = t;
-    res->ast_v.fields[0] = a;
-    res->ast_v.fields[1] = b;
+    for (int i = 0; i < nargs; ++i) {
+        res->ast_v.fields[i] = va_arg(valist, FAstNode *);
+    }
+    va_end(valist);
     return res;
 }

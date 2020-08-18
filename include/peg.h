@@ -50,12 +50,14 @@ typedef struct ast_sequence_t {
 #define AST_GET_TOKEN(node) node->ast_v.token
 #define AST_GET_SEQUENCE(node) node->ast_v.sequence
 
+#define AST_NODE_MAX_FIELD 4
+
 struct ast_node_t {
     unsigned int ast_t;
     union ast_v {
         FToken *token;
         FAstSequence sequence;
-        FAstNode *fields[4];
+        FAstNode *fields[AST_NODE_MAX_FIELD];
     } ast_v;
 };
 
@@ -79,13 +81,12 @@ FAstNode *FAst_new_sequence(FPegParser *p);
 
 void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
-#define AST_NODE_1(p, t, a) FAst_node_1(p, t, a)
+#define AST_NODE_1(p, t, a) FAst_new_node(p, t, 1, a)
+#define AST_NODE_2(p, t, a, b) FAst_new_node(p, t, 2, a, b)
+#define AST_NODE_3(p, t, a, b, c) FAst_new_node(p, t, 3, a, b, c)
+#define AST_NODE_4(p, t, a, b, c, d) FAst_new_node(p, t, 4, a, b, c, d)
 
-FAstNode *FAst_node_1(FPegParser *p, int t, FAstNode *a);
-
-#define AST_NODE_2(p, t, a, b) FAst_node_2(p, t, a, b)
-
-FAstNode *FAst_node_2(FPegParser *p, int t, FAstNode *a, FAstNode *b);
+FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...);
 
 
 #endif //CPEG_PEG_H
