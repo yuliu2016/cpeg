@@ -35,7 +35,7 @@ FAstNode *atom_2(FPegParser *p);
 
 FAstNode *parameters_rule(FPegParser *p);
 
-FAstNode *sum_list(FPegParser *p);
+FAstNode *sum_loop(FPegParser *p);
 
 // Parser Entry Point
 FAstNode *calc_parse(FPegParser *p, calc_entry_point entry_point) {
@@ -237,14 +237,14 @@ FAstNode *atom_2(FPegParser *p) {
 FAstNode *parameters_rule(FPegParser *p) {
     ENTER_FRAME(p, 10, "paramters");
     FAstNode *sum_list_, *comma;
-    (sum_list_ = sum_list(p)) &&
+    (sum_list_ = sum_loop(p)) &&
     (comma = OPTIONAL_TOKEN(p, 21, ","))
     ? (res = AST_NODE_2(p, 11, sum_list_, comma)) : 0;
     EXIT_FRAME(p);
 }
 
 // ','.sum+
-FAstNode *sum_list(FPegParser *p) {
+FAstNode *sum_loop(FPegParser *p) {
     FAstNode *node, *seq;
     if (!(node = sum_rule(p))) { return ((void *) 0); }
     seq = AST_SEQ_NEW(p);

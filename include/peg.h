@@ -34,7 +34,7 @@ typedef struct peg_parser_t {
     FMemRegion *region;
 } FPegParser;
 
-#define PARSER_ALLOC(p, size) FMemRegion_malloc(p->region, size)
+#define PARSER_ALLOC(p, size) FMemRegion_malloc(p->region, size) // NOLINT(bugprone-macro-parentheses)
 
 typedef struct ast_node_t FAstNode;
 
@@ -44,8 +44,8 @@ typedef struct ast_sequence_t {
     FAstNode **items;
 } FAstSequence;
 
-#define AST_IS_TOKEN(node) node->ast_t & 1
-#define AST_IS_SEQUENCE(node) node->ast_t & 2
+#define AST_IS_TOKEN(node) node->ast_t & 1 // NOLINT(bugprone-macro-parentheses)
+#define AST_IS_SEQUENCE(node) node->ast_t & 2 // NOLINT(bugprone-macro-parentheses)
 #define AST_GET_RULE(node) node->ast_t >> 2
 #define AST_GET_TOKEN(node) node->ast_v.token
 #define AST_GET_SEQUENCE(node) node->ast_v.sequence

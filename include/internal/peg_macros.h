@@ -1,3 +1,4 @@
+
 #ifndef CPEG_PEG_MACROS_H
 #define CPEG_PEG_MACROS_H
 
@@ -11,6 +12,9 @@
 #else
 # define IF_DEBUG(s)
 #endif
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-macro-parentheses"
 
 #define DEBUG_EXTRAS pos, f_type, f_name
 
@@ -52,9 +56,15 @@
 
 #define OPTIONAL_TOKEN(p, type, value) OPTIONAL(AST_CONSUME(p, type, value))
 
-#define TEST_MATCH(p, node) node || (p->pos = pos, 0)
+#define TEST(p, node) (node || (p->pos = pos, 0))
 
-#define TEST_NO_MATCH(p, node) !(node || (p->pos = pos, 0))
+#define RULE(name) FAstNode *name(FPegParser *p)
+
+// FAstNode \*[a-z0-9_]+\(FPegParser \*p\)
+// RULE($1)
+
+#pragma clang diagnostic pop
+
 
 
 #endif //CPEG_PEG_MACROS_H
