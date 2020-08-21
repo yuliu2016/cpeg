@@ -1,196 +1,5 @@
-#include <peg_macros.h>
-
-RULE(single_input);
-RULE(single_input_3);
-RULE(file_input);
-RULE(file_input_1_loop);
-RULE(file_input_1);
-RULE(eval_input);
-RULE(eval_input_loop);
-RULE(stmt);
-RULE(stmt_1);
-RULE(simple_stmt);
-RULE(small_stmt_loop);
-RULE(small_stmt);
-RULE(del_stmt);
-RULE(return_stmt);
-RULE(raise_stmt);
-RULE(raise_stmt_3);
-RULE(nonlocal_stmt);
-RULE(assert_stmt);
-RULE(assert_stmt_3);
-RULE(name_list);
-RULE(name_list_loop);
-RULE(star_expr);
-RULE(exprlist);
-RULE(expr_loop);
-RULE(target);
-RULE(target_1);
-RULE(target_2);
-RULE(target_4);
-RULE(t_primary);
-RULE(t_primary_1);
-RULE(t_primary_2);
-RULE(t_primary_3);
-RULE(t_primary_4);
-RULE(t_lookahead);
-RULE(targetlist);
-RULE(target_loop);
-RULE(expr_or_star);
-RULE(exprlist_star);
-RULE(expr_or_star_loop);
-RULE(named_expr_star);
-RULE(named_expr_list);
-RULE(named_expr_star_loop);
-RULE(subscript);
-RULE(slicelist);
-RULE(slice_loop);
-RULE(slice);
-RULE(slice_1);
-RULE(slice_expr);
-RULE(dict_item);
-RULE(dict_item_1);
-RULE(dict_item_2);
-RULE(dict_items);
-RULE(dict_item_loop);
-RULE(as_name);
-RULE(iter_for);
-RULE(iter_if);
-RULE(iterator);
-RULE(iter_for_loop);
-RULE(assignment);
-RULE(pubassign);
-RULE(annassign);
-RULE(annassign_4);
-RULE(augassign);
-RULE(simple_assign);
-RULE(simple_assign_1_loop);
-RULE(simple_assign_1);
-RULE(augassign_op);
-RULE(import_name);
-RULE(import_from);
-RULE(import_from_names);
-RULE(import_from_names_2);
-RULE(import_from_names_2_loop);
-RULE(import_from_items);
-RULE(import_from_items_2);
-RULE(import_as_name);
-RULE(dotted_as_name);
-RULE(import_as_names);
-RULE(import_as_name_loop);
-RULE(dotted_as_names);
-RULE(dotted_as_name_loop);
-RULE(dotted_name);
-RULE(dotted_name_loop);
-RULE(compound_stmt);
-RULE(if_stmt);
-RULE(elif_stmt_loop);
-RULE(elif_stmt);
-RULE(while_stmt);
-RULE(for_stmt);
-RULE(try_stmt);
-RULE(try_stmt_3);
-RULE(with_stmt);
-RULE(expr_as_name_loop);
-RULE(expr_as_name);
-RULE(block_suite);
-RULE(block_suite_1);
-RULE(stmt_loop);
-RULE(block_suite_2);
-RULE(suite);
-RULE(suite_1);
-RULE(else_suite);
-RULE(finally_suite);
-RULE(except_clause);
-RULE(except_suite);
-RULE(except_clause_loop);
-RULE(invocation);
-RULE(call_arg_list);
-RULE(call_arg_loop);
-RULE(call_arg);
-RULE(call_arg_1);
-RULE(call_arg_2);
-RULE(call_arg_3);
-RULE(call_arg_4);
-RULE(typed_arg_list);
-RULE(full_arg_list);
-RULE(default_arg_loop);
-RULE(full_arg_list_2);
-RULE(full_arg_list_2_2);
-RULE(args_kwargs);
-RULE(args_kwargs_3_loop);
-RULE(args_kwargs_3);
-RULE(args_kwargs_4);
-RULE(kwargs);
-RULE(default_arg);
-RULE(default_arg_2);
-RULE(typed_arg);
-RULE(typed_arg_2);
-RULE(simple_arg);
-RULE(simple_arg_2);
-RULE(simple_args);
-RULE(simple_arg_loop);
-RULE(builder_hint);
-RULE(builder_args);
-RULE(builder_args_2);
-RULE(named_expr);
-RULE(named_expr_1);
-RULE(conditional);
-RULE(expr);
-RULE(disjunction);
-RULE(disjunction_1);
-RULE(conjunction);
-RULE(conjunction_1);
-RULE(inversion);
-RULE(inversion_1);
-RULE(comparison);
-RULE(comparison_1);
-RULE(comparison_1_2_loop);
-RULE(comparison_1_2);
-RULE(comp_op);
-RULE(comp_op_8);
-RULE(comp_op_10);
-RULE(bitwise_or);
-RULE(bitwise_or_1);
-RULE(bitwise_xor);
-RULE(bitwise_xor_1);
-RULE(bitwise_and);
-RULE(bitwise_and_1);
-RULE(shift_expr);
-RULE(shift_expr_1);
-RULE(shift_expr_2);
-RULE(sum);
-RULE(sum_1);
-RULE(sum_2);
-RULE(term);
-RULE(term_1);
-RULE(term_2);
-RULE(term_3);
-RULE(term_4);
-RULE(term_5);
-RULE(pipe_expr);
-RULE(pipe_expr_1);
-RULE(factor);
-RULE(factor_1);
-RULE(factor_2);
-RULE(factor_3);
-RULE(power);
-RULE(power_1);
-RULE(primary);
-RULE(primary_1);
-RULE(primary_2);
-RULE(primary_3);
-RULE(tuple_atom);
-RULE(list_iter);
-RULE(list_atom);
-RULE(set_atom);
-RULE(dict_iter);
-RULE(dict_atom);
-RULE(builder);
-RULE(builder_1);
-RULE(builder_2);
-RULE(atom);
-
+#include "include/parser.h"
+#include "include/internal/peg_macros.h"
 
 // single_input:
 //     | NEWLINE
@@ -218,7 +27,7 @@ RULE(single_input_3) {
 RULE(file_input) {
     ENTER_FRAME(p, 3, "file_input");
     FAstNode *newlineOrStmts_, *endmarker_;
-    (newlineOrStmts_ = OPTIONAL(file_input_1_loop(p))) &&
+    (newlineOrStmts_ = file_input_1_loop(p)) &&
     (endmarker_ = AST_CONSUME(p, 1, "ENDMARKER"))
     ? (res = AST_NODE_2(p, newlineOrStmts_, endmarker_)) : 0;
     EXIT_FRAME(p);
@@ -245,7 +54,7 @@ RULE(eval_input) {
     ENTER_FRAME(p, 5, "eval_input");
     FAstNode *exprlist_, *newlines_, *endmarker_;
     (exprlist_ = exprlist(p)) &&
-    (newlines_ = OPTIONAL(eval_input_loop(p))) &&
+    (newlines_ = eval_input_loop(p)) &&
     (endmarker_ = AST_CONSUME(p, 1, "ENDMARKER"))
     ? (res = AST_NODE_3(p, exprlist_, newlines_, endmarker_)) : 0;
     EXIT_FRAME(p);
@@ -295,7 +104,7 @@ RULE(small_stmt_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 12, ";")) &&
             (node = small_stmt(p)));
     p->pos = pos;
     return seq;
@@ -421,7 +230,7 @@ RULE(name_list_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = AST_CONSUME(p, 3, "NAME")));
     p->pos = pos;
     return seq;
@@ -456,7 +265,7 @@ RULE(expr_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = expr(p)));
     p->pos = pos;
     return seq;
@@ -594,7 +403,7 @@ RULE(target_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = target(p)));
     p->pos = pos;
     return seq;
@@ -628,7 +437,7 @@ RULE(expr_or_star_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = expr_or_star(p)));
     p->pos = pos;
     return seq;
@@ -662,7 +471,7 @@ RULE(named_expr_star_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = named_expr_star(p)));
     p->pos = pos;
     return seq;
@@ -698,7 +507,7 @@ RULE(slice_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = slice(p)));
     p->pos = pos;
     return seq;
@@ -782,7 +591,7 @@ RULE(dict_item_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = dict_item(p)));
     p->pos = pos;
     return seq;
@@ -829,7 +638,7 @@ RULE(iter_if) {
 RULE(iterator) {
     ENTER_FRAME(p, 47, "iterator");
     FAstNode *iter_fors_, *targetlist_, *iter_if_;
-    (iter_fors_ = OPTIONAL(iter_for_loop(p))) &&
+    (iter_fors_ = iter_for_loop(p)) &&
     (AST_CONSUME(p, 72, "for")) &&
     (targetlist_ = targetlist(p)) &&
     (iter_if_ = OPTIONAL(iter_if(p)))
@@ -911,7 +720,7 @@ RULE(augassign) {
 RULE(simple_assign) {
     ENTER_FRAME(p, 53, "simple_assign");
     FAstNode *targetlist_assigns_, *exprlist_star_;
-    (targetlist_assigns_ = OPTIONAL(simple_assign_1_loop(p))) &&
+    (targetlist_assigns_ = simple_assign_1_loop(p)) &&
     (exprlist_star_ = exprlist_star(p))
     ? (res = AST_NODE_2(p, targetlist_assigns_, exprlist_star_)) : 0;
     EXIT_FRAME(p);
@@ -1080,7 +889,7 @@ RULE(import_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = import_as_name(p)));
     p->pos = pos;
     return seq;
@@ -1103,7 +912,7 @@ RULE(dotted_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = dotted_as_name(p)));
     p->pos = pos;
     return seq;
@@ -1126,7 +935,7 @@ RULE(dotted_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 6, ".")) &&
             (node = AST_CONSUME(p, 3, "NAME")));
     p->pos = pos;
     return seq;
@@ -1156,7 +965,7 @@ RULE(if_stmt) {
     (AST_CONSUME(p, 56, "if")) &&
     (named_expr_ = named_expr(p)) &&
     (suite_ = suite(p)) &&
-    (elif_stmts_ = OPTIONAL(elif_stmt_loop(p))) &&
+    (elif_stmts_ = elif_stmt_loop(p)) &&
     (else_suite_ = OPTIONAL(else_suite(p)))
     ? (res = AST_NODE_4(p, named_expr_, suite_, elif_stmts_, else_suite_)) : 0;
     EXIT_FRAME(p);
@@ -1248,7 +1057,7 @@ RULE(expr_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = expr_as_name(p)));
     p->pos = pos;
     return seq;
@@ -1406,7 +1215,7 @@ RULE(call_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = call_arg(p)));
     p->pos = pos;
     return seq;
@@ -1496,7 +1305,7 @@ RULE(default_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = default_arg(p)));
     p->pos = pos;
     return seq;
@@ -1525,7 +1334,7 @@ RULE(args_kwargs) {
     FAstNode *typed_arg_, *comma_default_args_, *args_kwargs_;
     (AST_CONSUME(p, 23, "*")) &&
     (typed_arg_ = OPTIONAL(typed_arg(p))) &&
-    (comma_default_args_ = OPTIONAL(args_kwargs_3_loop(p))) &&
+    (comma_default_args_ = args_kwargs_3_loop(p)) &&
     (args_kwargs_ = OPTIONAL(args_kwargs_4(p)))
     ? (res = AST_NODE_3(p, typed_arg_, comma_default_args_, args_kwargs_)) : 0;
     EXIT_FRAME(p);
@@ -1646,7 +1455,7 @@ RULE(simple_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 0, "delim")) &&
+            (AST_CONSUME(p, 7, ",")) &&
             (node = simple_arg(p)));
     p->pos = pos;
     return seq;

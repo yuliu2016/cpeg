@@ -86,4 +86,6 @@ void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...);
 
 
+#define RULE(name) FAstNode *name(FPegParser *p)
+
 #endif //CPEG_PEG_H
