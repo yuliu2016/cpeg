@@ -225,6 +225,14 @@ RULE(file_input) {
     EXIT_FRAME(p);
 }
 
+RULE(file_input_1_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = file_input_1(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
+}
+
 // NEWLINE | stmt
 RULE(file_input_1) {
     ENTER_FRAME(p, 4, "file_input:1");
@@ -243,6 +251,14 @@ RULE(eval_input) {
     (endmarker_ = AST_CONSUME(p, 1, "ENDMARKER"))
     ? (res = AST_NODE_3(p, exprlist_, newlines_, endmarker_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(eval_input_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = AST_CONSUME(p, 2, "NEWLINE"))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
 }
 
 // stmt:
@@ -273,6 +289,19 @@ RULE(simple_stmt) {
     (is_semicolon_ = OPTIONAL(AST_CONSUME(p, 12, ";")))
     ? (res = AST_NODE_2(p, small_stmts_, is_semicolon_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(small_stmt_loop) {
+    FAstNode *node, *seq;
+    if (!(node = small_stmt(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = small_stmt(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // small_stmt:
@@ -390,6 +419,19 @@ RULE(name_list) {
     EXIT_FRAME(p);
 }
 
+RULE(name_list_loop) {
+    FAstNode *node, *seq;
+    if (!(node = AST_CONSUME(p, 3, "NAME"))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = AST_CONSUME(p, 3, "NAME")));
+    p->pos = pos;
+    return seq;
+}
+
 // star_expr:
 //     | '*' bitwise_or
 RULE(star_expr) {
@@ -410,6 +452,19 @@ RULE(exprlist) {
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
     ? (res = AST_NODE_2(p, exprs_, is_comma_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(expr_loop) {
+    FAstNode *node, *seq;
+    if (!(node = expr(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = expr(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // target:
@@ -544,6 +599,19 @@ RULE(targetlist) {
     EXIT_FRAME(p);
 }
 
+RULE(target_loop) {
+    FAstNode *node, *seq;
+    if (!(node = target(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = target(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // expr_or_star:
 //     | star_expr
 //     | expr
@@ -563,6 +631,19 @@ RULE(exprlist_star) {
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
     ? (res = AST_NODE_2(p, expr_or_stars_, is_comma_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(expr_or_star_loop) {
+    FAstNode *node, *seq;
+    if (!(node = expr_or_star(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = expr_or_star(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // named_expr_star:
@@ -586,6 +667,19 @@ RULE(named_expr_list) {
     EXIT_FRAME(p);
 }
 
+RULE(named_expr_star_loop) {
+    FAstNode *node, *seq;
+    if (!(node = named_expr_star(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = named_expr_star(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // subscript:
 //     | '[' slicelist ']'
 RULE(subscript) {
@@ -607,6 +701,19 @@ RULE(slicelist) {
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
     ? (res = AST_NODE_2(p, slices_, is_comma_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(slice_loop) {
+    FAstNode *node, *seq;
+    if (!(node = slice(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = slice(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // slice:
@@ -683,6 +790,19 @@ RULE(dict_items) {
     EXIT_FRAME(p);
 }
 
+RULE(dict_item_loop) {
+    FAstNode *node, *seq;
+    if (!(node = dict_item(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = dict_item(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // as_name:
 //     | 'as' NAME
 RULE(as_name) {
@@ -730,6 +850,14 @@ RULE(iterator) {
     (iter_if_ = OPTIONAL(iter_if(p)))
     ? (res = AST_NODE_3(p, iter_fors_, targetlist_, iter_if_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(iter_for_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = iter_for(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
 }
 
 // assignment:
@@ -803,6 +931,14 @@ RULE(simple_assign) {
     (exprlist_star_ = exprlist_star(p))
     ? (res = AST_NODE_2(p, targetlist_assigns_, exprlist_star_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(simple_assign_1_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = simple_assign_1(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
 }
 
 // targetlist '='
@@ -891,6 +1027,15 @@ RULE(import_from_names_2) {
     EXIT_FRAME(p);
 }
 
+RULE(import_from_names_2_loop) {
+    FAstNode *node, *seq;
+    if (!(node = AST_CONSUME(p, 6, "."))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while ((node = AST_CONSUME(p, 6, ".")));
+    return seq;
+}
+
 // import_from_items:
 //     | '*'
 //     | '(' import_as_names [','] ')'
@@ -947,6 +1092,19 @@ RULE(import_as_names) {
     EXIT_FRAME(p);
 }
 
+RULE(import_as_name_loop) {
+    FAstNode *node, *seq;
+    if (!(node = import_as_name(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = import_as_name(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // dotted_as_names:
 //     | ','.dotted_as_name+
 RULE(dotted_as_names) {
@@ -957,6 +1115,19 @@ RULE(dotted_as_names) {
     EXIT_FRAME(p);
 }
 
+RULE(dotted_as_name_loop) {
+    FAstNode *node, *seq;
+    if (!(node = dotted_as_name(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = dotted_as_name(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // dotted_name:
 //     | '.'.NAME+
 RULE(dotted_name) {
@@ -965,6 +1136,19 @@ RULE(dotted_name) {
     (names_ = dotted_name_loop(p))
     ? (res = AST_NODE_1(p, names_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(dotted_name_loop) {
+    FAstNode *node, *seq;
+    if (!(node = AST_CONSUME(p, 3, "NAME"))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = AST_CONSUME(p, 3, "NAME")));
+    p->pos = pos;
+    return seq;
 }
 
 // compound_stmt:
@@ -995,6 +1179,14 @@ RULE(if_stmt) {
     (else_suite_ = OPTIONAL(else_suite(p)))
     ? (res = AST_NODE_4(p, named_expr_, suite_, elif_stmts_, else_suite_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(elif_stmt_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = elif_stmt(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
 }
 
 // elif_stmt:
@@ -1069,6 +1261,19 @@ RULE(with_stmt) {
     EXIT_FRAME(p);
 }
 
+RULE(expr_as_name_loop) {
+    FAstNode *node, *seq;
+    if (!(node = expr_as_name(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = expr_as_name(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // expr_as_name:
 //     | expr [as_name]
 RULE(expr_as_name) {
@@ -1100,6 +1305,15 @@ RULE(block_suite_1) {
     (AST_CONSUME(p, 16, "}"))
     ? (res = AST_NODE_2(p, newline_, stmts_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(stmt_loop) {
+    FAstNode *node, *seq;
+    if (!(node = stmt(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while ((node = stmt(p)));
+    return seq;
 }
 
 // '{' '}'
@@ -1176,6 +1390,15 @@ RULE(except_suite) {
     EXIT_FRAME(p);
 }
 
+RULE(except_clause_loop) {
+    FAstNode *node, *seq;
+    if (!(node = except_clause(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while ((node = except_clause(p)));
+    return seq;
+}
+
 // invocation:
 //     | '(' [call_arg_list] ')'
 RULE(invocation) {
@@ -1197,6 +1420,19 @@ RULE(call_arg_list) {
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
     ? (res = AST_NODE_2(p, call_args_, is_comma_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(call_arg_loop) {
+    FAstNode *node, *seq;
+    if (!(node = call_arg(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = call_arg(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // call_arg:
@@ -1280,6 +1516,19 @@ RULE(full_arg_list) {
     EXIT_FRAME(p);
 }
 
+RULE(default_arg_loop) {
+    FAstNode *node, *seq;
+    if (!(node = default_arg(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = default_arg(p)));
+    p->pos = pos;
+    return seq;
+}
+
 // ',' [kwargs | args_kwargs]
 RULE(full_arg_list_2) {
     ENTER_FRAME(p, 94, "full_arg_list:2");
@@ -1309,6 +1558,14 @@ RULE(args_kwargs) {
     (args_kwargs_ = OPTIONAL(args_kwargs_4(p)))
     ? (res = AST_NODE_3(p, typed_arg_, comma_default_args_, args_kwargs_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(args_kwargs_3_loop) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = args_kwargs_3(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
 }
 
 // ',' default_arg
@@ -1414,6 +1671,19 @@ RULE(simple_args) {
     (simple_args_ = simple_arg_loop(p))
     ? (res = AST_NODE_1(p, simple_args_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(simple_arg_loop) {
+    FAstNode *node, *seq;
+    if (!(node = simple_arg(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while (pos = p->pos,
+            (AST_CONSUME(p, 0, "delim")) &&
+            (node = simple_arg(p)));
+    p->pos = pos;
+    return seq;
 }
 
 // builder_hint:
@@ -1581,6 +1851,15 @@ RULE(comparison_1) {
     (comp_op_bitwise_ors_ = comparison_1_2_loop(p))
     ? (res = AST_NODE_2(p, bitwise_or_, comp_op_bitwise_ors_)) : 0;
     EXIT_FRAME(p);
+}
+
+RULE(comparison_1_2_loop) {
+    FAstNode *node, *seq;
+    if (!(node = comparison_1_2(p))) { return 0; }
+    seq = AST_SEQ_NEW(p);
+    do { AST_SEQ_APPEND(p, seq, node); }
+    while ((node = comparison_1_2(p)));
+    return seq;
 }
 
 // comp_op bitwise_or
