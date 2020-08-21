@@ -1,13 +1,16 @@
-#include "peg_macros.h"
+#include <peg_macros.h>
 
 RULE(single_input);
 RULE(single_input_3);
 RULE(file_input);
+RULE(file_input_1_loop);
 RULE(file_input_1);
 RULE(eval_input);
+RULE(eval_input_loop);
 RULE(stmt);
 RULE(stmt_1);
 RULE(simple_stmt);
+RULE(small_stmt_loop);
 RULE(small_stmt);
 RULE(del_stmt);
 RULE(return_stmt);
@@ -17,8 +20,10 @@ RULE(nonlocal_stmt);
 RULE(assert_stmt);
 RULE(assert_stmt_3);
 RULE(name_list);
+RULE(name_list_loop);
 RULE(star_expr);
 RULE(exprlist);
+RULE(expr_loop);
 RULE(target);
 RULE(target_1);
 RULE(target_2);
@@ -30,12 +35,16 @@ RULE(t_primary_3);
 RULE(t_primary_4);
 RULE(t_lookahead);
 RULE(targetlist);
+RULE(target_loop);
 RULE(expr_or_star);
 RULE(exprlist_star);
+RULE(expr_or_star_loop);
 RULE(named_expr_star);
 RULE(named_expr_list);
+RULE(named_expr_star_loop);
 RULE(subscript);
 RULE(slicelist);
+RULE(slice_loop);
 RULE(slice);
 RULE(slice_1);
 RULE(slice_expr);
@@ -43,40 +52,50 @@ RULE(dict_item);
 RULE(dict_item_1);
 RULE(dict_item_2);
 RULE(dict_items);
+RULE(dict_item_loop);
 RULE(as_name);
 RULE(iter_for);
 RULE(iter_if);
 RULE(iterator);
+RULE(iter_for_loop);
 RULE(assignment);
 RULE(pubassign);
 RULE(annassign);
 RULE(annassign_4);
 RULE(augassign);
 RULE(simple_assign);
+RULE(simple_assign_1_loop);
 RULE(simple_assign_1);
 RULE(augassign_op);
 RULE(import_name);
 RULE(import_from);
 RULE(import_from_names);
 RULE(import_from_names_2);
+RULE(import_from_names_2_loop);
 RULE(import_from_items);
 RULE(import_from_items_2);
 RULE(import_as_name);
 RULE(dotted_as_name);
 RULE(import_as_names);
+RULE(import_as_name_loop);
 RULE(dotted_as_names);
+RULE(dotted_as_name_loop);
 RULE(dotted_name);
+RULE(dotted_name_loop);
 RULE(compound_stmt);
 RULE(if_stmt);
+RULE(elif_stmt_loop);
 RULE(elif_stmt);
 RULE(while_stmt);
 RULE(for_stmt);
 RULE(try_stmt);
 RULE(try_stmt_3);
 RULE(with_stmt);
+RULE(expr_as_name_loop);
 RULE(expr_as_name);
 RULE(block_suite);
 RULE(block_suite_1);
+RULE(stmt_loop);
 RULE(block_suite_2);
 RULE(suite);
 RULE(suite_1);
@@ -84,8 +103,10 @@ RULE(else_suite);
 RULE(finally_suite);
 RULE(except_clause);
 RULE(except_suite);
+RULE(except_clause_loop);
 RULE(invocation);
 RULE(call_arg_list);
+RULE(call_arg_loop);
 RULE(call_arg);
 RULE(call_arg_1);
 RULE(call_arg_2);
@@ -93,9 +114,11 @@ RULE(call_arg_3);
 RULE(call_arg_4);
 RULE(typed_arg_list);
 RULE(full_arg_list);
+RULE(default_arg_loop);
 RULE(full_arg_list_2);
 RULE(full_arg_list_2_2);
 RULE(args_kwargs);
+RULE(args_kwargs_3_loop);
 RULE(args_kwargs_3);
 RULE(args_kwargs_4);
 RULE(kwargs);
@@ -106,6 +129,7 @@ RULE(typed_arg_2);
 RULE(simple_arg);
 RULE(simple_arg_2);
 RULE(simple_args);
+RULE(simple_arg_loop);
 RULE(builder_hint);
 RULE(builder_args);
 RULE(builder_args_2);
@@ -121,6 +145,7 @@ RULE(inversion);
 RULE(inversion_1);
 RULE(comparison);
 RULE(comparison_1);
+RULE(comparison_1_2_loop);
 RULE(comparison_1_2);
 RULE(comp_op);
 RULE(comp_op_8);
@@ -185,7 +210,7 @@ RULE(single_input_3) {
     FAstNode *compound_stmt_, *newline_;
     (compound_stmt_ = compound_stmt(p)) &&
     (newline_ = AST_CONSUME(p, 2, "NEWLINE"))
-    ? (res = AST_NODE_2(p, 2, compound_stmt_, newline_)) : 0;
+    ? (res = AST_NODE_2(p, compound_stmt_, newline_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -196,7 +221,7 @@ RULE(file_input) {
     FAstNode *newlineOrStmts_, *endmarker_;
     (newlineOrStmts_ = OPTIONAL(file_input_1_loop(p))) &&
     (endmarker_ = AST_CONSUME(p, 1, "ENDMARKER"))
-    ? (res = AST_NODE_2(p, 3, newlineOrStmts_, endmarker_)) : 0;
+    ? (res = AST_NODE_2(p, newlineOrStmts_, endmarker_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -216,7 +241,7 @@ RULE(eval_input) {
     (exprlist_ = exprlist(p)) &&
     (newlines_ = OPTIONAL(eval_input_loop(p))) &&
     (endmarker_ = AST_CONSUME(p, 1, "ENDMARKER"))
-    ? (res = AST_NODE_3(p, 5, exprlist_, newlines_, endmarker_)) : 0;
+    ? (res = AST_NODE_3(p, exprlist_, newlines_, endmarker_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -227,7 +252,7 @@ RULE(stmt) {
     FAstNode *simple_stmtOrCompound_stmt_, *newline_;
     (simple_stmtOrCompound_stmt_ = stmt_1(p)) &&
     (newline_ = AST_CONSUME(p, 2, "NEWLINE"))
-    ? (res = AST_NODE_2(p, 6, simple_stmtOrCompound_stmt_, newline_)) : 0;
+    ? (res = AST_NODE_2(p, simple_stmtOrCompound_stmt_, newline_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -246,7 +271,7 @@ RULE(simple_stmt) {
     FAstNode *small_stmts_, *is_semicolon_;
     (small_stmts_ = small_stmt_loop(p)) &&
     (is_semicolon_ = OPTIONAL(AST_CONSUME(p, 12, ";")))
-    ? (res = AST_NODE_2(p, 8, small_stmts_, is_semicolon_)) : 0;
+    ? (res = AST_NODE_2(p, small_stmts_, is_semicolon_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -285,7 +310,7 @@ RULE(del_stmt) {
     FAstNode *targetlist_;
     (AST_CONSUME(p, 79, "del")) &&
     (targetlist_ = targetlist(p))
-    ? (res = AST_NODE_1(p, 10, targetlist_)) : 0;
+    ? (res = AST_NODE_1(p, targetlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -296,7 +321,7 @@ RULE(return_stmt) {
     FAstNode *exprlist_star_;
     (AST_CONSUME(p, 54, "return")) &&
     (exprlist_star_ = OPTIONAL(exprlist_star(p)))
-    ? (res = AST_NODE_1(p, 11, exprlist_star_)) : 0;
+    ? (res = AST_NODE_1(p, exprlist_star_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -308,7 +333,7 @@ RULE(raise_stmt) {
     (AST_CONSUME(p, 78, "raise")) &&
     (expr_ = expr(p)) &&
     (from_expr_ = OPTIONAL(raise_stmt_3(p)))
-    ? (res = AST_NODE_2(p, 12, expr_, from_expr_)) : 0;
+    ? (res = AST_NODE_2(p, expr_, from_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -318,7 +343,7 @@ RULE(raise_stmt_3) {
     FAstNode *expr_;
     (AST_CONSUME(p, 66, "from")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 13, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -329,7 +354,7 @@ RULE(nonlocal_stmt) {
     FAstNode *name_list_;
     (AST_CONSUME(p, 55, "nonlocal")) &&
     (name_list_ = name_list(p))
-    ? (res = AST_NODE_1(p, 14, name_list_)) : 0;
+    ? (res = AST_NODE_1(p, name_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -341,7 +366,7 @@ RULE(assert_stmt) {
     (AST_CONSUME(p, 80, "assert")) &&
     (expr_ = expr(p)) &&
     (comma_expr_ = OPTIONAL(assert_stmt_3(p)))
-    ? (res = AST_NODE_2(p, 15, expr_, comma_expr_)) : 0;
+    ? (res = AST_NODE_2(p, expr_, comma_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -351,7 +376,7 @@ RULE(assert_stmt_3) {
     FAstNode *expr_;
     (AST_CONSUME(p, 7, ",")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 16, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -361,7 +386,7 @@ RULE(name_list) {
     ENTER_FRAME(p, 17, "name_list");
     FAstNode *names_;
     (names_ = name_list_loop(p))
-    ? (res = AST_NODE_1(p, 17, names_)) : 0;
+    ? (res = AST_NODE_1(p, names_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -372,7 +397,7 @@ RULE(star_expr) {
     FAstNode *bitwise_or_;
     (AST_CONSUME(p, 23, "*")) &&
     (bitwise_or_ = bitwise_or(p))
-    ? (res = AST_NODE_1(p, 18, bitwise_or_)) : 0;
+    ? (res = AST_NODE_1(p, bitwise_or_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -383,7 +408,7 @@ RULE(exprlist) {
     FAstNode *exprs_, *is_comma_;
     (exprs_ = expr_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 19, exprs_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, exprs_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -409,7 +434,7 @@ RULE(target_1) {
     (AST_CONSUME(p, 6, ".")) &&
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (!TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_2(p, 21, t_primary_, name_)) : 0;
+    ? (res = AST_NODE_2(p, t_primary_, name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -420,7 +445,7 @@ RULE(target_2) {
     (t_primary_ = t_primary(p)) &&
     (subscript_ = subscript(p)) &&
     (!TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_2(p, 22, t_primary_, subscript_)) : 0;
+    ? (res = AST_NODE_2(p, t_primary_, subscript_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -431,7 +456,7 @@ RULE(target_4) {
     (AST_CONSUME(p, 13, "(")) &&
     (targetlist_ = targetlist(p)) &&
     (AST_CONSUME(p, 14, ")"))
-    ? (res = AST_NODE_1(p, 23, targetlist_)) : 0;
+    ? (res = AST_NODE_1(p, targetlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -460,7 +485,7 @@ RULE(t_primary_1) {
     (AST_CONSUME(p, 6, ".")) &&
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_2(p, 25, t_primary_, name_)) : 0;
+    ? (res = AST_NODE_2(p, t_primary_, name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -471,7 +496,7 @@ RULE(t_primary_2) {
     (t_primary_ = t_primary(p)) &&
     (invocation_ = invocation(p)) &&
     (TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_2(p, 26, t_primary_, invocation_)) : 0;
+    ? (res = AST_NODE_2(p, t_primary_, invocation_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -482,7 +507,7 @@ RULE(t_primary_3) {
     (t_primary_ = t_primary(p)) &&
     (subscript_ = subscript(p)) &&
     (TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_2(p, 27, t_primary_, subscript_)) : 0;
+    ? (res = AST_NODE_2(p, t_primary_, subscript_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -492,7 +517,7 @@ RULE(t_primary_4) {
     FAstNode *atom_;
     (atom_ = atom(p)) &&
     (TEST(p, t_lookahead(p)))
-    ? (res = AST_NODE_1(p, 28, atom_)) : 0;
+    ? (res = AST_NODE_1(p, atom_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -515,7 +540,7 @@ RULE(targetlist) {
     FAstNode *targets_, *is_comma_;
     (targets_ = target_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 30, targets_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, targets_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -536,7 +561,7 @@ RULE(exprlist_star) {
     FAstNode *expr_or_stars_, *is_comma_;
     (expr_or_stars_ = expr_or_star_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 32, expr_or_stars_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, expr_or_stars_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -557,7 +582,7 @@ RULE(named_expr_list) {
     FAstNode *named_expr_stars_, *is_comma_;
     (named_expr_stars_ = named_expr_star_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 34, named_expr_stars_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, named_expr_stars_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -569,7 +594,7 @@ RULE(subscript) {
     (AST_CONSUME(p, 17, "[")) &&
     (slicelist_ = slicelist(p)) &&
     (AST_CONSUME(p, 18, "]"))
-    ? (res = AST_NODE_1(p, 35, slicelist_)) : 0;
+    ? (res = AST_NODE_1(p, slicelist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -580,7 +605,7 @@ RULE(slicelist) {
     FAstNode *slices_, *is_comma_;
     (slices_ = slice_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 36, slices_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, slices_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -601,7 +626,7 @@ RULE(slice_1) {
     (expr_ = OPTIONAL(expr(p))) &&
     (slice_expr_ = slice_expr(p)) &&
     (slice_expr_1_ = OPTIONAL(slice_expr(p)))
-    ? (res = AST_NODE_3(p, 38, expr_, slice_expr_, slice_expr_1_)) : 0;
+    ? (res = AST_NODE_3(p, expr_, slice_expr_, slice_expr_1_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -612,7 +637,7 @@ RULE(slice_expr) {
     FAstNode *expr_;
     (AST_CONSUME(p, 9, ":")) &&
     (expr_ = OPTIONAL(expr(p)))
-    ? (res = AST_NODE_1(p, 39, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -633,7 +658,7 @@ RULE(dict_item_1) {
     (expr_ = expr(p)) &&
     (AST_CONSUME(p, 9, ":")) &&
     (expr_1_ = expr(p))
-    ? (res = AST_NODE_2(p, 41, expr_, expr_1_)) : 0;
+    ? (res = AST_NODE_2(p, expr_, expr_1_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -643,7 +668,7 @@ RULE(dict_item_2) {
     FAstNode *bitwise_or_;
     (AST_CONSUME(p, 38, "**")) &&
     (bitwise_or_ = bitwise_or(p))
-    ? (res = AST_NODE_1(p, 42, bitwise_or_)) : 0;
+    ? (res = AST_NODE_1(p, bitwise_or_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -654,7 +679,7 @@ RULE(dict_items) {
     FAstNode *dict_items_, *is_comma_;
     (dict_items_ = dict_item_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 43, dict_items_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, dict_items_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -665,7 +690,7 @@ RULE(as_name) {
     FAstNode *name_;
     (AST_CONSUME(p, 65, "as")) &&
     (name_ = AST_CONSUME(p, 3, "NAME"))
-    ? (res = AST_NODE_1(p, 44, name_)) : 0;
+    ? (res = AST_NODE_1(p, name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -679,7 +704,7 @@ RULE(iter_for) {
     (AST_CONSUME(p, 63, "in")) &&
     (disjunction_ = disjunction(p)) &&
     (iter_if_ = OPTIONAL(iter_if(p)))
-    ? (res = AST_NODE_3(p, 45, targetlist_, disjunction_, iter_if_)) : 0;
+    ? (res = AST_NODE_3(p, targetlist_, disjunction_, iter_if_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -690,7 +715,7 @@ RULE(iter_if) {
     FAstNode *named_expr_;
     (AST_CONSUME(p, 56, "if")) &&
     (named_expr_ = named_expr(p))
-    ? (res = AST_NODE_1(p, 46, named_expr_)) : 0;
+    ? (res = AST_NODE_1(p, named_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -703,7 +728,7 @@ RULE(iterator) {
     (AST_CONSUME(p, 72, "for")) &&
     (targetlist_ = targetlist(p)) &&
     (iter_if_ = OPTIONAL(iter_if(p)))
-    ? (res = AST_NODE_3(p, 47, iter_fors_, targetlist_, iter_if_)) : 0;
+    ? (res = AST_NODE_3(p, iter_fors_, targetlist_, iter_if_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -730,7 +755,7 @@ RULE(pubassign) {
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (AST_CONSUME(p, 8, "=")) &&
     (exprlist_ = exprlist(p))
-    ? (res = AST_NODE_2(p, 49, name_, exprlist_)) : 0;
+    ? (res = AST_NODE_2(p, name_, exprlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -743,7 +768,7 @@ RULE(annassign) {
     (AST_CONSUME(p, 9, ":")) &&
     (expr_ = expr(p)) &&
     (assign_exprlist_ = OPTIONAL(annassign_4(p)))
-    ? (res = AST_NODE_3(p, 50, target_, expr_, assign_exprlist_)) : 0;
+    ? (res = AST_NODE_3(p, target_, expr_, assign_exprlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -753,7 +778,7 @@ RULE(annassign_4) {
     FAstNode *exprlist_;
     (AST_CONSUME(p, 8, "=")) &&
     (exprlist_ = exprlist(p))
-    ? (res = AST_NODE_1(p, 51, exprlist_)) : 0;
+    ? (res = AST_NODE_1(p, exprlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -765,7 +790,7 @@ RULE(augassign) {
     (target_ = target(p)) &&
     (augassign_op_ = augassign_op(p)) &&
     (exprlist_ = exprlist(p))
-    ? (res = AST_NODE_3(p, 52, target_, augassign_op_, exprlist_)) : 0;
+    ? (res = AST_NODE_3(p, target_, augassign_op_, exprlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -776,7 +801,7 @@ RULE(simple_assign) {
     FAstNode *targetlist_assigns_, *exprlist_star_;
     (targetlist_assigns_ = OPTIONAL(simple_assign_1_loop(p))) &&
     (exprlist_star_ = exprlist_star(p))
-    ? (res = AST_NODE_2(p, 53, targetlist_assigns_, exprlist_star_)) : 0;
+    ? (res = AST_NODE_2(p, targetlist_assigns_, exprlist_star_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -786,7 +811,7 @@ RULE(simple_assign_1) {
     FAstNode *targetlist_;
     (targetlist_ = targetlist(p)) &&
     (AST_CONSUME(p, 8, "="))
-    ? (res = AST_NODE_1(p, 54, targetlist_)) : 0;
+    ? (res = AST_NODE_1(p, targetlist_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -829,7 +854,7 @@ RULE(import_name) {
     FAstNode *dotted_as_names_;
     (AST_CONSUME(p, 67, "import")) &&
     (dotted_as_names_ = dotted_as_names(p))
-    ? (res = AST_NODE_1(p, 56, dotted_as_names_)) : 0;
+    ? (res = AST_NODE_1(p, dotted_as_names_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -842,7 +867,7 @@ RULE(import_from) {
     (import_from_names_ = import_from_names(p)) &&
     (AST_CONSUME(p, 67, "import")) &&
     (import_from_items_ = import_from_items(p))
-    ? (res = AST_NODE_2(p, 57, import_from_names_, import_from_items_)) : 0;
+    ? (res = AST_NODE_2(p, import_from_names_, import_from_items_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -862,7 +887,7 @@ RULE(import_from_names_2) {
     FAstNode *dotted_name_;
     (import_from_names_2_loop(p)) &&
     (dotted_name_ = OPTIONAL(dotted_name(p)))
-    ? (res = AST_NODE_1(p, 59, dotted_name_)) : 0;
+    ? (res = AST_NODE_1(p, dotted_name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -886,7 +911,7 @@ RULE(import_from_items_2) {
     (import_as_names_ = import_as_names(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ","))) &&
     (AST_CONSUME(p, 14, ")"))
-    ? (res = AST_NODE_2(p, 61, import_as_names_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, import_as_names_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -897,7 +922,7 @@ RULE(import_as_name) {
     FAstNode *name_, *as_name_;
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (as_name_ = OPTIONAL(as_name(p)))
-    ? (res = AST_NODE_2(p, 62, name_, as_name_)) : 0;
+    ? (res = AST_NODE_2(p, name_, as_name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -908,7 +933,7 @@ RULE(dotted_as_name) {
     FAstNode *dotted_name_, *as_name_;
     (dotted_name_ = dotted_name(p)) &&
     (as_name_ = OPTIONAL(as_name(p)))
-    ? (res = AST_NODE_2(p, 63, dotted_name_, as_name_)) : 0;
+    ? (res = AST_NODE_2(p, dotted_name_, as_name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -918,7 +943,7 @@ RULE(import_as_names) {
     ENTER_FRAME(p, 64, "import_as_names");
     FAstNode *import_as_names_;
     (import_as_names_ = import_as_name_loop(p))
-    ? (res = AST_NODE_1(p, 64, import_as_names_)) : 0;
+    ? (res = AST_NODE_1(p, import_as_names_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -928,7 +953,7 @@ RULE(dotted_as_names) {
     ENTER_FRAME(p, 65, "dotted_as_names");
     FAstNode *dotted_as_names_;
     (dotted_as_names_ = dotted_as_name_loop(p))
-    ? (res = AST_NODE_1(p, 65, dotted_as_names_)) : 0;
+    ? (res = AST_NODE_1(p, dotted_as_names_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -938,7 +963,7 @@ RULE(dotted_name) {
     ENTER_FRAME(p, 66, "dotted_name");
     FAstNode *names_;
     (names_ = dotted_name_loop(p))
-    ? (res = AST_NODE_1(p, 66, names_)) : 0;
+    ? (res = AST_NODE_1(p, names_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -968,7 +993,7 @@ RULE(if_stmt) {
     (suite_ = suite(p)) &&
     (elif_stmts_ = OPTIONAL(elif_stmt_loop(p))) &&
     (else_suite_ = OPTIONAL(else_suite(p)))
-    ? (res = AST_NODE_4(p, 68, named_expr_, suite_, elif_stmts_, else_suite_)) : 0;
+    ? (res = AST_NODE_4(p, named_expr_, suite_, elif_stmts_, else_suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -980,7 +1005,7 @@ RULE(elif_stmt) {
     (AST_CONSUME(p, 57, "elif")) &&
     (named_expr_ = named_expr(p)) &&
     (suite_ = suite(p))
-    ? (res = AST_NODE_2(p, 69, named_expr_, suite_)) : 0;
+    ? (res = AST_NODE_2(p, named_expr_, suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -993,7 +1018,7 @@ RULE(while_stmt) {
     (named_expr_ = named_expr(p)) &&
     (suite_ = suite(p)) &&
     (else_suite_ = OPTIONAL(else_suite(p)))
-    ? (res = AST_NODE_3(p, 70, named_expr_, suite_, else_suite_)) : 0;
+    ? (res = AST_NODE_3(p, named_expr_, suite_, else_suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1008,7 +1033,7 @@ RULE(for_stmt) {
     (exprlist_ = exprlist(p)) &&
     (suite_ = suite(p)) &&
     (else_suite_ = OPTIONAL(else_suite(p)))
-    ? (res = AST_NODE_4(p, 71, targetlist_, exprlist_, suite_, else_suite_)) : 0;
+    ? (res = AST_NODE_4(p, targetlist_, exprlist_, suite_, else_suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1020,7 +1045,7 @@ RULE(try_stmt) {
     (AST_CONSUME(p, 75, "try")) &&
     (suite_ = suite(p)) &&
     (except_suiteOrFinally_suite_ = try_stmt_3(p))
-    ? (res = AST_NODE_2(p, 72, suite_, except_suiteOrFinally_suite_)) : 0;
+    ? (res = AST_NODE_2(p, suite_, except_suiteOrFinally_suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1040,7 +1065,7 @@ RULE(with_stmt) {
     (AST_CONSUME(p, 68, "with")) &&
     (expr_as_names_ = expr_as_name_loop(p)) &&
     (suite_ = suite(p))
-    ? (res = AST_NODE_2(p, 74, expr_as_names_, suite_)) : 0;
+    ? (res = AST_NODE_2(p, expr_as_names_, suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1051,7 +1076,7 @@ RULE(expr_as_name) {
     FAstNode *expr_, *as_name_;
     (expr_ = expr(p)) &&
     (as_name_ = OPTIONAL(as_name(p)))
-    ? (res = AST_NODE_2(p, 75, expr_, as_name_)) : 0;
+    ? (res = AST_NODE_2(p, expr_, as_name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1073,7 +1098,7 @@ RULE(block_suite_1) {
     (newline_ = AST_CONSUME(p, 2, "NEWLINE")) &&
     (stmts_ = stmt_loop(p)) &&
     (AST_CONSUME(p, 16, "}"))
-    ? (res = AST_NODE_2(p, 77, newline_, stmts_)) : 0;
+    ? (res = AST_NODE_2(p, newline_, stmts_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1101,7 +1126,7 @@ RULE(suite_1) {
     FAstNode *simple_stmt_;
     (AST_CONSUME(p, 9, ":")) &&
     (simple_stmt_ = simple_stmt(p))
-    ? (res = AST_NODE_1(p, 80, simple_stmt_)) : 0;
+    ? (res = AST_NODE_1(p, simple_stmt_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1112,7 +1137,7 @@ RULE(else_suite) {
     FAstNode *suite_;
     (AST_CONSUME(p, 58, "else")) &&
     (suite_ = suite(p))
-    ? (res = AST_NODE_1(p, 81, suite_)) : 0;
+    ? (res = AST_NODE_1(p, suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1123,7 +1148,7 @@ RULE(finally_suite) {
     FAstNode *suite_;
     (AST_CONSUME(p, 77, "finally")) &&
     (suite_ = suite(p))
-    ? (res = AST_NODE_1(p, 82, suite_)) : 0;
+    ? (res = AST_NODE_1(p, suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1135,7 +1160,7 @@ RULE(except_clause) {
     (AST_CONSUME(p, 76, "except")) &&
     (expr_as_name_ = OPTIONAL(expr_as_name(p))) &&
     (suite_ = suite(p))
-    ? (res = AST_NODE_2(p, 83, expr_as_name_, suite_)) : 0;
+    ? (res = AST_NODE_2(p, expr_as_name_, suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1147,7 +1172,7 @@ RULE(except_suite) {
     (except_clauses_ = except_clause_loop(p)) &&
     (else_suite_ = OPTIONAL(else_suite(p))) &&
     (finally_suite_ = OPTIONAL(finally_suite(p)))
-    ? (res = AST_NODE_3(p, 84, except_clauses_, else_suite_, finally_suite_)) : 0;
+    ? (res = AST_NODE_3(p, except_clauses_, else_suite_, finally_suite_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1159,7 +1184,7 @@ RULE(invocation) {
     (AST_CONSUME(p, 13, "(")) &&
     (call_arg_list_ = OPTIONAL(call_arg_list(p))) &&
     (AST_CONSUME(p, 14, ")"))
-    ? (res = AST_NODE_1(p, 85, call_arg_list_)) : 0;
+    ? (res = AST_NODE_1(p, call_arg_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1170,7 +1195,7 @@ RULE(call_arg_list) {
     FAstNode *call_args_, *is_comma_;
     (call_args_ = call_arg_loop(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 86, call_args_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, call_args_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1197,7 +1222,7 @@ RULE(call_arg_1) {
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (AST_CONSUME(p, 36, ":=")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_2(p, 88, name_, expr_)) : 0;
+    ? (res = AST_NODE_2(p, name_, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1208,7 +1233,7 @@ RULE(call_arg_2) {
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (AST_CONSUME(p, 8, "=")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_2(p, 89, name_, expr_)) : 0;
+    ? (res = AST_NODE_2(p, name_, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1218,7 +1243,7 @@ RULE(call_arg_3) {
     FAstNode *expr_;
     (AST_CONSUME(p, 38, "**")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 90, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1228,7 +1253,7 @@ RULE(call_arg_4) {
     FAstNode *expr_;
     (AST_CONSUME(p, 23, "*")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 91, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1251,7 +1276,7 @@ RULE(full_arg_list) {
     FAstNode *default_args_, *full_arg_list_;
     (default_args_ = default_arg_loop(p)) &&
     (full_arg_list_ = OPTIONAL(full_arg_list_2(p)))
-    ? (res = AST_NODE_2(p, 93, default_args_, full_arg_list_)) : 0;
+    ? (res = AST_NODE_2(p, default_args_, full_arg_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1261,7 +1286,7 @@ RULE(full_arg_list_2) {
     FAstNode *kwargsOrArgs_kwargs_;
     (AST_CONSUME(p, 7, ",")) &&
     (kwargsOrArgs_kwargs_ = OPTIONAL(full_arg_list_2_2(p)))
-    ? (res = AST_NODE_1(p, 94, kwargsOrArgs_kwargs_)) : 0;
+    ? (res = AST_NODE_1(p, kwargsOrArgs_kwargs_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1282,7 +1307,7 @@ RULE(args_kwargs) {
     (typed_arg_ = OPTIONAL(typed_arg(p))) &&
     (comma_default_args_ = OPTIONAL(args_kwargs_3_loop(p))) &&
     (args_kwargs_ = OPTIONAL(args_kwargs_4(p)))
-    ? (res = AST_NODE_3(p, 96, typed_arg_, comma_default_args_, args_kwargs_)) : 0;
+    ? (res = AST_NODE_3(p, typed_arg_, comma_default_args_, args_kwargs_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1292,7 +1317,7 @@ RULE(args_kwargs_3) {
     FAstNode *default_arg_;
     (AST_CONSUME(p, 7, ",")) &&
     (default_arg_ = default_arg(p))
-    ? (res = AST_NODE_1(p, 97, default_arg_)) : 0;
+    ? (res = AST_NODE_1(p, default_arg_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1302,7 +1327,7 @@ RULE(args_kwargs_4) {
     FAstNode *kwargs_;
     (AST_CONSUME(p, 7, ",")) &&
     (kwargs_ = OPTIONAL(kwargs(p)))
-    ? (res = AST_NODE_1(p, 98, kwargs_)) : 0;
+    ? (res = AST_NODE_1(p, kwargs_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1314,7 +1339,7 @@ RULE(kwargs) {
     (AST_CONSUME(p, 38, "**")) &&
     (typed_arg_ = typed_arg(p)) &&
     (is_comma_ = OPTIONAL(AST_CONSUME(p, 7, ",")))
-    ? (res = AST_NODE_2(p, 99, typed_arg_, is_comma_)) : 0;
+    ? (res = AST_NODE_2(p, typed_arg_, is_comma_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1325,7 +1350,7 @@ RULE(default_arg) {
     FAstNode *typed_arg_, *assign_expr_;
     (typed_arg_ = typed_arg(p)) &&
     (assign_expr_ = OPTIONAL(default_arg_2(p)))
-    ? (res = AST_NODE_2(p, 100, typed_arg_, assign_expr_)) : 0;
+    ? (res = AST_NODE_2(p, typed_arg_, assign_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1335,7 +1360,7 @@ RULE(default_arg_2) {
     FAstNode *expr_;
     (AST_CONSUME(p, 8, "=")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 101, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1346,7 +1371,7 @@ RULE(typed_arg) {
     FAstNode *name_, *colon_expr_;
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (colon_expr_ = OPTIONAL(typed_arg_2(p)))
-    ? (res = AST_NODE_2(p, 102, name_, colon_expr_)) : 0;
+    ? (res = AST_NODE_2(p, name_, colon_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1356,7 +1381,7 @@ RULE(typed_arg_2) {
     FAstNode *expr_;
     (AST_CONSUME(p, 9, ":")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 103, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1367,7 +1392,7 @@ RULE(simple_arg) {
     FAstNode *name_, *assign_expr_;
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (assign_expr_ = OPTIONAL(simple_arg_2(p)))
-    ? (res = AST_NODE_2(p, 104, name_, assign_expr_)) : 0;
+    ? (res = AST_NODE_2(p, name_, assign_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1377,7 +1402,7 @@ RULE(simple_arg_2) {
     FAstNode *expr_;
     (AST_CONSUME(p, 8, "=")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_1(p, 105, expr_)) : 0;
+    ? (res = AST_NODE_1(p, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1387,7 +1412,7 @@ RULE(simple_args) {
     ENTER_FRAME(p, 106, "simple_args");
     FAstNode *simple_args_;
     (simple_args_ = simple_arg_loop(p))
-    ? (res = AST_NODE_1(p, 106, simple_args_)) : 0;
+    ? (res = AST_NODE_1(p, simple_args_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1399,7 +1424,7 @@ RULE(builder_hint) {
     (AST_CONSUME(p, 19, "<")) &&
     (name_list_ = name_list(p)) &&
     (AST_CONSUME(p, 20, ">"))
-    ? (res = AST_NODE_1(p, 107, name_list_)) : 0;
+    ? (res = AST_NODE_1(p, name_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1420,7 +1445,7 @@ RULE(builder_args_2) {
     (AST_CONSUME(p, 13, "(")) &&
     (typed_arg_list_ = OPTIONAL(typed_arg_list(p))) &&
     (AST_CONSUME(p, 14, ")"))
-    ? (res = AST_NODE_1(p, 109, typed_arg_list_)) : 0;
+    ? (res = AST_NODE_1(p, typed_arg_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1441,7 +1466,7 @@ RULE(named_expr_1) {
     (name_ = AST_CONSUME(p, 3, "NAME")) &&
     (AST_CONSUME(p, 36, ":=")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_2(p, 111, name_, expr_)) : 0;
+    ? (res = AST_NODE_2(p, name_, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1456,7 +1481,7 @@ RULE(conditional) {
     (disjunction_1_ = disjunction(p)) &&
     (AST_CONSUME(p, 9, ":")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_3(p, 112, disjunction_, disjunction_1_, expr_)) : 0;
+    ? (res = AST_NODE_3(p, disjunction_, disjunction_1_, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1490,7 +1515,7 @@ RULE(disjunction_1) {
     (disjunction_ = disjunction(p)) &&
     (AST_CONSUME(p, 60, "or")) &&
     (conjunction_ = conjunction(p))
-    ? (res = AST_NODE_2(p, 115, disjunction_, conjunction_)) : 0;
+    ? (res = AST_NODE_2(p, disjunction_, conjunction_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1514,7 +1539,7 @@ RULE(conjunction_1) {
     (conjunction_ = conjunction(p)) &&
     (AST_CONSUME(p, 59, "and")) &&
     (inversion_ = inversion(p))
-    ? (res = AST_NODE_2(p, 117, conjunction_, inversion_)) : 0;
+    ? (res = AST_NODE_2(p, conjunction_, inversion_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1534,7 +1559,7 @@ RULE(inversion_1) {
     FAstNode *inversion_;
     (AST_CONSUME(p, 61, "not")) &&
     (inversion_ = inversion(p))
-    ? (res = AST_NODE_1(p, 119, inversion_)) : 0;
+    ? (res = AST_NODE_1(p, inversion_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1554,7 +1579,7 @@ RULE(comparison_1) {
     FAstNode *bitwise_or_, *comp_op_bitwise_ors_;
     (bitwise_or_ = bitwise_or(p)) &&
     (comp_op_bitwise_ors_ = comparison_1_2_loop(p))
-    ? (res = AST_NODE_2(p, 121, bitwise_or_, comp_op_bitwise_ors_)) : 0;
+    ? (res = AST_NODE_2(p, bitwise_or_, comp_op_bitwise_ors_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1564,7 +1589,7 @@ RULE(comparison_1_2) {
     FAstNode *comp_op_, *bitwise_or_;
     (comp_op_ = comp_op(p)) &&
     (bitwise_or_ = bitwise_or(p))
-    ? (res = AST_NODE_2(p, 122, comp_op_, bitwise_or_)) : 0;
+    ? (res = AST_NODE_2(p, comp_op_, bitwise_or_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1630,7 +1655,7 @@ RULE(bitwise_or_1) {
     (bitwise_or_ = bitwise_or(p)) &&
     (AST_CONSUME(p, 27, "|")) &&
     (bitwise_xor_ = bitwise_xor(p))
-    ? (res = AST_NODE_2(p, 127, bitwise_or_, bitwise_xor_)) : 0;
+    ? (res = AST_NODE_2(p, bitwise_or_, bitwise_xor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1654,7 +1679,7 @@ RULE(bitwise_xor_1) {
     (bitwise_xor_ = bitwise_xor(p)) &&
     (AST_CONSUME(p, 30, "^")) &&
     (bitwise_and_ = bitwise_and(p))
-    ? (res = AST_NODE_2(p, 129, bitwise_xor_, bitwise_and_)) : 0;
+    ? (res = AST_NODE_2(p, bitwise_xor_, bitwise_and_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1678,7 +1703,7 @@ RULE(bitwise_and_1) {
     (bitwise_and_ = bitwise_and(p)) &&
     (AST_CONSUME(p, 28, "&")) &&
     (shift_expr_ = shift_expr(p))
-    ? (res = AST_NODE_2(p, 131, bitwise_and_, shift_expr_)) : 0;
+    ? (res = AST_NODE_2(p, bitwise_and_, shift_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1704,7 +1729,7 @@ RULE(shift_expr_1) {
     (shift_expr_ = shift_expr(p)) &&
     (AST_CONSUME(p, 48, "<<")) &&
     (sum_ = sum(p))
-    ? (res = AST_NODE_2(p, 133, shift_expr_, sum_)) : 0;
+    ? (res = AST_NODE_2(p, shift_expr_, sum_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1715,7 +1740,7 @@ RULE(shift_expr_2) {
     (shift_expr_ = shift_expr(p)) &&
     (AST_CONSUME(p, 49, ">>")) &&
     (sum_ = sum(p))
-    ? (res = AST_NODE_2(p, 134, shift_expr_, sum_)) : 0;
+    ? (res = AST_NODE_2(p, shift_expr_, sum_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1741,7 +1766,7 @@ RULE(sum_1) {
     (sum_ = sum(p)) &&
     (AST_CONSUME(p, 21, "+")) &&
     (term_ = term(p))
-    ? (res = AST_NODE_2(p, 136, sum_, term_)) : 0;
+    ? (res = AST_NODE_2(p, sum_, term_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1752,7 +1777,7 @@ RULE(sum_2) {
     (sum_ = sum(p)) &&
     (AST_CONSUME(p, 22, "-")) &&
     (term_ = term(p))
-    ? (res = AST_NODE_2(p, 137, sum_, term_)) : 0;
+    ? (res = AST_NODE_2(p, sum_, term_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1784,7 +1809,7 @@ RULE(term_1) {
     (term_ = term(p)) &&
     (AST_CONSUME(p, 23, "*")) &&
     (pipe_expr_ = pipe_expr(p))
-    ? (res = AST_NODE_2(p, 139, term_, pipe_expr_)) : 0;
+    ? (res = AST_NODE_2(p, term_, pipe_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1795,7 +1820,7 @@ RULE(term_2) {
     (term_ = term(p)) &&
     (AST_CONSUME(p, 24, "/")) &&
     (pipe_expr_ = pipe_expr(p))
-    ? (res = AST_NODE_2(p, 140, term_, pipe_expr_)) : 0;
+    ? (res = AST_NODE_2(p, term_, pipe_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1806,7 +1831,7 @@ RULE(term_3) {
     (term_ = term(p)) &&
     (AST_CONSUME(p, 25, "%")) &&
     (pipe_expr_ = pipe_expr(p))
-    ? (res = AST_NODE_2(p, 141, term_, pipe_expr_)) : 0;
+    ? (res = AST_NODE_2(p, term_, pipe_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1817,7 +1842,7 @@ RULE(term_4) {
     (term_ = term(p)) &&
     (AST_CONSUME(p, 37, "//")) &&
     (pipe_expr_ = pipe_expr(p))
-    ? (res = AST_NODE_2(p, 142, term_, pipe_expr_)) : 0;
+    ? (res = AST_NODE_2(p, term_, pipe_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1828,7 +1853,7 @@ RULE(term_5) {
     (term_ = term(p)) &&
     (AST_CONSUME(p, 26, "@")) &&
     (pipe_expr_ = pipe_expr(p))
-    ? (res = AST_NODE_2(p, 143, term_, pipe_expr_)) : 0;
+    ? (res = AST_NODE_2(p, term_, pipe_expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1852,7 +1877,7 @@ RULE(pipe_expr_1) {
     (pipe_expr_ = pipe_expr(p)) &&
     (AST_CONSUME(p, 35, "->")) &&
     (factor_ = factor(p))
-    ? (res = AST_NODE_2(p, 145, pipe_expr_, factor_)) : 0;
+    ? (res = AST_NODE_2(p, pipe_expr_, factor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1876,7 +1901,7 @@ RULE(factor_1) {
     FAstNode *factor_;
     (AST_CONSUME(p, 21, "+")) &&
     (factor_ = factor(p))
-    ? (res = AST_NODE_1(p, 147, factor_)) : 0;
+    ? (res = AST_NODE_1(p, factor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1886,7 +1911,7 @@ RULE(factor_2) {
     FAstNode *factor_;
     (AST_CONSUME(p, 22, "-")) &&
     (factor_ = factor(p))
-    ? (res = AST_NODE_1(p, 148, factor_)) : 0;
+    ? (res = AST_NODE_1(p, factor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1896,7 +1921,7 @@ RULE(factor_3) {
     FAstNode *factor_;
     (AST_CONSUME(p, 29, "~")) &&
     (factor_ = factor(p))
-    ? (res = AST_NODE_1(p, 149, factor_)) : 0;
+    ? (res = AST_NODE_1(p, factor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1917,7 +1942,7 @@ RULE(power_1) {
     (primary_ = primary(p)) &&
     (AST_CONSUME(p, 38, "**")) &&
     (factor_ = factor(p))
-    ? (res = AST_NODE_2(p, 151, primary_, factor_)) : 0;
+    ? (res = AST_NODE_2(p, primary_, factor_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1945,7 +1970,7 @@ RULE(primary_1) {
     (primary_ = primary(p)) &&
     (AST_CONSUME(p, 6, ".")) &&
     (name_ = AST_CONSUME(p, 3, "NAME"))
-    ? (res = AST_NODE_2(p, 153, primary_, name_)) : 0;
+    ? (res = AST_NODE_2(p, primary_, name_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1955,7 +1980,7 @@ RULE(primary_2) {
     FAstNode *primary_, *invocation_;
     (primary_ = primary(p)) &&
     (invocation_ = invocation(p))
-    ? (res = AST_NODE_2(p, 154, primary_, invocation_)) : 0;
+    ? (res = AST_NODE_2(p, primary_, invocation_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1965,7 +1990,7 @@ RULE(primary_3) {
     FAstNode *primary_, *subscript_;
     (primary_ = primary(p)) &&
     (subscript_ = subscript(p))
-    ? (res = AST_NODE_2(p, 155, primary_, subscript_)) : 0;
+    ? (res = AST_NODE_2(p, primary_, subscript_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1977,7 +2002,7 @@ RULE(tuple_atom) {
     (AST_CONSUME(p, 13, "(")) &&
     (named_expr_list_ = OPTIONAL(named_expr_list(p))) &&
     (AST_CONSUME(p, 14, ")"))
-    ? (res = AST_NODE_1(p, 156, named_expr_list_)) : 0;
+    ? (res = AST_NODE_1(p, named_expr_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1990,7 +2015,7 @@ RULE(list_iter) {
     (expr_or_star_ = expr_or_star(p)) &&
     (iterator_ = iterator(p)) &&
     (AST_CONSUME(p, 18, "]"))
-    ? (res = AST_NODE_2(p, 157, expr_or_star_, iterator_)) : 0;
+    ? (res = AST_NODE_2(p, expr_or_star_, iterator_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2002,7 +2027,7 @@ RULE(list_atom) {
     (AST_CONSUME(p, 17, "[")) &&
     (named_expr_list_ = OPTIONAL(named_expr_list(p))) &&
     (AST_CONSUME(p, 18, "]"))
-    ? (res = AST_NODE_1(p, 158, named_expr_list_)) : 0;
+    ? (res = AST_NODE_1(p, named_expr_list_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2014,7 +2039,7 @@ RULE(set_atom) {
     (AST_CONSUME(p, 15, "{")) &&
     (exprlist_star_ = OPTIONAL(exprlist_star(p))) &&
     (AST_CONSUME(p, 16, "}"))
-    ? (res = AST_NODE_1(p, 159, exprlist_star_)) : 0;
+    ? (res = AST_NODE_1(p, exprlist_star_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2027,7 +2052,7 @@ RULE(dict_iter) {
     (dict_item_ = dict_item(p)) &&
     (iterator_ = iterator(p)) &&
     (AST_CONSUME(p, 16, "}"))
-    ? (res = AST_NODE_2(p, 160, dict_item_, iterator_)) : 0;
+    ? (res = AST_NODE_2(p, dict_item_, iterator_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2039,7 +2064,7 @@ RULE(dict_atom) {
     (AST_CONSUME(p, 15, "{")) &&
     (dict_items_ = OPTIONAL(dict_items(p))) &&
     (AST_CONSUME(p, 16, "}"))
-    ? (res = AST_NODE_1(p, 161, dict_items_)) : 0;
+    ? (res = AST_NODE_1(p, dict_items_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2061,7 +2086,7 @@ RULE(builder_1) {
     (simple_args_ = simple_args(p)) &&
     (AST_CONSUME(p, 9, ":")) &&
     (expr_ = expr(p))
-    ? (res = AST_NODE_3(p, 163, name_, simple_args_, expr_)) : 0;
+    ? (res = AST_NODE_3(p, name_, simple_args_, expr_)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -2073,7 +2098,7 @@ RULE(builder_2) {
     (builder_hint_ = OPTIONAL(builder_hint(p))) &&
     (builder_args_ = OPTIONAL(builder_args(p))) &&
     (block_suite_ = block_suite(p))
-    ? (res = AST_NODE_4(p, 164, name_, builder_hint_, builder_args_, block_suite_)) : 0;
+    ? (res = AST_NODE_4(p, name_, builder_hint_, builder_args_, block_suite_)) : 0;
     EXIT_FRAME(p);
 }
 

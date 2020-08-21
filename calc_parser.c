@@ -65,7 +65,7 @@ FAstNode *sum_1(FPegParser *p) {
     (sum = sum_rule(p)) &&
     (AST_CONSUME(p, 3, "+")) &&
     (term = term_rule(p))
-    ? (res = AST_NODE_2(p, 1, sum, term)) : 0;
+    ? (res = AST_NODE_2(p, sum, term)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -76,7 +76,7 @@ FAstNode *sum_2(FPegParser *p) {
     (sum = sum_rule(p)) &&
     (AST_CONSUME(p, 4, "-")) &&
     (term = term_rule(p))
-    ? (res = AST_NODE_2(p, 2, sum, term)) : 0;
+    ? (res = AST_NODE_2(p, sum, term)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -104,7 +104,7 @@ FAstNode *term_1(FPegParser *p) {
     (term = term_rule(p)) &&
     (AST_CONSUME(p, 5, "*")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_2(p, 3, term, factor)) : 0;
+    ? (res = AST_NODE_2(p, term, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -115,7 +115,7 @@ FAstNode *term_2(FPegParser *p) {
     (term = term_rule(p)) &&
     (AST_CONSUME(p, 5, "/")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_2(p, 3, term, factor)) : 0;
+    ? (res = AST_NODE_2(p, term, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -126,7 +126,7 @@ FAstNode *term_3(FPegParser *p) {
     (term = term_rule(p)) &&
     (AST_CONSUME(p, 5, "%")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_2(p, 3, term, factor)) : 0;
+    ? (res = AST_NODE_2(p, term, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -150,7 +150,7 @@ FAstNode *factor_1(FPegParser *p) {
     FAstNode *factor;
     (AST_CONSUME(p, 5, "+")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_1(p, 2, factor)) : 0;
+    ? (res = AST_NODE_1(p, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -160,7 +160,7 @@ FAstNode *factor_2(FPegParser *p) {
     FAstNode *factor;
     (AST_CONSUME(p, 5, "-")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_1(p, 2, factor)) : 0;
+    ? (res = AST_NODE_1(p, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -170,7 +170,7 @@ FAstNode *factor_3(FPegParser *p) {
     FAstNode *factor;
     (AST_CONSUME(p, 5, "~")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_1(p, 2, factor)) : 0;
+    ? (res = AST_NODE_1(p, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -191,7 +191,7 @@ FAstNode *power_1(FPegParser *p) {
     (atom = atom_rule(p)) &&
     (AST_CONSUME(p, 5, "**")) &&
     (factor = factor_rule(p))
-    ? (res = AST_NODE_2(p, 1, atom, factor)) : 0;
+    ? (res = AST_NODE_2(p, atom, factor)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -216,7 +216,7 @@ FAstNode *atom_1(FPegParser *p) {
     (AST_CONSUME(p, 19, "(")) &&
     (sum = sum_rule(p)) &&
     (AST_CONSUME(p, 20, ")"))
-    ? (res = AST_NODE_1(p, 2, sum)) : 0;
+    ? (res = AST_NODE_1(p, sum)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -228,7 +228,7 @@ FAstNode *atom_2(FPegParser *p) {
     (AST_CONSUME(p, 3, "(")) &&
     (parameters = OPTIONAL(parameters_rule(p))) &&
     (AST_CONSUME(p, 8, ")"))
-    ? (res = AST_NODE_2(p, 10, name, parameters)) : 0;
+    ? (res = AST_NODE_2(p, name, parameters)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -239,7 +239,7 @@ FAstNode *parameters_rule(FPegParser *p) {
     FAstNode *sum_list_, *comma;
     (sum_list_ = sum_loop(p)) &&
     (comma = OPTIONAL_TOKEN(p, 21, ","))
-    ? (res = AST_NODE_2(p, 11, sum_list_, comma)) : 0;
+    ? (res = AST_NODE_2(p, sum_list_, comma)) : 0;
     EXIT_FRAME(p);
 }
 

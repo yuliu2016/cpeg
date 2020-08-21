@@ -60,6 +60,11 @@
 
 #define RULE(name) FAstNode *name(FPegParser *p)
 
+#define AST_NODE_1(p, a) AST_NEW_NODE(p, f_type, 1, a)
+#define AST_NODE_2(p, a, b) AST_NEW_NODE(p, f_type, 2, a, b)
+#define AST_NODE_3(p, a, b, c) AST_NEW_NODE(p, f_type, 3, a, b, c)
+#define AST_NODE_4(p, a, b, c, d) AST_NEW_NODE(p, f_type, 4, a, b, c, d)
+
 // FAstNode \*[a-z0-9_]+\(FPegParser \*p\)
 // RULE($1)
 
