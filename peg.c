@@ -115,12 +115,48 @@ FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...) {
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
     }
-    va_start(valist, nargs);
+            va_start(valist, nargs);
+
     FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
     res->ast_t = t;
     for (int i = 0; i < nargs; ++i) {
         res->ast_v.fields[i] = va_arg(valist, FAstNode *);
     }
-    va_end(valist);
+
+            va_end(valist);
     return res;
+}
+
+FAstNode *FPeg_parse_seq(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
+    FAstNode *node, *seq = AST_SEQ_NEW(p);
+    while ((node = rule(p))) {
+        AST_SEQ_APPEND(p, seq, node);
+    }
+    return seq;
+}
+
+FAstNode *FPeg_parse_seq_non_empty(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
+    FAstNode *node, *seq;
+    if (!(node = rule(p))) return 0;
+    seq = AST_SEQ_NEW(p);
+    do {
+        AST_SEQ_APPEND(p, seq, node);
+    } while ((node = rule(p)));
+    return seq;
+}
+
+FAstNode *FPeg_parse_seq_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *)) {
+    FAstNode *node, *seq;
+    if (!(node = rule(p))) return 0;
+    seq = AST_SEQ_NEW(p);
+    size_t pos;
+    while (1) {
+        AST_SEQ_APPEND(p, seq, node);
+        pos = p->pos;
+        if (!(FPeg_consume_token(p, delimiter) && rule(p))) {
+            break;
+        }
+    }
+    p->pos = pos;
+    return seq;
 }
