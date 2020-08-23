@@ -1,5 +1,5 @@
-#include "include/calc_parser.h"
-#include "include/internal/peg_macros.h"
+#include "calc_parser.h"
+#include "../internal/peg_macros.h"
 
 FAstNode *sum_rule(FPegParser *p);
 
