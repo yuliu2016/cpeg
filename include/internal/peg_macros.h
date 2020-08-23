@@ -24,12 +24,12 @@
     size_t pos = p->pos; \
     IF_DEBUG(p->debug_hook->enter_frame(++p->level, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
-    FAstNode *res = ((void *) 0) \
+    FAstNode *r = ((void *) 0) \
 
 #define EXIT_FRAME(p) \
-    IF_DEBUG(p->debug_hook->exit_frame(res, --p->level, DEBUG_EXTRAS);) \
-    if (!res) { p->pos = pos; } \
-    return res
+    IF_DEBUG(p->debug_hook->exit_frame(r, --p->level, DEBUG_EXTRAS);) \
+    if (!r) { p->pos = pos; } \
+    return r
 
 #define RETURN_IF_MEMOIZED(p) \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
@@ -37,7 +37,7 @@
     return memo->node; } \
 
 #define ENTER_LEFT_RECURSION(p) \
-    void * max = res; \
+    void * max = r; \
     size_t lastpos = pos; \
     left_rec_enter: \
     FPeg_put_memo(p, f_type, max, lastpos); \
@@ -47,10 +47,10 @@
     size_t end_pos = p->pos; \
     if (end_pos <= lastpos) { goto left_rec_exit; }\
     lastpos = end_pos; \
-    max = res; \
+    max = r; \
     goto left_rec_enter; \
     left_rec_exit: \
-    res = max \
+    r = max \
 
 #define OPTIONAL(node) node, 1
 
