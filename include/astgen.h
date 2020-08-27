@@ -5,9 +5,11 @@
 
 typedef union ast_gen_t FAstGen;
 
-#define ASC(node) ((FAstGen*) &(node)->ast_v)
+#define ASC(node) ((FAstGen *) &(node)->ast_v)
 
 union ast_gen_t {
+
+#define R_SINGLE_INPUT 1
 
 #define R_SINGLE_INPUT_3 2
     struct {
@@ -20,6 +22,8 @@ union ast_gen_t {
         FAstNode *newline_or_stmts;
         FAstNode *endmarker;
     } file_input;
+
+#define R_FILE_INPUT_1 4
 
 #define R_EVAL_INPUT 5
     struct {
@@ -34,11 +38,15 @@ union ast_gen_t {
         FAstNode *newline;
     } stmt;
 
+#define R_STMT_1 7
+
 #define R_SIMPLE_STMT 8
     struct {
         FAstNode *small_stmts;
         FAstNode *is_semicolon;
     } simple_stmt;
+
+#define R_SMALL_STMT 9
 
 #define R_DEL_STMT 10
     struct {
@@ -93,6 +101,8 @@ union ast_gen_t {
         FAstNode *is_comma;
     } exprlist;
 
+#define R_TARGET 20
+
 #define R_TARGET_1 21
     struct {
         FAstNode *t_primary;
@@ -109,6 +119,8 @@ union ast_gen_t {
     struct {
         FAstNode *targetlist;
     } target_4;
+
+#define R_T_PRIMARY 24
 
 #define R_T_PRIMARY_1 25
     struct {
@@ -133,17 +145,23 @@ union ast_gen_t {
         FAstNode *atom;
     } t_primary_4;
 
+#define R_T_LOOKAHEAD 29
+
 #define R_TARGETLIST 30
     struct {
         FAstNode *targets;
         FAstNode *is_comma;
     } targetlist;
 
+#define R_EXPR_OR_STAR 31
+
 #define R_EXPRLIST_STAR 32
     struct {
         FAstNode *expr_or_stars;
         FAstNode *is_comma;
     } exprlist_star;
+
+#define R_NAMED_EXPR_STAR 33
 
 #define R_NAMED_EXPR_LIST 34
     struct {
@@ -162,6 +180,8 @@ union ast_gen_t {
         FAstNode *is_comma;
     } slicelist;
 
+#define R_SLICE 37
+
 #define R_SLICE_1 38
     struct {
         FAstNode *expr;
@@ -173,6 +193,8 @@ union ast_gen_t {
     struct {
         FAstNode *expr;
     } slice_expr;
+
+#define R_DICT_ITEM 40
 
 #define R_DICT_ITEM_1 41
     struct {
@@ -215,6 +237,8 @@ union ast_gen_t {
         FAstNode *iter_if;
     } iterator;
 
+#define R_ASSIGNMENT 48
+
 #define R_PUBASSIGN 49
     struct {
         FAstNode *name;
@@ -251,6 +275,8 @@ union ast_gen_t {
         FAstNode *targetlist;
     } simple_assign_1;
 
+#define R_AUGASSIGN_OP 55
+
 #define R_IMPORT_NAME 56
     struct {
         FAstNode *dotted_as_names;
@@ -262,10 +288,14 @@ union ast_gen_t {
         FAstNode *import_from_items;
     } import_from;
 
+#define R_IMPORT_FROM_NAMES 58
+
 #define R_IMPORT_FROM_NAMES_2 59
     struct {
         FAstNode *dotted_name;
     } import_from_names_2;
+
+#define R_IMPORT_FROM_ITEMS 60
 
 #define R_IMPORT_FROM_ITEMS_2 61
     struct {
@@ -299,6 +329,8 @@ union ast_gen_t {
     struct {
         FAstNode *names;
     } dotted_name;
+
+#define R_COMPOUND_STMT 67
 
 #define R_IF_STMT 68
     struct {
@@ -335,6 +367,8 @@ union ast_gen_t {
         FAstNode *except_suite_or_finally_suite;
     } try_stmt;
 
+#define R_TRY_STMT_3 73
+
 #define R_WITH_STMT 74
     struct {
         FAstNode *expr_as_names;
@@ -347,6 +381,8 @@ union ast_gen_t {
         FAstNode *as_name;
     } expr_as_name;
 
+#define R_BLOCK_SUITE 76
+
 #define R_BLOCK_SUITE_1 77
     struct {
         FAstNode *newline;
@@ -356,6 +392,8 @@ union ast_gen_t {
 #define R_BLOCK_SUITE_2 78
     struct {
     } block_suite_2;
+
+#define R_SUITE 79
 
 #define R_SUITE_1 80
     struct {
@@ -396,6 +434,8 @@ union ast_gen_t {
         FAstNode *is_comma;
     } call_arg_list;
 
+#define R_CALL_ARG 87
+
 #define R_CALL_ARG_1 88
     struct {
         FAstNode *name;
@@ -418,6 +458,8 @@ union ast_gen_t {
         FAstNode *expr;
     } call_arg_4;
 
+#define R_TYPED_ARG_LIST 92
+
 #define R_FULL_ARG_LIST 93
     struct {
         FAstNode *default_args;
@@ -428,6 +470,8 @@ union ast_gen_t {
     struct {
         FAstNode *kwargs_or_args_kwargs;
     } full_arg_list_2;
+
+#define R_FULL_ARG_LIST_2_2 95
 
 #define R_ARGS_KWARGS 96
     struct {
@@ -495,10 +539,14 @@ union ast_gen_t {
         FAstNode *name_list;
     } builder_hint;
 
+#define R_BUILDER_ARGS 108
+
 #define R_BUILDER_ARGS_2 109
     struct {
         FAstNode *typed_arg_list;
     } builder_args_2;
+
+#define R_NAMED_EXPR 110
 
 #define R_NAMED_EXPR_1 111
     struct {
@@ -513,11 +561,17 @@ union ast_gen_t {
         FAstNode *expr;
     } conditional;
 
+#define R_EXPR 113
+
+#define R_DISJUNCTION 114
+
 #define R_DISJUNCTION_1 115
     struct {
         FAstNode *disjunction;
         FAstNode *conjunction;
     } disjunction_1;
+
+#define R_CONJUNCTION 116
 
 #define R_CONJUNCTION_1 117
     struct {
@@ -525,10 +579,14 @@ union ast_gen_t {
         FAstNode *inversion;
     } conjunction_1;
 
+#define R_INVERSION 118
+
 #define R_INVERSION_1 119
     struct {
         FAstNode *inversion;
     } inversion_1;
+
+#define R_COMPARISON 120
 
 #define R_COMPARISON_1 121
     struct {
@@ -542,6 +600,8 @@ union ast_gen_t {
         FAstNode *bitwise_or;
     } comparison_1_2;
 
+#define R_COMP_OP 123
+
 #define R_COMP_OP_8 124
     struct {
     } comp_op_8;
@@ -550,11 +610,15 @@ union ast_gen_t {
     struct {
     } comp_op_10;
 
+#define R_BITWISE_OR 126
+
 #define R_BITWISE_OR_1 127
     struct {
         FAstNode *bitwise_or;
         FAstNode *bitwise_xor;
     } bitwise_or_1;
+
+#define R_BITWISE_XOR 128
 
 #define R_BITWISE_XOR_1 129
     struct {
@@ -562,11 +626,15 @@ union ast_gen_t {
         FAstNode *bitwise_and;
     } bitwise_xor_1;
 
+#define R_BITWISE_AND 130
+
 #define R_BITWISE_AND_1 131
     struct {
         FAstNode *bitwise_and;
         FAstNode *shift_expr;
     } bitwise_and_1;
+
+#define R_SHIFT_EXPR 132
 
 #define R_SHIFT_EXPR_1 133
     struct {
@@ -580,6 +648,8 @@ union ast_gen_t {
         FAstNode *sum;
     } shift_expr_2;
 
+#define R_SUM 135
+
 #define R_SUM_1 136
     struct {
         FAstNode *sum;
@@ -591,6 +661,8 @@ union ast_gen_t {
         FAstNode *sum;
         FAstNode *term;
     } sum_2;
+
+#define R_TERM 138
 
 #define R_TERM_1 139
     struct {
@@ -622,11 +694,15 @@ union ast_gen_t {
         FAstNode *pipe_expr;
     } term_5;
 
+#define R_PIPE_EXPR 144
+
 #define R_PIPE_EXPR_1 145
     struct {
         FAstNode *pipe_expr;
         FAstNode *factor;
     } pipe_expr_1;
+
+#define R_FACTOR 146
 
 #define R_FACTOR_1 147
     struct {
@@ -643,11 +719,15 @@ union ast_gen_t {
         FAstNode *factor;
     } factor_3;
 
+#define R_POWER 150
+
 #define R_POWER_1 151
     struct {
         FAstNode *primary;
         FAstNode *factor;
     } power_1;
+
+#define R_PRIMARY 152
 
 #define R_PRIMARY_1 153
     struct {
@@ -699,6 +779,8 @@ union ast_gen_t {
         FAstNode *dict_items;
     } dict_atom;
 
+#define R_BUILDER 162
+
 #define R_BUILDER_1 163
     struct {
         FAstNode *name;
@@ -713,6 +795,8 @@ union ast_gen_t {
         FAstNode *builder_args;
         FAstNode *block_suite;
     } builder_2;
+
+#define R_ATOM 165
 } ;
 
 #endif //CPEG_ASTGEN_H
