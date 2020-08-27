@@ -38,6 +38,8 @@ typedef struct peg_parser_t {
 
 typedef struct ast_node_t FAstNode;
 
+#define RULE(name) FAstNode *name(FPegParser *p)
+
 typedef struct ast_sequence_t {
     size_t len;
     size_t capacity;
@@ -85,7 +87,16 @@ void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
 FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...);
 
+#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
 
-#define RULE(name) FAstNode *name(FPegParser *p)
+FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *));
+
+#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
+
+FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *));
+
+#define DELIMITED(p, delim_i, delim_v, rule) FPeg_parse_delimited(p, delim_i, rule)
+
+FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *));
 
 #endif //CPEG_PEG_H

@@ -127,31 +127,31 @@ FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...) {
     return res;
 }
 
-FAstNode *FPeg_parse_seq(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
-    FAstNode *node, *seq = AST_SEQ_NEW(p);
+FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
+    FAstNode *node, *seq = FAst_new_sequence(p);
     while ((node = rule(p))) {
-        AST_SEQ_APPEND(p, seq, node);
+        FAst_seq_append(p, seq, node);
     }
     return seq;
 }
 
-FAstNode *FPeg_parse_seq_non_empty(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
+FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
-    seq = AST_SEQ_NEW(p);
+    seq = FAst_new_sequence(p);
     do {
-        AST_SEQ_APPEND(p, seq, node);
+        FAst_seq_append(p, seq, node);
     } while ((node = rule(p)));
     return seq;
 }
 
-FAstNode *FPeg_parse_seq_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *)) {
+FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *)) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
-    seq = AST_SEQ_NEW(p);
+    seq = FAst_new_sequence(p);
     size_t pos;
     while (1) {
-        AST_SEQ_APPEND(p, seq, node);
+        FAst_seq_append(p, seq, node);
         pos = p->pos;
         if (!(FPeg_consume_token(p, delimiter) && rule(p))) {
             break;

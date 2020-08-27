@@ -104,7 +104,7 @@ RULE(small_stmt_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 12, ";")) &&
+            (TOKEN(p, 12, ";")) &&
             (node = small_stmt(p)));
     p->pos = pos;
     return seq;
@@ -230,7 +230,7 @@ RULE(name_list_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = TOKEN(p, 3, "NAME")));
     p->pos = pos;
     return seq;
@@ -265,7 +265,7 @@ RULE(expr_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = expr(p)));
     p->pos = pos;
     return seq;
@@ -403,7 +403,7 @@ RULE(target_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = target(p)));
     p->pos = pos;
     return seq;
@@ -437,7 +437,7 @@ RULE(expr_or_star_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = expr_or_star(p)));
     p->pos = pos;
     return seq;
@@ -471,7 +471,7 @@ RULE(named_expr_star_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = named_expr_star(p)));
     p->pos = pos;
     return seq;
@@ -507,7 +507,7 @@ RULE(slice_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = slice(p)));
     p->pos = pos;
     return seq;
@@ -591,7 +591,7 @@ RULE(dict_item_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = dict_item(p)));
     p->pos = pos;
     return seq;
@@ -889,7 +889,7 @@ RULE(import_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = import_as_name(p)));
     p->pos = pos;
     return seq;
@@ -912,7 +912,7 @@ RULE(dotted_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = dotted_as_name(p)));
     p->pos = pos;
     return seq;
@@ -935,7 +935,7 @@ RULE(dotted_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 6, ".")) &&
+            (TOKEN(p, 6, ".")) &&
             (node = TOKEN(p, 3, "NAME")));
     p->pos = pos;
     return seq;
@@ -1057,7 +1057,7 @@ RULE(expr_as_name_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = expr_as_name(p)));
     p->pos = pos;
     return seq;
@@ -1215,7 +1215,7 @@ RULE(call_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = call_arg(p)));
     p->pos = pos;
     return seq;
@@ -1305,7 +1305,7 @@ RULE(default_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = default_arg(p)));
     p->pos = pos;
     return seq;
@@ -1455,7 +1455,7 @@ RULE(simple_arg_loop) {
     size_t pos;
     do { AST_SEQ_APPEND(p, seq, node); }
     while (pos = p->pos,
-            (AST_CONSUME(p, 7, ",")) &&
+            (TOKEN(p, 7, ",")) &&
             (node = simple_arg(p)));
     p->pos = pos;
     return seq;
