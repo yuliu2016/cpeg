@@ -15,7 +15,6 @@ RULE(single_input) {
 
 RULE(single_input_3) {
     ENTER_FRAME(p, 2, "single_input:3");
-    FAstNode *a, *b;
     (a = compound_stmt(p)) &&
     (b = TOKEN(p, 2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -26,7 +25,6 @@ RULE(single_input_3) {
 //     | (NEWLINE | stmt)* ENDMARKER
 RULE(file_input) {
     ENTER_FRAME(p, 3, "file_input");
-    FAstNode *a, *b;
     (a = SEQ_OR_NONE(p, file_input_1)) &&
     (b = TOKEN(p, 1, "ENDMARKER"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -44,7 +42,6 @@ RULE(file_input_1) {
 //     | exprlist NEWLINE* ENDMARKER
 RULE(eval_input) {
     ENTER_FRAME(p, 5, "eval_input");
-    FAstNode *a, *b, *c;
     (a = exprlist(p)) &&
     (b = eval_input_loop(p)) &&
     (c = TOKEN(p, 1, "ENDMARKER"))
@@ -64,7 +61,6 @@ RULE(eval_input_loop) {
 //     | (simple_stmt | compound_stmt) NEWLINE
 RULE(stmt) {
     ENTER_FRAME(p, 6, "stmt");
-    FAstNode *a, *b;
     (a = stmt_1(p)) &&
     (b = TOKEN(p, 2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -82,7 +78,6 @@ RULE(stmt_1) {
 //     | ';'.small_stmt+ [';']
 RULE(simple_stmt) {
     ENTER_FRAME(p, 8, "simple_stmt");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 12, ";", small_stmt)) &&
     (b = OPTIONAL(TOKEN(p, 12, ";")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -121,7 +116,6 @@ RULE(small_stmt) {
 //     | 'del' targetlist
 RULE(del_stmt) {
     ENTER_FRAME(p, 10, "del_stmt");
-    FAstNode *a;
     (TOKEN(p, 79, "del")) &&
     (a = targetlist(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -132,7 +126,6 @@ RULE(del_stmt) {
 //     | 'return' [exprlist_star]
 RULE(return_stmt) {
     ENTER_FRAME(p, 11, "return_stmt");
-    FAstNode *a;
     (TOKEN(p, 54, "return")) &&
     (a = OPTIONAL(exprlist_star(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -143,7 +136,6 @@ RULE(return_stmt) {
 //     | 'raise' expr ['from' expr]
 RULE(raise_stmt) {
     ENTER_FRAME(p, 12, "raise_stmt");
-    FAstNode *a, *b;
     (TOKEN(p, 78, "raise")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(raise_stmt_3(p)))
@@ -153,7 +145,6 @@ RULE(raise_stmt) {
 
 RULE(raise_stmt_3) {
     ENTER_FRAME(p, 13, "raise_stmt:3");
-    FAstNode *a;
     (TOKEN(p, 66, "from")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -164,7 +155,6 @@ RULE(raise_stmt_3) {
 //     | 'nonlocal' name_list
 RULE(nonlocal_stmt) {
     ENTER_FRAME(p, 14, "nonlocal_stmt");
-    FAstNode *a;
     (TOKEN(p, 55, "nonlocal")) &&
     (a = name_list(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -175,7 +165,6 @@ RULE(nonlocal_stmt) {
 //     | 'assert' expr [',' expr]
 RULE(assert_stmt) {
     ENTER_FRAME(p, 15, "assert_stmt");
-    FAstNode *a, *b;
     (TOKEN(p, 80, "assert")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(assert_stmt_3(p)))
@@ -185,7 +174,6 @@ RULE(assert_stmt) {
 
 RULE(assert_stmt_3) {
     ENTER_FRAME(p, 16, "assert_stmt:3");
-    FAstNode *a;
     (TOKEN(p, 7, ",")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -196,7 +184,6 @@ RULE(assert_stmt_3) {
 //     | ','.NAME+
 RULE(name_list) {
     ENTER_FRAME(p, 17, "name_list");
-    FAstNode *a;
     (a = name_list_loop(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -219,7 +206,6 @@ RULE(name_list_loop) {
 //     | '*' bitwise_or
 RULE(star_expr) {
     ENTER_FRAME(p, 18, "star_expr");
-    FAstNode *a;
     (TOKEN(p, 23, "*")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -230,7 +216,6 @@ RULE(star_expr) {
 //     | ','.expr+ [',']
 RULE(exprlist) {
     ENTER_FRAME(p, 19, "exprlist");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", expr)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -253,7 +238,6 @@ RULE(target) {
 
 RULE(target_1) {
     ENTER_FRAME(p, 21, "target:1");
-    FAstNode *a, *b;
     (a = t_primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME")) &&
@@ -264,7 +248,6 @@ RULE(target_1) {
 
 RULE(target_2) {
     ENTER_FRAME(p, 22, "target:2");
-    FAstNode *a, *b;
     (a = t_primary(p)) &&
     (b = subscript(p)) &&
     (!TEST(p, t_lookahead(p)))
@@ -274,7 +257,6 @@ RULE(target_2) {
 
 RULE(target_4) {
     ENTER_FRAME(p, 23, "target:4");
-    FAstNode *a;
     (TOKEN(p, 13, "(")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 14, ")"))
@@ -301,7 +283,6 @@ RULE(t_primary) {
 
 RULE(t_primary_1) {
     ENTER_FRAME(p, 25, "t_primary:1");
-    FAstNode *a, *b;
     (a = t_primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME")) &&
@@ -312,7 +293,6 @@ RULE(t_primary_1) {
 
 RULE(t_primary_2) {
     ENTER_FRAME(p, 26, "t_primary:2");
-    FAstNode *a, *b;
     (a = t_primary(p)) &&
     (b = invocation(p)) &&
     (TEST(p, t_lookahead(p)))
@@ -322,7 +302,6 @@ RULE(t_primary_2) {
 
 RULE(t_primary_3) {
     ENTER_FRAME(p, 27, "t_primary:3");
-    FAstNode *a, *b;
     (a = t_primary(p)) &&
     (b = subscript(p)) &&
     (TEST(p, t_lookahead(p)))
@@ -332,7 +311,6 @@ RULE(t_primary_3) {
 
 RULE(t_primary_4) {
     ENTER_FRAME(p, 28, "t_primary:4");
-    FAstNode *a;
     (a = atom(p)) &&
     (TEST(p, t_lookahead(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -355,7 +333,6 @@ RULE(t_lookahead) {
 //     | ','.target+ [',']
 RULE(targetlist) {
     ENTER_FRAME(p, 30, "targetlist");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", target)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -376,7 +353,6 @@ RULE(expr_or_star) {
 //     | ','.expr_or_star+ [',']
 RULE(exprlist_star) {
     ENTER_FRAME(p, 32, "exprlist_star");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", expr_or_star)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -397,7 +373,6 @@ RULE(named_expr_star) {
 //     | ','.named_expr_star+ [',']
 RULE(named_expr_list) {
     ENTER_FRAME(p, 34, "named_expr_list");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", named_expr_star)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -408,7 +383,6 @@ RULE(named_expr_list) {
 //     | '[' slicelist ']'
 RULE(subscript) {
     ENTER_FRAME(p, 35, "subscript");
-    FAstNode *a;
     (TOKEN(p, 17, "[")) &&
     (a = slicelist(p)) &&
     (TOKEN(p, 18, "]"))
@@ -420,7 +394,6 @@ RULE(subscript) {
 //     | ','.slice+ [',']
 RULE(slicelist) {
     ENTER_FRAME(p, 36, "slicelist");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", slice)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -439,7 +412,6 @@ RULE(slice) {
 
 RULE(slice_1) {
     ENTER_FRAME(p, 38, "slice:1");
-    FAstNode *a, *b, *c;
     (a = OPTIONAL(expr(p))) &&
     (b = slice_expr(p)) &&
     (c = OPTIONAL(slice_expr(p)))
@@ -451,7 +423,6 @@ RULE(slice_1) {
 //     | ':' [expr]
 RULE(slice_expr) {
     ENTER_FRAME(p, 39, "slice_expr");
-    FAstNode *a;
     (TOKEN(p, 9, ":")) &&
     (a = OPTIONAL(expr(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -470,7 +441,6 @@ RULE(dict_item) {
 
 RULE(dict_item_1) {
     ENTER_FRAME(p, 41, "dict_item:1");
-    FAstNode *a, *b;
     (a = expr(p)) &&
     (TOKEN(p, 9, ":")) &&
     (b = expr(p))
@@ -480,7 +450,6 @@ RULE(dict_item_1) {
 
 RULE(dict_item_2) {
     ENTER_FRAME(p, 42, "dict_item:2");
-    FAstNode *a;
     (TOKEN(p, 38, "**")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -491,7 +460,6 @@ RULE(dict_item_2) {
 //     | ','.dict_item+ [',']
 RULE(dict_items) {
     ENTER_FRAME(p, 43, "dict_items");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", dict_item)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -502,7 +470,6 @@ RULE(dict_items) {
 //     | 'as' NAME
 RULE(as_name) {
     ENTER_FRAME(p, 44, "as_name");
-    FAstNode *a;
     (TOKEN(p, 65, "as")) &&
     (a = TOKEN(p, 3, "NAME"))
     ? (r = NODE_1(p, a)) : 0;
@@ -513,7 +480,6 @@ RULE(as_name) {
 //     | 'for' targetlist 'in' disjunction [iter_if]
 RULE(iter_for) {
     ENTER_FRAME(p, 45, "iter_for");
-    FAstNode *a, *b, *c;
     (TOKEN(p, 72, "for")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 63, "in")) &&
@@ -527,7 +493,6 @@ RULE(iter_for) {
 //     | 'if' named_expr
 RULE(iter_if) {
     ENTER_FRAME(p, 46, "iter_if");
-    FAstNode *a;
     (TOKEN(p, 56, "if")) &&
     (a = named_expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -538,7 +503,6 @@ RULE(iter_if) {
 //     | iter_for* 'for' targetlist [iter_if]
 RULE(iterator) {
     ENTER_FRAME(p, 47, "iterator");
-    FAstNode *a, *b, *c;
     (a = SEQ_OR_NONE(p, iter_for)) &&
     (TOKEN(p, 72, "for")) &&
     (b = targetlist(p)) &&
@@ -565,7 +529,6 @@ RULE(assignment) {
 //     | '/' NAME '=' exprlist
 RULE(pubassign) {
     ENTER_FRAME(p, 49, "pubassign");
-    FAstNode *a, *b;
     (TOKEN(p, 24, "/")) &&
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 8, "=")) &&
@@ -578,7 +541,6 @@ RULE(pubassign) {
 //     | target ':' expr ['=' exprlist]
 RULE(annassign) {
     ENTER_FRAME(p, 50, "annassign");
-    FAstNode *a, *b, *c;
     (a = target(p)) &&
     (TOKEN(p, 9, ":")) &&
     (b = expr(p)) &&
@@ -589,7 +551,6 @@ RULE(annassign) {
 
 RULE(annassign_4) {
     ENTER_FRAME(p, 51, "annassign:4");
-    FAstNode *a;
     (TOKEN(p, 8, "=")) &&
     (a = exprlist(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -600,7 +561,6 @@ RULE(annassign_4) {
 //     | target augassign_op exprlist
 RULE(augassign) {
     ENTER_FRAME(p, 52, "augassign");
-    FAstNode *a, *b, *c;
     (a = target(p)) &&
     (b = augassign_op(p)) &&
     (c = exprlist(p))
@@ -612,7 +572,6 @@ RULE(augassign) {
 //     | (targetlist '=')* exprlist_star
 RULE(simple_assign) {
     ENTER_FRAME(p, 53, "simple_assign");
-    FAstNode *a, *b;
     (a = SEQ_OR_NONE(p, simple_assign_1)) &&
     (b = exprlist_star(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -621,7 +580,6 @@ RULE(simple_assign) {
 
 RULE(simple_assign_1) {
     ENTER_FRAME(p, 54, "simple_assign:1");
-    FAstNode *a;
     (a = targetlist(p)) &&
     (TOKEN(p, 8, "="))
     ? (r = NODE_1(p, a)) : 0;
@@ -664,7 +622,6 @@ RULE(augassign_op) {
 //     | 'import' dotted_as_names
 RULE(import_name) {
     ENTER_FRAME(p, 56, "import_name");
-    FAstNode *a;
     (TOKEN(p, 67, "import")) &&
     (a = dotted_as_names(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -675,7 +632,6 @@ RULE(import_name) {
 //     | 'from' import_from_names 'import' import_from_items
 RULE(import_from) {
     ENTER_FRAME(p, 57, "import_from");
-    FAstNode *a, *b;
     (TOKEN(p, 66, "from")) &&
     (a = import_from_names(p)) &&
     (TOKEN(p, 67, "import")) &&
@@ -696,7 +652,6 @@ RULE(import_from_names) {
 
 RULE(import_from_names_2) {
     ENTER_FRAME(p, 59, "import_from_names:2");
-    FAstNode *a;
     (import_from_names_2_loop(p)) &&
     (a = OPTIONAL(dotted_name(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -726,7 +681,6 @@ RULE(import_from_items) {
 
 RULE(import_from_items_2) {
     ENTER_FRAME(p, 61, "import_from_items:2");
-    FAstNode *a, *b;
     (TOKEN(p, 13, "(")) &&
     (a = import_as_names(p)) &&
     (b = OPTIONAL(TOKEN(p, 7, ","))) &&
@@ -739,7 +693,6 @@ RULE(import_from_items_2) {
 //     | NAME [as_name]
 RULE(import_as_name) {
     ENTER_FRAME(p, 62, "import_as_name");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -750,7 +703,6 @@ RULE(import_as_name) {
 //     | dotted_name [as_name]
 RULE(dotted_as_name) {
     ENTER_FRAME(p, 63, "dotted_as_name");
-    FAstNode *a, *b;
     (a = dotted_name(p)) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -761,7 +713,6 @@ RULE(dotted_as_name) {
 //     | ','.import_as_name+
 RULE(import_as_names) {
     ENTER_FRAME(p, 64, "import_as_names");
-    FAstNode *a;
     (a = DELIMITED(p, 7, ",", import_as_name))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -771,7 +722,6 @@ RULE(import_as_names) {
 //     | ','.dotted_as_name+
 RULE(dotted_as_names) {
     ENTER_FRAME(p, 65, "dotted_as_names");
-    FAstNode *a;
     (a = DELIMITED(p, 7, ",", dotted_as_name))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -781,7 +731,6 @@ RULE(dotted_as_names) {
 //     | '.'.NAME+
 RULE(dotted_name) {
     ENTER_FRAME(p, 66, "dotted_name");
-    FAstNode *a;
     (a = dotted_name_loop(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -820,7 +769,6 @@ RULE(compound_stmt) {
 //     | 'if' named_expr suite elif_stmt* [else_suite]
 RULE(if_stmt) {
     ENTER_FRAME(p, 68, "if_stmt");
-    FAstNode *a, *b, *c, *d;
     (TOKEN(p, 56, "if")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
@@ -834,7 +782,6 @@ RULE(if_stmt) {
 //     | 'elif' named_expr suite
 RULE(elif_stmt) {
     ENTER_FRAME(p, 69, "elif_stmt");
-    FAstNode *a, *b;
     (TOKEN(p, 57, "elif")) &&
     (a = named_expr(p)) &&
     (b = suite(p))
@@ -846,7 +793,6 @@ RULE(elif_stmt) {
 //     | 'while' named_expr suite [else_suite]
 RULE(while_stmt) {
     ENTER_FRAME(p, 70, "while_stmt");
-    FAstNode *a, *b, *c;
     (TOKEN(p, 71, "while")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
@@ -859,7 +805,6 @@ RULE(while_stmt) {
 //     | 'for' targetlist 'in' exprlist suite [else_suite]
 RULE(for_stmt) {
     ENTER_FRAME(p, 71, "for_stmt");
-    FAstNode *a, *b, *c, *d;
     (TOKEN(p, 72, "for")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 63, "in")) &&
@@ -874,7 +819,6 @@ RULE(for_stmt) {
 //     | 'try' suite (except_suite | finally_suite)
 RULE(try_stmt) {
     ENTER_FRAME(p, 72, "try_stmt");
-    FAstNode *a, *b;
     (TOKEN(p, 75, "try")) &&
     (a = suite(p)) &&
     (b = try_stmt_3(p))
@@ -893,7 +837,6 @@ RULE(try_stmt_3) {
 //     | 'with' ','.expr_as_name+ suite
 RULE(with_stmt) {
     ENTER_FRAME(p, 74, "with_stmt");
-    FAstNode *a, *b;
     (TOKEN(p, 68, "with")) &&
     (a = DELIMITED(p, 7, ",", expr_as_name)) &&
     (b = suite(p))
@@ -905,7 +848,6 @@ RULE(with_stmt) {
 //     | expr [as_name]
 RULE(expr_as_name) {
     ENTER_FRAME(p, 75, "expr_as_name");
-    FAstNode *a, *b;
     (a = expr(p)) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -924,7 +866,6 @@ RULE(block_suite) {
 
 RULE(block_suite_1) {
     ENTER_FRAME(p, 77, "block_suite:1");
-    FAstNode *a, *b;
     (TOKEN(p, 15, "{")) &&
     (a = TOKEN(p, 2, "NEWLINE")) &&
     (b = SEQUENCE(p, stmt)) &&
@@ -952,7 +893,6 @@ RULE(suite) {
 
 RULE(suite_1) {
     ENTER_FRAME(p, 80, "suite:1");
-    FAstNode *a;
     (TOKEN(p, 9, ":")) &&
     (a = simple_stmt(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -963,7 +903,6 @@ RULE(suite_1) {
 //     | 'else' suite
 RULE(else_suite) {
     ENTER_FRAME(p, 81, "else_suite");
-    FAstNode *a;
     (TOKEN(p, 58, "else")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -974,7 +913,6 @@ RULE(else_suite) {
 //     | 'finally' suite
 RULE(finally_suite) {
     ENTER_FRAME(p, 82, "finally_suite");
-    FAstNode *a;
     (TOKEN(p, 77, "finally")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -985,7 +923,6 @@ RULE(finally_suite) {
 //     | 'except' [expr_as_name] suite
 RULE(except_clause) {
     ENTER_FRAME(p, 83, "except_clause");
-    FAstNode *a, *b;
     (TOKEN(p, 76, "except")) &&
     (a = OPTIONAL(expr_as_name(p))) &&
     (b = suite(p))
@@ -997,7 +934,6 @@ RULE(except_clause) {
 //     | except_clause+ [else_suite] [finally_suite]
 RULE(except_suite) {
     ENTER_FRAME(p, 84, "except_suite");
-    FAstNode *a, *b, *c;
     (a = SEQUENCE(p, except_clause)) &&
     (b = OPTIONAL(else_suite(p))) &&
     (c = OPTIONAL(finally_suite(p)))
@@ -1009,7 +945,6 @@ RULE(except_suite) {
 //     | '(' [call_arg_list] ')'
 RULE(invocation) {
     ENTER_FRAME(p, 85, "invocation");
-    FAstNode *a;
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(call_arg_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -1021,7 +956,6 @@ RULE(invocation) {
 //     | ','.call_arg+ [',']
 RULE(call_arg_list) {
     ENTER_FRAME(p, 86, "call_arg_list");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", call_arg)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1046,7 +980,6 @@ RULE(call_arg) {
 
 RULE(call_arg_1) {
     ENTER_FRAME(p, 88, "call_arg:1");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 36, ":=")) &&
     (b = expr(p))
@@ -1056,7 +989,6 @@ RULE(call_arg_1) {
 
 RULE(call_arg_2) {
     ENTER_FRAME(p, 89, "call_arg:2");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 8, "=")) &&
     (b = expr(p))
@@ -1066,7 +998,6 @@ RULE(call_arg_2) {
 
 RULE(call_arg_3) {
     ENTER_FRAME(p, 90, "call_arg:3");
-    FAstNode *a;
     (TOKEN(p, 38, "**")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1075,7 +1006,6 @@ RULE(call_arg_3) {
 
 RULE(call_arg_4) {
     ENTER_FRAME(p, 91, "call_arg:4");
-    FAstNode *a;
     (TOKEN(p, 23, "*")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1098,7 +1028,6 @@ RULE(typed_arg_list) {
 //     | ','.default_arg+ [',' [kwargs | args_kwargs]]
 RULE(full_arg_list) {
     ENTER_FRAME(p, 93, "full_arg_list");
-    FAstNode *a, *b;
     (a = DELIMITED(p, 7, ",", default_arg)) &&
     (b = OPTIONAL(full_arg_list_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1107,7 +1036,6 @@ RULE(full_arg_list) {
 
 RULE(full_arg_list_2) {
     ENTER_FRAME(p, 94, "full_arg_list:2");
-    FAstNode *a;
     (TOKEN(p, 7, ",")) &&
     (a = OPTIONAL(full_arg_list_2_2(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -1125,7 +1053,6 @@ RULE(full_arg_list_2_2) {
 //     | '*' [typed_arg] (',' default_arg)* [',' [kwargs]]
 RULE(args_kwargs) {
     ENTER_FRAME(p, 96, "args_kwargs");
-    FAstNode *a, *b, *c;
     (TOKEN(p, 23, "*")) &&
     (a = OPTIONAL(typed_arg(p))) &&
     (b = SEQ_OR_NONE(p, args_kwargs_3)) &&
@@ -1136,7 +1063,6 @@ RULE(args_kwargs) {
 
 RULE(args_kwargs_3) {
     ENTER_FRAME(p, 97, "args_kwargs:3");
-    FAstNode *a;
     (TOKEN(p, 7, ",")) &&
     (a = default_arg(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1145,7 +1071,6 @@ RULE(args_kwargs_3) {
 
 RULE(args_kwargs_4) {
     ENTER_FRAME(p, 98, "args_kwargs:4");
-    FAstNode *a;
     (TOKEN(p, 7, ",")) &&
     (a = OPTIONAL(kwargs(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -1156,7 +1081,6 @@ RULE(args_kwargs_4) {
 //     | '**' typed_arg [',']
 RULE(kwargs) {
     ENTER_FRAME(p, 99, "kwargs");
-    FAstNode *a, *b;
     (TOKEN(p, 38, "**")) &&
     (a = typed_arg(p)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
@@ -1168,7 +1092,6 @@ RULE(kwargs) {
 //     | typed_arg ['=' expr]
 RULE(default_arg) {
     ENTER_FRAME(p, 100, "default_arg");
-    FAstNode *a, *b;
     (a = typed_arg(p)) &&
     (b = OPTIONAL(default_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1177,7 +1100,6 @@ RULE(default_arg) {
 
 RULE(default_arg_2) {
     ENTER_FRAME(p, 101, "default_arg:2");
-    FAstNode *a;
     (TOKEN(p, 8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1188,7 +1110,6 @@ RULE(default_arg_2) {
 //     | NAME [':' expr]
 RULE(typed_arg) {
     ENTER_FRAME(p, 102, "typed_arg");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(typed_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1197,7 +1118,6 @@ RULE(typed_arg) {
 
 RULE(typed_arg_2) {
     ENTER_FRAME(p, 103, "typed_arg:2");
-    FAstNode *a;
     (TOKEN(p, 9, ":")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1208,7 +1128,6 @@ RULE(typed_arg_2) {
 //     | NAME ['=' expr]
 RULE(simple_arg) {
     ENTER_FRAME(p, 104, "simple_arg");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(simple_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1217,7 +1136,6 @@ RULE(simple_arg) {
 
 RULE(simple_arg_2) {
     ENTER_FRAME(p, 105, "simple_arg:2");
-    FAstNode *a;
     (TOKEN(p, 8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1228,7 +1146,6 @@ RULE(simple_arg_2) {
 //     | ','.simple_arg+
 RULE(simple_args) {
     ENTER_FRAME(p, 106, "simple_args");
-    FAstNode *a;
     (a = DELIMITED(p, 7, ",", simple_arg))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -1238,7 +1155,6 @@ RULE(simple_args) {
 //     | '<' name_list '>'
 RULE(builder_hint) {
     ENTER_FRAME(p, 107, "builder_hint");
-    FAstNode *a;
     (TOKEN(p, 19, "<")) &&
     (a = name_list(p)) &&
     (TOKEN(p, 20, ">"))
@@ -1258,7 +1174,6 @@ RULE(builder_args) {
 
 RULE(builder_args_2) {
     ENTER_FRAME(p, 109, "builder_args:2");
-    FAstNode *a;
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(typed_arg_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -1278,7 +1193,6 @@ RULE(named_expr) {
 
 RULE(named_expr_1) {
     ENTER_FRAME(p, 111, "named_expr:1");
-    FAstNode *a, *b;
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 36, ":=")) &&
     (b = expr(p))
@@ -1290,7 +1204,6 @@ RULE(named_expr_1) {
 //     | 'if' disjunction '?' disjunction ':' expr
 RULE(conditional) {
     ENTER_FRAME(p, 112, "conditional");
-    FAstNode *a, *b, *c;
     (TOKEN(p, 56, "if")) &&
     (a = disjunction(p)) &&
     (TOKEN(p, 10, "?")) &&
@@ -1326,7 +1239,6 @@ RULE(disjunction) {
 
 RULE(disjunction_1) {
     ENTER_FRAME(p, 115, "disjunction:1");
-    FAstNode *a, *b;
     (a = disjunction(p)) &&
     (TOKEN(p, 60, "or")) &&
     (b = conjunction(p))
@@ -1349,7 +1261,6 @@ RULE(conjunction) {
 
 RULE(conjunction_1) {
     ENTER_FRAME(p, 117, "conjunction:1");
-    FAstNode *a, *b;
     (a = conjunction(p)) &&
     (TOKEN(p, 59, "and")) &&
     (b = inversion(p))
@@ -1369,7 +1280,6 @@ RULE(inversion) {
 
 RULE(inversion_1) {
     ENTER_FRAME(p, 119, "inversion:1");
-    FAstNode *a;
     (TOKEN(p, 61, "not")) &&
     (a = inversion(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1388,7 +1298,6 @@ RULE(comparison) {
 
 RULE(comparison_1) {
     ENTER_FRAME(p, 121, "comparison:1");
-    FAstNode *a, *b;
     (a = bitwise_or(p)) &&
     (b = SEQUENCE(p, comparison_1_2))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1397,7 +1306,6 @@ RULE(comparison_1) {
 
 RULE(comparison_1_2) {
     ENTER_FRAME(p, 122, "comparison:1:2");
-    FAstNode *a, *b;
     (a = comp_op(p)) &&
     (b = bitwise_or(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1459,7 +1367,6 @@ RULE(bitwise_or) {
 
 RULE(bitwise_or_1) {
     ENTER_FRAME(p, 127, "bitwise_or:1");
-    FAstNode *a, *b;
     (a = bitwise_or(p)) &&
     (TOKEN(p, 27, "|")) &&
     (b = bitwise_xor(p))
@@ -1482,7 +1389,6 @@ RULE(bitwise_xor) {
 
 RULE(bitwise_xor_1) {
     ENTER_FRAME(p, 129, "bitwise_xor:1");
-    FAstNode *a, *b;
     (a = bitwise_xor(p)) &&
     (TOKEN(p, 30, "^")) &&
     (b = bitwise_and(p))
@@ -1505,7 +1411,6 @@ RULE(bitwise_and) {
 
 RULE(bitwise_and_1) {
     ENTER_FRAME(p, 131, "bitwise_and:1");
-    FAstNode *a, *b;
     (a = bitwise_and(p)) &&
     (TOKEN(p, 28, "&")) &&
     (b = shift_expr(p))
@@ -1530,7 +1435,6 @@ RULE(shift_expr) {
 
 RULE(shift_expr_1) {
     ENTER_FRAME(p, 133, "shift_expr:1");
-    FAstNode *a, *b;
     (a = shift_expr(p)) &&
     (TOKEN(p, 48, "<<")) &&
     (b = sum(p))
@@ -1540,7 +1444,6 @@ RULE(shift_expr_1) {
 
 RULE(shift_expr_2) {
     ENTER_FRAME(p, 134, "shift_expr:2");
-    FAstNode *a, *b;
     (a = shift_expr(p)) &&
     (TOKEN(p, 49, ">>")) &&
     (b = sum(p))
@@ -1565,7 +1468,6 @@ RULE(sum) {
 
 RULE(sum_1) {
     ENTER_FRAME(p, 136, "sum:1");
-    FAstNode *a, *b;
     (a = sum(p)) &&
     (TOKEN(p, 21, "+")) &&
     (b = term(p))
@@ -1575,7 +1477,6 @@ RULE(sum_1) {
 
 RULE(sum_2) {
     ENTER_FRAME(p, 137, "sum:2");
-    FAstNode *a, *b;
     (a = sum(p)) &&
     (TOKEN(p, 22, "-")) &&
     (b = term(p))
@@ -1606,7 +1507,6 @@ RULE(term) {
 
 RULE(term_1) {
     ENTER_FRAME(p, 139, "term:1");
-    FAstNode *a, *b;
     (a = term(p)) &&
     (TOKEN(p, 23, "*")) &&
     (b = pipe_expr(p))
@@ -1616,7 +1516,6 @@ RULE(term_1) {
 
 RULE(term_2) {
     ENTER_FRAME(p, 140, "term:2");
-    FAstNode *a, *b;
     (a = term(p)) &&
     (TOKEN(p, 24, "/")) &&
     (b = pipe_expr(p))
@@ -1626,7 +1525,6 @@ RULE(term_2) {
 
 RULE(term_3) {
     ENTER_FRAME(p, 141, "term:3");
-    FAstNode *a, *b;
     (a = term(p)) &&
     (TOKEN(p, 25, "%")) &&
     (b = pipe_expr(p))
@@ -1636,7 +1534,6 @@ RULE(term_3) {
 
 RULE(term_4) {
     ENTER_FRAME(p, 142, "term:4");
-    FAstNode *a, *b;
     (a = term(p)) &&
     (TOKEN(p, 37, "//")) &&
     (b = pipe_expr(p))
@@ -1646,7 +1543,6 @@ RULE(term_4) {
 
 RULE(term_5) {
     ENTER_FRAME(p, 143, "term:5");
-    FAstNode *a, *b;
     (a = term(p)) &&
     (TOKEN(p, 26, "@")) &&
     (b = pipe_expr(p))
@@ -1669,7 +1565,6 @@ RULE(pipe_expr) {
 
 RULE(pipe_expr_1) {
     ENTER_FRAME(p, 145, "pipe_expr:1");
-    FAstNode *a, *b;
     (a = pipe_expr(p)) &&
     (TOKEN(p, 35, "->")) &&
     (b = factor(p))
@@ -1693,7 +1588,6 @@ RULE(factor) {
 
 RULE(factor_1) {
     ENTER_FRAME(p, 147, "factor:1");
-    FAstNode *a;
     (TOKEN(p, 21, "+")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1702,7 +1596,6 @@ RULE(factor_1) {
 
 RULE(factor_2) {
     ENTER_FRAME(p, 148, "factor:2");
-    FAstNode *a;
     (TOKEN(p, 22, "-")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1711,7 +1604,6 @@ RULE(factor_2) {
 
 RULE(factor_3) {
     ENTER_FRAME(p, 149, "factor:3");
-    FAstNode *a;
     (TOKEN(p, 29, "~")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1730,7 +1622,6 @@ RULE(power) {
 
 RULE(power_1) {
     ENTER_FRAME(p, 151, "power:1");
-    FAstNode *a, *b;
     (a = primary(p)) &&
     (TOKEN(p, 38, "**")) &&
     (b = factor(p))
@@ -1757,7 +1648,6 @@ RULE(primary) {
 
 RULE(primary_1) {
     ENTER_FRAME(p, 153, "primary:1");
-    FAstNode *a, *b;
     (a = primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME"))
@@ -1767,7 +1657,6 @@ RULE(primary_1) {
 
 RULE(primary_2) {
     ENTER_FRAME(p, 154, "primary:2");
-    FAstNode *a, *b;
     (a = primary(p)) &&
     (b = invocation(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1776,7 +1665,6 @@ RULE(primary_2) {
 
 RULE(primary_3) {
     ENTER_FRAME(p, 155, "primary:3");
-    FAstNode *a, *b;
     (a = primary(p)) &&
     (b = subscript(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1787,7 +1675,6 @@ RULE(primary_3) {
 //     | '(' [named_expr_list] ')'
 RULE(tuple_atom) {
     ENTER_FRAME(p, 156, "tuple_atom");
-    FAstNode *a;
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(named_expr_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -1799,7 +1686,6 @@ RULE(tuple_atom) {
 //     | '[' expr_or_star iterator ']'
 RULE(list_iter) {
     ENTER_FRAME(p, 157, "list_iter");
-    FAstNode *a, *b;
     (TOKEN(p, 17, "[")) &&
     (a = expr_or_star(p)) &&
     (b = iterator(p)) &&
@@ -1812,7 +1698,6 @@ RULE(list_iter) {
 //     | '[' [named_expr_list] ']'
 RULE(list_atom) {
     ENTER_FRAME(p, 158, "list_atom");
-    FAstNode *a;
     (TOKEN(p, 17, "[")) &&
     (a = OPTIONAL(named_expr_list(p))) &&
     (TOKEN(p, 18, "]"))
@@ -1824,7 +1709,6 @@ RULE(list_atom) {
 //     | '{' [exprlist_star] '}'
 RULE(set_atom) {
     ENTER_FRAME(p, 159, "set_atom");
-    FAstNode *a;
     (TOKEN(p, 15, "{")) &&
     (a = OPTIONAL(exprlist_star(p))) &&
     (TOKEN(p, 16, "}"))
@@ -1836,7 +1720,6 @@ RULE(set_atom) {
 //     | '{' dict_item iterator '}'
 RULE(dict_iter) {
     ENTER_FRAME(p, 160, "dict_iter");
-    FAstNode *a, *b;
     (TOKEN(p, 15, "{")) &&
     (a = dict_item(p)) &&
     (b = iterator(p)) &&
@@ -1849,7 +1732,6 @@ RULE(dict_iter) {
 //     | '{' [dict_items] '}'
 RULE(dict_atom) {
     ENTER_FRAME(p, 161, "dict_atom");
-    FAstNode *a;
     (TOKEN(p, 15, "{")) &&
     (a = OPTIONAL(dict_items(p))) &&
     (TOKEN(p, 16, "}"))
@@ -1869,7 +1751,6 @@ RULE(builder) {
 
 RULE(builder_1) {
     ENTER_FRAME(p, 163, "builder:1");
-    FAstNode *a, *b, *c;
     (a = TOKEN(p, 3, "NAME")) &&
     (b = simple_args(p)) &&
     (TOKEN(p, 9, ":")) &&
@@ -1880,7 +1761,6 @@ RULE(builder_1) {
 
 RULE(builder_2) {
     ENTER_FRAME(p, 164, "builder:2");
-    FAstNode *a, *b, *c, *d;
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(builder_hint(p))) &&
     (c = OPTIONAL(builder_args(p))) &&

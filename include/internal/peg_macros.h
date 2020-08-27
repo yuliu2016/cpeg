@@ -16,24 +16,24 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-macro-parentheses"
 
-#define DEBUG_EXTRAS pos, f_type, f_name
+#define DEBUG_EXTRAS f_type, f_name
 
 #define ENTER_FRAME(p, type, name) \
     const int f_type = type; \
     IF_DEBUG(const char* f_name = name;) \
     size_t pos = p->pos; \
-    IF_DEBUG(p->debug_hook->enter_frame(++p->level, DEBUG_EXTRAS);) \
+    IF_DEBUG(p->debug_hook->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
-    FAstNode *r = ((void *) 0) \
+    FAstNode *r = ((void *) 0), *a, *b, *c, *d \
 
 #define EXIT_FRAME(p) \
-    IF_DEBUG(p->debug_hook->exit_frame(r, --p->level, DEBUG_EXTRAS);) \
+    IF_DEBUG(p->debug_hook->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
     if (!r) { p->pos = pos; } \
     return r
 
 #define RETURN_IF_MEMOIZED(p) \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
-    if (memo) { IF_DEBUG(p->debug_hook->memo_hit(--p->level, DEBUG_EXTRAS);) \
+    if (memo) { IF_DEBUG(p->debug_hook->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
     return memo->node; } \
 
 #define ENTER_LEFT_RECURSION(p) \
