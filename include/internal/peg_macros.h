@@ -24,7 +24,7 @@
     size_t pos = p->pos; \
     IF_DEBUG(p->debug_hook->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
-    FAstNode *r = ((void *) 0), *a, *b, *c, *d \
+    FAstNode *r = 0, *a, *b, *c, *d \
 
 #define EXIT_FRAME(p) \
     IF_DEBUG(p->debug_hook->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
@@ -50,7 +50,7 @@
     max = r; \
     goto left_rec_enter; \
     left_rec_exit: \
-    r = max \
+    r = AST_NEW_NODE(p, f_type, 1, max) \
 
 #define OPTIONAL(node) node, 1
 

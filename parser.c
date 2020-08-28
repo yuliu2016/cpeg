@@ -7,9 +7,10 @@
 //     | compound_stmt NEWLINE
 RULE(single_input) {
     ENTER_FRAME(p, 1, "single_input");
-    (r = TOKEN(p, 2, "NEWLINE")) ||
-    (r = simple_stmt(p)) ||
-    (r = single_input_3(p));
+    (a = TOKEN(p, 2, "NEWLINE")) ||
+    (a = simple_stmt(p)) ||
+    (a = single_input_3(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -33,8 +34,9 @@ RULE(file_input) {
 
 RULE(file_input_1) {
     ENTER_FRAME(p, 4, "file_input:1");
-    (r = TOKEN(p, 2, "NEWLINE")) ||
-    (r = stmt(p));
+    (a = TOKEN(p, 2, "NEWLINE")) ||
+    (a = stmt(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -69,8 +71,9 @@ RULE(stmt) {
 
 RULE(stmt_1) {
     ENTER_FRAME(p, 7, "stmt:1");
-    (r = simple_stmt(p)) ||
-    (r = compound_stmt(p));
+    (a = simple_stmt(p)) ||
+    (a = compound_stmt(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -98,17 +101,18 @@ RULE(simple_stmt) {
 //     | assignment
 RULE(small_stmt) {
     ENTER_FRAME(p, 9, "small_stmt");
-    (r = TOKEN(p, 64, "pass")) ||
-    (r = TOKEN(p, 74, "break")) ||
-    (r = TOKEN(p, 73, "continue")) ||
-    (r = return_stmt(p)) ||
-    (r = raise_stmt(p)) ||
-    (r = del_stmt(p)) ||
-    (r = nonlocal_stmt(p)) ||
-    (r = assert_stmt(p)) ||
-    (r = import_name(p)) ||
-    (r = import_from(p)) ||
-    (r = assignment(p));
+    (a = TOKEN(p, 64, "pass")) ||
+    (a = TOKEN(p, 74, "break")) ||
+    (a = TOKEN(p, 73, "continue")) ||
+    (a = return_stmt(p)) ||
+    (a = raise_stmt(p)) ||
+    (a = del_stmt(p)) ||
+    (a = nonlocal_stmt(p)) ||
+    (a = assert_stmt(p)) ||
+    (a = import_name(p)) ||
+    (a = import_from(p)) ||
+    (a = assignment(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -229,10 +233,11 @@ RULE(exprlist) {
 //     | '(' targetlist ')'
 RULE(target) {
     ENTER_FRAME(p, 20, "target");
-    (r = target_1(p)) ||
-    (r = target_2(p)) ||
-    (r = TOKEN(p, 3, "NAME")) ||
-    (r = target_4(p));
+    (a = target_1(p)) ||
+    (a = target_2(p)) ||
+    (a = TOKEN(p, 3, "NAME")) ||
+    (a = target_4(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -323,9 +328,10 @@ RULE(t_primary_4) {
 //     | '['
 RULE(t_lookahead) {
     ENTER_FRAME(p, 29, "t_lookahead");
-    (r = TOKEN(p, 6, ".")) ||
-    (r = TOKEN(p, 13, "(")) ||
-    (r = TOKEN(p, 17, "["));
+    (a = TOKEN(p, 6, ".")) ||
+    (a = TOKEN(p, 13, "(")) ||
+    (a = TOKEN(p, 17, "["))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -344,8 +350,9 @@ RULE(targetlist) {
 //     | expr
 RULE(expr_or_star) {
     ENTER_FRAME(p, 31, "expr_or_star");
-    (r = star_expr(p)) ||
-    (r = expr(p));
+    (a = star_expr(p)) ||
+    (a = expr(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -364,8 +371,9 @@ RULE(exprlist_star) {
 //     | named_expr
 RULE(named_expr_star) {
     ENTER_FRAME(p, 33, "named_expr_star");
-    (r = star_expr(p)) ||
-    (r = named_expr(p));
+    (a = star_expr(p)) ||
+    (a = named_expr(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -405,8 +413,9 @@ RULE(slicelist) {
 //     | expr
 RULE(slice) {
     ENTER_FRAME(p, 37, "slice");
-    (r = slice_1(p)) ||
-    (r = expr(p));
+    (a = slice_1(p)) ||
+    (a = expr(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -434,8 +443,9 @@ RULE(slice_expr) {
 //     | '**' bitwise_or
 RULE(dict_item) {
     ENTER_FRAME(p, 40, "dict_item");
-    (r = dict_item_1(p)) ||
-    (r = dict_item_2(p));
+    (a = dict_item_1(p)) ||
+    (a = dict_item_2(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -518,10 +528,11 @@ RULE(iterator) {
 //     | simple_assign
 RULE(assignment) {
     ENTER_FRAME(p, 48, "assignment");
-    (r = pubassign(p)) ||
-    (r = annassign(p)) ||
-    (r = augassign(p)) ||
-    (r = simple_assign(p));
+    (a = pubassign(p)) ||
+    (a = annassign(p)) ||
+    (a = augassign(p)) ||
+    (a = simple_assign(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -602,19 +613,20 @@ RULE(simple_assign_1) {
 //     | '//='
 RULE(augassign_op) {
     ENTER_FRAME(p, 55, "augassign_op");
-    (r = TOKEN(p, 39, "+=")) ||
-    (r = TOKEN(p, 40, "-=")) ||
-    (r = TOKEN(p, 41, "*=")) ||
-    (r = TOKEN(p, 44, "@=")) ||
-    (r = TOKEN(p, 42, "/=")) ||
-    (r = TOKEN(p, 43, "%=")) ||
-    (r = TOKEN(p, 46, "&=")) ||
-    (r = TOKEN(p, 45, "|=")) ||
-    (r = TOKEN(p, 47, "^=")) ||
-    (r = TOKEN(p, 52, "<<=")) ||
-    (r = TOKEN(p, 53, ">>=")) ||
-    (r = TOKEN(p, 51, "**=")) ||
-    (r = TOKEN(p, 50, "//="));
+    (a = TOKEN(p, 39, "+=")) ||
+    (a = TOKEN(p, 40, "-=")) ||
+    (a = TOKEN(p, 41, "*=")) ||
+    (a = TOKEN(p, 44, "@=")) ||
+    (a = TOKEN(p, 42, "/=")) ||
+    (a = TOKEN(p, 43, "%=")) ||
+    (a = TOKEN(p, 46, "&=")) ||
+    (a = TOKEN(p, 45, "|=")) ||
+    (a = TOKEN(p, 47, "^=")) ||
+    (a = TOKEN(p, 52, "<<=")) ||
+    (a = TOKEN(p, 53, ">>=")) ||
+    (a = TOKEN(p, 51, "**=")) ||
+    (a = TOKEN(p, 50, "//="))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -645,8 +657,9 @@ RULE(import_from) {
 //     | '.'+ [dotted_name]
 RULE(import_from_names) {
     ENTER_FRAME(p, 58, "import_from_names");
-    (r = dotted_name(p)) ||
-    (r = import_from_names_2(p));
+    (a = dotted_name(p)) ||
+    (a = import_from_names_2(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -673,9 +686,10 @@ RULE(import_from_names_2_loop) {
 //     | import_as_names
 RULE(import_from_items) {
     ENTER_FRAME(p, 60, "import_from_items");
-    (r = TOKEN(p, 23, "*")) ||
-    (r = import_from_items_2(p)) ||
-    (r = import_as_names(p));
+    (a = TOKEN(p, 23, "*")) ||
+    (a = import_from_items_2(p)) ||
+    (a = import_as_names(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -757,11 +771,12 @@ RULE(dotted_name_loop) {
 //     | with_stmt
 RULE(compound_stmt) {
     ENTER_FRAME(p, 67, "compound_stmt");
-    (r = if_stmt(p)) ||
-    (r = while_stmt(p)) ||
-    (r = for_stmt(p)) ||
-    (r = try_stmt(p)) ||
-    (r = with_stmt(p));
+    (a = if_stmt(p)) ||
+    (a = while_stmt(p)) ||
+    (a = for_stmt(p)) ||
+    (a = try_stmt(p)) ||
+    (a = with_stmt(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -828,8 +843,9 @@ RULE(try_stmt) {
 
 RULE(try_stmt_3) {
     ENTER_FRAME(p, 73, "try_stmt:3");
-    (r = except_suite(p)) ||
-    (r = finally_suite(p));
+    (a = except_suite(p)) ||
+    (a = finally_suite(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -859,8 +875,9 @@ RULE(expr_as_name) {
 //     | '{' '}'
 RULE(block_suite) {
     ENTER_FRAME(p, 76, "block_suite");
-    (r = block_suite_1(p)) ||
-    (r = block_suite_2(p));
+    (a = block_suite_1(p)) ||
+    (a = block_suite_2(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -886,8 +903,9 @@ RULE(block_suite_2) {
 //     | block_suite
 RULE(suite) {
     ENTER_FRAME(p, 79, "suite");
-    (r = suite_1(p)) ||
-    (r = block_suite(p));
+    (a = suite_1(p)) ||
+    (a = block_suite(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -970,11 +988,12 @@ RULE(call_arg_list) {
 //     | expr
 RULE(call_arg) {
     ENTER_FRAME(p, 87, "call_arg");
-    (r = call_arg_1(p)) ||
-    (r = call_arg_2(p)) ||
-    (r = call_arg_3(p)) ||
-    (r = call_arg_4(p)) ||
-    (r = expr(p));
+    (a = call_arg_1(p)) ||
+    (a = call_arg_2(p)) ||
+    (a = call_arg_3(p)) ||
+    (a = call_arg_4(p)) ||
+    (a = expr(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1018,9 +1037,10 @@ RULE(call_arg_4) {
 //     | full_arg_list
 RULE(typed_arg_list) {
     ENTER_FRAME(p, 92, "typed_arg_list");
-    (r = kwargs(p)) ||
-    (r = args_kwargs(p)) ||
-    (r = full_arg_list(p));
+    (a = kwargs(p)) ||
+    (a = args_kwargs(p)) ||
+    (a = full_arg_list(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1044,8 +1064,9 @@ RULE(full_arg_list_2) {
 
 RULE(full_arg_list_2_2) {
     ENTER_FRAME(p, 95, "full_arg_list:2:2");
-    (r = kwargs(p)) ||
-    (r = args_kwargs(p));
+    (a = kwargs(p)) ||
+    (a = args_kwargs(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1167,8 +1188,9 @@ RULE(builder_hint) {
 //     | '(' [typed_arg_list] ')'
 RULE(builder_args) {
     ENTER_FRAME(p, 108, "builder_args");
-    (r = simple_args(p)) ||
-    (r = builder_args_2(p));
+    (a = simple_args(p)) ||
+    (a = builder_args_2(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1186,8 +1208,9 @@ RULE(builder_args_2) {
 //     | expr
 RULE(named_expr) {
     ENTER_FRAME(p, 110, "named_expr");
-    (r = named_expr_1(p)) ||
-    (r = expr(p));
+    (a = named_expr_1(p)) ||
+    (a = expr(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1219,8 +1242,9 @@ RULE(conditional) {
 //     | disjunction
 RULE(expr) {
     ENTER_FRAME(p, 113, "expr");
-    (r = conditional(p)) ||
-    (r = disjunction(p));
+    (a = conditional(p)) ||
+    (a = disjunction(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1273,8 +1297,9 @@ RULE(conjunction_1) {
 //     | comparison
 RULE(inversion) {
     ENTER_FRAME(p, 118, "inversion");
-    (r = inversion_1(p)) ||
-    (r = comparison(p));
+    (a = inversion_1(p)) ||
+    (a = comparison(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1291,8 +1316,9 @@ RULE(inversion_1) {
 //     | bitwise_or
 RULE(comparison) {
     ENTER_FRAME(p, 120, "comparison");
-    (r = comparison_1(p)) ||
-    (r = bitwise_or(p));
+    (a = comparison_1(p)) ||
+    (a = bitwise_or(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1325,16 +1351,17 @@ RULE(comparison_1_2) {
 //     | 'is' 'not'
 RULE(comp_op) {
     ENTER_FRAME(p, 123, "comp_op");
-    (r = TOKEN(p, 19, "<")) ||
-    (r = TOKEN(p, 20, ">")) ||
-    (r = TOKEN(p, 31, "==")) ||
-    (r = TOKEN(p, 34, ">=")) ||
-    (r = TOKEN(p, 33, "<=")) ||
-    (r = TOKEN(p, 32, "!=")) ||
-    (r = TOKEN(p, 63, "in")) ||
-    (r = comp_op_8(p)) ||
-    (r = TOKEN(p, 62, "is")) ||
-    (r = comp_op_10(p));
+    (a = TOKEN(p, 19, "<")) ||
+    (a = TOKEN(p, 20, ">")) ||
+    (a = TOKEN(p, 31, "==")) ||
+    (a = TOKEN(p, 34, ">=")) ||
+    (a = TOKEN(p, 33, "<=")) ||
+    (a = TOKEN(p, 32, "!=")) ||
+    (a = TOKEN(p, 63, "in")) ||
+    (a = comp_op_8(p)) ||
+    (a = TOKEN(p, 62, "is")) ||
+    (a = comp_op_10(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1579,10 +1606,11 @@ RULE(pipe_expr_1) {
 //     | power
 RULE(factor) {
     ENTER_FRAME(p, 146, "factor");
-    (r = factor_1(p)) ||
-    (r = factor_2(p)) ||
-    (r = factor_3(p)) ||
-    (r = power(p));
+    (a = factor_1(p)) ||
+    (a = factor_2(p)) ||
+    (a = factor_3(p)) ||
+    (a = power(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1615,8 +1643,9 @@ RULE(factor_3) {
 //     | primary
 RULE(power) {
     ENTER_FRAME(p, 150, "power");
-    (r = power_1(p)) ||
-    (r = primary(p));
+    (a = power_1(p)) ||
+    (a = primary(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1744,8 +1773,9 @@ RULE(dict_atom) {
 //     | NAME [builder_hint] [builder_args] block_suite
 RULE(builder) {
     ENTER_FRAME(p, 162, "builder");
-    (r = builder_1(p)) ||
-    (r = builder_2(p));
+    (a = builder_1(p)) ||
+    (a = builder_2(p))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
@@ -1785,18 +1815,19 @@ RULE(builder_2) {
 //     | 'False'
 RULE(atom) {
     ENTER_FRAME(p, 165, "atom");
-    (r = tuple_atom(p)) ||
-    (r = list_iter(p)) ||
-    (r = list_atom(p)) ||
-    (r = set_atom(p)) ||
-    (r = dict_iter(p)) ||
-    (r = dict_atom(p)) ||
-    (r = builder(p)) ||
-    (r = TOKEN(p, 3, "NAME")) ||
-    (r = TOKEN(p, 4, "NUMBER")) ||
-    (r = TOKEN(p, 5, "STRING")) ||
-    (r = TOKEN(p, 81, "None")) ||
-    (r = TOKEN(p, 82, "True")) ||
-    (r = TOKEN(p, 83, "False"));
+    (a = tuple_atom(p)) ||
+    (a = list_iter(p)) ||
+    (a = list_atom(p)) ||
+    (a = set_atom(p)) ||
+    (a = dict_iter(p)) ||
+    (a = dict_atom(p)) ||
+    (a = builder(p)) ||
+    (a = TOKEN(p, 3, "NAME")) ||
+    (a = TOKEN(p, 4, "NUMBER")) ||
+    (a = TOKEN(p, 5, "STRING")) ||
+    (a = TOKEN(p, 81, "None")) ||
+    (a = TOKEN(p, 82, "True")) ||
+    (a = TOKEN(p, 83, "False"))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }

@@ -390,8 +390,6 @@ union ast_gen_t {
     } block_suite_1;
 
 #define R_BLOCK_SUITE_2 78
-    struct {
-    } block_suite_2;
 
 #define R_SUITE 79
 
@@ -603,12 +601,8 @@ union ast_gen_t {
 #define R_COMP_OP 123
 
 #define R_COMP_OP_8 124
-    struct {
-    } comp_op_8;
 
 #define R_COMP_OP_10 125
-    struct {
-    } comp_op_10;
 
 #define R_BITWISE_OR 126
 
