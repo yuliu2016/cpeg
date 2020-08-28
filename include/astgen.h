@@ -43,7 +43,7 @@ union ast_gen_t {
 #define R_SIMPLE_STMT 8
     struct {
         FAstNode *small_stmts;
-        FAstNode *is_semicolon;
+        FAstNode *is_op_semicolon;
     } simple_stmt;
 
 #define R_SMALL_STMT 9
@@ -77,7 +77,7 @@ union ast_gen_t {
 #define R_ASSERT_STMT 15
     struct {
         FAstNode *expr;
-        FAstNode *comma_expr;
+        FAstNode *op_comma_expr;
     } assert_stmt;
 
 #define R_ASSERT_STMT_3 16
@@ -98,7 +98,7 @@ union ast_gen_t {
 #define R_EXPRLIST 19
     struct {
         FAstNode *exprs;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } exprlist;
 
 #define R_TARGET 20
@@ -150,7 +150,7 @@ union ast_gen_t {
 #define R_TARGETLIST 30
     struct {
         FAstNode *targets;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } targetlist;
 
 #define R_EXPR_OR_STAR 31
@@ -158,7 +158,7 @@ union ast_gen_t {
 #define R_EXPRLIST_STAR 32
     struct {
         FAstNode *expr_or_stars;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } exprlist_star;
 
 #define R_NAMED_EXPR_STAR 33
@@ -166,7 +166,7 @@ union ast_gen_t {
 #define R_NAMED_EXPR_LIST 34
     struct {
         FAstNode *named_expr_stars;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } named_expr_list;
 
 #define R_SUBSCRIPT 35
@@ -177,7 +177,7 @@ union ast_gen_t {
 #define R_SLICELIST 36
     struct {
         FAstNode *slices;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } slicelist;
 
 #define R_SLICE 37
@@ -210,7 +210,7 @@ union ast_gen_t {
 #define R_DICT_ITEMS 43
     struct {
         FAstNode *dict_items;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } dict_items;
 
 #define R_AS_NAME 44
@@ -249,7 +249,7 @@ union ast_gen_t {
     struct {
         FAstNode *target;
         FAstNode *expr;
-        FAstNode *assign_exprlist;
+        FAstNode *op_assign_exprlist;
     } annassign;
 
 #define R_ANNASSIGN_4 51
@@ -266,7 +266,7 @@ union ast_gen_t {
 
 #define R_SIMPLE_ASSIGN 53
     struct {
-        FAstNode *targetlist_assigns;
+        FAstNode *targetlist_op_assigns;
         FAstNode *exprlist_star;
     } simple_assign;
 
@@ -300,7 +300,7 @@ union ast_gen_t {
 #define R_IMPORT_FROM_ITEMS_2 61
     struct {
         FAstNode *import_as_names;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } import_from_items_2;
 
 #define R_IMPORT_AS_NAME 62
@@ -429,7 +429,7 @@ union ast_gen_t {
 #define R_CALL_ARG_LIST 86
     struct {
         FAstNode *call_args;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } call_arg_list;
 
 #define R_CALL_ARG 87
@@ -474,7 +474,7 @@ union ast_gen_t {
 #define R_ARGS_KWARGS 96
     struct {
         FAstNode *typed_arg;
-        FAstNode *comma_default_args;
+        FAstNode *op_comma_default_args;
         FAstNode *args_kwargs;
     } args_kwargs;
 
@@ -491,13 +491,13 @@ union ast_gen_t {
 #define R_KWARGS 99
     struct {
         FAstNode *typed_arg;
-        FAstNode *is_comma;
+        FAstNode *is_op_comma;
     } kwargs;
 
 #define R_DEFAULT_ARG 100
     struct {
         FAstNode *typed_arg;
-        FAstNode *assign_expr;
+        FAstNode *op_assign_expr;
     } default_arg;
 
 #define R_DEFAULT_ARG_2 101
@@ -508,7 +508,7 @@ union ast_gen_t {
 #define R_TYPED_ARG 102
     struct {
         FAstNode *name;
-        FAstNode *colon_expr;
+        FAstNode *op_colon_expr;
     } typed_arg;
 
 #define R_TYPED_ARG_2 103
@@ -519,7 +519,7 @@ union ast_gen_t {
 #define R_SIMPLE_ARG 104
     struct {
         FAstNode *name;
-        FAstNode *assign_expr;
+        FAstNode *op_assign_expr;
     } simple_arg;
 
 #define R_SIMPLE_ARG_2 105
