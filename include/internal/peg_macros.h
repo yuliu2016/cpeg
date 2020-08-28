@@ -37,7 +37,8 @@
     return memo->node; } \
 
 #define ENTER_LEFT_RECURSION(p) \
-    void * max = r; \
+    FAstNode *max = 0; \
+    a = 0; \
     size_t lastpos = pos; \
     left_rec_enter: \
     FPeg_put_memo(p, f_type, max, lastpos); \
@@ -47,10 +48,10 @@
     size_t end_pos = p->pos; \
     if (end_pos <= lastpos) { goto left_rec_exit; }\
     lastpos = end_pos; \
-    max = r; \
+    max = a; \
     goto left_rec_enter; \
     left_rec_exit: \
-    r = AST_NEW_NODE(p, f_type, 1, max) \
+    r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
 
 #define OPTIONAL(node) node, 1
 

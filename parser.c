@@ -278,10 +278,10 @@ RULE(t_primary) {
     ENTER_FRAME(p, 24, "t_primary");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = t_primary_1(p)) ||
-    (r = t_primary_2(p)) ||
-    (r = t_primary_3(p)) ||
-    (r = t_primary_4(p));
+    (a = t_primary_1(p)) ||
+    (a = t_primary_2(p)) ||
+    (a = t_primary_3(p)) ||
+    (a = t_primary_4(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1255,8 +1255,8 @@ RULE(disjunction) {
     ENTER_FRAME(p, 114, "disjunction");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = disjunction_1(p)) ||
-    (r = conjunction(p));
+    (a = disjunction_1(p)) ||
+    (a = conjunction(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1277,8 +1277,8 @@ RULE(conjunction) {
     ENTER_FRAME(p, 116, "conjunction");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = conjunction_1(p)) ||
-    (r = inversion(p));
+    (a = conjunction_1(p)) ||
+    (a = inversion(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1386,8 +1386,8 @@ RULE(bitwise_or) {
     ENTER_FRAME(p, 126, "bitwise_or");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = bitwise_or_1(p)) ||
-    (r = bitwise_xor(p));
+    (a = bitwise_or_1(p)) ||
+    (a = bitwise_xor(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1408,8 +1408,8 @@ RULE(bitwise_xor) {
     ENTER_FRAME(p, 128, "bitwise_xor");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = bitwise_xor_1(p)) ||
-    (r = bitwise_and(p));
+    (a = bitwise_xor_1(p)) ||
+    (a = bitwise_and(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1430,8 +1430,8 @@ RULE(bitwise_and) {
     ENTER_FRAME(p, 130, "bitwise_and");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = bitwise_and_1(p)) ||
-    (r = shift_expr(p));
+    (a = bitwise_and_1(p)) ||
+    (a = shift_expr(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1453,9 +1453,9 @@ RULE(shift_expr) {
     ENTER_FRAME(p, 132, "shift_expr");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = shift_expr_1(p)) ||
-    (r = shift_expr_2(p)) ||
-    (r = sum(p));
+    (a = shift_expr_1(p)) ||
+    (a = shift_expr_2(p)) ||
+    (a = sum(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1486,9 +1486,9 @@ RULE(sum) {
     ENTER_FRAME(p, 135, "sum");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = sum_1(p)) ||
-    (r = sum_2(p)) ||
-    (r = term(p));
+    (a = sum_1(p)) ||
+    (a = sum_2(p)) ||
+    (a = term(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1522,12 +1522,12 @@ RULE(term) {
     ENTER_FRAME(p, 138, "term");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = term_1(p)) ||
-    (r = term_2(p)) ||
-    (r = term_3(p)) ||
-    (r = term_4(p)) ||
-    (r = term_5(p)) ||
-    (r = pipe_expr(p));
+    (a = term_1(p)) ||
+    (a = term_2(p)) ||
+    (a = term_3(p)) ||
+    (a = term_4(p)) ||
+    (a = term_5(p)) ||
+    (a = pipe_expr(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1584,8 +1584,8 @@ RULE(pipe_expr) {
     ENTER_FRAME(p, 144, "pipe_expr");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = pipe_expr_1(p)) ||
-    (r = factor(p));
+    (a = pipe_expr_1(p)) ||
+    (a = factor(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
@@ -1667,10 +1667,10 @@ RULE(primary) {
     ENTER_FRAME(p, 152, "primary");
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
-    (r = primary_1(p)) ||
-    (r = primary_2(p)) ||
-    (r = primary_3(p)) ||
-    (r = atom(p));
+    (a = primary_1(p)) ||
+    (a = primary_2(p)) ||
+    (a = primary_3(p)) ||
+    (a = atom(p));
     EXIT_LEFT_RECURSION(p);
     EXIT_FRAME(p);
 }
