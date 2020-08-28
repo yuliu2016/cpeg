@@ -6,7 +6,7 @@
 //     | simple_stmt
 //     | compound_stmt NEWLINE
 RULE(single_input) {
-    ENTER_FRAME(p, 1, "single_input");
+    ENTER_FRAME(p, 1);
     (a = TOKEN(p, 2, "NEWLINE")) ||
     (a = simple_stmt(p)) ||
     (a = single_input_3(p))
@@ -15,7 +15,7 @@ RULE(single_input) {
 }
 
 RULE(single_input_3) {
-    ENTER_FRAME(p, 2, "single_input:3");
+    ENTER_FRAME(p, 2);
     (a = compound_stmt(p)) &&
     (b = TOKEN(p, 2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -25,7 +25,7 @@ RULE(single_input_3) {
 // file_input:
 //     | (NEWLINE | stmt)* ENDMARKER
 RULE(file_input) {
-    ENTER_FRAME(p, 3, "file_input");
+    ENTER_FRAME(p, 3);
     (a = SEQ_OR_NONE(p, file_input_1)) &&
     (b = TOKEN(p, 1, "ENDMARKER"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -33,7 +33,7 @@ RULE(file_input) {
 }
 
 RULE(file_input_1) {
-    ENTER_FRAME(p, 4, "file_input:1");
+    ENTER_FRAME(p, 4);
     (a = TOKEN(p, 2, "NEWLINE")) ||
     (a = stmt(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -43,7 +43,7 @@ RULE(file_input_1) {
 // eval_input:
 //     | exprlist NEWLINE* ENDMARKER
 RULE(eval_input) {
-    ENTER_FRAME(p, 5, "eval_input");
+    ENTER_FRAME(p, 5);
     (a = exprlist(p)) &&
     (b = eval_input_loop(p)) &&
     (c = TOKEN(p, 1, "ENDMARKER"))
@@ -62,7 +62,7 @@ RULE(eval_input_loop) {
 // stmt:
 //     | (simple_stmt | compound_stmt) NEWLINE
 RULE(stmt) {
-    ENTER_FRAME(p, 6, "stmt");
+    ENTER_FRAME(p, 6);
     (a = stmt_1(p)) &&
     (b = TOKEN(p, 2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -70,7 +70,7 @@ RULE(stmt) {
 }
 
 RULE(stmt_1) {
-    ENTER_FRAME(p, 7, "stmt:1");
+    ENTER_FRAME(p, 7);
     (a = simple_stmt(p)) ||
     (a = compound_stmt(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -80,7 +80,7 @@ RULE(stmt_1) {
 // simple_stmt:
 //     | ';'.small_stmt+ [';']
 RULE(simple_stmt) {
-    ENTER_FRAME(p, 8, "simple_stmt");
+    ENTER_FRAME(p, 8);
     (a = DELIMITED(p, 12, ";", small_stmt)) &&
     (b = OPTIONAL(TOKEN(p, 12, ";")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -100,7 +100,7 @@ RULE(simple_stmt) {
 //     | import_from
 //     | assignment
 RULE(small_stmt) {
-    ENTER_FRAME(p, 9, "small_stmt");
+    ENTER_FRAME(p, 9);
     (a = TOKEN(p, 64, "pass")) ||
     (a = TOKEN(p, 74, "break")) ||
     (a = TOKEN(p, 73, "continue")) ||
@@ -119,7 +119,7 @@ RULE(small_stmt) {
 // del_stmt:
 //     | 'del' targetlist
 RULE(del_stmt) {
-    ENTER_FRAME(p, 10, "del_stmt");
+    ENTER_FRAME(p, 10);
     (TOKEN(p, 79, "del")) &&
     (a = targetlist(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -129,7 +129,7 @@ RULE(del_stmt) {
 // return_stmt:
 //     | 'return' [exprlist_star]
 RULE(return_stmt) {
-    ENTER_FRAME(p, 11, "return_stmt");
+    ENTER_FRAME(p, 11);
     (TOKEN(p, 54, "return")) &&
     (a = OPTIONAL(exprlist_star(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -139,7 +139,7 @@ RULE(return_stmt) {
 // raise_stmt:
 //     | 'raise' expr ['from' expr]
 RULE(raise_stmt) {
-    ENTER_FRAME(p, 12, "raise_stmt");
+    ENTER_FRAME(p, 12);
     (TOKEN(p, 78, "raise")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(raise_stmt_3(p)))
@@ -148,7 +148,7 @@ RULE(raise_stmt) {
 }
 
 RULE(raise_stmt_3) {
-    ENTER_FRAME(p, 13, "raise_stmt:3");
+    ENTER_FRAME(p, 13);
     (TOKEN(p, 66, "from")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -158,7 +158,7 @@ RULE(raise_stmt_3) {
 // nonlocal_stmt:
 //     | 'nonlocal' name_list
 RULE(nonlocal_stmt) {
-    ENTER_FRAME(p, 14, "nonlocal_stmt");
+    ENTER_FRAME(p, 14);
     (TOKEN(p, 55, "nonlocal")) &&
     (a = name_list(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -168,7 +168,7 @@ RULE(nonlocal_stmt) {
 // assert_stmt:
 //     | 'assert' expr [',' expr]
 RULE(assert_stmt) {
-    ENTER_FRAME(p, 15, "assert_stmt");
+    ENTER_FRAME(p, 15);
     (TOKEN(p, 80, "assert")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(assert_stmt_3(p)))
@@ -177,7 +177,7 @@ RULE(assert_stmt) {
 }
 
 RULE(assert_stmt_3) {
-    ENTER_FRAME(p, 16, "assert_stmt:3");
+    ENTER_FRAME(p, 16);
     (TOKEN(p, 7, ",")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -187,7 +187,7 @@ RULE(assert_stmt_3) {
 // name_list:
 //     | ','.NAME+
 RULE(name_list) {
-    ENTER_FRAME(p, 17, "name_list");
+    ENTER_FRAME(p, 17);
     (a = name_list_loop(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -209,7 +209,7 @@ RULE(name_list_loop) {
 // star_expr:
 //     | '*' bitwise_or
 RULE(star_expr) {
-    ENTER_FRAME(p, 18, "star_expr");
+    ENTER_FRAME(p, 18);
     (TOKEN(p, 23, "*")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -219,7 +219,7 @@ RULE(star_expr) {
 // exprlist:
 //     | ','.expr+ [',']
 RULE(exprlist) {
-    ENTER_FRAME(p, 19, "exprlist");
+    ENTER_FRAME(p, 19);
     (a = DELIMITED(p, 7, ",", expr)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -232,7 +232,7 @@ RULE(exprlist) {
 //     | NAME
 //     | '(' targetlist ')'
 RULE(target) {
-    ENTER_FRAME(p, 20, "target");
+    ENTER_FRAME(p, 20);
     (a = target_1(p)) ||
     (a = target_2(p)) ||
     (a = TOKEN(p, 3, "NAME")) ||
@@ -242,7 +242,7 @@ RULE(target) {
 }
 
 RULE(target_1) {
-    ENTER_FRAME(p, 21, "target:1");
+    ENTER_FRAME(p, 21);
     (a = t_primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME")) &&
@@ -252,7 +252,7 @@ RULE(target_1) {
 }
 
 RULE(target_2) {
-    ENTER_FRAME(p, 22, "target:2");
+    ENTER_FRAME(p, 22);
     (a = t_primary(p)) &&
     (b = subscript(p)) &&
     (!TEST(p, t_lookahead(p)))
@@ -261,7 +261,7 @@ RULE(target_2) {
 }
 
 RULE(target_4) {
-    ENTER_FRAME(p, 23, "target:4");
+    ENTER_FRAME(p, 23);
     (TOKEN(p, 13, "(")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 14, ")"))
@@ -275,7 +275,7 @@ RULE(target_4) {
 //     | t_primary subscript &t_lookahead
 //     | atom &t_lookahead
 RULE(t_primary) {
-    ENTER_FRAME(p, 24, "t_primary");
+    ENTER_FRAME(p, 24);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = t_primary_1(p)) ||
@@ -287,7 +287,7 @@ RULE(t_primary) {
 }
 
 RULE(t_primary_1) {
-    ENTER_FRAME(p, 25, "t_primary:1");
+    ENTER_FRAME(p, 25);
     (a = t_primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME")) &&
@@ -297,7 +297,7 @@ RULE(t_primary_1) {
 }
 
 RULE(t_primary_2) {
-    ENTER_FRAME(p, 26, "t_primary:2");
+    ENTER_FRAME(p, 26);
     (a = t_primary(p)) &&
     (b = invocation(p)) &&
     (TEST(p, t_lookahead(p)))
@@ -306,7 +306,7 @@ RULE(t_primary_2) {
 }
 
 RULE(t_primary_3) {
-    ENTER_FRAME(p, 27, "t_primary:3");
+    ENTER_FRAME(p, 27);
     (a = t_primary(p)) &&
     (b = subscript(p)) &&
     (TEST(p, t_lookahead(p)))
@@ -315,7 +315,7 @@ RULE(t_primary_3) {
 }
 
 RULE(t_primary_4) {
-    ENTER_FRAME(p, 28, "t_primary:4");
+    ENTER_FRAME(p, 28);
     (a = atom(p)) &&
     (TEST(p, t_lookahead(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -327,7 +327,7 @@ RULE(t_primary_4) {
 //     | '('
 //     | '['
 RULE(t_lookahead) {
-    ENTER_FRAME(p, 29, "t_lookahead");
+    ENTER_FRAME(p, 29);
     (a = TOKEN(p, 6, ".")) ||
     (a = TOKEN(p, 13, "(")) ||
     (a = TOKEN(p, 17, "["))
@@ -338,7 +338,7 @@ RULE(t_lookahead) {
 // targetlist:
 //     | ','.target+ [',']
 RULE(targetlist) {
-    ENTER_FRAME(p, 30, "targetlist");
+    ENTER_FRAME(p, 30);
     (a = DELIMITED(p, 7, ",", target)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -349,7 +349,7 @@ RULE(targetlist) {
 //     | star_expr
 //     | expr
 RULE(expr_or_star) {
-    ENTER_FRAME(p, 31, "expr_or_star");
+    ENTER_FRAME(p, 31);
     (a = star_expr(p)) ||
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -359,7 +359,7 @@ RULE(expr_or_star) {
 // exprlist_star:
 //     | ','.expr_or_star+ [',']
 RULE(exprlist_star) {
-    ENTER_FRAME(p, 32, "exprlist_star");
+    ENTER_FRAME(p, 32);
     (a = DELIMITED(p, 7, ",", expr_or_star)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -370,7 +370,7 @@ RULE(exprlist_star) {
 //     | star_expr
 //     | named_expr
 RULE(named_expr_star) {
-    ENTER_FRAME(p, 33, "named_expr_star");
+    ENTER_FRAME(p, 33);
     (a = star_expr(p)) ||
     (a = named_expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -380,7 +380,7 @@ RULE(named_expr_star) {
 // named_expr_list:
 //     | ','.named_expr_star+ [',']
 RULE(named_expr_list) {
-    ENTER_FRAME(p, 34, "named_expr_list");
+    ENTER_FRAME(p, 34);
     (a = DELIMITED(p, 7, ",", named_expr_star)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -390,7 +390,7 @@ RULE(named_expr_list) {
 // subscript:
 //     | '[' slicelist ']'
 RULE(subscript) {
-    ENTER_FRAME(p, 35, "subscript");
+    ENTER_FRAME(p, 35);
     (TOKEN(p, 17, "[")) &&
     (a = slicelist(p)) &&
     (TOKEN(p, 18, "]"))
@@ -401,7 +401,7 @@ RULE(subscript) {
 // slicelist:
 //     | ','.slice+ [',']
 RULE(slicelist) {
-    ENTER_FRAME(p, 36, "slicelist");
+    ENTER_FRAME(p, 36);
     (a = DELIMITED(p, 7, ",", slice)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -412,7 +412,7 @@ RULE(slicelist) {
 //     | [expr] slice_expr [slice_expr]
 //     | expr
 RULE(slice) {
-    ENTER_FRAME(p, 37, "slice");
+    ENTER_FRAME(p, 37);
     (a = slice_1(p)) ||
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -420,7 +420,7 @@ RULE(slice) {
 }
 
 RULE(slice_1) {
-    ENTER_FRAME(p, 38, "slice:1");
+    ENTER_FRAME(p, 38);
     (a = OPTIONAL(expr(p))) &&
     (b = slice_expr(p)) &&
     (c = OPTIONAL(slice_expr(p)))
@@ -431,7 +431,7 @@ RULE(slice_1) {
 // slice_expr:
 //     | ':' [expr]
 RULE(slice_expr) {
-    ENTER_FRAME(p, 39, "slice_expr");
+    ENTER_FRAME(p, 39);
     (TOKEN(p, 9, ":")) &&
     (a = OPTIONAL(expr(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -442,7 +442,7 @@ RULE(slice_expr) {
 //     | expr ':' expr
 //     | '**' bitwise_or
 RULE(dict_item) {
-    ENTER_FRAME(p, 40, "dict_item");
+    ENTER_FRAME(p, 40);
     (a = dict_item_1(p)) ||
     (a = dict_item_2(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -450,7 +450,7 @@ RULE(dict_item) {
 }
 
 RULE(dict_item_1) {
-    ENTER_FRAME(p, 41, "dict_item:1");
+    ENTER_FRAME(p, 41);
     (a = expr(p)) &&
     (TOKEN(p, 9, ":")) &&
     (b = expr(p))
@@ -459,7 +459,7 @@ RULE(dict_item_1) {
 }
 
 RULE(dict_item_2) {
-    ENTER_FRAME(p, 42, "dict_item:2");
+    ENTER_FRAME(p, 42);
     (TOKEN(p, 38, "**")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -469,7 +469,7 @@ RULE(dict_item_2) {
 // dict_items:
 //     | ','.dict_item+ [',']
 RULE(dict_items) {
-    ENTER_FRAME(p, 43, "dict_items");
+    ENTER_FRAME(p, 43);
     (a = DELIMITED(p, 7, ",", dict_item)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -479,7 +479,7 @@ RULE(dict_items) {
 // as_name:
 //     | 'as' NAME
 RULE(as_name) {
-    ENTER_FRAME(p, 44, "as_name");
+    ENTER_FRAME(p, 44);
     (TOKEN(p, 65, "as")) &&
     (a = TOKEN(p, 3, "NAME"))
     ? (r = NODE_1(p, a)) : 0;
@@ -489,7 +489,7 @@ RULE(as_name) {
 // iter_for:
 //     | 'for' targetlist 'in' disjunction [iter_if]
 RULE(iter_for) {
-    ENTER_FRAME(p, 45, "iter_for");
+    ENTER_FRAME(p, 45);
     (TOKEN(p, 72, "for")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 63, "in")) &&
@@ -502,7 +502,7 @@ RULE(iter_for) {
 // iter_if:
 //     | 'if' named_expr
 RULE(iter_if) {
-    ENTER_FRAME(p, 46, "iter_if");
+    ENTER_FRAME(p, 46);
     (TOKEN(p, 56, "if")) &&
     (a = named_expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -512,7 +512,7 @@ RULE(iter_if) {
 // iterator:
 //     | iter_for* 'for' targetlist [iter_if]
 RULE(iterator) {
-    ENTER_FRAME(p, 47, "iterator");
+    ENTER_FRAME(p, 47);
     (a = SEQ_OR_NONE(p, iter_for)) &&
     (TOKEN(p, 72, "for")) &&
     (b = targetlist(p)) &&
@@ -527,7 +527,7 @@ RULE(iterator) {
 //     | augassign
 //     | simple_assign
 RULE(assignment) {
-    ENTER_FRAME(p, 48, "assignment");
+    ENTER_FRAME(p, 48);
     (a = pubassign(p)) ||
     (a = annassign(p)) ||
     (a = augassign(p)) ||
@@ -539,7 +539,7 @@ RULE(assignment) {
 // pubassign:
 //     | '/' NAME '=' exprlist
 RULE(pubassign) {
-    ENTER_FRAME(p, 49, "pubassign");
+    ENTER_FRAME(p, 49);
     (TOKEN(p, 24, "/")) &&
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 8, "=")) &&
@@ -551,7 +551,7 @@ RULE(pubassign) {
 // annassign:
 //     | target ':' expr ['=' exprlist]
 RULE(annassign) {
-    ENTER_FRAME(p, 50, "annassign");
+    ENTER_FRAME(p, 50);
     (a = target(p)) &&
     (TOKEN(p, 9, ":")) &&
     (b = expr(p)) &&
@@ -561,7 +561,7 @@ RULE(annassign) {
 }
 
 RULE(annassign_4) {
-    ENTER_FRAME(p, 51, "annassign:4");
+    ENTER_FRAME(p, 51);
     (TOKEN(p, 8, "=")) &&
     (a = exprlist(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -571,7 +571,7 @@ RULE(annassign_4) {
 // augassign:
 //     | target augassign_op exprlist
 RULE(augassign) {
-    ENTER_FRAME(p, 52, "augassign");
+    ENTER_FRAME(p, 52);
     (a = target(p)) &&
     (b = augassign_op(p)) &&
     (c = exprlist(p))
@@ -582,7 +582,7 @@ RULE(augassign) {
 // simple_assign:
 //     | (targetlist '=')* exprlist_star
 RULE(simple_assign) {
-    ENTER_FRAME(p, 53, "simple_assign");
+    ENTER_FRAME(p, 53);
     (a = SEQ_OR_NONE(p, simple_assign_1)) &&
     (b = exprlist_star(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -590,7 +590,7 @@ RULE(simple_assign) {
 }
 
 RULE(simple_assign_1) {
-    ENTER_FRAME(p, 54, "simple_assign:1");
+    ENTER_FRAME(p, 54);
     (a = targetlist(p)) &&
     (TOKEN(p, 8, "="))
     ? (r = NODE_1(p, a)) : 0;
@@ -612,7 +612,7 @@ RULE(simple_assign_1) {
 //     | '**='
 //     | '//='
 RULE(augassign_op) {
-    ENTER_FRAME(p, 55, "augassign_op");
+    ENTER_FRAME(p, 55);
     (a = TOKEN(p, 39, "+=")) ||
     (a = TOKEN(p, 40, "-=")) ||
     (a = TOKEN(p, 41, "*=")) ||
@@ -633,7 +633,7 @@ RULE(augassign_op) {
 // import_name:
 //     | 'import' dotted_as_names
 RULE(import_name) {
-    ENTER_FRAME(p, 56, "import_name");
+    ENTER_FRAME(p, 56);
     (TOKEN(p, 67, "import")) &&
     (a = dotted_as_names(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -643,7 +643,7 @@ RULE(import_name) {
 // import_from:
 //     | 'from' import_from_names 'import' import_from_items
 RULE(import_from) {
-    ENTER_FRAME(p, 57, "import_from");
+    ENTER_FRAME(p, 57);
     (TOKEN(p, 66, "from")) &&
     (a = import_from_names(p)) &&
     (TOKEN(p, 67, "import")) &&
@@ -656,7 +656,7 @@ RULE(import_from) {
 //     | dotted_name
 //     | '.'+ [dotted_name]
 RULE(import_from_names) {
-    ENTER_FRAME(p, 58, "import_from_names");
+    ENTER_FRAME(p, 58);
     (a = dotted_name(p)) ||
     (a = import_from_names_2(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -664,7 +664,7 @@ RULE(import_from_names) {
 }
 
 RULE(import_from_names_2) {
-    ENTER_FRAME(p, 59, "import_from_names:2");
+    ENTER_FRAME(p, 59);
     (import_from_names_2_loop(p)) &&
     (a = OPTIONAL(dotted_name(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -685,7 +685,7 @@ RULE(import_from_names_2_loop) {
 //     | '(' import_as_names [','] ')'
 //     | import_as_names
 RULE(import_from_items) {
-    ENTER_FRAME(p, 60, "import_from_items");
+    ENTER_FRAME(p, 60);
     (a = TOKEN(p, 23, "*")) ||
     (a = import_from_items_2(p)) ||
     (a = import_as_names(p))
@@ -694,7 +694,7 @@ RULE(import_from_items) {
 }
 
 RULE(import_from_items_2) {
-    ENTER_FRAME(p, 61, "import_from_items:2");
+    ENTER_FRAME(p, 61);
     (TOKEN(p, 13, "(")) &&
     (a = import_as_names(p)) &&
     (b = OPTIONAL(TOKEN(p, 7, ","))) &&
@@ -706,7 +706,7 @@ RULE(import_from_items_2) {
 // import_as_name:
 //     | NAME [as_name]
 RULE(import_as_name) {
-    ENTER_FRAME(p, 62, "import_as_name");
+    ENTER_FRAME(p, 62);
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -716,7 +716,7 @@ RULE(import_as_name) {
 // dotted_as_name:
 //     | dotted_name [as_name]
 RULE(dotted_as_name) {
-    ENTER_FRAME(p, 63, "dotted_as_name");
+    ENTER_FRAME(p, 63);
     (a = dotted_name(p)) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -726,7 +726,7 @@ RULE(dotted_as_name) {
 // import_as_names:
 //     | ','.import_as_name+
 RULE(import_as_names) {
-    ENTER_FRAME(p, 64, "import_as_names");
+    ENTER_FRAME(p, 64);
     (a = DELIMITED(p, 7, ",", import_as_name))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -735,7 +735,7 @@ RULE(import_as_names) {
 // dotted_as_names:
 //     | ','.dotted_as_name+
 RULE(dotted_as_names) {
-    ENTER_FRAME(p, 65, "dotted_as_names");
+    ENTER_FRAME(p, 65);
     (a = DELIMITED(p, 7, ",", dotted_as_name))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -744,7 +744,7 @@ RULE(dotted_as_names) {
 // dotted_name:
 //     | '.'.NAME+
 RULE(dotted_name) {
-    ENTER_FRAME(p, 66, "dotted_name");
+    ENTER_FRAME(p, 66);
     (a = dotted_name_loop(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -770,7 +770,7 @@ RULE(dotted_name_loop) {
 //     | try_stmt
 //     | with_stmt
 RULE(compound_stmt) {
-    ENTER_FRAME(p, 67, "compound_stmt");
+    ENTER_FRAME(p, 67);
     (a = if_stmt(p)) ||
     (a = while_stmt(p)) ||
     (a = for_stmt(p)) ||
@@ -783,7 +783,7 @@ RULE(compound_stmt) {
 // if_stmt:
 //     | 'if' named_expr suite elif_stmt* [else_suite]
 RULE(if_stmt) {
-    ENTER_FRAME(p, 68, "if_stmt");
+    ENTER_FRAME(p, 68);
     (TOKEN(p, 56, "if")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
@@ -796,7 +796,7 @@ RULE(if_stmt) {
 // elif_stmt:
 //     | 'elif' named_expr suite
 RULE(elif_stmt) {
-    ENTER_FRAME(p, 69, "elif_stmt");
+    ENTER_FRAME(p, 69);
     (TOKEN(p, 57, "elif")) &&
     (a = named_expr(p)) &&
     (b = suite(p))
@@ -807,7 +807,7 @@ RULE(elif_stmt) {
 // while_stmt:
 //     | 'while' named_expr suite [else_suite]
 RULE(while_stmt) {
-    ENTER_FRAME(p, 70, "while_stmt");
+    ENTER_FRAME(p, 70);
     (TOKEN(p, 71, "while")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
@@ -819,7 +819,7 @@ RULE(while_stmt) {
 // for_stmt:
 //     | 'for' targetlist 'in' exprlist suite [else_suite]
 RULE(for_stmt) {
-    ENTER_FRAME(p, 71, "for_stmt");
+    ENTER_FRAME(p, 71);
     (TOKEN(p, 72, "for")) &&
     (a = targetlist(p)) &&
     (TOKEN(p, 63, "in")) &&
@@ -833,7 +833,7 @@ RULE(for_stmt) {
 // try_stmt:
 //     | 'try' suite (except_suite | finally_suite)
 RULE(try_stmt) {
-    ENTER_FRAME(p, 72, "try_stmt");
+    ENTER_FRAME(p, 72);
     (TOKEN(p, 75, "try")) &&
     (a = suite(p)) &&
     (b = try_stmt_3(p))
@@ -842,7 +842,7 @@ RULE(try_stmt) {
 }
 
 RULE(try_stmt_3) {
-    ENTER_FRAME(p, 73, "try_stmt:3");
+    ENTER_FRAME(p, 73);
     (a = except_suite(p)) ||
     (a = finally_suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -852,7 +852,7 @@ RULE(try_stmt_3) {
 // with_stmt:
 //     | 'with' ','.expr_as_name+ suite
 RULE(with_stmt) {
-    ENTER_FRAME(p, 74, "with_stmt");
+    ENTER_FRAME(p, 74);
     (TOKEN(p, 68, "with")) &&
     (a = DELIMITED(p, 7, ",", expr_as_name)) &&
     (b = suite(p))
@@ -863,7 +863,7 @@ RULE(with_stmt) {
 // expr_as_name:
 //     | expr [as_name]
 RULE(expr_as_name) {
-    ENTER_FRAME(p, 75, "expr_as_name");
+    ENTER_FRAME(p, 75);
     (a = expr(p)) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -874,7 +874,7 @@ RULE(expr_as_name) {
 //     | '{' NEWLINE stmt+ '}'
 //     | '{' '}'
 RULE(block_suite) {
-    ENTER_FRAME(p, 76, "block_suite");
+    ENTER_FRAME(p, 76);
     (a = block_suite_1(p)) ||
     (a = block_suite_2(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -882,7 +882,7 @@ RULE(block_suite) {
 }
 
 RULE(block_suite_1) {
-    ENTER_FRAME(p, 77, "block_suite:1");
+    ENTER_FRAME(p, 77);
     (TOKEN(p, 15, "{")) &&
     (a = TOKEN(p, 2, "NEWLINE")) &&
     (b = SEQUENCE(p, stmt)) &&
@@ -892,7 +892,7 @@ RULE(block_suite_1) {
 }
 
 RULE(block_suite_2) {
-    ENTER_FRAME(p, 78, "block_suite:2");
+    ENTER_FRAME(p, 78);
     (TOKEN(p, 15, "{")) &&
     (TOKEN(p, 16, "}"));
     EXIT_FRAME(p);
@@ -902,7 +902,7 @@ RULE(block_suite_2) {
 //     | ':' simple_stmt
 //     | block_suite
 RULE(suite) {
-    ENTER_FRAME(p, 79, "suite");
+    ENTER_FRAME(p, 79);
     (a = suite_1(p)) ||
     (a = block_suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -910,7 +910,7 @@ RULE(suite) {
 }
 
 RULE(suite_1) {
-    ENTER_FRAME(p, 80, "suite:1");
+    ENTER_FRAME(p, 80);
     (TOKEN(p, 9, ":")) &&
     (a = simple_stmt(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -920,7 +920,7 @@ RULE(suite_1) {
 // else_suite:
 //     | 'else' suite
 RULE(else_suite) {
-    ENTER_FRAME(p, 81, "else_suite");
+    ENTER_FRAME(p, 81);
     (TOKEN(p, 58, "else")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -930,7 +930,7 @@ RULE(else_suite) {
 // finally_suite:
 //     | 'finally' suite
 RULE(finally_suite) {
-    ENTER_FRAME(p, 82, "finally_suite");
+    ENTER_FRAME(p, 82);
     (TOKEN(p, 77, "finally")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -940,7 +940,7 @@ RULE(finally_suite) {
 // except_clause:
 //     | 'except' [expr_as_name] suite
 RULE(except_clause) {
-    ENTER_FRAME(p, 83, "except_clause");
+    ENTER_FRAME(p, 83);
     (TOKEN(p, 76, "except")) &&
     (a = OPTIONAL(expr_as_name(p))) &&
     (b = suite(p))
@@ -951,7 +951,7 @@ RULE(except_clause) {
 // except_suite:
 //     | except_clause+ [else_suite] [finally_suite]
 RULE(except_suite) {
-    ENTER_FRAME(p, 84, "except_suite");
+    ENTER_FRAME(p, 84);
     (a = SEQUENCE(p, except_clause)) &&
     (b = OPTIONAL(else_suite(p))) &&
     (c = OPTIONAL(finally_suite(p)))
@@ -962,7 +962,7 @@ RULE(except_suite) {
 // invocation:
 //     | '(' [call_arg_list] ')'
 RULE(invocation) {
-    ENTER_FRAME(p, 85, "invocation");
+    ENTER_FRAME(p, 85);
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(call_arg_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -973,7 +973,7 @@ RULE(invocation) {
 // call_arg_list:
 //     | ','.call_arg+ [',']
 RULE(call_arg_list) {
-    ENTER_FRAME(p, 86, "call_arg_list");
+    ENTER_FRAME(p, 86);
     (a = DELIMITED(p, 7, ",", call_arg)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -987,7 +987,7 @@ RULE(call_arg_list) {
 //     | '*' expr
 //     | expr
 RULE(call_arg) {
-    ENTER_FRAME(p, 87, "call_arg");
+    ENTER_FRAME(p, 87);
     (a = call_arg_1(p)) ||
     (a = call_arg_2(p)) ||
     (a = call_arg_3(p)) ||
@@ -998,7 +998,7 @@ RULE(call_arg) {
 }
 
 RULE(call_arg_1) {
-    ENTER_FRAME(p, 88, "call_arg:1");
+    ENTER_FRAME(p, 88);
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 36, ":=")) &&
     (b = expr(p))
@@ -1007,7 +1007,7 @@ RULE(call_arg_1) {
 }
 
 RULE(call_arg_2) {
-    ENTER_FRAME(p, 89, "call_arg:2");
+    ENTER_FRAME(p, 89);
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 8, "=")) &&
     (b = expr(p))
@@ -1016,7 +1016,7 @@ RULE(call_arg_2) {
 }
 
 RULE(call_arg_3) {
-    ENTER_FRAME(p, 90, "call_arg:3");
+    ENTER_FRAME(p, 90);
     (TOKEN(p, 38, "**")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1024,7 +1024,7 @@ RULE(call_arg_3) {
 }
 
 RULE(call_arg_4) {
-    ENTER_FRAME(p, 91, "call_arg:4");
+    ENTER_FRAME(p, 91);
     (TOKEN(p, 23, "*")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1036,7 +1036,7 @@ RULE(call_arg_4) {
 //     | args_kwargs
 //     | full_arg_list
 RULE(typed_arg_list) {
-    ENTER_FRAME(p, 92, "typed_arg_list");
+    ENTER_FRAME(p, 92);
     (a = kwargs(p)) ||
     (a = args_kwargs(p)) ||
     (a = full_arg_list(p))
@@ -1047,7 +1047,7 @@ RULE(typed_arg_list) {
 // full_arg_list:
 //     | ','.default_arg+ [',' [kwargs | args_kwargs]]
 RULE(full_arg_list) {
-    ENTER_FRAME(p, 93, "full_arg_list");
+    ENTER_FRAME(p, 93);
     (a = DELIMITED(p, 7, ",", default_arg)) &&
     (b = OPTIONAL(full_arg_list_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1055,7 +1055,7 @@ RULE(full_arg_list) {
 }
 
 RULE(full_arg_list_2) {
-    ENTER_FRAME(p, 94, "full_arg_list:2");
+    ENTER_FRAME(p, 94);
     (TOKEN(p, 7, ",")) &&
     (a = OPTIONAL(full_arg_list_2_2(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -1063,7 +1063,7 @@ RULE(full_arg_list_2) {
 }
 
 RULE(full_arg_list_2_2) {
-    ENTER_FRAME(p, 95, "full_arg_list:2:2");
+    ENTER_FRAME(p, 95);
     (a = kwargs(p)) ||
     (a = args_kwargs(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1073,7 +1073,7 @@ RULE(full_arg_list_2_2) {
 // args_kwargs:
 //     | '*' [typed_arg] (',' default_arg)* [',' [kwargs]]
 RULE(args_kwargs) {
-    ENTER_FRAME(p, 96, "args_kwargs");
+    ENTER_FRAME(p, 96);
     (TOKEN(p, 23, "*")) &&
     (a = OPTIONAL(typed_arg(p))) &&
     (b = SEQ_OR_NONE(p, args_kwargs_3)) &&
@@ -1083,7 +1083,7 @@ RULE(args_kwargs) {
 }
 
 RULE(args_kwargs_3) {
-    ENTER_FRAME(p, 97, "args_kwargs:3");
+    ENTER_FRAME(p, 97);
     (TOKEN(p, 7, ",")) &&
     (a = default_arg(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1091,7 +1091,7 @@ RULE(args_kwargs_3) {
 }
 
 RULE(args_kwargs_4) {
-    ENTER_FRAME(p, 98, "args_kwargs:4");
+    ENTER_FRAME(p, 98);
     (TOKEN(p, 7, ",")) &&
     (a = OPTIONAL(kwargs(p)))
     ? (r = NODE_1(p, a)) : 0;
@@ -1101,7 +1101,7 @@ RULE(args_kwargs_4) {
 // kwargs:
 //     | '**' typed_arg [',']
 RULE(kwargs) {
-    ENTER_FRAME(p, 99, "kwargs");
+    ENTER_FRAME(p, 99);
     (TOKEN(p, 38, "**")) &&
     (a = typed_arg(p)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
@@ -1112,7 +1112,7 @@ RULE(kwargs) {
 // default_arg:
 //     | typed_arg ['=' expr]
 RULE(default_arg) {
-    ENTER_FRAME(p, 100, "default_arg");
+    ENTER_FRAME(p, 100);
     (a = typed_arg(p)) &&
     (b = OPTIONAL(default_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1120,7 +1120,7 @@ RULE(default_arg) {
 }
 
 RULE(default_arg_2) {
-    ENTER_FRAME(p, 101, "default_arg:2");
+    ENTER_FRAME(p, 101);
     (TOKEN(p, 8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1130,7 +1130,7 @@ RULE(default_arg_2) {
 // typed_arg:
 //     | NAME [':' expr]
 RULE(typed_arg) {
-    ENTER_FRAME(p, 102, "typed_arg");
+    ENTER_FRAME(p, 102);
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(typed_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1138,7 +1138,7 @@ RULE(typed_arg) {
 }
 
 RULE(typed_arg_2) {
-    ENTER_FRAME(p, 103, "typed_arg:2");
+    ENTER_FRAME(p, 103);
     (TOKEN(p, 9, ":")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1148,7 +1148,7 @@ RULE(typed_arg_2) {
 // simple_arg:
 //     | NAME ['=' expr]
 RULE(simple_arg) {
-    ENTER_FRAME(p, 104, "simple_arg");
+    ENTER_FRAME(p, 104);
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(simple_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1156,7 +1156,7 @@ RULE(simple_arg) {
 }
 
 RULE(simple_arg_2) {
-    ENTER_FRAME(p, 105, "simple_arg:2");
+    ENTER_FRAME(p, 105);
     (TOKEN(p, 8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1166,7 +1166,7 @@ RULE(simple_arg_2) {
 // simple_args:
 //     | ','.simple_arg+
 RULE(simple_args) {
-    ENTER_FRAME(p, 106, "simple_args");
+    ENTER_FRAME(p, 106);
     (a = DELIMITED(p, 7, ",", simple_arg))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
@@ -1175,7 +1175,7 @@ RULE(simple_args) {
 // builder_hint:
 //     | '<' name_list '>'
 RULE(builder_hint) {
-    ENTER_FRAME(p, 107, "builder_hint");
+    ENTER_FRAME(p, 107);
     (TOKEN(p, 19, "<")) &&
     (a = name_list(p)) &&
     (TOKEN(p, 20, ">"))
@@ -1187,7 +1187,7 @@ RULE(builder_hint) {
 //     | simple_args
 //     | '(' [typed_arg_list] ')'
 RULE(builder_args) {
-    ENTER_FRAME(p, 108, "builder_args");
+    ENTER_FRAME(p, 108);
     (a = simple_args(p)) ||
     (a = builder_args_2(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1195,7 +1195,7 @@ RULE(builder_args) {
 }
 
 RULE(builder_args_2) {
-    ENTER_FRAME(p, 109, "builder_args:2");
+    ENTER_FRAME(p, 109);
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(typed_arg_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -1207,7 +1207,7 @@ RULE(builder_args_2) {
 //     | NAME ':=' expr
 //     | expr
 RULE(named_expr) {
-    ENTER_FRAME(p, 110, "named_expr");
+    ENTER_FRAME(p, 110);
     (a = named_expr_1(p)) ||
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1215,7 +1215,7 @@ RULE(named_expr) {
 }
 
 RULE(named_expr_1) {
-    ENTER_FRAME(p, 111, "named_expr:1");
+    ENTER_FRAME(p, 111);
     (a = TOKEN(p, 3, "NAME")) &&
     (TOKEN(p, 36, ":=")) &&
     (b = expr(p))
@@ -1226,7 +1226,7 @@ RULE(named_expr_1) {
 // conditional:
 //     | 'if' disjunction '?' disjunction ':' expr
 RULE(conditional) {
-    ENTER_FRAME(p, 112, "conditional");
+    ENTER_FRAME(p, 112);
     (TOKEN(p, 56, "if")) &&
     (a = disjunction(p)) &&
     (TOKEN(p, 10, "?")) &&
@@ -1241,7 +1241,7 @@ RULE(conditional) {
 //     | conditional
 //     | disjunction
 RULE(expr) {
-    ENTER_FRAME(p, 113, "expr");
+    ENTER_FRAME(p, 113);
     (a = conditional(p)) ||
     (a = disjunction(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1252,7 +1252,7 @@ RULE(expr) {
 //     | disjunction 'or' conjunction
 //     | conjunction
 RULE(disjunction) {
-    ENTER_FRAME(p, 114, "disjunction");
+    ENTER_FRAME(p, 114);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = disjunction_1(p)) ||
@@ -1262,7 +1262,7 @@ RULE(disjunction) {
 }
 
 RULE(disjunction_1) {
-    ENTER_FRAME(p, 115, "disjunction:1");
+    ENTER_FRAME(p, 115);
     (a = disjunction(p)) &&
     (TOKEN(p, 60, "or")) &&
     (b = conjunction(p))
@@ -1274,7 +1274,7 @@ RULE(disjunction_1) {
 //     | conjunction 'and' inversion
 //     | inversion
 RULE(conjunction) {
-    ENTER_FRAME(p, 116, "conjunction");
+    ENTER_FRAME(p, 116);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = conjunction_1(p)) ||
@@ -1284,7 +1284,7 @@ RULE(conjunction) {
 }
 
 RULE(conjunction_1) {
-    ENTER_FRAME(p, 117, "conjunction:1");
+    ENTER_FRAME(p, 117);
     (a = conjunction(p)) &&
     (TOKEN(p, 59, "and")) &&
     (b = inversion(p))
@@ -1296,7 +1296,7 @@ RULE(conjunction_1) {
 //     | 'not' inversion
 //     | comparison
 RULE(inversion) {
-    ENTER_FRAME(p, 118, "inversion");
+    ENTER_FRAME(p, 118);
     (a = inversion_1(p)) ||
     (a = comparison(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1304,7 +1304,7 @@ RULE(inversion) {
 }
 
 RULE(inversion_1) {
-    ENTER_FRAME(p, 119, "inversion:1");
+    ENTER_FRAME(p, 119);
     (TOKEN(p, 61, "not")) &&
     (a = inversion(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1315,7 +1315,7 @@ RULE(inversion_1) {
 //     | bitwise_or (comp_op bitwise_or)+
 //     | bitwise_or
 RULE(comparison) {
-    ENTER_FRAME(p, 120, "comparison");
+    ENTER_FRAME(p, 120);
     (a = comparison_1(p)) ||
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1323,7 +1323,7 @@ RULE(comparison) {
 }
 
 RULE(comparison_1) {
-    ENTER_FRAME(p, 121, "comparison:1");
+    ENTER_FRAME(p, 121);
     (a = bitwise_or(p)) &&
     (b = SEQUENCE(p, comparison_1_2))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1331,7 +1331,7 @@ RULE(comparison_1) {
 }
 
 RULE(comparison_1_2) {
-    ENTER_FRAME(p, 122, "comparison:1:2");
+    ENTER_FRAME(p, 122);
     (a = comp_op(p)) &&
     (b = bitwise_or(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1350,7 +1350,7 @@ RULE(comparison_1_2) {
 //     | 'is'
 //     | 'is' 'not'
 RULE(comp_op) {
-    ENTER_FRAME(p, 123, "comp_op");
+    ENTER_FRAME(p, 123);
     (a = TOKEN(p, 19, "<")) ||
     (a = TOKEN(p, 20, ">")) ||
     (a = TOKEN(p, 31, "==")) ||
@@ -1366,14 +1366,14 @@ RULE(comp_op) {
 }
 
 RULE(comp_op_8) {
-    ENTER_FRAME(p, 124, "comp_op:8");
+    ENTER_FRAME(p, 124);
     (TOKEN(p, 61, "not")) &&
     (TOKEN(p, 63, "in"));
     EXIT_FRAME(p);
 }
 
 RULE(comp_op_10) {
-    ENTER_FRAME(p, 125, "comp_op:10");
+    ENTER_FRAME(p, 125);
     (TOKEN(p, 62, "is")) &&
     (TOKEN(p, 61, "not"));
     EXIT_FRAME(p);
@@ -1383,7 +1383,7 @@ RULE(comp_op_10) {
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
 RULE(bitwise_or) {
-    ENTER_FRAME(p, 126, "bitwise_or");
+    ENTER_FRAME(p, 126);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = bitwise_or_1(p)) ||
@@ -1393,7 +1393,7 @@ RULE(bitwise_or) {
 }
 
 RULE(bitwise_or_1) {
-    ENTER_FRAME(p, 127, "bitwise_or:1");
+    ENTER_FRAME(p, 127);
     (a = bitwise_or(p)) &&
     (TOKEN(p, 27, "|")) &&
     (b = bitwise_xor(p))
@@ -1405,7 +1405,7 @@ RULE(bitwise_or_1) {
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
 RULE(bitwise_xor) {
-    ENTER_FRAME(p, 128, "bitwise_xor");
+    ENTER_FRAME(p, 128);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = bitwise_xor_1(p)) ||
@@ -1415,7 +1415,7 @@ RULE(bitwise_xor) {
 }
 
 RULE(bitwise_xor_1) {
-    ENTER_FRAME(p, 129, "bitwise_xor:1");
+    ENTER_FRAME(p, 129);
     (a = bitwise_xor(p)) &&
     (TOKEN(p, 30, "^")) &&
     (b = bitwise_and(p))
@@ -1427,7 +1427,7 @@ RULE(bitwise_xor_1) {
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
 RULE(bitwise_and) {
-    ENTER_FRAME(p, 130, "bitwise_and");
+    ENTER_FRAME(p, 130);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = bitwise_and_1(p)) ||
@@ -1437,7 +1437,7 @@ RULE(bitwise_and) {
 }
 
 RULE(bitwise_and_1) {
-    ENTER_FRAME(p, 131, "bitwise_and:1");
+    ENTER_FRAME(p, 131);
     (a = bitwise_and(p)) &&
     (TOKEN(p, 28, "&")) &&
     (b = shift_expr(p))
@@ -1450,7 +1450,7 @@ RULE(bitwise_and_1) {
 //     | shift_expr '>>' sum
 //     | sum
 RULE(shift_expr) {
-    ENTER_FRAME(p, 132, "shift_expr");
+    ENTER_FRAME(p, 132);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = shift_expr_1(p)) ||
@@ -1461,7 +1461,7 @@ RULE(shift_expr) {
 }
 
 RULE(shift_expr_1) {
-    ENTER_FRAME(p, 133, "shift_expr:1");
+    ENTER_FRAME(p, 133);
     (a = shift_expr(p)) &&
     (TOKEN(p, 48, "<<")) &&
     (b = sum(p))
@@ -1470,7 +1470,7 @@ RULE(shift_expr_1) {
 }
 
 RULE(shift_expr_2) {
-    ENTER_FRAME(p, 134, "shift_expr:2");
+    ENTER_FRAME(p, 134);
     (a = shift_expr(p)) &&
     (TOKEN(p, 49, ">>")) &&
     (b = sum(p))
@@ -1483,7 +1483,7 @@ RULE(shift_expr_2) {
 //     | sum '-' term
 //     | term
 RULE(sum) {
-    ENTER_FRAME(p, 135, "sum");
+    ENTER_FRAME(p, 135);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = sum_1(p)) ||
@@ -1494,7 +1494,7 @@ RULE(sum) {
 }
 
 RULE(sum_1) {
-    ENTER_FRAME(p, 136, "sum:1");
+    ENTER_FRAME(p, 136);
     (a = sum(p)) &&
     (TOKEN(p, 21, "+")) &&
     (b = term(p))
@@ -1503,7 +1503,7 @@ RULE(sum_1) {
 }
 
 RULE(sum_2) {
-    ENTER_FRAME(p, 137, "sum:2");
+    ENTER_FRAME(p, 137);
     (a = sum(p)) &&
     (TOKEN(p, 22, "-")) &&
     (b = term(p))
@@ -1519,7 +1519,7 @@ RULE(sum_2) {
 //     | term '@' pipe_expr
 //     | pipe_expr
 RULE(term) {
-    ENTER_FRAME(p, 138, "term");
+    ENTER_FRAME(p, 138);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = term_1(p)) ||
@@ -1533,7 +1533,7 @@ RULE(term) {
 }
 
 RULE(term_1) {
-    ENTER_FRAME(p, 139, "term:1");
+    ENTER_FRAME(p, 139);
     (a = term(p)) &&
     (TOKEN(p, 23, "*")) &&
     (b = pipe_expr(p))
@@ -1542,7 +1542,7 @@ RULE(term_1) {
 }
 
 RULE(term_2) {
-    ENTER_FRAME(p, 140, "term:2");
+    ENTER_FRAME(p, 140);
     (a = term(p)) &&
     (TOKEN(p, 24, "/")) &&
     (b = pipe_expr(p))
@@ -1551,7 +1551,7 @@ RULE(term_2) {
 }
 
 RULE(term_3) {
-    ENTER_FRAME(p, 141, "term:3");
+    ENTER_FRAME(p, 141);
     (a = term(p)) &&
     (TOKEN(p, 25, "%")) &&
     (b = pipe_expr(p))
@@ -1560,7 +1560,7 @@ RULE(term_3) {
 }
 
 RULE(term_4) {
-    ENTER_FRAME(p, 142, "term:4");
+    ENTER_FRAME(p, 142);
     (a = term(p)) &&
     (TOKEN(p, 37, "//")) &&
     (b = pipe_expr(p))
@@ -1569,7 +1569,7 @@ RULE(term_4) {
 }
 
 RULE(term_5) {
-    ENTER_FRAME(p, 143, "term:5");
+    ENTER_FRAME(p, 143);
     (a = term(p)) &&
     (TOKEN(p, 26, "@")) &&
     (b = pipe_expr(p))
@@ -1581,7 +1581,7 @@ RULE(term_5) {
 //     | pipe_expr '->' factor
 //     | factor
 RULE(pipe_expr) {
-    ENTER_FRAME(p, 144, "pipe_expr");
+    ENTER_FRAME(p, 144);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = pipe_expr_1(p)) ||
@@ -1591,7 +1591,7 @@ RULE(pipe_expr) {
 }
 
 RULE(pipe_expr_1) {
-    ENTER_FRAME(p, 145, "pipe_expr:1");
+    ENTER_FRAME(p, 145);
     (a = pipe_expr(p)) &&
     (TOKEN(p, 35, "->")) &&
     (b = factor(p))
@@ -1605,7 +1605,7 @@ RULE(pipe_expr_1) {
 //     | '~' factor
 //     | power
 RULE(factor) {
-    ENTER_FRAME(p, 146, "factor");
+    ENTER_FRAME(p, 146);
     (a = factor_1(p)) ||
     (a = factor_2(p)) ||
     (a = factor_3(p)) ||
@@ -1615,7 +1615,7 @@ RULE(factor) {
 }
 
 RULE(factor_1) {
-    ENTER_FRAME(p, 147, "factor:1");
+    ENTER_FRAME(p, 147);
     (TOKEN(p, 21, "+")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1623,7 +1623,7 @@ RULE(factor_1) {
 }
 
 RULE(factor_2) {
-    ENTER_FRAME(p, 148, "factor:2");
+    ENTER_FRAME(p, 148);
     (TOKEN(p, 22, "-")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1631,7 +1631,7 @@ RULE(factor_2) {
 }
 
 RULE(factor_3) {
-    ENTER_FRAME(p, 149, "factor:3");
+    ENTER_FRAME(p, 149);
     (TOKEN(p, 29, "~")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1642,7 +1642,7 @@ RULE(factor_3) {
 //     | primary '**' factor
 //     | primary
 RULE(power) {
-    ENTER_FRAME(p, 150, "power");
+    ENTER_FRAME(p, 150);
     (a = power_1(p)) ||
     (a = primary(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1650,7 +1650,7 @@ RULE(power) {
 }
 
 RULE(power_1) {
-    ENTER_FRAME(p, 151, "power:1");
+    ENTER_FRAME(p, 151);
     (a = primary(p)) &&
     (TOKEN(p, 38, "**")) &&
     (b = factor(p))
@@ -1664,7 +1664,7 @@ RULE(power_1) {
 //     | primary subscript
 //     | atom
 RULE(primary) {
-    ENTER_FRAME(p, 152, "primary");
+    ENTER_FRAME(p, 152);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = primary_1(p)) ||
@@ -1676,7 +1676,7 @@ RULE(primary) {
 }
 
 RULE(primary_1) {
-    ENTER_FRAME(p, 153, "primary:1");
+    ENTER_FRAME(p, 153);
     (a = primary(p)) &&
     (TOKEN(p, 6, ".")) &&
     (b = TOKEN(p, 3, "NAME"))
@@ -1685,7 +1685,7 @@ RULE(primary_1) {
 }
 
 RULE(primary_2) {
-    ENTER_FRAME(p, 154, "primary:2");
+    ENTER_FRAME(p, 154);
     (a = primary(p)) &&
     (b = invocation(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1693,7 +1693,7 @@ RULE(primary_2) {
 }
 
 RULE(primary_3) {
-    ENTER_FRAME(p, 155, "primary:3");
+    ENTER_FRAME(p, 155);
     (a = primary(p)) &&
     (b = subscript(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -1703,7 +1703,7 @@ RULE(primary_3) {
 // tuple_atom:
 //     | '(' [named_expr_list] ')'
 RULE(tuple_atom) {
-    ENTER_FRAME(p, 156, "tuple_atom");
+    ENTER_FRAME(p, 156);
     (TOKEN(p, 13, "(")) &&
     (a = OPTIONAL(named_expr_list(p))) &&
     (TOKEN(p, 14, ")"))
@@ -1714,7 +1714,7 @@ RULE(tuple_atom) {
 // list_iter:
 //     | '[' expr_or_star iterator ']'
 RULE(list_iter) {
-    ENTER_FRAME(p, 157, "list_iter");
+    ENTER_FRAME(p, 157);
     (TOKEN(p, 17, "[")) &&
     (a = expr_or_star(p)) &&
     (b = iterator(p)) &&
@@ -1726,7 +1726,7 @@ RULE(list_iter) {
 // list_atom:
 //     | '[' [named_expr_list] ']'
 RULE(list_atom) {
-    ENTER_FRAME(p, 158, "list_atom");
+    ENTER_FRAME(p, 158);
     (TOKEN(p, 17, "[")) &&
     (a = OPTIONAL(named_expr_list(p))) &&
     (TOKEN(p, 18, "]"))
@@ -1737,7 +1737,7 @@ RULE(list_atom) {
 // set_atom:
 //     | '{' [exprlist_star] '}'
 RULE(set_atom) {
-    ENTER_FRAME(p, 159, "set_atom");
+    ENTER_FRAME(p, 159);
     (TOKEN(p, 15, "{")) &&
     (a = OPTIONAL(exprlist_star(p))) &&
     (TOKEN(p, 16, "}"))
@@ -1748,7 +1748,7 @@ RULE(set_atom) {
 // dict_iter:
 //     | '{' dict_item iterator '}'
 RULE(dict_iter) {
-    ENTER_FRAME(p, 160, "dict_iter");
+    ENTER_FRAME(p, 160);
     (TOKEN(p, 15, "{")) &&
     (a = dict_item(p)) &&
     (b = iterator(p)) &&
@@ -1760,7 +1760,7 @@ RULE(dict_iter) {
 // dict_atom:
 //     | '{' [dict_items] '}'
 RULE(dict_atom) {
-    ENTER_FRAME(p, 161, "dict_atom");
+    ENTER_FRAME(p, 161);
     (TOKEN(p, 15, "{")) &&
     (a = OPTIONAL(dict_items(p))) &&
     (TOKEN(p, 16, "}"))
@@ -1772,7 +1772,7 @@ RULE(dict_atom) {
 //     | NAME simple_args ':' expr
 //     | NAME [builder_hint] [builder_args] block_suite
 RULE(builder) {
-    ENTER_FRAME(p, 162, "builder");
+    ENTER_FRAME(p, 162);
     (a = builder_1(p)) ||
     (a = builder_2(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -1780,7 +1780,7 @@ RULE(builder) {
 }
 
 RULE(builder_1) {
-    ENTER_FRAME(p, 163, "builder:1");
+    ENTER_FRAME(p, 163);
     (a = TOKEN(p, 3, "NAME")) &&
     (b = simple_args(p)) &&
     (TOKEN(p, 9, ":")) &&
@@ -1790,7 +1790,7 @@ RULE(builder_1) {
 }
 
 RULE(builder_2) {
-    ENTER_FRAME(p, 164, "builder:2");
+    ENTER_FRAME(p, 164);
     (a = TOKEN(p, 3, "NAME")) &&
     (b = OPTIONAL(builder_hint(p))) &&
     (c = OPTIONAL(builder_args(p))) &&
@@ -1814,7 +1814,7 @@ RULE(builder_2) {
 //     | 'True'
 //     | 'False'
 RULE(atom) {
-    ENTER_FRAME(p, 165, "atom");
+    ENTER_FRAME(p, 165);
     (a = tuple_atom(p)) ||
     (a = list_iter(p)) ||
     (a = list_atom(p)) ||

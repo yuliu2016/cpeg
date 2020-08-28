@@ -16,11 +16,10 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-macro-parentheses"
 
-#define DEBUG_EXTRAS f_type, f_name
+#define DEBUG_EXTRAS f_type, __func__
 
-#define ENTER_FRAME(p, type, name) \
+#define ENTER_FRAME(p, type) \
     const int f_type = type; \
-    IF_DEBUG(const char* f_name = name;) \
     size_t pos = p->pos; \
     IF_DEBUG(p->debug_hook->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
