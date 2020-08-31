@@ -269,7 +269,7 @@ RULE(target_4) {
     EXIT_FRAME(p);
 }
 
-// targetlist_sp:
+// targetlist_sp (allow_whitespace=true):
 //     | targetlist
 RULE(targetlist_sp) {
     ENTER_FRAME(p, 24);
@@ -278,7 +278,7 @@ RULE(targetlist_sp) {
     EXIT_FRAME(p);
 }
 
-// t_primary:
+// t_primary (left_recursive):
 //     | t_primary '.' NAME &t_lookahead
 //     | t_primary invocation &t_lookahead
 //     | t_primary subscript &t_lookahead
@@ -454,7 +454,7 @@ RULE(dict_item_2) {
     EXIT_FRAME(p);
 }
 
-// dict_items:
+// dict_items (allow_whitespace=true):
 //     | ','.dict_item+ [',']
 RULE(dict_items) {
     ENTER_FRAME(p, 42);
@@ -475,7 +475,7 @@ RULE(list_item) {
     EXIT_FRAME(p);
 }
 
-// list_items:
+// list_items (allow_whitespace=true):
 //     | ','.list_item+ [',']
 RULE(list_items) {
     ENTER_FRAME(p, 44);
@@ -485,7 +485,7 @@ RULE(list_items) {
     EXIT_FRAME(p);
 }
 
-// set_items:
+// set_items (allow_whitespace=true):
 //     | exprlist_star
 RULE(set_items) {
     ENTER_FRAME(p, 45);
@@ -539,7 +539,7 @@ RULE(iterator) {
     EXIT_FRAME(p);
 }
 
-// list_iterator:
+// list_iterator (allow_whitespace=true):
 //     | expr_or_star iterator
 RULE(list_iterator) {
     ENTER_FRAME(p, 50);
@@ -549,7 +549,7 @@ RULE(list_iterator) {
     EXIT_FRAME(p);
 }
 
-// dict_iterator:
+// dict_iterator (allow_whitespace=true):
 //     | dict_item iterator
 RULE(dict_iterator) {
     ENTER_FRAME(p, 51);
@@ -731,7 +731,7 @@ RULE(import_from_items) {
     EXIT_FRAME(p);
 }
 
-// import_as_names_sp:
+// import_as_names_sp (allow_whitespace=true):
 //     | '(' import_as_names [','] ')'
 RULE(import_as_names_sp) {
     ENTER_FRAME(p, 65);
@@ -910,7 +910,7 @@ RULE(expr_as_name) {
     EXIT_FRAME(p);
 }
 
-// block_suite:
+// block_suite (allow_whitespace=false):
 //     | '{' NEWLINE stmt+ '}'
 //     | '{' '}'
 RULE(block_suite) {
@@ -1010,7 +1010,7 @@ RULE(invocation) {
     EXIT_FRAME(p);
 }
 
-// call_arg_list:
+// call_arg_list (allow_whitespace=true):
 //     | ','.call_arg+ [',']
 RULE(call_arg_list) {
     ENTER_FRAME(p, 90);
@@ -1071,7 +1071,7 @@ RULE(call_arg_4) {
     EXIT_FRAME(p);
 }
 
-// typed_arg_list:
+// typed_arg_list (allow_whitespace=true):
 //     | kwargs
 //     | args_kwargs
 //     | full_arg_list
@@ -1288,7 +1288,7 @@ RULE(expr) {
     EXIT_FRAME(p);
 }
 
-// disjunction:
+// disjunction (left_recursive):
 //     | disjunction 'or' conjunction
 //     | conjunction
 RULE(disjunction) {
@@ -1310,7 +1310,7 @@ RULE(disjunction_1) {
     EXIT_FRAME(p);
 }
 
-// conjunction:
+// conjunction (left_recursive):
 //     | conjunction 'and' inversion
 //     | inversion
 RULE(conjunction) {
@@ -1419,7 +1419,7 @@ RULE(comp_op_10) {
     EXIT_FRAME(p);
 }
 
-// bitwise_or:
+// bitwise_or (left_recursive):
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
 RULE(bitwise_or) {
@@ -1441,7 +1441,7 @@ RULE(bitwise_or_1) {
     EXIT_FRAME(p);
 }
 
-// bitwise_xor:
+// bitwise_xor (left_recursive):
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
 RULE(bitwise_xor) {
@@ -1463,7 +1463,7 @@ RULE(bitwise_xor_1) {
     EXIT_FRAME(p);
 }
 
-// bitwise_and:
+// bitwise_and (left_recursive):
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
 RULE(bitwise_and) {
@@ -1485,7 +1485,7 @@ RULE(bitwise_and_1) {
     EXIT_FRAME(p);
 }
 
-// shift_expr:
+// shift_expr (left_recursive):
 //     | shift_expr '<<' sum
 //     | shift_expr '>>' sum
 //     | sum
@@ -1518,7 +1518,7 @@ RULE(shift_expr_2) {
     EXIT_FRAME(p);
 }
 
-// sum:
+// sum (left_recursive):
 //     | sum '+' term
 //     | sum '-' term
 //     | term
@@ -1551,7 +1551,7 @@ RULE(sum_2) {
     EXIT_FRAME(p);
 }
 
-// term:
+// term (left_recursive):
 //     | term '*' pipe_expr
 //     | term '/' pipe_expr
 //     | term '%' pipe_expr
@@ -1617,7 +1617,7 @@ RULE(term_5) {
     EXIT_FRAME(p);
 }
 
-// pipe_expr:
+// pipe_expr (left_recursive):
 //     | pipe_expr '->' factor
 //     | factor
 RULE(pipe_expr) {
@@ -1698,7 +1698,7 @@ RULE(power_1) {
     EXIT_FRAME(p);
 }
 
-// primary:
+// primary (left_recursive):
 //     | primary '.' NAME
 //     | primary invocation
 //     | primary subscript
