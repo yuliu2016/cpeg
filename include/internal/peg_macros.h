@@ -15,24 +15,25 @@
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-macro-parentheses"
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #define DEBUG_EXTRAS f_type, __func__
 
 #define ENTER_FRAME(p, type) \
     const int f_type = type; \
     size_t pos = p->pos; \
-    IF_DEBUG(p->debug_hook->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
+    IF_DEBUG(p->dh->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
     FAstNode *r = 0, *a, *b, *c, *d \
 
 #define EXIT_FRAME(p) \
-    IF_DEBUG(p->debug_hook->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
+    IF_DEBUG(p->dh->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
     if (!r) { p->pos = pos; } \
     return r
 
 #define RETURN_IF_MEMOIZED(p) \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
-    if (memo) { IF_DEBUG(p->debug_hook->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
+    if (memo) { IF_DEBUG(p->dh->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
     return memo->node; } \
 
 #define ENTER_LEFT_RECURSION(p) \
@@ -51,6 +52,13 @@
     goto left_rec_enter; \
     left_rec_exit: \
     r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
+
+#define WS_PUSH(p, ws) \
+    int old_ws = p->ignore_whitespace; \
+    p->ignore_whitespace = ws;
+
+#define WS_POP(p) \
+    p->ignore_whitespace = old_ws;
 
 #define OPTIONAL(node) node, 1
 

@@ -6,33 +6,47 @@ FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *d
     p->pos = 0;
     p->max_reached_pos = 0;
     p->level = 0;
-    p->debug_hook = dh;
+    p->dh = dh;
     p->region = region;
     p->token_len = a->len;
     p->tokens = a->tokens;
+    p->ignore_whitespace = 0;
     return p;
 }
 
-FAstNode *ast_node_from_token(FPegParser *p, FToken *token) {
-    if (token) {
-        FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
-        node->ast_t = 1;
-        node->ast_v.token = token;
-        return node;
+char *FPeg_check_state(FPegParser *p) {
+    if (p->dh) {
+        return 0;
     }
-    return NULL;
+    if (p->level != 0) {
+        return "p->level is not 0";
+    }
+    if (p->pos < p->token_len) {
+        return "Finished AST without all tokens";
+    }
+    return 0;
 }
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type) {
-    if (p->pos >= p->token_len) {
+    FToken *curr_token;
+
+    // the first token that doesn't ignore whitespace
+    do {
+        if (p->pos >= p->token_len) {
+            return NULL;
+        }
+        curr_token = p->tokens[p->pos];
+    } while (curr_token->type == p->ignore_whitespace);
+
+    // now check for correct type
+    if (curr_token->type == type) {
+        FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
+        node->ast_t = 1;
+        node->ast_v.token = curr_token;
+        return node;
+    } else {
         return NULL;
     }
-    FToken *curr_token = p->tokens[p->pos];
-    FToken *res = NULL;
-    if (curr_token->type == type) {
-        res = curr_token;
-    }
-    return ast_node_from_token(p, res);
 }
 
 FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end) {
@@ -110,7 +124,7 @@ void FAst_seq_append(FPegParser *p, FAstNode *node, void *item) {
     ++seq->len;
 }
 
-FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...) {
+FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...) {
     va_list valist;
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;

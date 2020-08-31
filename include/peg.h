@@ -27,14 +27,15 @@ typedef struct {
 typedef struct peg_parser_t {
     size_t pos;
     size_t max_reached_pos;
-    size_t level;
     size_t token_len;
     FToken **tokens;
-    FPegDebugHook *debug_hook;
     FMemRegion *region;
+    int ignore_whitespace;
+    size_t level;
+    FPegDebugHook *dh;
 } FPegParser;
 
-#define PARSER_ALLOC(p, size) FMemRegion_malloc(p->region, size) // NOLINT(bugprone-macro-parentheses)
+#define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
 typedef struct ast_node_t FAstNode;
 
@@ -46,11 +47,16 @@ typedef struct ast_sequence_t {
     FAstNode **items;
 } FAstSequence;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+
 #define AST_IS_TOKEN(node) node->ast_t & 1 // NOLINT(bugprone-macro-parentheses)
 #define AST_IS_SEQUENCE(node) node->ast_t & 2 // NOLINT(bugprone-macro-parentheses)
 #define AST_GET_RULE(node) node->ast_t >> 2
 #define AST_GET_TOKEN(node) node->ast_v.token
 #define AST_GET_SEQUENCE(node) node->ast_v.sequence
+
+#pragma clang diagnostic pop
 
 #define AST_NODE_MAX_FIELD 4
 
@@ -64,6 +70,8 @@ struct ast_node_t {
 };
 
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh);
+
+char *FPeg_check_state(FPegParser *p);
 
 FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end);
 
@@ -85,7 +93,7 @@ void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
 
-FAstNode *FAst_new_node(FPegParser *p, int t, int nargs, ...);
+FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...);
 
 #define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
 
