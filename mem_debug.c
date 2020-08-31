@@ -104,7 +104,7 @@ void print_address(void *ptr, const char *name) {
     if (s == 1) {
         printf("%-16s = %#08x\n", name, (unsigned int) i);
     } else {
-        printf("%-16s = %#016llx = 0b \n", name, (unsigned long long) i);
+        printf("%-16s = %#016llx\n", name, (unsigned long long) i);
     }
 }
 

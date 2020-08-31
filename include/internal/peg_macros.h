@@ -36,6 +36,9 @@
     if (memo) { IF_DEBUG(p->dh->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
     return memo->node; } \
 
+#define MEMOIZE(p) \
+    FPeg_put_memo(p, f_type, r, p->pos)
+
 #define ENTER_LEFT_RECURSION(p) \
     FAstNode *max = 0; \
     a = 0; \
@@ -53,9 +56,9 @@
     left_rec_exit: \
     r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
 
-#define WS_PUSH(p, ws) \
+#define WS_PUSH(p) \
     int old_ws = p->ignore_whitespace; \
-    p->ignore_whitespace = ws;
+    p->ignore_whitespace = 1;
 
 #define WS_POP(p) \
     p->ignore_whitespace = old_ws;

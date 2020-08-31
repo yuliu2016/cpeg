@@ -28,7 +28,7 @@ char *FPeg_check_state(FPegParser *p) {
 }
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type) {
-    FToken *curr_token;
+    FToken *curr_token = p->tokens[p->pos];
 
     // the first token that doesn't ignore whitespace
     do {
@@ -40,6 +40,7 @@ FAstNode *FPeg_consume_token(FPegParser *p, int type) {
 
     // now check for correct type
     if (curr_token->type == type) {
+        p->pos++;
         FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
         node->ast_t = 1;
         node->ast_v.token = curr_token;

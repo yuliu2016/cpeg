@@ -3,7 +3,6 @@
 #define CPEG_PEG_H
 
 #include "mem.h"
-#include "token.h"
 
 /**
  * PEG parse tree implementation
@@ -15,12 +14,36 @@
  */
 
 typedef struct {
+    char *start;
+    int len;
+} FTokenStr;
+
+typedef struct token_memo_t {
+    int type;
+    void *node;
+    int end_pos;
+    struct token_memo_t *next;
+} FTokenMemo;
+
+typedef struct {
+    int type;
+    FTokenStr *str;
+    int line_start;
+    int line_end;
+    int col_start;
+    int col_end;
+    FTokenMemo *memo;
+} FToken;
+
+typedef struct token_array_t {
+    int len;
+    FToken **tokens;
+} FTokenArray;
+
+typedef struct {
     void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
-
     void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
-
     void (*exit_frame)(void *res, int level, int pos, int rule_index, const char *rule_name);
-
     void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
 } FPegDebugHook;
 
@@ -80,30 +103,24 @@ void FPeg_put_memo(FPegParser *p, int type, void *node, int end);
 FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 
 #define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
+#define AST_SEQ_NEW(p) FAst_new_sequence(p)
+#define AST_SEQ_APPEND(p, list, item) FAst_seq_append(p, list, item)
+#define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
+#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
+#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
+#define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type);
 
-#define AST_SEQ_NEW(p) FAst_new_sequence(p)
-
 FAstNode *FAst_new_sequence(FPegParser *p);
-
-#define AST_SEQ_APPEND(p, list, item) FAst_seq_append(p, list, item)
 
 void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
-#define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
-
 FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...);
-
-#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
 
 FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *));
 
-#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
-
 FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *));
-
-#define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
 
 FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *));
 
