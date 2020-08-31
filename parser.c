@@ -3,18 +3,20 @@
 
 // single_input:
 //     | NEWLINE
+//     | ENDMARKER
 //     | simple_stmt
 //     | compound_stmt NEWLINE
 RULE(single_input) {
     ENTER_FRAME(p, 1);
     (a = TOKEN(p, 2, "NEWLINE")) ||
+    (a = TOKEN(p, 1, "ENDMARKER")) ||
     (a = simple_stmt(p)) ||
-    (a = single_input_3(p))
+    (a = single_input_4(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
-RULE(single_input_3) {
+RULE(single_input_4) {
     ENTER_FRAME(p, 2);
     (a = compound_stmt(p)) &&
     (b = TOKEN(p, 2, "NEWLINE"))
@@ -23,40 +25,33 @@ RULE(single_input_3) {
 }
 
 // file_input:
-//     | (NEWLINE | stmt)* ENDMARKER
+//     | [stmt_list] ENDMARKER
 RULE(file_input) {
     ENTER_FRAME(p, 3);
-    (a = SEQ_OR_NONE(p, file_input_1)) &&
+    (a = OPTIONAL(stmt_list(p))) &&
     (b = TOKEN(p, 1, "ENDMARKER"))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
-}
-
-RULE(file_input_1) {
-    ENTER_FRAME(p, 4);
-    (a = TOKEN(p, 2, "NEWLINE")) ||
-    (a = stmt(p))
-    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 
 // eval_input:
 //     | exprlist NEWLINE* ENDMARKER
 RULE(eval_input) {
-    ENTER_FRAME(p, 5);
+    ENTER_FRAME(p, 4);
     (a = exprlist(p)) &&
-    (b = eval_input_loop(p)) &&
+    (b = TOKEN_SEQ_OR_NONE(p, 2, "NEWLINE")) &&
     (c = TOKEN(p, 1, "ENDMARKER"))
     ? (r = NODE_3(p, a, b, c)) : 0;
     EXIT_FRAME(p);
 }
 
-RULE(eval_input_loop) {
-    FAstNode *node, *seq = AST_SEQ_NEW(p);
-    while ((node = TOKEN(p, 2, "NEWLINE"))) {
-        AST_SEQ_APPEND(p, seq, node);
-    }
-    return seq;
+// stmt_list:
+//     | stmt+
+RULE(stmt_list) {
+    ENTER_FRAME(p, 5);
+    (a = SEQUENCE(p, stmt))
+    ? (r = NODE_1(p, a)) : 0;
+    EXIT_FRAME(p);
 }
 
 // stmt:
@@ -188,22 +183,9 @@ RULE(assert_stmt_3) {
 //     | ','.NAME+
 RULE(name_list) {
     ENTER_FRAME(p, 17);
-    (a = name_list_loop(p))
+    (a = TOKEN_DELIMITED(p, 7, ",", 3, "NAME"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
-}
-
-RULE(name_list_loop) {
-    FAstNode *node, *seq;
-    if (!(node = TOKEN(p, 3, "NAME"))) { return 0; }
-    seq = AST_SEQ_NEW(p);
-    size_t pos;
-    do { AST_SEQ_APPEND(p, seq, node); }
-    while (pos = p->pos,
-            (TOKEN(p, 7, ",")) &&
-            (node = TOKEN(p, 3, "NAME")));
-    p->pos = pos;
-    return seq;
 }
 
 // star_expr:
@@ -703,19 +685,10 @@ RULE(import_from_names) {
 
 RULE(import_from_names_2) {
     ENTER_FRAME(p, 63);
-    (import_from_names_2_loop(p)) &&
+    (TOKEN_SEQUENCE(p, 6, ".")) &&
     (a = OPTIONAL(dotted_name(p)))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
-}
-
-RULE(import_from_names_2_loop) {
-    FAstNode *node, *seq;
-    if (!(node = TOKEN(p, 6, "."))) { return 0; }
-    seq = AST_SEQ_NEW(p);
-    do { AST_SEQ_APPEND(p, seq, node); }
-    while ((node = TOKEN(p, 6, ".")));
-    return seq;
 }
 
 // import_from_items:
@@ -785,22 +758,9 @@ RULE(dotted_as_names) {
 //     | '.'.NAME+
 RULE(dotted_name) {
     ENTER_FRAME(p, 70);
-    (a = dotted_name_loop(p))
+    (a = TOKEN_DELIMITED(p, 6, ".", 3, "NAME"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
-}
-
-RULE(dotted_name_loop) {
-    FAstNode *node, *seq;
-    if (!(node = TOKEN(p, 3, "NAME"))) { return 0; }
-    seq = AST_SEQ_NEW(p);
-    size_t pos;
-    do { AST_SEQ_APPEND(p, seq, node); }
-    while (pos = p->pos,
-            (TOKEN(p, 6, ".")) &&
-            (node = TOKEN(p, 3, "NAME")));
-    p->pos = pos;
-    return seq;
 }
 
 // compound_stmt:
@@ -911,8 +871,8 @@ RULE(expr_as_name) {
 }
 
 // block_suite (allow_whitespace=false):
-//     | '{' NEWLINE stmt+ '}'
-//     | '{' '}'
+//     | '{' NEWLINE stmt_list '}'
+//     | '{' [simple_stmt] '}'
 RULE(block_suite) {
     ENTER_FRAME(p, 80);
     (a = block_suite_1(p)) ||
@@ -925,7 +885,7 @@ RULE(block_suite_1) {
     ENTER_FRAME(p, 81);
     (TOKEN(p, 15, "{")) &&
     (a = TOKEN(p, 2, "NEWLINE")) &&
-    (b = SEQUENCE(p, stmt)) &&
+    (b = stmt_list(p)) &&
     (TOKEN(p, 16, "}"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT_FRAME(p);
@@ -934,7 +894,9 @@ RULE(block_suite_1) {
 RULE(block_suite_2) {
     ENTER_FRAME(p, 82);
     (TOKEN(p, 15, "{")) &&
-    (TOKEN(p, 16, "}"));
+    (a = OPTIONAL(simple_stmt(p))) &&
+    (TOKEN(p, 16, "}"))
+    ? (r = NODE_1(p, a)) : 0;
     EXIT_FRAME(p);
 }
 

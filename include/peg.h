@@ -110,6 +110,9 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 #define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
 #define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
 #define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
+#define TOKEN_SEQ_OR_NONE(p, t, v) FPeg_parse_token_sequence_or_none(p, t)
+#define TOKEN_SEQUENCE(p, t, v) FPeg_parse_token_sequence(p, t)
+#define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type);
 
@@ -124,5 +127,11 @@ FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser
 FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *));
 
 FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *));
+
+FAstNode *FPeg_parse_token_sequence(FPegParser *p, int token);
+
+FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, int token);
+
+FAstNode *FPeg_parse_token_delimited(FPegParser *p, int delimiter, int token);
 
 #endif //CPEG_PEG_H

@@ -11,26 +11,29 @@ union ast_gen_t {
 
 #define R_SINGLE_INPUT 1
 
-#define R_SINGLE_INPUT_3 2
+#define R_SINGLE_INPUT_4 2
     struct {
         FAstNode *compound_stmt;
         FAstNode *newline;
-    } single_input_3;
+    } single_input_4;
 
 #define R_FILE_INPUT 3
     struct {
-        FAstNode *newline_or_stmts;
+        FAstNode *stmt_list;
         FAstNode *endmarker;
     } file_input;
 
-#define R_FILE_INPUT_1 4
-
-#define R_EVAL_INPUT 5
+#define R_EVAL_INPUT 4
     struct {
         FAstNode *exprlist;
         FAstNode *newlines;
         FAstNode *endmarker;
     } eval_input;
+
+#define R_STMT_LIST 5
+    struct {
+        FAstNode *stmts;
+    } stmt_list;
 
 #define R_STMT 6
     struct {
@@ -408,10 +411,13 @@ union ast_gen_t {
 #define R_BLOCK_SUITE_1 81
     struct {
         FAstNode *newline;
-        FAstNode *stmts;
+        FAstNode *stmt_list;
     } block_suite_1;
 
 #define R_BLOCK_SUITE_2 82
+    struct {
+        FAstNode *simple_stmt;
+    } block_suite_2;
 
 #define R_SUITE 83
 

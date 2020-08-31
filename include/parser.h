@@ -4,11 +4,10 @@
 #include "peg.h"
 
 RULE(single_input);
-RULE(single_input_3);
+RULE(single_input_4);
 RULE(file_input);
-RULE(file_input_1);
 RULE(eval_input);
-RULE(eval_input_loop);
+RULE(stmt_list);
 RULE(stmt);
 RULE(stmt_1);
 RULE(simple_stmt);
@@ -21,7 +20,6 @@ RULE(nonlocal_stmt);
 RULE(assert_stmt);
 RULE(assert_stmt_3);
 RULE(name_list);
-RULE(name_list_loop);
 RULE(star_expr);
 RULE(exprlist);
 RULE(target);
@@ -68,7 +66,6 @@ RULE(import_name);
 RULE(import_from);
 RULE(import_from_names);
 RULE(import_from_names_2);
-RULE(import_from_names_2_loop);
 RULE(import_from_items);
 RULE(import_as_names_sp);
 RULE(import_as_name);
@@ -76,7 +73,6 @@ RULE(dotted_as_name);
 RULE(import_as_names);
 RULE(dotted_as_names);
 RULE(dotted_name);
-RULE(dotted_name_loop);
 RULE(compound_stmt);
 RULE(if_stmt);
 RULE(elif_stmt);
