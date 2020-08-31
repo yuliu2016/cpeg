@@ -32,6 +32,7 @@ typedef struct {
     int line_end;
     int col_start;
     int col_end;
+    int is_whitespace;
     FTokenMemo *memo;
 } FToken;
 

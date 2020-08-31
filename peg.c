@@ -28,19 +28,21 @@ char *FPeg_check_state(FPegParser *p) {
 }
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type) {
-    FToken *curr_token = p->tokens[p->pos];
+    size_t pos = p->pos;
+
+    FToken *curr_token = p->tokens[pos];
 
     // the first token that doesn't ignore whitespace
-    do {
-        if (p->pos >= p->token_len) {
-            return NULL;
+    if (p->ignore_whitespace) {
+        while (curr_token->is_whitespace && (pos + 1) < p->token_len) {
+            pos += 1;
+            curr_token = p->tokens[pos];
         }
-        curr_token = p->tokens[p->pos];
-    } while (curr_token->type == p->ignore_whitespace);
+    }
 
     // now check for correct type
     if (curr_token->type == type) {
-        p->pos++;
+        p->pos = pos + 1;
         FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
         node->ast_t = 1;
         node->ast_v.token = curr_token;

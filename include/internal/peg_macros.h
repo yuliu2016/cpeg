@@ -56,9 +56,13 @@
     left_rec_exit: \
     r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
 
-#define WS_PUSH(p) \
+#define WS_PUSH_1(p) \
     int old_ws = p->ignore_whitespace; \
     p->ignore_whitespace = 1;
+
+#define WS_PUSH_0(p) \
+    int old_ws = p->ignore_whitespace; \
+    p->ignore_whitespace = 0;
 
 #define WS_POP(p) \
     p->ignore_whitespace = old_ws;
