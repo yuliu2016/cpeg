@@ -819,4 +819,4 @@ union ast_gen_t {
 #define R_ATOM 169
 } ;
 
-#endif //CPEG_ASTGEN_H
+#endif // CPEG_ASTGEN_H

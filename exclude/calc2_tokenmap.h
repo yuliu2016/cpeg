@@ -1,5 +1,5 @@
-#ifndef CPEG_TOKENMAP_H
-#define CPEG_TOKENMAP_H
+#ifndef CPEG_CALC2_TOKENMAP_H
+#define CPEG_CALC2_TOKENMAP_H
 
 
 #define T_ENDMARKER 1  // ENDMARKER
@@ -86,4 +86,4 @@
 #define T_TRUE 82  // True
 #define T_FALSE 83  // False
 
-#endif // CPEG_TOKENMAP_H
+#endif // CPEG_CALC2_TOKENMAP_H

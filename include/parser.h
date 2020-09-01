@@ -173,4 +173,4 @@ RULE(builder_1);
 RULE(builder_2);
 RULE(atom);
 
-#endif //CPEG_PARSER_H
+#endif // CPEG_PARSER_H
