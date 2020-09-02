@@ -4,29 +4,31 @@
 
 #include "mem.h"
 
-/**
- * PEG parse tree implementation
- * Source of implementation algorithms:
- * https://github.com/python/cpython/blob/master/Grammar/python.gram
- * https://medium.com/@gvanrossum_83706/left-recursive-peg-grammars-65dab3c580e1
- * https://www.python.org/dev/peps/pep-0617/
- * https://github.com/PhilippeSigaud/Pegged/wiki/Left-Recursion
- */
+
+// PEG parse tree implementation
+// Source of implementation algorithms:
+// https://github.com/python/cpython/blob/master/Grammar/python.gram
+// https://medium.com/@gvanrossum_83706/left-recursive-peg-grammars-65dab3c580e1
+// https://www.python.org/dev/peps/pep-0617/
+// https://github.com/PhilippeSigaud/Pegged/wiki/Left-Recursion
+
 
 typedef struct {
     char *start;
     int len;
 } FTokenStr;
 
+// Memo stored in a linked list, assuming not storing
+// too many types at the same position
 typedef struct token_memo_t {
-    int type;
+    unsigned int type;
     void *node;
-    int end_pos;
+    size_t end_pos;
     struct token_memo_t *next;
 } FTokenMemo;
 
 typedef struct {
-    int type;
+    unsigned int type;
     FTokenStr *str;
     int line_start;
     int line_end;
@@ -71,18 +73,15 @@ typedef struct ast_sequence_t {
     FAstNode **items;
 } FAstSequence;
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
-
-#define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
-#define AST_GET_F(node, n) (node)->ast_v.fields[n]
-#define AST_GET_T(node, n) AST_GET_F(node, n)->ast_v.token
-
-#pragma clang diagnostic pop
 
 #define AST_NODE_MAX_FIELD 4
 
 struct ast_node_t {
+    // type layout:
+    // - bit 1: set for token type
+    // - bit 2: set for sequence type
+    // - other bits: token index if bit 1 set,
+    //   rule index otherwise
     unsigned int ast_t;
     union ast_v {
         FToken *token;
@@ -91,17 +90,26 @@ struct ast_node_t {
     } ast_v;
 };
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+
+#define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
+
+#pragma clang diagnostic pop
+
+typedef unsigned int index_t;
+
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh);
 
 char *FPeg_check_state(FPegParser *p);
 
-void FAst_node_assert_type(FAstNode *node, unsigned int t);
+void FAst_node_assert_type(FAstNode *node, index_t t);
 
-FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end);
+void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end);
 
-void FPeg_put_memo(FPegParser *p, int type, void *node, int end);
+FTokenMemo *FPeg_get_memo(FPegParser *p, index_t type);
 
-FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
+// Macros used in the parser
 
 #define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
@@ -112,20 +120,20 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 #define TOKEN_SEQUENCE(p, t, v) FPeg_parse_token_sequence(p, t)
 #define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
 
-FAstNode *FPeg_consume_token(FPegParser *p, int type);
+FAstNode *FPeg_consume_token(FPegParser *p, index_t type);
 
-FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...);
+FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...);
 
 FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *));
 
 FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *));
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *));
+FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FAstNode *(*rule)(FPegParser *));
 
-FAstNode *FPeg_parse_token_sequence(FPegParser *p, int token);
+FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token);
 
-FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, int token);
+FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, index_t token);
 
-FAstNode *FPeg_parse_token_delimited(FPegParser *p, int delimiter, int token);
+FAstNode *FPeg_parse_token_delimited(FPegParser *p, index_t delimiter, index_t token);
 
 #endif //CPEG_PEG_H

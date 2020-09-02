@@ -28,13 +28,13 @@ char *FPeg_check_state(FPegParser *p) {
     return 0;
 }
 
-void FAst_node_assert_type(FAstNode *node, unsigned int t) {
+void FAst_node_assert_type(FAstNode *node, index_t t) {
     if (node->ast_t != t) {
         printf("Node type %d expected, but is actually %d", t, node->ast_t);
     }
 }
 
-FAstNode *FPeg_consume_token(FPegParser *p, int type) {
+FAstNode *FPeg_consume_token(FPegParser *p, index_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = p->tokens[pos];
@@ -59,7 +59,7 @@ FAstNode *FPeg_consume_token(FPegParser *p, int type) {
     }
 }
 
-FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end) {
+FTokenMemo *new_memo(FPegParser *p, index_t type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
     if (!new_memo) return NULL;
     new_memo->type = type;
@@ -69,11 +69,11 @@ FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end) {
     return new_memo;
 }
 
-void FPeg_put_memo(FPegParser *p, int type, void *node, int end) {
+void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end) {
     FToken *curr_token = p->tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
-        curr_token->memo = FPeg_new_memo(p, type, node, end);
+        curr_token->memo = new_memo(p, type, node, end);
         return;
     }
     while (memo->next) {
@@ -84,10 +84,10 @@ void FPeg_put_memo(FPegParser *p, int type, void *node, int end) {
         }
         memo = memo->next;
     }
-    memo->next = FPeg_new_memo(p, type, node, end);
+    memo->next = new_memo(p, type, node, end);
 }
 
-FTokenMemo *FPeg_get_memo(FPegParser *p, int type) {
+FTokenMemo *FPeg_get_memo(FPegParser *p, index_t type) {
     FToken *curr_token = p->tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
@@ -104,9 +104,10 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type) {
     return NULL;
 }
 
-FAstNode *FAst_new_sequence(FPegParser *p) {
+FAstNode *seq_new(FPegParser *p, index_t t) {
     FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
-    node->ast_t = 2;
+    // assume t is made correctly
+    node->ast_t = t;
     FAstSequence *seq = &node->ast_v.sequence;
     seq->capacity = 0;
     seq->len = 0;
@@ -114,7 +115,7 @@ FAstNode *FAst_new_sequence(FPegParser *p) {
     return node;
 }
 
-void FAst_seq_append(FPegParser *p, FAstNode *node, void *item) {
+void seq_append(FPegParser *p, FAstNode *node, void *item) {
     FAstSequence *seq = &node->ast_v.sequence;
     if (seq->len >= seq->capacity) {
         if (!seq->capacity) {
@@ -134,7 +135,7 @@ void FAst_seq_append(FPegParser *p, FAstNode *node, void *item) {
     ++seq->len;
 }
 
-FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...) {
+FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...) {
     va_list valist;
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
@@ -142,7 +143,8 @@ FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...) {
     va_start(valist, nargs);
 
     FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
-    res->ast_t = t;
+    // a field-node, just shift by 2
+    res->ast_t = t << 2u;
     for (int i = 0; i < nargs; ++i) {
         res->ast_v.fields[i] = va_arg(valist, FAstNode *);
     }
@@ -152,9 +154,9 @@ FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...) {
 }
 
 FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
-    FAstNode *node, *seq = FAst_new_sequence(p);
+    FAstNode *node, *seq = seq_new(p, 2);
     while ((node = rule(p))) {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
     }
     return seq;
 }
@@ -162,20 +164,20 @@ FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser
 FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *)) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
-    seq = FAst_new_sequence(p);
+    seq = seq_new(p, 2);
     do {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
     } while ((node = rule(p)));
     return seq;
 }
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(FPegParser *)) {
+FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FAstNode *(*rule)(FPegParser *)) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
-    seq = FAst_new_sequence(p);
+    seq = seq_new(p, 2);
     size_t pos;
     while (1) {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
         pos = p->pos;
         if (!(FPeg_consume_token(p, delimiter) && rule(p))) {
             break;
@@ -185,31 +187,31 @@ FAstNode *FPeg_parse_delimited(FPegParser *p, int delimiter, FAstNode *(*rule)(F
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence(FPegParser *p, int token) {
+FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
-    seq = FAst_new_sequence(p);
+    seq = seq_new(p, token << 2u | 1u | 2u);
     do {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
     } while ((node = FPeg_consume_token(p, token)));
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, int token) {
-    FAstNode *node, *seq = FAst_new_sequence(p);
+FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, index_t token) {
+    FAstNode *node, *seq = seq_new(p, token << 2u | 1u | 2u);
     while ((node = FPeg_consume_token(p, token))) {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
     }
     return seq;
 }
 
-FAstNode *FPeg_parse_token_delimited(FPegParser *p, int delimiter, int token) {
+FAstNode *FPeg_parse_token_delimited(FPegParser *p, index_t delimiter, index_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
-    seq = FAst_new_sequence(p);
+    seq = seq_new(p, token << 2u | 1u | 2u);
     size_t pos;
     while (1) {
-        FAst_seq_append(p, seq, node);
+        seq_append(p, seq, node);
         pos = p->pos;
         if (!(FPeg_consume_token(p, delimiter) && FPeg_consume_token(p, token))) {
             break;

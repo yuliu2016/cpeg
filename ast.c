@@ -1,5 +1,5 @@
-#include "astgen.h"
-#include "tokenmap.h"
+#include "include/astgen.h"
+#include "include/tokenmap.h"
 
 void compile_single_input(FAstNode *n);
 void compile_single_input_4(FAstNode *n);
