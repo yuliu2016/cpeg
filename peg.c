@@ -1,5 +1,6 @@
 #include "include/peg.h"
 #include "stdarg.h"
+#include "stdio.h"
 
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
     FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
@@ -25,6 +26,12 @@ char *FPeg_check_state(FPegParser *p) {
         return "Finished AST without all tokens";
     }
     return 0;
+}
+
+void FAst_node_assert_type(FAstNode *node, unsigned int t) {
+    if (node->ast_t != t) {
+        printf("Node type %d expected, but is actually %d", t, node->ast_t);
+    }
 }
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type) {

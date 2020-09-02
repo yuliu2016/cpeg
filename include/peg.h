@@ -74,11 +74,7 @@ typedef struct ast_sequence_t {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#define AST_IS_TOKEN(node) node->ast_t & 1 // NOLINT(bugprone-macro-parentheses)
-#define AST_IS_SEQUENCE(node) node->ast_t & 2 // NOLINT(bugprone-macro-parentheses)
-#define AST_GET_RULE(node) node->ast_t >> 2
-#define AST_GET_TOKEN(node) node->ast_v.token
-#define AST_GET_SEQUENCE(node) node->ast_v.sequence
+#define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
 
 #pragma clang diagnostic pop
 
@@ -97,6 +93,8 @@ FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *d
 
 char *FPeg_check_state(FPegParser *p);
 
+void FAst_node_assert_type(FAstNode *node, unsigned int t);
+
 FTokenMemo *FPeg_new_memo(FPegParser *p, int type, void *node, int end);
 
 void FPeg_put_memo(FPegParser *p, int type, void *node, int end);
@@ -104,8 +102,6 @@ void FPeg_put_memo(FPegParser *p, int type, void *node, int end);
 FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 
 #define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
-#define AST_SEQ_NEW(p) FAst_new_sequence(p)
-#define AST_SEQ_APPEND(p, list, item) FAst_seq_append(p, list, item)
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
 #define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
 #define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
@@ -115,10 +111,6 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, int type);
 #define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_consume_token(FPegParser *p, int type);
-
-FAstNode *FAst_new_sequence(FPegParser *p);
-
-void FAst_seq_append(FPegParser *p, FAstNode *seq, void *item);
 
 FAstNode *FAst_new_node(FPegParser *p, unsigned int t, int nargs, ...);
 

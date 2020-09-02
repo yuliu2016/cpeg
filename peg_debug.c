@@ -1,4 +1,4 @@
-#include "peg_debug.h"
+#include "include/internal/peg_debug.h"
 #include "stdio.h"
 
 void print_indent_level(size_t s) {
