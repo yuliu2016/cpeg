@@ -75,6 +75,8 @@ typedef struct ast_sequence_t {
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
+#define AST_GET_F(node, n) (node)->ast_v.fields[n]
+#define AST_GET_T(node, n) AST_GET_F(node, n)->ast_v.token
 
 #pragma clang diagnostic pop
 
