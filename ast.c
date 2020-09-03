@@ -178,17 +178,17 @@ void compile_atom(FAstNode *n);
 //     | compound_stmt NEWLINE
 void compile_single_input(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_NEWLINE) {
+    if (T_CHECK(n, T_NEWLINE)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_ENDMARKER) {
+    if (T_CHECK(n, T_ENDMARKER)) {
         return;
     }
-    if (o->ast_t == R_SIMPLE_STMT) {
+    if (R_CHECK(n, R_SIMPLE_STMT)) {
         compile_simple_stmt(o);
         return;
     }
-    if (o->ast_t == R_SINGLE_INPUT_4) {
+    if (R_CHECK(n, R_SINGLE_INPUT_4)) {
         compile_single_input_4(o);
         return;
     }
@@ -229,11 +229,11 @@ void compile_stmt(FAstNode *n) {
 
 void compile_stmt_1(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SIMPLE_STMT) {
+    if (R_CHECK(n, R_SIMPLE_STMT)) {
         compile_simple_stmt(o);
         return;
     }
-    if (o->ast_t == R_COMPOUND_STMT) {
+    if (R_CHECK(n, R_COMPOUND_STMT)) {
         compile_compound_stmt(o);
         return;
     }
@@ -260,44 +260,44 @@ void compile_simple_stmt(FAstNode *n) {
 //     | assignment
 void compile_small_stmt(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_PASS) {
+    if (T_CHECK(n, T_PASS)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_BREAK) {
+    if (T_CHECK(n, T_BREAK)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_CONTINUE) {
+    if (T_CHECK(n, T_CONTINUE)) {
         return;
     }
-    if (o->ast_t == R_RETURN_STMT) {
+    if (R_CHECK(n, R_RETURN_STMT)) {
         compile_return_stmt(o);
         return;
     }
-    if (o->ast_t == R_RAISE_STMT) {
+    if (R_CHECK(n, R_RAISE_STMT)) {
         compile_raise_stmt(o);
         return;
     }
-    if (o->ast_t == R_DEL_STMT) {
+    if (R_CHECK(n, R_DEL_STMT)) {
         compile_del_stmt(o);
         return;
     }
-    if (o->ast_t == R_NONLOCAL_STMT) {
+    if (R_CHECK(n, R_NONLOCAL_STMT)) {
         compile_nonlocal_stmt(o);
         return;
     }
-    if (o->ast_t == R_ASSERT_STMT) {
+    if (R_CHECK(n, R_ASSERT_STMT)) {
         compile_assert_stmt(o);
         return;
     }
-    if (o->ast_t == R_IMPORT_NAME) {
+    if (R_CHECK(n, R_IMPORT_NAME)) {
         compile_import_name(o);
         return;
     }
-    if (o->ast_t == R_IMPORT_FROM) {
+    if (R_CHECK(n, R_IMPORT_FROM)) {
         compile_import_from(o);
         return;
     }
-    if (o->ast_t == R_ASSIGNMENT) {
+    if (R_CHECK(n, R_ASSIGNMENT)) {
         compile_assignment(o);
         return;
     }
@@ -377,18 +377,18 @@ void compile_exprlist(FAstNode *n) {
 //     | '(' targetlist_sp ')'
 void compile_target(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_TARGET_1) {
+    if (R_CHECK(n, R_TARGET_1)) {
         compile_target_1(o);
         return;
     }
-    if (o->ast_t == R_TARGET_2) {
+    if (R_CHECK(n, R_TARGET_2)) {
         compile_target_2(o);
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_NAME) {
+    if (T_CHECK(n, T_NAME)) {
         return;
     }
-    if (o->ast_t == R_TARGET_4) {
+    if (R_CHECK(n, R_TARGET_4)) {
         compile_target_4(o);
         return;
     }
@@ -424,19 +424,19 @@ void compile_targetlist_sp(FAstNode *n) {
 //     | atom &t_lookahead
 void compile_t_primary(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_T_PRIMARY_1) {
+    if (R_CHECK(n, R_T_PRIMARY_1)) {
         compile_t_primary_1(o);
         return;
     }
-    if (o->ast_t == R_T_PRIMARY_2) {
+    if (R_CHECK(n, R_T_PRIMARY_2)) {
         compile_t_primary_2(o);
         return;
     }
-    if (o->ast_t == R_T_PRIMARY_3) {
+    if (R_CHECK(n, R_T_PRIMARY_3)) {
         compile_t_primary_3(o);
         return;
     }
-    if (o->ast_t == R_T_PRIMARY_4) {
+    if (R_CHECK(n, R_T_PRIMARY_4)) {
         compile_t_primary_4(o);
         return;
     }
@@ -470,13 +470,13 @@ void compile_t_primary_4(FAstNode *n) {
 //     | '['
 void compile_t_lookahead(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_DOT) {
+    if (T_CHECK(n, T_OP_DOT)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_LPAR) {
+    if (T_CHECK(n, T_OP_LPAR)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_LSQB) {
+    if (T_CHECK(n, T_OP_LSQB)) {
         return;
     }
 }
@@ -493,11 +493,11 @@ void compile_targetlist(FAstNode *n) {
 //     | expr
 void compile_expr_or_star(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_STAR_EXPR) {
+    if (R_CHECK(n, R_STAR_EXPR)) {
         compile_star_expr(o);
         return;
     }
-    if (o->ast_t == R_EXPR) {
+    if (R_CHECK(n, R_EXPR)) {
         compile_expr(o);
         return;
     }
@@ -529,11 +529,11 @@ void compile_slicelist(FAstNode *n) {
 //     | expr
 void compile_slice(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SLICE_1) {
+    if (R_CHECK(n, R_SLICE_1)) {
         compile_slice_1(o);
         return;
     }
-    if (o->ast_t == R_EXPR) {
+    if (R_CHECK(n, R_EXPR)) {
         compile_expr(o);
         return;
     }
@@ -558,11 +558,11 @@ void compile_slice_expr(FAstNode *n) {
 //     | '**' bitwise_or
 void compile_dict_item(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_DICT_ITEM_1) {
+    if (R_CHECK(n, R_DICT_ITEM_1)) {
         compile_dict_item_1(o);
         return;
     }
-    if (o->ast_t == R_DICT_ITEM_2) {
+    if (R_CHECK(n, R_DICT_ITEM_2)) {
         compile_dict_item_2(o);
         return;
     }
@@ -591,11 +591,11 @@ void compile_dict_items(FAstNode *n) {
 //     | named_expr
 void compile_list_item(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_STAR_EXPR) {
+    if (R_CHECK(n, R_STAR_EXPR)) {
         compile_star_expr(o);
         return;
     }
-    if (o->ast_t == R_NAMED_EXPR) {
+    if (R_CHECK(n, R_NAMED_EXPR)) {
         compile_named_expr(o);
         return;
     }
@@ -669,19 +669,19 @@ void compile_dict_iterator(FAstNode *n) {
 //     | simple_assign
 void compile_assignment(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_PUBASSIGN) {
+    if (R_CHECK(n, R_PUBASSIGN)) {
         compile_pubassign(o);
         return;
     }
-    if (o->ast_t == R_ANNASSIGN) {
+    if (R_CHECK(n, R_ANNASSIGN)) {
         compile_annassign(o);
         return;
     }
-    if (o->ast_t == R_AUGASSIGN) {
+    if (R_CHECK(n, R_AUGASSIGN)) {
         compile_augassign(o);
         return;
     }
-    if (o->ast_t == R_SIMPLE_ASSIGN) {
+    if (R_CHECK(n, R_SIMPLE_ASSIGN)) {
         compile_simple_assign(o);
         return;
     }
@@ -746,43 +746,43 @@ void compile_simple_assign_1(FAstNode *n) {
 //     | '//='
 void compile_augassign_op(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_PLUS_ASSIGN) {
+    if (T_CHECK(n, T_OP_PLUS_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_MINUS_ASSIGN) {
+    if (T_CHECK(n, T_OP_MINUS_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_TIMES_ASSIGN) {
+    if (T_CHECK(n, T_OP_TIMES_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_MATRIX_TIMES_ASSIGN) {
+    if (T_CHECK(n, T_OP_MATRIX_TIMES_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_DIV_ASSIGN) {
+    if (T_CHECK(n, T_OP_DIV_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_MODULUS_ASSIGN) {
+    if (T_CHECK(n, T_OP_MODULUS_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_BIT_AND_ASSIGN) {
+    if (T_CHECK(n, T_OP_BIT_AND_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_BIT_OR_ASSIGN) {
+    if (T_CHECK(n, T_OP_BIT_OR_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_BIT_XOR_ASSIGN) {
+    if (T_CHECK(n, T_OP_BIT_XOR_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_LSHIFT_ASSIGN) {
+    if (T_CHECK(n, T_OP_LSHIFT_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_RSHIFT_ASSIGN) {
+    if (T_CHECK(n, T_OP_RSHIFT_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_POWER_ASSIGN) {
+    if (T_CHECK(n, T_OP_POWER_ASSIGN)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_FLOOR_DIV_ASSIGN) {
+    if (T_CHECK(n, T_OP_FLOOR_DIV_ASSIGN)) {
         return;
     }
 }
@@ -807,11 +807,11 @@ void compile_import_from(FAstNode *n) {
 //     | '.'+ [dotted_name]
 void compile_import_from_names(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_DOTTED_NAME) {
+    if (R_CHECK(n, R_DOTTED_NAME)) {
         compile_dotted_name(o);
         return;
     }
-    if (o->ast_t == R_IMPORT_FROM_NAMES_2) {
+    if (R_CHECK(n, R_IMPORT_FROM_NAMES_2)) {
         compile_import_from_names_2(o);
         return;
     }
@@ -828,14 +828,14 @@ void compile_import_from_names_2(FAstNode *n) {
 //     | import_as_names
 void compile_import_from_items(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_TIMES) {
+    if (T_CHECK(n, T_OP_TIMES)) {
         return;
     }
-    if (o->ast_t == R_IMPORT_AS_NAMES_SP) {
+    if (R_CHECK(n, R_IMPORT_AS_NAMES_SP)) {
         compile_import_as_names_sp(o);
         return;
     }
-    if (o->ast_t == R_IMPORT_AS_NAMES) {
+    if (R_CHECK(n, R_IMPORT_AS_NAMES)) {
         compile_import_as_names(o);
         return;
     }
@@ -891,23 +891,23 @@ void compile_dotted_name(FAstNode *n) {
 //     | with_stmt
 void compile_compound_stmt(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_IF_STMT) {
+    if (R_CHECK(n, R_IF_STMT)) {
         compile_if_stmt(o);
         return;
     }
-    if (o->ast_t == R_WHILE_STMT) {
+    if (R_CHECK(n, R_WHILE_STMT)) {
         compile_while_stmt(o);
         return;
     }
-    if (o->ast_t == R_FOR_STMT) {
+    if (R_CHECK(n, R_FOR_STMT)) {
         compile_for_stmt(o);
         return;
     }
-    if (o->ast_t == R_TRY_STMT) {
+    if (R_CHECK(n, R_TRY_STMT)) {
         compile_try_stmt(o);
         return;
     }
-    if (o->ast_t == R_WITH_STMT) {
+    if (R_CHECK(n, R_WITH_STMT)) {
         compile_with_stmt(o);
         return;
     }
@@ -960,11 +960,11 @@ void compile_try_stmt(FAstNode *n) {
 
 void compile_try_stmt_3(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_EXCEPT_SUITE) {
+    if (R_CHECK(n, R_EXCEPT_SUITE)) {
         compile_except_suite(o);
         return;
     }
-    if (o->ast_t == R_FINALLY_SUITE) {
+    if (R_CHECK(n, R_FINALLY_SUITE)) {
         compile_finally_suite(o);
         return;
     }
@@ -991,11 +991,11 @@ void compile_expr_as_name(FAstNode *n) {
 //     | '{' [simple_stmt] '}'
 void compile_block_suite(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_BLOCK_SUITE_1) {
+    if (R_CHECK(n, R_BLOCK_SUITE_1)) {
         compile_block_suite_1(o);
         return;
     }
-    if (o->ast_t == R_BLOCK_SUITE_2) {
+    if (R_CHECK(n, R_BLOCK_SUITE_2)) {
         compile_block_suite_2(o);
         return;
     }
@@ -1016,11 +1016,11 @@ void compile_block_suite_2(FAstNode *n) {
 //     | block_suite
 void compile_suite(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SUITE_1) {
+    if (R_CHECK(n, R_SUITE_1)) {
         compile_suite_1(o);
         return;
     }
-    if (o->ast_t == R_BLOCK_SUITE) {
+    if (R_CHECK(n, R_BLOCK_SUITE)) {
         compile_block_suite(o);
         return;
     }
@@ -1084,23 +1084,23 @@ void compile_call_arg_list(FAstNode *n) {
 //     | expr
 void compile_call_arg(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_CALL_ARG_1) {
+    if (R_CHECK(n, R_CALL_ARG_1)) {
         compile_call_arg_1(o);
         return;
     }
-    if (o->ast_t == R_CALL_ARG_2) {
+    if (R_CHECK(n, R_CALL_ARG_2)) {
         compile_call_arg_2(o);
         return;
     }
-    if (o->ast_t == R_CALL_ARG_3) {
+    if (R_CHECK(n, R_CALL_ARG_3)) {
         compile_call_arg_3(o);
         return;
     }
-    if (o->ast_t == R_CALL_ARG_4) {
+    if (R_CHECK(n, R_CALL_ARG_4)) {
         compile_call_arg_4(o);
         return;
     }
-    if (o->ast_t == R_EXPR) {
+    if (R_CHECK(n, R_EXPR)) {
         compile_expr(o);
         return;
     }
@@ -1132,15 +1132,15 @@ void compile_call_arg_4(FAstNode *n) {
 //     | full_arg_list
 void compile_typed_arg_list(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_KWARGS) {
+    if (R_CHECK(n, R_KWARGS)) {
         compile_kwargs(o);
         return;
     }
-    if (o->ast_t == R_ARGS_KWARGS) {
+    if (R_CHECK(n, R_ARGS_KWARGS)) {
         compile_args_kwargs(o);
         return;
     }
-    if (o->ast_t == R_FULL_ARG_LIST) {
+    if (R_CHECK(n, R_FULL_ARG_LIST)) {
         compile_full_arg_list(o);
         return;
     }
@@ -1161,11 +1161,11 @@ void compile_full_arg_list_2(FAstNode *n) {
 
 void compile_full_arg_list_2_2(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_KWARGS) {
+    if (R_CHECK(n, R_KWARGS)) {
         compile_kwargs(o);
         return;
     }
-    if (o->ast_t == R_ARGS_KWARGS) {
+    if (R_CHECK(n, R_ARGS_KWARGS)) {
         compile_args_kwargs(o);
         return;
     }
@@ -1253,11 +1253,11 @@ void compile_builder_hint(FAstNode *n) {
 //     | '(' [typed_arg_list] ')'
 void compile_builder_args(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SIMPLE_ARGS) {
+    if (R_CHECK(n, R_SIMPLE_ARGS)) {
         compile_simple_args(o);
         return;
     }
-    if (o->ast_t == R_BUILDER_ARGS_2) {
+    if (R_CHECK(n, R_BUILDER_ARGS_2)) {
         compile_builder_args_2(o);
         return;
     }
@@ -1273,11 +1273,11 @@ void compile_builder_args_2(FAstNode *n) {
 //     | expr
 void compile_named_expr(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_NAMED_EXPR_1) {
+    if (R_CHECK(n, R_NAMED_EXPR_1)) {
         compile_named_expr_1(o);
         return;
     }
-    if (o->ast_t == R_EXPR) {
+    if (R_CHECK(n, R_EXPR)) {
         compile_expr(o);
         return;
     }
@@ -1302,11 +1302,11 @@ void compile_conditional(FAstNode *n) {
 //     | disjunction
 void compile_expr(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_CONDITIONAL) {
+    if (R_CHECK(n, R_CONDITIONAL)) {
         compile_conditional(o);
         return;
     }
-    if (o->ast_t == R_DISJUNCTION) {
+    if (R_CHECK(n, R_DISJUNCTION)) {
         compile_disjunction(o);
         return;
     }
@@ -1317,11 +1317,11 @@ void compile_expr(FAstNode *n) {
 //     | conjunction
 void compile_disjunction(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_DISJUNCTION_1) {
+    if (R_CHECK(n, R_DISJUNCTION_1)) {
         compile_disjunction_1(o);
         return;
     }
-    if (o->ast_t == R_CONJUNCTION) {
+    if (R_CHECK(n, R_CONJUNCTION)) {
         compile_conjunction(o);
         return;
     }
@@ -1338,11 +1338,11 @@ void compile_disjunction_1(FAstNode *n) {
 //     | inversion
 void compile_conjunction(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_CONJUNCTION_1) {
+    if (R_CHECK(n, R_CONJUNCTION_1)) {
         compile_conjunction_1(o);
         return;
     }
-    if (o->ast_t == R_INVERSION) {
+    if (R_CHECK(n, R_INVERSION)) {
         compile_inversion(o);
         return;
     }
@@ -1359,11 +1359,11 @@ void compile_conjunction_1(FAstNode *n) {
 //     | comparison
 void compile_inversion(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_INVERSION_1) {
+    if (R_CHECK(n, R_INVERSION_1)) {
         compile_inversion_1(o);
         return;
     }
-    if (o->ast_t == R_COMPARISON) {
+    if (R_CHECK(n, R_COMPARISON)) {
         compile_comparison(o);
         return;
     }
@@ -1379,11 +1379,11 @@ void compile_inversion_1(FAstNode *n) {
 //     | bitwise_or
 void compile_comparison(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_COMPARISON_1) {
+    if (R_CHECK(n, R_COMPARISON_1)) {
         compile_comparison_1(o);
         return;
     }
-    if (o->ast_t == R_BITWISE_OR) {
+    if (R_CHECK(n, R_BITWISE_OR)) {
         compile_bitwise_or(o);
         return;
     }
@@ -1414,35 +1414,35 @@ void compile_comparison_1_2(FAstNode *n) {
 //     | 'is' 'not'
 void compile_comp_op(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_LESS) {
+    if (T_CHECK(n, T_OP_LESS)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_GREATER) {
+    if (T_CHECK(n, T_OP_GREATER)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_EQUAL) {
+    if (T_CHECK(n, T_OP_EQUAL)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_MORE_EQUAL) {
+    if (T_CHECK(n, T_OP_MORE_EQUAL)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_LESS_EQUAL) {
+    if (T_CHECK(n, T_OP_LESS_EQUAL)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_OP_NEQUAL) {
+    if (T_CHECK(n, T_OP_NEQUAL)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_IN) {
+    if (T_CHECK(n, T_IN)) {
         return;
     }
-    if (o->ast_t == R_COMP_OP_8) {
+    if (R_CHECK(n, R_COMP_OP_8)) {
         compile_comp_op_8(o);
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_IS) {
+    if (T_CHECK(n, T_IS)) {
         return;
     }
-    if (o->ast_t == R_COMP_OP_10) {
+    if (R_CHECK(n, R_COMP_OP_10)) {
         compile_comp_op_10(o);
         return;
     }
@@ -1459,11 +1459,11 @@ void compile_comp_op_10(FAstNode *n) {
 //     | bitwise_xor
 void compile_bitwise_or(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_BITWISE_OR_1) {
+    if (R_CHECK(n, R_BITWISE_OR_1)) {
         compile_bitwise_or_1(o);
         return;
     }
-    if (o->ast_t == R_BITWISE_XOR) {
+    if (R_CHECK(n, R_BITWISE_XOR)) {
         compile_bitwise_xor(o);
         return;
     }
@@ -1480,11 +1480,11 @@ void compile_bitwise_or_1(FAstNode *n) {
 //     | bitwise_and
 void compile_bitwise_xor(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_BITWISE_XOR_1) {
+    if (R_CHECK(n, R_BITWISE_XOR_1)) {
         compile_bitwise_xor_1(o);
         return;
     }
-    if (o->ast_t == R_BITWISE_AND) {
+    if (R_CHECK(n, R_BITWISE_AND)) {
         compile_bitwise_and(o);
         return;
     }
@@ -1501,11 +1501,11 @@ void compile_bitwise_xor_1(FAstNode *n) {
 //     | shift_expr
 void compile_bitwise_and(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_BITWISE_AND_1) {
+    if (R_CHECK(n, R_BITWISE_AND_1)) {
         compile_bitwise_and_1(o);
         return;
     }
-    if (o->ast_t == R_SHIFT_EXPR) {
+    if (R_CHECK(n, R_SHIFT_EXPR)) {
         compile_shift_expr(o);
         return;
     }
@@ -1523,15 +1523,15 @@ void compile_bitwise_and_1(FAstNode *n) {
 //     | sum
 void compile_shift_expr(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SHIFT_EXPR_1) {
+    if (R_CHECK(n, R_SHIFT_EXPR_1)) {
         compile_shift_expr_1(o);
         return;
     }
-    if (o->ast_t == R_SHIFT_EXPR_2) {
+    if (R_CHECK(n, R_SHIFT_EXPR_2)) {
         compile_shift_expr_2(o);
         return;
     }
-    if (o->ast_t == R_SUM) {
+    if (R_CHECK(n, R_SUM)) {
         compile_sum(o);
         return;
     }
@@ -1555,15 +1555,15 @@ void compile_shift_expr_2(FAstNode *n) {
 //     | term
 void compile_sum(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_SUM_1) {
+    if (R_CHECK(n, R_SUM_1)) {
         compile_sum_1(o);
         return;
     }
-    if (o->ast_t == R_SUM_2) {
+    if (R_CHECK(n, R_SUM_2)) {
         compile_sum_2(o);
         return;
     }
-    if (o->ast_t == R_TERM) {
+    if (R_CHECK(n, R_TERM)) {
         compile_term(o);
         return;
     }
@@ -1590,27 +1590,27 @@ void compile_sum_2(FAstNode *n) {
 //     | pipe_expr
 void compile_term(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_TERM_1) {
+    if (R_CHECK(n, R_TERM_1)) {
         compile_term_1(o);
         return;
     }
-    if (o->ast_t == R_TERM_2) {
+    if (R_CHECK(n, R_TERM_2)) {
         compile_term_2(o);
         return;
     }
-    if (o->ast_t == R_TERM_3) {
+    if (R_CHECK(n, R_TERM_3)) {
         compile_term_3(o);
         return;
     }
-    if (o->ast_t == R_TERM_4) {
+    if (R_CHECK(n, R_TERM_4)) {
         compile_term_4(o);
         return;
     }
-    if (o->ast_t == R_TERM_5) {
+    if (R_CHECK(n, R_TERM_5)) {
         compile_term_5(o);
         return;
     }
-    if (o->ast_t == R_PIPE_EXPR) {
+    if (R_CHECK(n, R_PIPE_EXPR)) {
         compile_pipe_expr(o);
         return;
     }
@@ -1651,11 +1651,11 @@ void compile_term_5(FAstNode *n) {
 //     | factor
 void compile_pipe_expr(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_PIPE_EXPR_1) {
+    if (R_CHECK(n, R_PIPE_EXPR_1)) {
         compile_pipe_expr_1(o);
         return;
     }
-    if (o->ast_t == R_FACTOR) {
+    if (R_CHECK(n, R_FACTOR)) {
         compile_factor(o);
         return;
     }
@@ -1674,19 +1674,19 @@ void compile_pipe_expr_1(FAstNode *n) {
 //     | power
 void compile_factor(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_FACTOR_1) {
+    if (R_CHECK(n, R_FACTOR_1)) {
         compile_factor_1(o);
         return;
     }
-    if (o->ast_t == R_FACTOR_2) {
+    if (R_CHECK(n, R_FACTOR_2)) {
         compile_factor_2(o);
         return;
     }
-    if (o->ast_t == R_FACTOR_3) {
+    if (R_CHECK(n, R_FACTOR_3)) {
         compile_factor_3(o);
         return;
     }
-    if (o->ast_t == R_POWER) {
+    if (R_CHECK(n, R_POWER)) {
         compile_power(o);
         return;
     }
@@ -1712,11 +1712,11 @@ void compile_factor_3(FAstNode *n) {
 //     | primary
 void compile_power(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_POWER_1) {
+    if (R_CHECK(n, R_POWER_1)) {
         compile_power_1(o);
         return;
     }
-    if (o->ast_t == R_PRIMARY) {
+    if (R_CHECK(n, R_PRIMARY)) {
         compile_primary(o);
         return;
     }
@@ -1735,19 +1735,19 @@ void compile_power_1(FAstNode *n) {
 //     | atom
 void compile_primary(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_PRIMARY_1) {
+    if (R_CHECK(n, R_PRIMARY_1)) {
         compile_primary_1(o);
         return;
     }
-    if (o->ast_t == R_PRIMARY_2) {
+    if (R_CHECK(n, R_PRIMARY_2)) {
         compile_primary_2(o);
         return;
     }
-    if (o->ast_t == R_PRIMARY_3) {
+    if (R_CHECK(n, R_PRIMARY_3)) {
         compile_primary_3(o);
         return;
     }
-    if (o->ast_t == R_ATOM) {
+    if (R_CHECK(n, R_ATOM)) {
         compile_atom(o);
         return;
     }
@@ -1817,11 +1817,11 @@ void compile_dict_atom(FAstNode *n) {
 //     | NAME [builder_hint] [builder_args] block_suite
 void compile_builder(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_BUILDER_1) {
+    if (R_CHECK(n, R_BUILDER_1)) {
         compile_builder_1(o);
         return;
     }
-    if (o->ast_t == R_BUILDER_2) {
+    if (R_CHECK(n, R_BUILDER_2)) {
         compile_builder_2(o);
         return;
     }
@@ -1856,50 +1856,50 @@ void compile_builder_2(FAstNode *n) {
 //     | 'False'
 void compile_atom(FAstNode *n) {
     FAstNode *o = n->ast_v.fields[0];
-    if (o->ast_t == R_TUPLE_ATOM) {
+    if (R_CHECK(n, R_TUPLE_ATOM)) {
         compile_tuple_atom(o);
         return;
     }
-    if (o->ast_t == R_LIST_ITERABLE) {
+    if (R_CHECK(n, R_LIST_ITERABLE)) {
         compile_list_iterable(o);
         return;
     }
-    if (o->ast_t == R_LIST_ATOM) {
+    if (R_CHECK(n, R_LIST_ATOM)) {
         compile_list_atom(o);
         return;
     }
-    if (o->ast_t == R_SET_ATOM) {
+    if (R_CHECK(n, R_SET_ATOM)) {
         compile_set_atom(o);
         return;
     }
-    if (o->ast_t == R_DICT_ITERABLE) {
+    if (R_CHECK(n, R_DICT_ITERABLE)) {
         compile_dict_iterable(o);
         return;
     }
-    if (o->ast_t == R_DICT_ATOM) {
+    if (R_CHECK(n, R_DICT_ATOM)) {
         compile_dict_atom(o);
         return;
     }
-    if (o->ast_t == R_BUILDER) {
+    if (R_CHECK(n, R_BUILDER)) {
         compile_builder(o);
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_NAME) {
+    if (T_CHECK(n, T_NAME)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_NUMBER) {
+    if (T_CHECK(n, T_NUMBER)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_STRING) {
+    if (T_CHECK(n, T_STRING)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_NONE) {
+    if (T_CHECK(n, T_NONE)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_TRUE) {
+    if (T_CHECK(n, T_TRUE)) {
         return;
     }
-    if (o->ast_t == 0 && o->ast_v.token->type == T_FALSE) {
+    if (T_CHECK(n, T_FALSE)) {
         return;
     }
 }

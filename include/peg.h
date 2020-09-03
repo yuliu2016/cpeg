@@ -78,9 +78,9 @@ typedef struct ast_sequence_t {
 
 struct ast_node_t {
     // type layout:
-    // - bit 1: set for token type
-    // - bit 2: set for sequence type
-    // - other bits: token index if bit 1 set,
+    // - bit 1: set for non-sequence type
+    // - bit 2: set for token type
+    // - other bits: token index if bit 2 set,
     //   rule index otherwise
     unsigned int ast_t;
     union ast_v {
@@ -94,6 +94,9 @@ struct ast_node_t {
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
+#define R_CHECK(node, t) (!((node)->ast_t & 2u) && (node)->ast_t >> 2u == (t))
+#define T_CHECK(node, t) ((node)->ast_t & 2u && (node)->ast_t >> 2u == (t))
+#define S_CHECK(node) !((node)->ast_t & 1u)
 
 #pragma clang diagnostic pop
 
@@ -124,11 +127,13 @@ FAstNode *FPeg_consume_token(FPegParser *p, index_t type);
 
 FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...);
 
-FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FAstNode *(*rule)(FPegParser *));
+typedef FAstNode *(*rule_func)(FPegParser *);
 
-FAstNode *FPeg_parse_sequence(FPegParser *p, FAstNode *(*rule)(FPegParser *));
+FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, rule_func rule);
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FAstNode *(*rule)(FPegParser *));
+FAstNode *FPeg_parse_sequence(FPegParser *p, rule_func rule);
+
+FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, rule_func rule);
 
 FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token);
 
