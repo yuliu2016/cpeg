@@ -1,18 +1,103 @@
 #include "include/peg.h"
 #include "stdarg.h"
-#include "stdio.h"
 
-void init_lexer_state(FLexerState *ls, FTokenArray *a) {
-    ls->tokens = a->tokens;
-    ls->token_len = a->len;
+void lexer_init_state(FLexerState *ls, char *src, size_t len) {
+    ls->src = src;
+    ls->src_len = len;
+
+    ls->curr_index = 0;
+
+    ls->tokens = 0;
+    ls->token_len = 0;
+    ls->token_capacity = 0;
+
+    ls->line_to_index = 0;
+    ls->lines = 0;
+    ls->line_capacity = 0;
+
+    ls->last_end_index = 0;
+    ls->error = 0;
 }
 
-FParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
+void lexer_compute_next_token(FParser *p) {
+    FLexerState *ls = &p->lexer_state;
+    if (ls->curr_index < ls->src_len) {
+        FLexerFunc lexer_func = p->lexer_func;
+        ls->next_token = lexer_func(ls);
+    } else {
+        ls->next_token = NULL;
+    }
+}
+
+void lexer_add_token(FLexerState *ls, FToken *token) {
+    if (ls->token_len >= ls->token_capacity) {
+        if (!ls->token_capacity) {
+            ls->token_capacity = 1;
+            ls->token_len = 0;
+            ls->tokens = FMem_malloc(sizeof(FToken *));
+        } else {
+            ls->token_capacity = ls->token_capacity << 1u;
+            ls->tokens = FMem_realloc(ls->tokens, ls->token_capacity * sizeof(FToken *));
+        }
+    }
+    ls->tokens[ls->token_len] = token;
+    ls->token_len += 1;
+}
+
+FToken *lexer_get_token(FParser *p, size_t pos) {
+    FLexerState *ls = &p->lexer_state;
+
+    if (pos > ls->token_len) {
+        p->error = "Token index too big";
+        return NULL;
+    }
+
+    // scan the next unknown token
+    if (pos == ls->token_len) {
+        FToken *this_token = ls->next_token;
+
+        if (this_token) {
+            lexer_add_token(ls, this_token);
+            lexer_compute_next_token(p);
+
+            return this_token;
+        } else {
+            p->error = "attempting to get token when stream has finished";
+            return NULL;
+        }
+    }
+
+    return ls->tokens[pos];
+}
+
+int lexer_did_finish(FParser *p, size_t pos) {
+    return pos >= p->lexer_state.token_len
+           && p->lexer_state.next_token == NULL;
+}
+
+FParser *FPeg_init_new_parser(
+        char *src,
+        size_t len,
+        FLexerFunc lexer_func,
+        FPegDebugHook *dh) {
+
+    if (!src || !lexer_func) {
+        return NULL;
+    }
+
+    FMemRegion *region = FMemRegion_new();
+    if (!region) {
+        return NULL;
+    }
+
     FParser *p = FMem_malloc(sizeof(FParser));
+    if (!p) {
+        return NULL;
+    }
 
-    init_lexer_state(&p->lexer_state, a);
+    lexer_init_state(&p->lexer_state, src, len);
 
-    p->lexer_func = 0;
+    p->lexer_func = lexer_func;
     p->region = region;
     p->pos = 0;
     p->max_reached_pos = 0;
@@ -20,6 +105,11 @@ FParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) 
     p->level = 0;
     p->dh = dh;
     p->error = 0;
+
+    // Need to scan at least one token to see
+    // if there is anything to parse
+    lexer_compute_next_token(p);
+
     return p;
 }
 
@@ -39,22 +129,16 @@ char *FPeg_check_state(FParser *p) {
     return 0;
 }
 
-void FAst_node_assert_type(FAstNode *node, index_t t) {
-    if (node->ast_t != t) {
-        printf("Node type %d expected, but is actually %d", t, node->ast_t);
-    }
-}
-
 FAstNode *FPeg_consume_token(FParser *p, index_t type) {
     size_t pos = p->pos;
 
-    FToken *curr_token = p->lexer_state.tokens[pos];
+    FToken *curr_token = lexer_get_token(p, pos);
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
-        while (curr_token->is_whitespace && (pos + 1) < p->lexer_state.token_len) {
+        while (curr_token->is_whitespace && !lexer_did_finish(p, pos + 1)) {
             pos += 1;
-            curr_token = p->lexer_state.tokens[pos];
+            curr_token = lexer_get_token(p, pos);
         }
     }
 
@@ -62,6 +146,9 @@ FAstNode *FPeg_consume_token(FParser *p, index_t type) {
     if (curr_token->type == type) {
         p->pos = pos + 1;
         FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
+        if (!node) {
+            return NULL;
+        }
         // not sequence -> | 1u
         // is token -> | 2u
         node->ast_t = type << 2u | 1u | 2u;
@@ -74,7 +161,9 @@ FAstNode *FPeg_consume_token(FParser *p, index_t type) {
 
 FTokenMemo *new_memo(FParser *p, index_t type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
-    if (!new_memo) return NULL;
+    if (!new_memo) {
+        return NULL;
+    }
     new_memo->type = type;
     new_memo->node = node;
     new_memo->end_pos = end;
@@ -119,6 +208,9 @@ FTokenMemo *FPeg_get_memo(FParser *p, index_t type) {
 
 FAstNode *seq_new(FParser *p) {
     FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
+    if (!node) {
+        return NULL;
+    }
     // sequence type has a t of 0
     node->ast_t = 0;
     FAstSequence *seq = &node->ast_v.sequence;
@@ -137,6 +229,8 @@ void seq_append(FParser *p, FAstNode *node, void *item) {
             seq->items = PARSER_ALLOC(p, sizeof(FAstNode *));
         } else {
             seq->capacity = seq->capacity << 1u;
+            // Since realloc isn't available with memory regions,
+            // the nodes needs to be copied in a loop
             FAstNode **old_items = seq->items;
             seq->items = PARSER_ALLOC(p, seq->capacity * sizeof(FAstNode *));
             for (int i = 0; i < seq->len; ++i) {
@@ -145,7 +239,7 @@ void seq_append(FParser *p, FAstNode *node, void *item) {
         }
     }
     seq->items[seq->len] = item;
-    ++seq->len;
+    seq->len += 1;
 }
 
 FAstNode *FAst_new_node(FParser *p, index_t t, int nargs, ...) {

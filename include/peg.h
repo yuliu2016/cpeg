@@ -32,22 +32,10 @@ typedef struct {
     FTokenMemo *memo;
 } FToken;
 
-typedef struct token_array_t {
-    int len;
-    FToken **tokens;
-} FTokenArray;
-
-typedef struct {
-    void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
-    void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
-    void (*exit_frame)(void *res, int level, int pos, int rule_index, const char *rule_name);
-    void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
-} FPegDebugHook;
-
 // Lazily-evaluated tokenizer
 typedef struct lexer_state_t {
     // Test source
-    char *src_buf;
+    char *src;
     size_t src_len;
 
     // Index of the visitor
@@ -57,6 +45,9 @@ typedef struct lexer_state_t {
     FToken **tokens;
     size_t token_len;
     size_t token_capacity;
+
+    // Stores next token to determine if stream is done
+    FToken *next_token;
 
     // Dynamically-growing list of line indices
     size_t *line_to_index;
@@ -69,12 +60,21 @@ typedef struct lexer_state_t {
     char *error;
 } FLexerState;
 
+typedef struct {
+    void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
+    void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
+    void (*exit_frame)(void *res, int level, int pos, int rule_index, const char *rule_name);
+    void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
+} FPegDebugHook;
+
+typedef FToken *(*FLexerFunc)(FLexerState *);
+
 typedef struct parser_state_t {
     // Use to get lazily scan the next token
     FLexerState lexer_state;
 
     // Use to get the next token
-    FToken *(*lexer_func)(FLexerState *);
+    FLexerFunc lexer_func;
 
     // Allocate nodes in the same region so it can be freed all at once
     FMemRegion *region;
@@ -124,7 +124,6 @@ struct ast_node_t {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#define ASSERT_AST_T(node, t) FAst_node_assert_type(node, t)
 #define R_CHECK(node, t) (!((node)->ast_t & 2u) && (node)->ast_t >> 2u == (t))
 #define T_CHECK(node, t) ((node)->ast_t & 2u && (node)->ast_t >> 2u == (t))
 #define S_CHECK(node) !((node)->ast_t & 1u)
@@ -133,11 +132,14 @@ struct ast_node_t {
 
 typedef unsigned int index_t;
 
-FParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh);
+FParser *FPeg_init_new_parser(
+        char *src,
+        size_t len,
+        FLexerFunc lexer_func,
+        FPegDebugHook *dh
+);
 
 char *FPeg_check_state(FParser *p);
-
-void FAst_node_assert_type(FAstNode *node, index_t t);
 
 void FPeg_put_memo(FParser *p, index_t type, void *node, size_t end);
 
@@ -147,18 +149,19 @@ FTokenMemo *FPeg_get_memo(FParser *p, index_t type);
 
 #define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
-#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
-#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
-#define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
-#define TOKEN_SEQ_OR_NONE(p, t, v) FPeg_parse_token_sequence_or_none(p, t)
-#define TOKEN_SEQUENCE(p, t, v) FPeg_parse_token_sequence(p, t)
-#define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_consume_token(FParser *p, index_t type);
 
 FAstNode *FAst_new_node(FParser *p, index_t t, int nargs, ...);
 
 typedef FAstNode *(*FRuleFunc)(FParser *);
+
+#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
+#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
+#define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
+#define TOKEN_SEQ_OR_NONE(p, t, v) FPeg_parse_token_sequence_or_none(p, t)
+#define TOKEN_SEQUENCE(p, t, v) FPeg_parse_token_sequence(p, t)
+#define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
 
