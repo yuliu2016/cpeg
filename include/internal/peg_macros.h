@@ -78,7 +78,7 @@
 #define NODE_3(p, a, b, c) AST_NEW_NODE(p, f_type, 3, a, b, c)
 #define NODE_4(p, a, b, c, d) AST_NEW_NODE(p, f_type, 4, a, b, c, d)
 
-// FAstNode \*[a-z0-9_]+\(FPegParser \*p\)
+// FAstNode \*[a-z0-9_]+\(FParser \*p\)
 // RULE($1)
 
 #pragma clang diagnostic pop

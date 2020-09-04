@@ -7,8 +7,8 @@ void init_lexer_state(FLexerState *ls, FTokenArray *a) {
     ls->token_len = a->len;
 }
 
-FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
-    FPegParser *p = FMem_malloc(sizeof(FPegParser));
+FParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
+    FParser *p = FMem_malloc(sizeof(FParser));
 
     init_lexer_state(&p->lexer_state, a);
 
@@ -23,7 +23,7 @@ FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *d
     return p;
 }
 
-char *FPeg_check_state(FPegParser *p) {
+char *FPeg_check_state(FParser *p) {
     if (p->dh) {
         return 0;
     }
@@ -45,7 +45,7 @@ void FAst_node_assert_type(FAstNode *node, index_t t) {
     }
 }
 
-FAstNode *FPeg_consume_token(FPegParser *p, index_t type) {
+FAstNode *FPeg_consume_token(FParser *p, index_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = p->lexer_state.tokens[pos];
@@ -72,7 +72,7 @@ FAstNode *FPeg_consume_token(FPegParser *p, index_t type) {
     }
 }
 
-FTokenMemo *new_memo(FPegParser *p, index_t type, void *node, size_t end) {
+FTokenMemo *new_memo(FParser *p, index_t type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
     if (!new_memo) return NULL;
     new_memo->type = type;
@@ -82,7 +82,7 @@ FTokenMemo *new_memo(FPegParser *p, index_t type, void *node, size_t end) {
     return new_memo;
 }
 
-void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end) {
+void FPeg_put_memo(FParser *p, index_t type, void *node, size_t end) {
     FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
@@ -100,7 +100,7 @@ void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end) {
     memo->next = new_memo(p, type, node, end);
 }
 
-FTokenMemo *FPeg_get_memo(FPegParser *p, index_t type) {
+FTokenMemo *FPeg_get_memo(FParser *p, index_t type) {
     FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
@@ -117,7 +117,7 @@ FTokenMemo *FPeg_get_memo(FPegParser *p, index_t type) {
     return NULL;
 }
 
-FAstNode *seq_new(FPegParser *p) {
+FAstNode *seq_new(FParser *p) {
     FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
     // sequence type has a t of 0
     node->ast_t = 0;
@@ -128,7 +128,7 @@ FAstNode *seq_new(FPegParser *p) {
     return node;
 }
 
-void seq_append(FPegParser *p, FAstNode *node, void *item) {
+void seq_append(FParser *p, FAstNode *node, void *item) {
     FAstSequence *seq = &node->ast_v.sequence;
     if (seq->len >= seq->capacity) {
         if (!seq->capacity) {
@@ -148,7 +148,7 @@ void seq_append(FPegParser *p, FAstNode *node, void *item) {
     ++seq->len;
 }
 
-FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...) {
+FAstNode *FAst_new_node(FParser *p, index_t t, int nargs, ...) {
     va_list valist;
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
@@ -166,7 +166,7 @@ FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...) {
     return res;
 }
 
-FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FRuleFunc rule) {
+FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule) {
     FAstNode *node, *seq = seq_new(p);
     while ((node = rule(p))) {
         seq_append(p, seq, node);
@@ -174,7 +174,7 @@ FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FRuleFunc rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_sequence(FPegParser *p, FRuleFunc rule) {
+FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
@@ -184,7 +184,7 @@ FAstNode *FPeg_parse_sequence(FPegParser *p, FRuleFunc rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FRuleFunc rule) {
+FAstNode *FPeg_parse_delimited(FParser *p, index_t delimiter, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
@@ -200,7 +200,7 @@ FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FRuleFunc rule)
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token) {
+FAstNode *FPeg_parse_token_sequence(FParser *p, index_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
@@ -210,7 +210,7 @@ FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token) {
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, index_t token) {
+FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, index_t token) {
     FAstNode *node, *seq = seq_new(p);
     while ((node = FPeg_consume_token(p, token))) {
         seq_append(p, seq, node);
@@ -218,7 +218,7 @@ FAstNode *FPeg_parse_token_sequence_or_none(FPegParser *p, index_t token) {
     return seq;
 }
 
-FAstNode *FPeg_parse_token_delimited(FPegParser *p, index_t delimiter, index_t token) {
+FAstNode *FPeg_parse_token_delimited(FParser *p, index_t delimiter, index_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
