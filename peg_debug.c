@@ -6,7 +6,7 @@ void print_indent_level(size_t s) {
     if (!b) {
         return;
     }
-    for (int i = 0; i < s; ++i) {
+    for (size_t i = 0; i < s; ++i) {
         b[i] = ' ';
     }
     b[s] = '\0';
@@ -14,17 +14,17 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
-void enter_frame(int level, int pos, int rule_index, const char *rule_name) {
+void enter_frame(size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
     printf("Entering frame %d:%s at pos %d", rule_index, rule_name, pos);
 }
 
-void memo_hit(int level, int pos, int rule_index, const char *rule_name) {
+void memo_hit(size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
     printf("Memo found in frame %d:%s at pos %d", rule_index, rule_name, pos);
 }
 
-void exit_frame(void *res, int level, int pos, int rule_index, const char *rule_name) {
+void exit_frame(FAstNode *res, size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
     if (res) {
         printf("Success in frame %d:%s at pos %d", rule_index, rule_name, pos);
@@ -33,13 +33,6 @@ void exit_frame(void *res, int level, int pos, int rule_index, const char *rule_
     }
 }
 
-void mark_token(void *res, int level, int expected, int actual, const char *literal) {
-    print_indent_level(level);
-    if (res) {
-        printf("Success in token %s", literal);
-    } else {
-        printf("Failure in token %d, expecting %s(%d)", actual, literal, expected);
-    }
+FPegDebugHook FPeg_print_debug_hook() {
+    return (FPegDebugHook) {enter_frame, memo_hit, exit_frame};
 }
-
-FPegDebugHook FPeg_print_debug_hook = {enter_frame, memo_hit, exit_frame, mark_token};

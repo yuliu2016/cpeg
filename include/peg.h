@@ -25,9 +25,9 @@ typedef struct token_memo_t {
 typedef struct {
     unsigned int type;
     char *start;
-    int len;
-    int lineno;
-    int column;
+    size_t len;
+    size_t lineno;
+    size_t column;
     int is_whitespace;
     FTokenMemo *memo;
 } FToken;
@@ -51,8 +51,8 @@ typedef struct lexer_state_t {
 
     // Dynamically-growing list of line indices
     size_t *line_to_index;
-    size_t lines;
-    size_t line_capacity;
+    size_t lines_size;
+    size_t lines_capacity;
 
     // end of the last token
     size_t last_end_index;
@@ -62,31 +62,26 @@ typedef struct lexer_state_t {
 
 int FLexer_did_finish(FLexerState *ls, size_t pos);
 
-FToken *FLexer_new_token(
-        FLexerState *ls,
-        size_t type,
-        size_t begin,
-        size_t end,
-        int is_whitespace);
-
 typedef FToken *(*FLexerFunc)(FLexerState *);
+
+typedef struct ast_node_t FAstNode;
 
 typedef struct {
     void (*enter_frame)(
-            int level,
-            int pos,
-            int rule_index,
+            size_t level,
+            size_t pos,
+            unsigned int rule_index,
             const char *rule_name);
     void (*memo_hit)(
-            int level,
-            int pos,
-            int rule_index,
+            size_t level,
+            size_t pos,
+            unsigned int rule_index,
             const char *rule_name);
     void (*exit_frame)(
-            void *res,
-            int level,
-            int pos,
-            int rule_index,
+            FAstNode *res,
+            size_t level,
+            size_t pos,
+            unsigned int rule_index,
             const char *rule_name);
 } FPegDebugHook;
 
@@ -115,8 +110,6 @@ typedef struct parser_state_t {
 } FParser;
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
-
-typedef struct ast_node_t FAstNode;
 
 #define RULE(name) FAstNode *name(FParser *p)
 

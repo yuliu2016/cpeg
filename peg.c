@@ -12,8 +12,8 @@ void lexer_init_state(FLexerState *ls, char *src, size_t len) {
     ls->token_capacity = 0;
 
     ls->line_to_index = 0;
-    ls->lines = 0;
-    ls->line_capacity = 0;
+    ls->lines_size = 0;
+    ls->lines_capacity = 0;
 
     ls->last_end_index = 0;
     ls->error = 0;

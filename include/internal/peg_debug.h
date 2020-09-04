@@ -3,6 +3,6 @@
 
 #include "../peg.h"
 
-FPegDebugHook FPeg_print_debug_hook;
+FPegDebugHook FPeg_print_debug_hook();
 
 #endif //CPEG_PEG_DEBUG_H
