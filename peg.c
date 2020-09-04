@@ -70,9 +70,9 @@ FToken *lexer_get_token(FParser *p, size_t pos) {
     return ls->tokens[pos];
 }
 
-int lexer_did_finish(FParser *p, size_t pos) {
-    return pos >= p->lexer_state.token_len
-           && p->lexer_state.next_token == NULL;
+int FLexer_did_finish(FLexerState *ls, size_t pos) {
+    return pos >= ls->token_len
+           && ls->next_token == NULL;
 }
 
 FParser *FPeg_init_new_parser(
@@ -113,6 +113,19 @@ FParser *FPeg_init_new_parser(
     return p;
 }
 
+void lexer_free_all(FLexerState *ls) {
+    for (int i = 0; i < ls->token_len; ++i) {
+        FMem_free(ls->tokens[i]);
+    }
+    FMem_free(ls->tokens);
+    FMem_free(ls->line_to_index);
+}
+
+void FPeg_free_parser(FParser *p) {
+    lexer_free_all(&p->lexer_state);
+    FMem_free(p);
+}
+
 char *FPeg_check_state(FParser *p) {
     if (p->dh) {
         return 0;
@@ -136,7 +149,8 @@ FAstNode *FPeg_consume_token(FParser *p, index_t type) {
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
-        while (curr_token->is_whitespace && !lexer_did_finish(p, pos + 1)) {
+        while (curr_token->is_whitespace &&
+               !FLexer_did_finish(&p->lexer_state, pos + 1)) {
             pos += 1;
             curr_token = lexer_get_token(p, pos);
         }
@@ -272,9 +286,11 @@ FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
+
     do {
         seq_append(p, seq, node);
     } while ((node = rule(p)));
+
     return seq;
 }
 
@@ -283,13 +299,12 @@ FAstNode *FPeg_parse_delimited(FParser *p, index_t delimiter, FRuleFunc rule) {
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
     size_t pos;
-    while (1) {
+
+    do {
         seq_append(p, seq, node);
         pos = p->pos;
-        if (!(FPeg_consume_token(p, delimiter) && rule(p))) {
-            break;
-        }
-    }
+    } while (FPeg_consume_token(p, delimiter) && rule(p));
+
     p->pos = pos;
     return seq;
 }
@@ -298,9 +313,11 @@ FAstNode *FPeg_parse_token_sequence(FParser *p, index_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
+
     do {
         seq_append(p, seq, node);
     } while ((node = FPeg_consume_token(p, token)));
+
     return seq;
 }
 
@@ -317,13 +334,12 @@ FAstNode *FPeg_parse_token_delimited(FParser *p, index_t delimiter, index_t toke
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
     size_t pos;
-    while (1) {
+
+    do {
         seq_append(p, seq, node);
         pos = p->pos;
-        if (!(FPeg_consume_token(p, delimiter) && FPeg_consume_token(p, token))) {
-            break;
-        }
-    }
+    } while (FPeg_consume_token(p, delimiter) && FPeg_consume_token(p, token));
+
     p->pos = pos;
     return seq;
 }

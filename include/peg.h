@@ -60,14 +60,35 @@ typedef struct lexer_state_t {
     char *error;
 } FLexerState;
 
-typedef struct {
-    void (*enter_frame)(int level, int pos, int rule_index, const char *rule_name);
-    void (*memo_hit)(int level, int pos, int rule_index, const char *rule_name);
-    void (*exit_frame)(void *res, int level, int pos, int rule_index, const char *rule_name);
-    void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
-} FPegDebugHook;
+int FLexer_did_finish(FLexerState *ls, size_t pos);
+
+FToken *FLexer_new_token(
+        FLexerState *ls,
+        size_t type,
+        size_t begin,
+        size_t end,
+        int is_whitespace);
 
 typedef FToken *(*FLexerFunc)(FLexerState *);
+
+typedef struct {
+    void (*enter_frame)(
+            int level,
+            int pos,
+            int rule_index,
+            const char *rule_name);
+    void (*memo_hit)(
+            int level,
+            int pos,
+            int rule_index,
+            const char *rule_name);
+    void (*exit_frame)(
+            void *res,
+            int level,
+            int pos,
+            int rule_index,
+            const char *rule_name);
+} FPegDebugHook;
 
 typedef struct parser_state_t {
     // Use to get lazily scan the next token
@@ -138,6 +159,8 @@ FParser *FPeg_init_new_parser(
         FLexerFunc lexer_func,
         FPegDebugHook *dh
 );
+
+void FPeg_free_parser(FParser *p);
 
 char *FPeg_check_state(FParser *p);
 
