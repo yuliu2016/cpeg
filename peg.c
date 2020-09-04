@@ -2,16 +2,24 @@
 #include "stdarg.h"
 #include "stdio.h"
 
+void init_lexer_state(FLexerState *ls, FTokenArray *a) {
+    ls->tokens = a->tokens;
+    ls->token_len = a->len;
+}
+
 FPegParser *FPeg_new_parser(FMemRegion *region, FTokenArray *a, FPegDebugHook *dh) {
-    FPegParser *p = FMemRegion_malloc(region, sizeof(FPegParser));
+    FPegParser *p = FMem_malloc(sizeof(FPegParser));
+
+    init_lexer_state(&p->lexer_state, a);
+
+    p->lexer_func = 0;
+    p->region = region;
     p->pos = 0;
     p->max_reached_pos = 0;
+    p->ignore_whitespace = 0;
     p->level = 0;
     p->dh = dh;
-    p->region = region;
-    p->token_len = a->len;
-    p->tokens = a->tokens;
-    p->ignore_whitespace = 0;
+    p->error = 0;
     return p;
 }
 
@@ -22,8 +30,11 @@ char *FPeg_check_state(FPegParser *p) {
     if (p->level != 0) {
         return "p->level is not 0";
     }
-    if (p->pos < p->token_len) {
+    if (p->pos < p->lexer_state.token_len) {
         return "Finished AST without all tokens";
+    }
+    if (p->error) {
+        return p->error;
     }
     return 0;
 }
@@ -37,13 +48,13 @@ void FAst_node_assert_type(FAstNode *node, index_t t) {
 FAstNode *FPeg_consume_token(FPegParser *p, index_t type) {
     size_t pos = p->pos;
 
-    FToken *curr_token = p->tokens[pos];
+    FToken *curr_token = p->lexer_state.tokens[pos];
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
-        while (curr_token->is_whitespace && (pos + 1) < p->token_len) {
+        while (curr_token->is_whitespace && (pos + 1) < p->lexer_state.token_len) {
             pos += 1;
-            curr_token = p->tokens[pos];
+            curr_token = p->lexer_state.tokens[pos];
         }
     }
 
@@ -72,7 +83,7 @@ FTokenMemo *new_memo(FPegParser *p, index_t type, void *node, size_t end) {
 }
 
 void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end) {
-    FToken *curr_token = p->tokens[p->pos];
+    FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
         curr_token->memo = new_memo(p, type, node, end);
@@ -90,7 +101,7 @@ void FPeg_put_memo(FPegParser *p, index_t type, void *node, size_t end) {
 }
 
 FTokenMemo *FPeg_get_memo(FPegParser *p, index_t type) {
-    FToken *curr_token = p->tokens[p->pos];
+    FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
         if (memo->type == type) {
@@ -155,7 +166,7 @@ FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...) {
     return res;
 }
 
-FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, rule_func rule) {
+FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FRuleFunc rule) {
     FAstNode *node, *seq = seq_new(p);
     while ((node = rule(p))) {
         seq_append(p, seq, node);
@@ -163,7 +174,7 @@ FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, rule_func rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_sequence(FPegParser *p, rule_func rule) {
+FAstNode *FPeg_parse_sequence(FPegParser *p, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
@@ -173,7 +184,7 @@ FAstNode *FPeg_parse_sequence(FPegParser *p, rule_func rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, rule_func rule) {
+FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);

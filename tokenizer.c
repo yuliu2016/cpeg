@@ -1,5 +1,4 @@
-#include "include/tokenizer.h"
-#include "include/mem.h"
+#include "include/peg.h"
 
 typedef struct {
     FMemRegion *region;
@@ -45,7 +44,7 @@ void tokenizer_list_resize_double(FTokenizerState *ts) {
     }
 }
 
-void FTokenizer_append_token(FTokenizerState *ts, FToken* tok) {
+void FTokenizer_append_token(FTokenizerState *ts, FToken *tok) {
     int i = ts->len;
     if (i >= ts->capacity) {
         tokenizer_list_resize_double(ts);

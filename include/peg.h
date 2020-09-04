@@ -13,11 +13,6 @@
 // https://github.com/PhilippeSigaud/Pegged/wiki/Left-Recursion
 
 
-typedef struct {
-    char *start;
-    int len;
-} FTokenStr;
-
 // Memo stored in a linked list, assuming not storing
 // too many types at the same position
 typedef struct token_memo_t {
@@ -29,11 +24,10 @@ typedef struct token_memo_t {
 
 typedef struct {
     unsigned int type;
-    FTokenStr *str;
-    int line_start;
-    int line_end;
-    int col_start;
-    int col_end;
+    char *start;
+    int len;
+    int lineno;
+    int column;
     int is_whitespace;
     FTokenMemo *memo;
 } FToken;
@@ -50,15 +44,53 @@ typedef struct {
     void (*mark_token)(void *res, int level, int expected, int actual, const char *literal);
 } FPegDebugHook;
 
-typedef struct peg_parser_t {
+// Lazily-evaluated tokenizer
+typedef struct lexer_state_t {
+    // Test source
+    char *src_buf;
+    size_t src_len;
+
+    // Index of the visitor
+    size_t curr_index;
+
+    // Dynamically-growing list of tokens
+    FToken **tokens;
+    size_t token_len;
+    size_t token_capacity;
+
+    // Dynamically-growing list of line indices
+    size_t *line_to_index;
+    size_t lines;
+    size_t line_capacity;
+
+    // end of the last token
+    size_t last_end_index;
+
+    char *error;
+} FLexerState;
+
+typedef struct parser_state_t {
+    // Use to get lazily scan the next token
+    FLexerState lexer_state;
+
+    // Use to get the next token
+    FToken *(*lexer_func)(FLexerState *);
+
+    // Allocate nodes in the same region so it can be freed all at once
+    FMemRegion *region;
+
     size_t pos;
     size_t max_reached_pos;
-    size_t token_len;
-    FToken **tokens;
-    FMemRegion *region;
+
+    // Use for space-insensitive blocks (like between brackets)
     int ignore_whitespace;
+
+    char *error;
+
+    // Debugging
     size_t level;
     FPegDebugHook *dh;
+
 } FPegParser;
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
@@ -72,7 +104,6 @@ typedef struct ast_sequence_t {
     size_t capacity;
     FAstNode **items;
 } FAstSequence;
-
 
 #define AST_NODE_MAX_FIELD 4
 
@@ -127,13 +158,13 @@ FAstNode *FPeg_consume_token(FPegParser *p, index_t type);
 
 FAstNode *FAst_new_node(FPegParser *p, index_t t, int nargs, ...);
 
-typedef FAstNode *(*rule_func)(FPegParser *);
+typedef FAstNode *(*FRuleFunc)(FPegParser *);
 
-FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, rule_func rule);
+FAstNode *FPeg_parse_sequece_or_none(FPegParser *p, FRuleFunc rule);
 
-FAstNode *FPeg_parse_sequence(FPegParser *p, rule_func rule);
+FAstNode *FPeg_parse_sequence(FPegParser *p, FRuleFunc rule);
 
-FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, rule_func rule);
+FAstNode *FPeg_parse_delimited(FPegParser *p, index_t delimiter, FRuleFunc rule);
 
 FAstNode *FPeg_parse_token_sequence(FPegParser *p, index_t token);
 
