@@ -41,6 +41,12 @@ typedef struct lexer_state_t {
     // Index of the visitor
     size_t curr_index;
 
+    // Index of the start of the token;
+    size_t start_index;
+
+    // Indentation level (multiple of 4, in spaces)
+    size_t indent;
+
     // Dynamically-growing list of tokens
     FToken **tokens;
     size_t token_len;
@@ -53,9 +59,6 @@ typedef struct lexer_state_t {
     size_t *line_to_index;
     size_t lines_size;
     size_t lines_capacity;
-
-    // end of the last token
-    size_t last_end_index;
 
     char *error;
 } FLexerState;
