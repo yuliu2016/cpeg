@@ -1,6 +1,7 @@
-#include "include/peg.h"
+#include "include/tokenizer.h"
 #include "include/tokenmap.h"
 #include "stdbool.h"
+#include "stdio.h"
 
 void lexer_add_line_index(FLexerState *ls, size_t i) {
     if (ls->lines_size >= ls->lines_capacity) {
@@ -143,12 +144,17 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
     }
 
     if (j == ls->curr_index + 2) {
-        ls->error = "Cannot parse name number after leading literal";
+        char buf[60];
+        sprintf(buf, "Cannot parser %s number after leading literal", name);
+        ls->error = buf;
         return false;
     }
 
+    // make sure the number literal doesn't start or end with '_'
     if (ls->src[j - 1] == '_' || ls->src[ls->curr_index + 2] == '_') {
-        ls->error = name;
+        char buf[30];
+        sprintf(buf, "Invalid %s literal", name);
+        ls->error = buf;
         return false;
     }
 
@@ -171,7 +177,101 @@ bool test_bin(char ch) {
     return ch == '0' || ch == '1';
 }
 
+bool test_dec(char ch) {
+    return ch >= '0' && ch <= '9';
+}
+
+size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
+    size_t j = i;
+    while (j < ls->src_len) {
+        char ch = ls->src[j];
+        if (ch != '_' && !test_dec(ch)) {
+            break;
+        }
+        j++;
+    }
+
+    // make sure the number literal doesn't start or end with '_'
+    if (j == i || ls->src[j - 1] == '_' || ls->src[ls->curr_index + 2] == '_') {
+        ls->error = "Invalid decimal literal";
+        return false;
+    }
+
+    return j;
+}
+
 bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
+
+    size_t j = ls->curr_index;
+
+    if (!test_dec(PEEK(ls))) {
+        return false;
+    }
+
+    j = advance_decimal_sequence(ls, j);
+    if (ls->error) {
+        return false;
+    }
+
+    // floating point
+    bool is_floating_point = false;
+    if (j < ls->src_len && ls->src[j] == '.') {
+        is_floating_point = true;
+        j++;
+        j = advance_decimal_sequence(ls, j);
+        if (ls->error) {
+            return false;
+        }
+    }
+
+    // exponent
+    if (j < ls->src_len) {
+        char ch = ls->src[j];
+        if (ch == 'e' || ch == 'E') {
+            is_floating_point = true;
+            j++;
+            // exponent sign
+            if (j < ls->src_len) {
+                char ch2 = ls->src[j];
+                if (ch2 == '+' || ch2 == '-') {
+                    j++;
+                }
+            }
+            j = advance_decimal_sequence(ls, j);
+            if (ls->error) {
+                return false;
+            }
+        }
+    }
+
+    // imaginary
+    if (j < ls->src_len) {
+        char ch = ls->src[j];
+        if (ch == 'j' || ch == 'J') {
+            is_floating_point = true;
+            j++;
+        }
+    }
+
+    // 0-leading check
+    if (!is_floating_point) {
+        bool all_zero = true;
+
+        for (size_t i = ls->curr_index; i < j; ++i) {
+            if (ls->src[i] != '0') {
+                all_zero = false;
+                break;
+            }
+        }
+        if (ls->src[ls->curr_index] == '0' && !all_zero) {
+            ls->error = "Integer with leading zero; use 0o for octal numbers";
+            return false;
+        }
+    }
+
+    ls->curr_index = j;
+    *ptoken = create_token(ls, T_NUMBER, false);
+
     return false;
 }
 
@@ -200,14 +300,25 @@ bool tokenize_number(FLexerState *ls, FToken **ptoken) {
     return tokenize_decimal(ls, ptoken);
 }
 
-int tokenize_symbol(FLexerState *ls, FToken **ptoken) {
+bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
-        return 0;
+        return false;
     }
 
-    return 1;
+    return true;
 }
 
+bool tokenize_name(FLexerState *ls, FToken **ptoken) {
+    if (ls->error) {
+        return false;
+    }
+
+    return true;
+}
+
+bool tokenize_symbol(FLexerState *ls, FToken **ptoken) {
+    return true;
+}
 
 FToken *FTokenizer_get_next_token(FLexerState *ls) {
     FToken *token = NULL;
@@ -222,6 +333,8 @@ FToken *FTokenizer_get_next_token(FLexerState *ls) {
 
     (tokenize_newlines(ls, &token)) ||
     (tokenize_number(ls, &token)) ||
+    (tokenize_string(ls, &token)) ||
+    (tokenize_name(ls, &token)) ||
     (tokenize_symbol(ls, &token));
 
     if (ls->error) {
