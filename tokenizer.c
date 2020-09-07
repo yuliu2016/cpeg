@@ -300,6 +300,72 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
         return false;
     }
 
+    bool multi_line = false;
+
+    size_t i = ls->curr_index;
+
+    if (PEEK_SAFE(ls, i) == 'r') {
+        i++;
+    }
+    if (PEEK_SAFE(ls, i) == 'f') {
+        i++;
+    }
+
+    char open_char = PEEK_SAFE(ls, i);
+    if (!(open_char == '\'' || open_char == '\"')) {
+        return false;
+    }
+
+    if (PEEK_SAFE(ls, i + 1) == open_char && PEEK_SAFE(ls, i + 2) == open_char) {
+        multi_line = true;
+    }
+
+    bool closed = false;
+
+    if (multi_line) {
+        int close_counter = 0;
+        while (i < ls->src_len) {
+            char ch = PEEK_SAFE(ls, i);
+            if (ch == open_char) {
+                close_counter++;
+            } else {
+                close_counter = 0;
+            }
+            if (close_counter == 3) {
+                closed = true;
+                break;
+            }
+            if (ch == '\n') {
+                lexer_add_line_index(ls, i);
+            } else if (ch == '\r') {
+                if (PEEK_SAFE(ls, i + 1) == '\n') {
+                    i++;
+                }
+                lexer_add_line_index(ls, i);
+            }
+            i++;
+        }
+    } else {
+        while (i < ls->src_len) {
+            char ch = PEEK_SAFE(ls, i);
+            if (ch == open_char) {
+                closed = true;
+                break;
+            }
+            if (ch == '\n' || ch == '\r') {
+                break;
+            }
+            i++;
+        }
+    }
+
+    if (!closed) {
+        tokenizer_set_error(ls, "String not closed, unexpected EOL", 4);
+    }
+
+    ls->curr_index = i;
+    *ptoken = create_token(ls, T_STRING, false);
+
     return true;
 }
 
@@ -465,11 +531,11 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
         return false;
     }
 
-    size_t n_keywords = sizeof(keywords) / sizeof(struct token_literal);
+    size_t n_operators = sizeof(operators) / sizeof(struct token_literal);
 
     // reverse because the longest operators first
-    for (int i = n_keywords; i > 0; --i) {
-        struct token_literal pair = keywords[i];
+    for (int i = n_operators; i > 0; --i) {
+        struct token_literal pair = operators[i];
 
         const char *op = pair.literal;
         size_t j = ls->start_index;
