@@ -42,8 +42,8 @@ FToken *create_token(FLexerState *ls,
 
 #define HAS_REMAINING(ls) ((ls)->curr_index < (ls)->src_len)
 #define PEEK(ls) ls->src[(ls)->curr_index]
-#define PEEK_NEXT(ls, n) ((ls)->curr_index < (ls)->src_len - (n) ? \
-    (ls)->src[(ls)->curr_index + (n)] : 0)
+#define PEEK_SAFE(ls, i) ((i) < (ls)->src_len ? (ls)->src[i] : 0)
+#define PEEK_NEXT(ls, n) PEEK_SAFE(ls, (ls)->curr_index + (n))
 
 #define ADVANCE(ls) ls->curr_index++;
 
@@ -73,7 +73,7 @@ void skip_spaces(FLexerState *ls) {
 #define T_INDENT 0
 #define T_DEDENT 200
 
-bool tokenize_newlines(FLexerState *ls, FToken **ptoken) {
+bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -150,8 +150,8 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
         return false;
     }
 
-    // make sure the number literal doesn't start or end with '_'
-    if (ls->src[j - 1] == '_' || ls->src[ls->curr_index + 2] == '_') {
+    // make sure the number literal doesn't end with '_'
+    if (ls->src[j - 1] == '_') {
         char buf[30];
         sprintf(buf, "Invalid %s literal", name);
         ls->error = buf;
@@ -225,33 +225,28 @@ bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
     }
 
     // exponent
-    if (j < ls->src_len) {
-        char ch = ls->src[j];
-        if (ch == 'e' || ch == 'E') {
-            is_floating_point = true;
+    char ch = PEEK_SAFE(ls, j);
+    if (ch == 'e' || ch == 'E') {
+        is_floating_point = true;
+        j++;
+        // exponent sign
+        char ch2 = PEEK_SAFE(ls, j);
+        if (ch2 == '+' || ch2 == '-') {
             j++;
-            // exponent sign
-            if (j < ls->src_len) {
-                char ch2 = ls->src[j];
-                if (ch2 == '+' || ch2 == '-') {
-                    j++;
-                }
-            }
-            j = advance_decimal_sequence(ls, j);
-            if (ls->error) {
-                return false;
-            }
+        }
+        j = advance_decimal_sequence(ls, j);
+        if (ls->error) {
+            return false;
         }
     }
 
     // imaginary
-    if (j < ls->src_len) {
-        char ch = ls->src[j];
-        if (ch == 'j' || ch == 'J') {
-            is_floating_point = true;
-            j++;
-        }
+    ch = PEEK_SAFE(ls, j);
+    if (ch == 'j' || ch == 'J') {
+        is_floating_point = true;
+        j++;
     }
+
 
     // 0-leading check
     if (!is_floating_point) {
@@ -308,16 +303,195 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     return true;
 }
 
-bool tokenize_name(FLexerState *ls, FToken **ptoken) {
+bool test_name(char ch) {
+    return (ch >= 'A' && ch <= 'Z') ||
+           (ch >= 'a' && ch <= 'z') ||
+           (ch >= '0' && ch <= '9') ||
+           (ch == '_');
+}
+
+struct token_literal {
+    const char *literal;
+    size_t type;
+};
+
+static struct token_literal keywords[] = {
+        {"return",   T_RETURN},
+        {"nonlocal", T_NONLOCAL},
+        {"if",       T_IF},
+        {"elif",     T_ELIF},
+        {"else",     T_ELSE},
+        {"and",      T_AND},
+        {"or",       T_OR},
+        {"not",      T_NOT},
+        {"is",       T_IS},
+        {"in",       T_IN},
+        {"pass",     T_PASS},
+        {"as",       T_AS},
+        {"from",     T_FROM},
+        {"import",   T_IMPORT},
+        {"with",     T_WITH},
+        {"async",    T_ASYNC},
+        {"await",    T_AWAIT},
+        {"while",    T_WHILE},
+        {"for",      T_FOR},
+        {"continue", T_CONTINUE},
+        {"break",    T_BREAK},
+        {"try",      T_TRY},
+        {"except",   T_EXCEPT},
+        {"finally",  T_FINALLY},
+        {"raise",    T_RAISE},
+        {"del",      T_DEL},
+        {"assert",   T_ASSERT},
+        {"None",     T_NONE},
+        {"True",     T_TRUE},
+        {"False",    T_FALSE}
+};
+
+bool tokenize_name_or_keyword(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
 
+    // numbers have already been tokenized,
+    // so this doesn't test if the first char is a number
+
+    if (!test_name(PEEK(ls))) {
+        return false;
+    }
+
+    while (HAS_REMAINING(ls) && test_name(PEEK(ls))) {
+        ADVANCE(ls);
+    }
+
+    // Since some literals and all keywords have the same rules as symbols
+    // just add them here
+
+    size_t n_keywords = sizeof(keywords) / sizeof(struct token_literal);
+
+    for (int i = 0; i < n_keywords; ++i) {
+        struct token_literal pair = keywords[i];
+
+        const char *kw = pair.literal;
+        size_t j = ls->start_index;
+
+        bool matching = true;
+        char ch;
+        while ((ch = *kw)) {
+            if (ch != ls->src[j]) {
+                matching = false;
+                break;
+            }
+            ++j;
+            ++kw;
+        }
+
+        if (matching && j == ls->curr_index) {
+            *ptoken = create_token(ls, pair.type, false);
+            return true;
+        }
+    }
+
+    // not any of the keywords
+    *ptoken = create_token(ls, T_NAME, false);
     return true;
 }
 
-bool tokenize_symbol(FLexerState *ls, FToken **ptoken) {
-    return true;
+static struct token_literal operators[] = {
+
+// ====== Single-char operators ======
+        {".",   T_OP_DOT},
+        {",",   T_OP_COMMA},
+        {"=",   T_OP_ASSIGN},
+        {":",   T_OP_COLON},
+        {"?",   T_OP_TERNERY},
+        {"!",   T_OP_NOT},
+        {";",   T_OP_SEMICOLON},
+
+// second most common - brackets
+        {"(",   T_OP_LPAR},
+        {")",   T_OP_RPAR},
+        {"{",   T_OP_LBRACE},
+        {"}",   T_OP_RBRACE},
+        {"[",   T_OP_LSQB},
+        {"]",   T_OP_RSQB},
+        {"<",   T_OP_LESS},
+        {">",   T_OP_GREATER},
+
+// arithmetic
+        {"+",   T_OP_PLUS},
+        {"-",   T_OP_MINUS},
+        {"*",   T_OP_TIMES},
+        {"/",   T_OP_DIV},
+        {"%",   T_OP_MODULUS},
+        {"@",   T_OP_MATRIX_TIMES},
+
+// bitwise operators
+        {"|",   T_OP_BIT_OR},
+        {"&",   T_OP_BIT_AND},
+        {"~",   T_OP_BIT_NOT},
+        {"^",   T_OP_BIT_XOR},
+
+// ====== Double-Char Operators ======
+        {"==",  T_OP_EQUAL},
+        {"!=",  T_OP_NEQUAL},
+        {"<=",  T_OP_LESS_EQUAL},
+        {">=",  T_OP_MORE_EQUAL},
+        {"->",  T_OP_PIPE},
+        {":=",  T_OP_ASGN_EXPR},
+        {"//",  T_OP_FLOOR_DIV},
+        {"**",  T_OP_POWER},
+        {"+=",  T_OP_PLUS_ASSIGN},
+        {"-=",  T_OP_MINUS_ASSIGN},
+        {"*=",  T_OP_TIMES_ASSIGN},
+        {"/=",  T_OP_DIV_ASSIGN},
+        {"%=",  T_OP_MODULUS_ASSIGN},
+        {"@=",  T_OP_MATRIX_TIMES_ASSIGN},
+        {"|=",  T_OP_BIT_OR_ASSIGN},
+        {"&=",  T_OP_BIT_AND_ASSIGN},
+        {"^=",  T_OP_BIT_XOR_ASSIGN},
+        {"<<",  T_OP_LSHIFT},
+        {">>",  T_OP_RSHIFT},
+
+// ====== Triple-char operators ======
+        {"//=", T_OP_FLOOR_DIV_ASSIGN},
+        {"**=", T_OP_POWER_ASSIGN},
+        {"<<=", T_OP_LSHIFT_ASSIGN},
+        {">>=", T_OP_RSHIFT_ASSIGN}
+};
+
+bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
+    if (ls->error) {
+        return false;
+    }
+
+    size_t n_keywords = sizeof(keywords) / sizeof(struct token_literal);
+
+    // reverse because the longest operators first
+    for (int i = n_keywords; i > 0; --i) {
+        struct token_literal pair = keywords[i];
+
+        const char *op = pair.literal;
+        size_t j = ls->start_index;
+
+        bool matching = true;
+        char ch;
+        while ((ch = *op)) {
+            if (ch != ls->src[j]) {
+                matching = false;
+                break;
+            }
+            ++j;
+            ++op;
+        }
+
+        if (matching) {
+            ls->curr_index = j;
+            *ptoken = create_token(ls, pair.type, false);
+            return true;
+        }
+    }
+    return false;
 }
 
 FToken *FTokenizer_get_next_token(FLexerState *ls) {
@@ -331,11 +505,11 @@ FToken *FTokenizer_get_next_token(FLexerState *ls) {
         return create_token(ls, T_ENDMARKER, 0);
     }
 
-    (tokenize_newlines(ls, &token)) ||
+    (tokenize_newline_or_indent(ls, &token)) ||
     (tokenize_number(ls, &token)) ||
     (tokenize_string(ls, &token)) ||
-    (tokenize_name(ls, &token)) ||
-    (tokenize_symbol(ls, &token));
+    (tokenize_name_or_keyword(ls, &token)) ||
+    (tokenize_operator_or_symbol(ls, &token));
 
     if (ls->error) {
         return NULL;
