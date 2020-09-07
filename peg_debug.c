@@ -16,20 +16,20 @@ void print_indent_level(size_t s) {
 
 void enter_frame(size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
-    printf("Entering frame %d:%s at pos %d", rule_index, rule_name, pos);
+    printf("Entering frame %zu:%s at pos %zu", rule_index, rule_name, pos);
 }
 
 void memo_hit(size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
-    printf("Memo found in frame %d:%s at pos %d", rule_index, rule_name, pos);
+    printf("Memo found in frame %zu:%s at pos %zu", rule_index, rule_name, pos);
 }
 
 void exit_frame(FAstNode *res, size_t level, size_t pos, size_t rule_index, const char *rule_name) {
     print_indent_level(level);
     if (res) {
-        printf("Success in frame %d:%s at pos %d", rule_index, rule_name, pos);
+        printf("Success in frame %zu:%s at pos %zu", rule_index, rule_name, pos);
     } else {
-        printf("Failure in frame %d:%s at pos %d", rule_index, rule_name, pos);
+        printf("Failure in frame %zu:%s at pos %zu", rule_index, rule_name, pos);
     }
 }
 

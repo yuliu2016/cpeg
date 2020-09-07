@@ -73,18 +73,18 @@ typedef struct {
     void (*enter_frame)(
             size_t level,
             size_t pos,
-            unsigned int rule_index,
+            size_t rule_index,
             const char *rule_name);
     void (*memo_hit)(
             size_t level,
             size_t pos,
-            unsigned int rule_index,
+            size_t rule_index,
             const char *rule_name);
     void (*exit_frame)(
             FAstNode *res,
             size_t level,
             size_t pos,
-            unsigned int rule_index,
+            size_t rule_index,
             const char *rule_name);
 } FPegDebugHook;
 
@@ -147,8 +147,6 @@ struct ast_node_t {
 
 #pragma clang diagnostic pop
 
-typedef unsigned int index_t;
-
 FParser *FPeg_init_new_parser(
         char *src,
         size_t len,
@@ -160,18 +158,18 @@ void FPeg_free_parser(FParser *p);
 
 char *FPeg_check_state(FParser *p);
 
-void FPeg_put_memo(FParser *p, index_t type, void *node, size_t end);
+void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end);
 
-FTokenMemo *FPeg_get_memo(FParser *p, index_t type);
+FTokenMemo *FPeg_get_memo(FParser *p, size_t type);
 
 // Macros used in the parser
 
 #define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
 
-FAstNode *FPeg_consume_token(FParser *p, index_t type);
+FAstNode *FPeg_consume_token(FParser *p, size_t type);
 
-FAstNode *FAst_new_node(FParser *p, index_t t, int nargs, ...);
+FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
 typedef FAstNode *(*FRuleFunc)(FParser *);
 
@@ -186,12 +184,12 @@ FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
 
 FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule);
 
-FAstNode *FPeg_parse_delimited(FParser *p, index_t delimiter, FRuleFunc rule);
+FAstNode *FPeg_parse_delimited(FParser *p, size_t delimiter, FRuleFunc rule);
 
-FAstNode *FPeg_parse_token_sequence(FParser *p, index_t token);
+FAstNode *FPeg_parse_token_sequence(FParser *p, size_t token);
 
-FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, index_t token);
+FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, size_t token);
 
-FAstNode *FPeg_parse_token_delimited(FParser *p, index_t delimiter, index_t token);
+FAstNode *FPeg_parse_token_delimited(FParser *p, size_t delimiter, size_t token);
 
 #endif //CPEG_PEG_H

@@ -15,7 +15,7 @@ void lexer_init_state(FLexerState *ls, char *src, size_t len) {
     ls->lines_size = 0;
     ls->lines_capacity = 0;
 
-    ls->last_end_index = 0;
+    ls->start_index = 0;
     ls->error = 0;
 }
 
@@ -142,7 +142,7 @@ char *FPeg_check_state(FParser *p) {
     return 0;
 }
 
-FAstNode *FPeg_consume_token(FParser *p, index_t type) {
+FAstNode *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = lexer_get_token(p, pos);
@@ -173,7 +173,7 @@ FAstNode *FPeg_consume_token(FParser *p, index_t type) {
     }
 }
 
-FTokenMemo *new_memo(FParser *p, index_t type, void *node, size_t end) {
+FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
     if (!new_memo) {
         return NULL;
@@ -185,7 +185,7 @@ FTokenMemo *new_memo(FParser *p, index_t type, void *node, size_t end) {
     return new_memo;
 }
 
-void FPeg_put_memo(FParser *p, index_t type, void *node, size_t end) {
+void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end) {
     FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
@@ -203,7 +203,7 @@ void FPeg_put_memo(FParser *p, index_t type, void *node, size_t end) {
     memo->next = new_memo(p, type, node, end);
 }
 
-FTokenMemo *FPeg_get_memo(FParser *p, index_t type) {
+FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
     FToken *curr_token = p->lexer_state.tokens[p->pos];
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
@@ -256,7 +256,7 @@ void seq_append(FParser *p, FAstNode *node, void *item) {
     seq->len += 1;
 }
 
-FAstNode *FAst_new_node(FParser *p, index_t t, int nargs, ...) {
+FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
     va_list valist;
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
@@ -294,7 +294,7 @@ FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_delimited(FParser *p, index_t delimiter, FRuleFunc rule) {
+FAstNode *FPeg_parse_delimited(FParser *p, size_t delimiter, FRuleFunc rule) {
     FAstNode *node, *seq;
     if (!(node = rule(p))) return 0;
     seq = seq_new(p);
@@ -309,7 +309,7 @@ FAstNode *FPeg_parse_delimited(FParser *p, index_t delimiter, FRuleFunc rule) {
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence(FParser *p, index_t token) {
+FAstNode *FPeg_parse_token_sequence(FParser *p, size_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
@@ -321,7 +321,7 @@ FAstNode *FPeg_parse_token_sequence(FParser *p, index_t token) {
     return seq;
 }
 
-FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, index_t token) {
+FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, size_t token) {
     FAstNode *node, *seq = seq_new(p);
     while ((node = FPeg_consume_token(p, token))) {
         seq_append(p, seq, node);
@@ -329,7 +329,7 @@ FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, index_t token) {
     return seq;
 }
 
-FAstNode *FPeg_parse_token_delimited(FParser *p, index_t delimiter, index_t token) {
+FAstNode *FPeg_parse_token_delimited(FParser *p, size_t delimiter, size_t token) {
     FAstNode *node, *seq;
     if (!(node = FPeg_consume_token(p, token))) return 0;
     seq = seq_new(p);
