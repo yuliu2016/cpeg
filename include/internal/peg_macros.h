@@ -73,10 +73,10 @@
 
 #define TOKEN(type, value) AST_CONSUME(p, type, value)
 
-#define NODE_1(p, a) AST_NEW_NODE(p, f_type, 1, a)
-#define NODE_2(p, a, b) AST_NEW_NODE(p, f_type, 2, a, b)
-#define NODE_3(p, a, b, c) AST_NEW_NODE(p, f_type, 3, a, b, c)
-#define NODE_4(p, a, b, c, d) AST_NEW_NODE(p, f_type, 4, a, b, c, d)
+#define NODE_1() AST_NEW_NODE(p, f_type, 1, a)
+#define NODE_2() AST_NEW_NODE(p, f_type, 2, a, b)
+#define NODE_3() AST_NEW_NODE(p, f_type, 3, a, b, c)
+#define NODE_4() AST_NEW_NODE(p, f_type, 4, a, b, c, d)
 
 // FAstNode \*[a-z0-9_]+\(FParser \*p\)
 // RULE($1)

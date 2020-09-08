@@ -21,7 +21,7 @@ RULE(sum_1) {
     (a = sum(p)) &&
     (TOKEN(21, "+")) &&
     (b = term(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -30,7 +30,7 @@ RULE(sum_2) {
     (a = sum(p)) &&
     (TOKEN(22, "-")) &&
     (b = term(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -56,7 +56,7 @@ RULE(term_1) {
     (a = term(p)) &&
     (TOKEN(23, "*")) &&
     (b = factor(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -65,7 +65,7 @@ RULE(term_2) {
     (a = term(p)) &&
     (TOKEN(24, "/")) &&
     (b = factor(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -74,7 +74,7 @@ RULE(term_3) {
     (a = term(p)) &&
     (TOKEN(25, "%")) &&
     (b = factor(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -89,7 +89,7 @@ RULE(factor) {
     (a = factor_2(p)) ||
     (a = factor_3(p)) ||
     (a = power(p))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0;
     EXIT();
 }
 
@@ -97,7 +97,7 @@ RULE(factor_1) {
     ENTER(9);
     (TOKEN(21, "+")) &&
     (a = factor(p))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0; 
     EXIT();
 }
 
@@ -105,7 +105,7 @@ RULE(factor_2) {
     ENTER(10);
     (TOKEN(22, "-")) &&
     (a = factor(p))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0; 
     EXIT();
 }
 
@@ -113,7 +113,7 @@ RULE(factor_3) {
     ENTER(11);
     (TOKEN(29, "~")) &&
     (a = factor(p))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0; 
     EXIT();
 }
 
@@ -124,7 +124,7 @@ RULE(power) {
     ENTER(12);
     (a = power_1(p)) ||
     (a = atom(p))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0;
     EXIT();
 }
 
@@ -133,7 +133,7 @@ RULE(power_1) {
     (a = atom(p)) &&
     (TOKEN(38, "**")) &&
     (b = factor(p))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -148,7 +148,7 @@ RULE(atom) {
     (a = atom_2(p)) ||
     (a = TOKEN(3, "NAME")) ||
     (a = TOKEN(4, "NUMBER"))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0;
     EXIT();
 }
 
@@ -157,7 +157,7 @@ RULE(atom_1) {
     (TOKEN(13, "(")) &&
     (a = sum(p)) &&
     (TOKEN(14, ")"))
-    ? (r = NODE_1(p, a)) : 0;
+    ? (r = NODE_1()) : 0; 
     EXIT();
 }
 
@@ -167,7 +167,7 @@ RULE(atom_2) {
     (TOKEN(13, "(")) &&
     (b = OPTIONAL(parameters(p))) &&
     (TOKEN(14, ")"))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
 
@@ -177,6 +177,6 @@ RULE(parameters) {
     ENTER(17);
     (a = DELIMITED(p, 7, ",", sum)) &&
     (b = OPTIONAL(TOKEN(7, ",")))
-    ? (r = NODE_2(p, a, b)) : 0;
+    ? (r = NODE_2()) : 0; 
     EXIT();
 }
