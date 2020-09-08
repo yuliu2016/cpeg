@@ -63,9 +63,10 @@ typedef struct lexer_state_t {
     size_t lines_capacity;
 
     char *error;
+    int endmarker;
 } FLexerState;
 
-void FLexer_init_state(FLexerState *ls, char *src, size_t len);
+void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker);
 
 void FLexer_add_index_for_line(FLexerState *ls, size_t i);
 

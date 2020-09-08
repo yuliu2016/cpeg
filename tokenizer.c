@@ -113,6 +113,8 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
         return false;
     }
 
+    ls->indent = indent;
+
     return true;
 }
 
@@ -545,16 +547,20 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
 }
 
 FToken *FLexer_get_next_token(FLexerState *ls) {
-    FToken *token = NULL;
+    ls->start_index = ls->curr_index;
+
+    // lexer still needs an ending token
+    if (!HAS_REMAINING(ls)) {
+        if (ls->endmarker) {
+            ls->endmarker = 0;
+            return create_token(ls, T_ENDMARKER, 0);
+        }
+        return NULL;
+    }
 
     skip_spaces(ls);
 
-    ls->start_index = ls->curr_index;
-
-    if (!HAS_REMAINING(ls)) {
-        return create_token(ls, T_ENDMARKER, 0);
-    }
-
+    FToken *token = NULL;
     (tokenize_newline_or_indent(ls, &token)) ||
     (tokenize_number(ls, &token)) ||
     (tokenize_string(ls, &token)) ||
@@ -574,16 +580,16 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
 }
 
 FLexerState *FLexer_analyze_all(char *src) {
-    FLexerState *ls =  FMem_malloc(sizeof(FLexerState));
+    FLexerState *ls = FMem_malloc(sizeof(FLexerState));
 
     // find length of string
     size_t len = 0;
     char *ptr = src;
     while (*(ptr++)) ++len;
 
-    FLexer_init_state(ls, src, len);
+    FLexer_init_state(ls, src, len, false);
 
-    while (HAS_REMAINING(ls)) {
+    for (;;) {
         FToken *token = FLexer_get_next_token(ls);
         if (!token) {
             break;

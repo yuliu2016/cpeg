@@ -1,15 +1,20 @@
 #include "include/peg.h"
 #include "stdarg.h"
 
-void FLexer_init_state(FLexerState *ls, char *src, size_t len) {
+void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker) {
     ls->src = src;
     ls->src_len = len;
 
     ls->curr_index = 0;
+    ls->start_index = 0;
 
-    ls->tokens = 0;
+    ls->indent = 0;
+
+    ls->tokens = NULL;
     ls->token_len = 0;
     ls->token_capacity = 0;
+
+    ls->next_token = NULL;
 
     // always non-empty
     ls->line_to_index = FMem_malloc(sizeof(size_t));
@@ -17,8 +22,8 @@ void FLexer_init_state(FLexerState *ls, char *src, size_t len) {
     ls->lines_size = 1;
     ls->lines_capacity = 1;
 
-    ls->start_index = 0;
-    ls->error = 0;
+    ls->error = NULL;
+    ls->endmarker = endmarker;
 }
 
 void FLexer_add_index_for_line(FLexerState *ls, size_t i) {
@@ -115,7 +120,7 @@ FParser *FPeg_init_new_parser(
         return NULL;
     }
 
-    FLexer_init_state(&p->lexer_state, src, len);
+    FLexer_init_state(&p->lexer_state, src, len, 1);
 
     p->lexer_func = lexer_func;
     p->region = region;

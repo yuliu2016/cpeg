@@ -7,8 +7,14 @@ void input_loop(char *prompt, char *(*func)(char *)) {
     char line[1024];
     for (;;) {
         fgets(line, 1024, stdin);
-        if (strcmp(line, "exit") == 0) {
+        if (strcmp(line, "exit\n") == 0) {
             break;
+        }
+        // remove the newline character at the end
+        for (int i = 0; i < 1024; ++i) {
+            if (i && !line[i]) {
+                line[i - 1] = 0;
+            }
         }
         print(func(line));
         print(prompt);

@@ -6,6 +6,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 char *idchptr(char *in) {
     return in;
 }
@@ -19,7 +20,24 @@ void *parse() {
 
 char *tokenizer_repl(char *in) {
     FLexerState *ls = FLexer_analyze_all(in);
-    printf("# of tokens: %zu, error: %s", ls->token_len, ls->error);
+    printf("# of tokens: %zu, error: %s\n", ls->token_len, ls->error);
+    for (int i = 0; i < ls->token_len; ++i) {
+        FToken *token = ls->tokens[i];
+        char literal[100];
+        for (int j = 0; j < 100; ++j) {
+            literal[j] = 0;
+        }
+        for (size_t j = 0; j < token->len; ++j) {
+            char ch = token->start[j];
+            if (ch == '\n') {
+                literal[j++] = '\\';
+                literal[j] = 'n';
+            } else {
+                literal[j] = ch;
+            }
+        }
+        printf("T(type=%d, len=%zu, '%s')\n", token->type, token->len, literal);
+    }
     return "\n";
 }
 
