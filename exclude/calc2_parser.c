@@ -7,12 +7,12 @@
 //     | term
 RULE(sum) {
     ENTER(1);
-    RETURN_IF_MEMOIZED(p);
-    ENTER_LEFT_RECURSION(p);
+    RETURN_IF_MEMOIZED();
+    ENTER_LEFT_RECURSION();
     (a = sum_1(p)) ||
     (a = sum_2(p)) ||
     (a = term(p));
-    EXIT_LEFT_RECURSION(p);
+    EXIT_LEFT_RECURSION();
     EXIT();
 }
 
@@ -41,13 +41,13 @@ RULE(sum_2) {
 //     | factor
 RULE(term) {
     ENTER(4);
-    RETURN_IF_MEMOIZED(p);
-    ENTER_LEFT_RECURSION(p);
+    RETURN_IF_MEMOIZED();
+    ENTER_LEFT_RECURSION();
     (a = term_1(p)) ||
     (a = term_2(p)) ||
     (a = term_3(p)) ||
     (a = factor(p));
-    EXIT_LEFT_RECURSION(p);
+    EXIT_LEFT_RECURSION();
     EXIT();
 }
 

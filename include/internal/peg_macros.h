@@ -31,15 +31,15 @@
     if (!r) { p->pos = pos; } \
     return r
 
-#define RETURN_IF_MEMOIZED(p) \
+#define RETURN_IF_MEMOIZED() \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
     if (memo) { IF_DEBUG(p->dh->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
     return memo->node; } \
 
-#define MEMOIZE(p) \
+#define MEMOIZE() \
     FPeg_put_memo(p, f_type, r, p->pos)
 
-#define ENTER_LEFT_RECURSION(p) \
+#define ENTER_LEFT_RECURSION() \
     FAstNode *max = 0; \
     a = 0; \
     size_t lastpos = pos; \
@@ -47,7 +47,7 @@
     FPeg_put_memo(p, f_type, max, lastpos); \
     p->pos = pos
 
-#define EXIT_LEFT_RECURSION(p) \
+#define EXIT_LEFT_RECURSION() \
     size_t end_pos = p->pos; \
     if (end_pos <= lastpos) { goto left_rec_exit; }\
     lastpos = end_pos; \
@@ -56,20 +56,20 @@
     left_rec_exit: \
     r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
 
-#define WS_PUSH_1(p) \
+#define WS_PUSH_1() \
     int old_ws = p->ignore_whitespace; \
     p->ignore_whitespace = 1;
 
-#define WS_PUSH_0(p) \
+#define WS_PUSH_0() \
     int old_ws = p->ignore_whitespace; \
     p->ignore_whitespace = 0;
 
-#define WS_POP(p) \
+#define WS_POP() \
     p->ignore_whitespace = old_ws;
 
 #define OPTIONAL(node) node, 1
 
-#define TEST(p, node) (node || (p->pos = pos, 0))
+#define TEST(node) (node || (p->pos = pos, 0))
 
 #define TOKEN(type, value) AST_CONSUME(p, type, value)
 
