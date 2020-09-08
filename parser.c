@@ -255,8 +255,10 @@ RULE(target_4) {
 //     | targetlist
 RULE(targetlist_sp) {
     ENTER_FRAME(p, 24);
+    WS_PUSH_1(p);
     (a = targetlist(p))
     ? (r = NODE_1(p, a)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -440,9 +442,11 @@ RULE(dict_item_2) {
 //     | ','.dict_item+ [',']
 RULE(dict_items) {
     ENTER_FRAME(p, 42);
+    WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", dict_item)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -461,9 +465,11 @@ RULE(list_item) {
 //     | ','.list_item+ [',']
 RULE(list_items) {
     ENTER_FRAME(p, 44);
+    WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", list_item)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -471,8 +477,10 @@ RULE(list_items) {
 //     | exprlist_star
 RULE(set_items) {
     ENTER_FRAME(p, 45);
+    WS_PUSH_1(p);
     (a = exprlist_star(p))
     ? (r = NODE_1(p, a)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -525,9 +533,11 @@ RULE(iterator) {
 //     | expr_or_star iterator
 RULE(list_iterator) {
     ENTER_FRAME(p, 50);
+    WS_PUSH_1(p);
     (a = expr_or_star(p)) &&
     (b = iterator(p))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -535,9 +545,11 @@ RULE(list_iterator) {
 //     | dict_item iterator
 RULE(dict_iterator) {
     ENTER_FRAME(p, 51);
+    WS_PUSH_1(p);
     (a = dict_item(p)) &&
     (b = iterator(p))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -708,11 +720,13 @@ RULE(import_from_items) {
 //     | '(' import_as_names [','] ')'
 RULE(import_as_names_sp) {
     ENTER_FRAME(p, 65);
+    WS_PUSH_1(p);
     (TOKEN(p, 13, "(")) &&
     (a = import_as_names(p)) &&
     (b = OPTIONAL(TOKEN(p, 7, ","))) &&
     (TOKEN(p, 14, ")"))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -875,9 +889,11 @@ RULE(expr_as_name) {
 //     | '{' [simple_stmt] '}'
 RULE(block_suite) {
     ENTER_FRAME(p, 80);
+    WS_PUSH_0(p);
     (a = block_suite_1(p)) ||
     (a = block_suite_2(p))
     ? (r = NODE_1(p, a)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -976,9 +992,11 @@ RULE(invocation) {
 //     | ','.call_arg+ [',']
 RULE(call_arg_list) {
     ENTER_FRAME(p, 90);
+    WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", call_arg)) &&
     (b = OPTIONAL(TOKEN(p, 7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
@@ -1039,10 +1057,12 @@ RULE(call_arg_4) {
 //     | full_arg_list
 RULE(typed_arg_list) {
     ENTER_FRAME(p, 96);
+    WS_PUSH_1(p);
     (a = kwargs(p)) ||
     (a = args_kwargs(p)) ||
     (a = full_arg_list(p))
     ? (r = NODE_1(p, a)) : 0;
+    WS_POP(p);
     EXIT_FRAME(p);
 }
 
