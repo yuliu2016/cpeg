@@ -56,6 +56,8 @@ typedef struct lexer_state_t {
     FToken *next_token;
 
     // Dynamically-growing list of line indices
+    // N.W. it's always non-empty because there is always
+    // the first line
     size_t *line_to_index;
     size_t lines_size;
     size_t lines_capacity;
@@ -64,6 +66,8 @@ typedef struct lexer_state_t {
 } FLexerState;
 
 void FLexer_init_state(FLexerState *ls, char *src, size_t len);
+
+void FLexer_add_index_for_line(FLexerState *ls, size_t i);
 
 void FLexer_add_token(FLexerState *ls, FToken *token);
 

@@ -15,8 +15,11 @@ void *parse() {
     return single_input(p);
 }
 
+#include "stdio.h"
+
 char *tokenizer_repl(char *in) {
     FLexerState *ls = FLexer_analyze_all(in);
+    printf("# of tokens: %zu, error: %s", ls->token_len, ls->error);
     return "\n";
 }
 

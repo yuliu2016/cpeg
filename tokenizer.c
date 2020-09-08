@@ -3,22 +3,6 @@
 #include "stdbool.h"
 #include "stdio.h"
 
-void lexer_add_line_index(FLexerState *ls, size_t i) {
-    if (ls->lines_size >= ls->lines_capacity) {
-        if (!ls->lines_capacity) {
-            ls->lines_capacity = 1;
-            ls->lines_size = 0;
-            ls->line_to_index = FMem_malloc(sizeof(size_t));
-        } else {
-            ls->lines_capacity = ls->lines_capacity << 1u;
-            ls->line_to_index = FMem_realloc(
-                    ls->line_to_index, ls->lines_capacity * sizeof(size_t));
-        }
-    }
-    ls->line_to_index[ls->lines_size] = i;
-    ls->lines_size += 1;
-}
-
 FToken *create_token(FLexerState *ls,
                      unsigned int type, bool is_whitespace) {
     FToken *token = FMem_malloc(sizeof(FToken));
@@ -70,8 +54,8 @@ void skip_spaces(FLexerState *ls) {
     }
 }
 
-#define T_INDENT 0
-#define T_DEDENT 200
+#define T_INDENT 300
+#define T_DEDENT 301
 
 bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
@@ -100,7 +84,7 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
 
         if (newline) {
             indent = 0;
-            lexer_add_line_index(ls, ls->curr_index);
+            FLexer_add_index_for_line(ls, ls->curr_index);
             in_comment = false;
         } else {
             in_comment = in_comment || ch == '#';
@@ -336,12 +320,12 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
                 break;
             }
             if (ch == '\n') {
-                lexer_add_line_index(ls, i);
+                FLexer_add_index_for_line(ls, i);
             } else if (ch == '\r') {
                 if (PEEK_SAFE(ls, i + 1) == '\n') {
                     i++;
                 }
-                lexer_add_line_index(ls, i);
+                FLexer_add_index_for_line(ls, i);
             }
             i++;
         }
@@ -433,7 +417,7 @@ bool tokenize_name_or_keyword(FLexerState *ls, FToken **ptoken) {
     // Since some literals and all keywords have the same rules as symbols
     // just add them here
 
-    size_t n_keywords = sizeof(keywords) / sizeof(struct token_literal);
+    int n_keywords = sizeof(keywords) / sizeof(struct token_literal);
 
     for (int i = 0; i < n_keywords; ++i) {
         struct token_literal pair = keywords[i];
@@ -531,10 +515,10 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
         return false;
     }
 
-    size_t n_operators = sizeof(operators) / sizeof(struct token_literal);
+    int n_operators = sizeof(operators) / sizeof(struct token_literal);
 
     // reverse because the longest operators first
-    for (int i = n_operators; i > 0; --i) {
+    for (int i = n_operators - 1; i >= 0; --i) {
         struct token_literal pair = operators[i];
 
         const char *op = pair.literal;

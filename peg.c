@@ -11,22 +11,24 @@ void FLexer_init_state(FLexerState *ls, char *src, size_t len) {
     ls->token_len = 0;
     ls->token_capacity = 0;
 
-    ls->line_to_index = 0;
-    ls->lines_size = 0;
-    ls->lines_capacity = 0;
+    // always non-empty
+    ls->line_to_index = FMem_malloc(sizeof(size_t));
+    ls->line_to_index[0] = 0;
+    ls->lines_size = 1;
+    ls->lines_capacity = 1;
 
     ls->start_index = 0;
     ls->error = 0;
 }
 
-void lexer_compute_next_token(FParser *p) {
-    FLexerState *ls = &p->lexer_state;
-    if (ls->curr_index < ls->src_len) {
-        FLexerFunc lexer_func = p->lexer_func;
-        ls->next_token = lexer_func(ls);
-    } else {
-        ls->next_token = NULL;
+void FLexer_add_index_for_line(FLexerState *ls, size_t i) {
+    if (ls->lines_size >= ls->lines_capacity) {
+        ls->lines_capacity = ls->lines_capacity << 1u;
+        ls->line_to_index = FMem_realloc(
+                ls->line_to_index, ls->lines_capacity * sizeof(size_t));
     }
+    ls->line_to_index[ls->lines_size] = i;
+    ls->lines_size += 1;
 }
 
 void FLexer_add_token(FLexerState *ls, FToken *token) {
@@ -44,7 +46,17 @@ void FLexer_add_token(FLexerState *ls, FToken *token) {
     ls->token_len += 1;
 }
 
-FToken *lexer_get_token(FParser *p, size_t pos) {
+void lexer_compute_next_token(FParser *p) {
+    FLexerState *ls = &p->lexer_state;
+    if (ls->curr_index < ls->src_len) {
+        FLexerFunc lexer_func = p->lexer_func;
+        ls->next_token = lexer_func(ls);
+    } else {
+        ls->next_token = NULL;
+    }
+}
+
+FToken *lexer_fetch_token(FParser *p, size_t pos) {
     FLexerState *ls = &p->lexer_state;
 
     if (pos > ls->token_len) {
@@ -145,14 +157,14 @@ char *FPeg_check_state(FParser *p) {
 FAstNode *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
 
-    FToken *curr_token = lexer_get_token(p, pos);
+    FToken *curr_token = lexer_fetch_token(p, pos);
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
         while (curr_token->is_whitespace &&
                !FLexer_did_finish(&p->lexer_state, pos + 1)) {
             pos += 1;
-            curr_token = lexer_get_token(p, pos);
+            curr_token = lexer_fetch_token(p, pos);
         }
     }
 
@@ -261,7 +273,7 @@ FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
     }
-    va_start(valist, nargs);
+            va_start(valist, nargs);
 
     FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
     // a field-node, shift by 2 and mark as non-sequence
@@ -270,7 +282,7 @@ FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
         res->ast_v.fields[i] = va_arg(valist, FAstNode *);
     }
 
-    va_end(valist);
+            va_end(valist);
     return res;
 }
 
