@@ -63,7 +63,13 @@ typedef struct lexer_state_t {
     char *error;
 } FLexerState;
 
+void FLexer_init_state(FLexerState *ls, char *src, size_t len);
+
+void FLexer_add_token(FLexerState *ls, FToken *token);
+
 int FLexer_did_finish(FLexerState *ls, size_t pos);
+
+void FLexer_free_state(FLexerState *ls);
 
 typedef FToken *(*FLexerFunc)(FLexerState *);
 

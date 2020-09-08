@@ -11,8 +11,13 @@ char *idchptr(char *in) {
 }
 
 void *parse() {
-    FParser *p = FPeg_init_new_parser(0, 0, FTokenizer_get_next_token, 0);
+    FParser *p = FPeg_init_new_parser(0, 0, FLexer_get_next_token, 0);
     return single_input(p);
+}
+
+char *tokenizer_repl(char *in) {
+    FLexerState *ls = FLexer_analyze_all(in);
+    return "\n";
 }
 
 #pragma clang diagnostic pop
@@ -21,6 +26,6 @@ int main() {
     FMem_set_allocator(default_allocator());
     test_region();
 
-    input_loop(">>>", idchptr);
+    input_loop(">>>", tokenizer_repl);
     return 0;
 }

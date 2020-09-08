@@ -1,7 +1,7 @@
 #include "include/peg.h"
 #include "stdarg.h"
 
-void lexer_init_state(FLexerState *ls, char *src, size_t len) {
+void FLexer_init_state(FLexerState *ls, char *src, size_t len) {
     ls->src = src;
     ls->src_len = len;
 
@@ -29,7 +29,7 @@ void lexer_compute_next_token(FParser *p) {
     }
 }
 
-void lexer_add_token(FLexerState *ls, FToken *token) {
+void FLexer_add_token(FLexerState *ls, FToken *token) {
     if (ls->token_len >= ls->token_capacity) {
         if (!ls->token_capacity) {
             ls->token_capacity = 1;
@@ -57,7 +57,7 @@ FToken *lexer_get_token(FParser *p, size_t pos) {
         FToken *this_token = ls->next_token;
 
         if (this_token) {
-            lexer_add_token(ls, this_token);
+            FLexer_add_token(ls, this_token);
             lexer_compute_next_token(p);
 
             return this_token;
@@ -73,6 +73,14 @@ FToken *lexer_get_token(FParser *p, size_t pos) {
 int FLexer_did_finish(FLexerState *ls, size_t pos) {
     return pos >= ls->token_len
            && ls->next_token == NULL;
+}
+
+void FLexer_free_state(FLexerState *ls) {
+    for (int i = 0; i < ls->token_len; ++i) {
+        FMem_free(ls->tokens[i]);
+    }
+    FMem_free(ls->tokens);
+    FMem_free(ls->line_to_index);
 }
 
 FParser *FPeg_init_new_parser(
@@ -95,7 +103,7 @@ FParser *FPeg_init_new_parser(
         return NULL;
     }
 
-    lexer_init_state(&p->lexer_state, src, len);
+    FLexer_init_state(&p->lexer_state, src, len);
 
     p->lexer_func = lexer_func;
     p->region = region;
@@ -113,16 +121,8 @@ FParser *FPeg_init_new_parser(
     return p;
 }
 
-void lexer_free_all(FLexerState *ls) {
-    for (int i = 0; i < ls->token_len; ++i) {
-        FMem_free(ls->tokens[i]);
-    }
-    FMem_free(ls->tokens);
-    FMem_free(ls->line_to_index);
-}
-
 void FPeg_free_parser(FParser *p) {
-    lexer_free_all(&p->lexer_state);
+    FLexer_free_state(&p->lexer_state);
     FMem_free(p);
 }
 

@@ -560,7 +560,7 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
     return false;
 }
 
-FToken *FTokenizer_get_next_token(FLexerState *ls) {
+FToken *FLexer_get_next_token(FLexerState *ls) {
     FToken *token = NULL;
 
     skip_spaces(ls);
@@ -587,4 +587,25 @@ FToken *FTokenizer_get_next_token(FLexerState *ls) {
     }
 
     return token;
+}
+
+FLexerState *FLexer_analyze_all(char *src) {
+    FLexerState *ls =  FMem_malloc(sizeof(FLexerState));
+
+    // find length of string
+    size_t len = 0;
+    char *ptr = src;
+    while (*(ptr++)) ++len;
+
+    FLexer_init_state(ls, src, len);
+
+    while (HAS_REMAINING(ls)) {
+        FToken *token = FLexer_get_next_token(ls);
+        if (!token) {
+            break;
+        }
+        FLexer_add_token(ls, token);
+    }
+
+    return ls;
 }
