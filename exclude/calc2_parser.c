@@ -6,32 +6,32 @@
 //     | sum '-' term
 //     | term
 RULE(sum) {
-    ENTER_FRAME(p, 1);
+    ENTER(1);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = sum_1(p)) ||
     (a = sum_2(p)) ||
     (a = term(p));
     EXIT_LEFT_RECURSION(p);
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(sum_1) {
-    ENTER_FRAME(p, 2);
+    ENTER(2);
     (a = sum(p)) &&
-    (TOKEN(p, 21, "+")) &&
+    (TOKEN(21, "+")) &&
     (b = term(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(sum_2) {
-    ENTER_FRAME(p, 3);
+    ENTER(3);
     (a = sum(p)) &&
-    (TOKEN(p, 22, "-")) &&
+    (TOKEN(22, "-")) &&
     (b = term(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 // term:
@@ -40,7 +40,7 @@ RULE(sum_2) {
 //     | term '%' factor
 //     | factor
 RULE(term) {
-    ENTER_FRAME(p, 4);
+    ENTER(4);
     RETURN_IF_MEMOIZED(p);
     ENTER_LEFT_RECURSION(p);
     (a = term_1(p)) ||
@@ -48,34 +48,34 @@ RULE(term) {
     (a = term_3(p)) ||
     (a = factor(p));
     EXIT_LEFT_RECURSION(p);
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(term_1) {
-    ENTER_FRAME(p, 5);
+    ENTER(5);
     (a = term(p)) &&
-    (TOKEN(p, 23, "*")) &&
+    (TOKEN(23, "*")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(term_2) {
-    ENTER_FRAME(p, 6);
+    ENTER(6);
     (a = term(p)) &&
-    (TOKEN(p, 24, "/")) &&
+    (TOKEN(24, "/")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(term_3) {
-    ENTER_FRAME(p, 7);
+    ENTER(7);
     (a = term(p)) &&
-    (TOKEN(p, 25, "%")) &&
+    (TOKEN(25, "%")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 // factor:
@@ -84,57 +84,57 @@ RULE(term_3) {
 //     | '~' factor
 //     | power
 RULE(factor) {
-    ENTER_FRAME(p, 8);
+    ENTER(8);
     (a = factor_1(p)) ||
     (a = factor_2(p)) ||
     (a = factor_3(p)) ||
     (a = power(p))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(factor_1) {
-    ENTER_FRAME(p, 9);
-    (TOKEN(p, 21, "+")) &&
+    ENTER(9);
+    (TOKEN(21, "+")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(factor_2) {
-    ENTER_FRAME(p, 10);
-    (TOKEN(p, 22, "-")) &&
+    ENTER(10);
+    (TOKEN(22, "-")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(factor_3) {
-    ENTER_FRAME(p, 11);
-    (TOKEN(p, 29, "~")) &&
+    ENTER(11);
+    (TOKEN(29, "~")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 // power:
 //     | atom '**' factor
 //     | atom
 RULE(power) {
-    ENTER_FRAME(p, 12);
+    ENTER(12);
     (a = power_1(p)) ||
     (a = atom(p))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(power_1) {
-    ENTER_FRAME(p, 13);
+    ENTER(13);
     (a = atom(p)) &&
-    (TOKEN(p, 38, "**")) &&
+    (TOKEN(38, "**")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 // atom:
@@ -143,40 +143,40 @@ RULE(power_1) {
 //     | NAME
 //     | NUMBER
 RULE(atom) {
-    ENTER_FRAME(p, 14);
+    ENTER(14);
     (a = atom_1(p)) ||
     (a = atom_2(p)) ||
-    (a = TOKEN(p, 3, "NAME")) ||
-    (a = TOKEN(p, 4, "NUMBER"))
+    (a = TOKEN(3, "NAME")) ||
+    (a = TOKEN(4, "NUMBER"))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(atom_1) {
-    ENTER_FRAME(p, 15);
-    (TOKEN(p, 13, "(")) &&
+    ENTER(15);
+    (TOKEN(13, "(")) &&
     (a = sum(p)) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_1(p, a)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 RULE(atom_2) {
-    ENTER_FRAME(p, 16);
-    (a = TOKEN(p, 3, "NAME")) &&
-    (TOKEN(p, 13, "(")) &&
+    ENTER(16);
+    (a = TOKEN(3, "NAME")) &&
+    (TOKEN(13, "(")) &&
     (b = OPTIONAL(parameters(p))) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }
 
 // parameters:
 //     | ','.sum+ [',']
 RULE(parameters) {
-    ENTER_FRAME(p, 17);
+    ENTER(17);
     (a = DELIMITED(p, 7, ",", sum)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
-    EXIT_FRAME(p);
+    EXIT();
 }

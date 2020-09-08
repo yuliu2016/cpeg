@@ -8,8 +8,8 @@
 //     | compound_stmt NEWLINE
 RULE(single_input) {
     ENTER(1);
-    (a = TOKEN(p, 2, "NEWLINE")) ||
-    (a = TOKEN(p, 1, "ENDMARKER")) ||
+    (a = TOKEN(2, "NEWLINE")) ||
+    (a = TOKEN(1, "ENDMARKER")) ||
     (a = simple_stmt(p)) ||
     (a = single_input_4(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -19,7 +19,7 @@ RULE(single_input) {
 RULE(single_input_4) {
     ENTER(2);
     (a = compound_stmt(p)) &&
-    (b = TOKEN(p, 2, "NEWLINE"))
+    (b = TOKEN(2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -29,7 +29,7 @@ RULE(single_input_4) {
 RULE(file_input) {
     ENTER(3);
     (a = OPTIONAL(stmt_list(p))) &&
-    (b = TOKEN(p, 1, "ENDMARKER"))
+    (b = TOKEN(1, "ENDMARKER"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -40,7 +40,7 @@ RULE(eval_input) {
     ENTER(4);
     (a = exprlist(p)) &&
     (b = TOKEN_SEQ_OR_NONE(p, 2, "NEWLINE")) &&
-    (c = TOKEN(p, 1, "ENDMARKER"))
+    (c = TOKEN(1, "ENDMARKER"))
     ? (r = NODE_3(p, a, b, c)) : 0;
     EXIT();
 }
@@ -59,7 +59,7 @@ RULE(stmt_list) {
 RULE(stmt) {
     ENTER(6);
     (a = stmt_1(p)) &&
-    (b = TOKEN(p, 2, "NEWLINE"))
+    (b = TOKEN(2, "NEWLINE"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -77,7 +77,7 @@ RULE(stmt_1) {
 RULE(simple_stmt) {
     ENTER(8);
     (a = DELIMITED(p, 12, ";", small_stmt)) &&
-    (b = OPTIONAL(TOKEN(p, 12, ";")))
+    (b = OPTIONAL(TOKEN(12, ";")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -96,9 +96,9 @@ RULE(simple_stmt) {
 //     | assignment
 RULE(small_stmt) {
     ENTER(9);
-    (a = TOKEN(p, 64, "pass")) ||
-    (a = TOKEN(p, 74, "break")) ||
-    (a = TOKEN(p, 73, "continue")) ||
+    (a = TOKEN(64, "pass")) ||
+    (a = TOKEN(74, "break")) ||
+    (a = TOKEN(73, "continue")) ||
     (a = return_stmt(p)) ||
     (a = raise_stmt(p)) ||
     (a = del_stmt(p)) ||
@@ -115,7 +115,7 @@ RULE(small_stmt) {
 //     | 'del' targetlist
 RULE(del_stmt) {
     ENTER(10);
-    (TOKEN(p, 79, "del")) &&
+    (TOKEN(79, "del")) &&
     (a = targetlist(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -125,7 +125,7 @@ RULE(del_stmt) {
 //     | 'return' [exprlist_star]
 RULE(return_stmt) {
     ENTER(11);
-    (TOKEN(p, 54, "return")) &&
+    (TOKEN(54, "return")) &&
     (a = OPTIONAL(exprlist_star(p)))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -135,7 +135,7 @@ RULE(return_stmt) {
 //     | 'raise' expr ['from' expr]
 RULE(raise_stmt) {
     ENTER(12);
-    (TOKEN(p, 78, "raise")) &&
+    (TOKEN(78, "raise")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(raise_stmt_3(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -144,7 +144,7 @@ RULE(raise_stmt) {
 
 RULE(raise_stmt_3) {
     ENTER(13);
-    (TOKEN(p, 66, "from")) &&
+    (TOKEN(66, "from")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -154,7 +154,7 @@ RULE(raise_stmt_3) {
 //     | 'nonlocal' name_list
 RULE(nonlocal_stmt) {
     ENTER(14);
-    (TOKEN(p, 55, "nonlocal")) &&
+    (TOKEN(55, "nonlocal")) &&
     (a = name_list(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -164,7 +164,7 @@ RULE(nonlocal_stmt) {
 //     | 'assert' expr [',' expr]
 RULE(assert_stmt) {
     ENTER(15);
-    (TOKEN(p, 80, "assert")) &&
+    (TOKEN(80, "assert")) &&
     (a = expr(p)) &&
     (b = OPTIONAL(assert_stmt_3(p)))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -173,7 +173,7 @@ RULE(assert_stmt) {
 
 RULE(assert_stmt_3) {
     ENTER(16);
-    (TOKEN(p, 7, ",")) &&
+    (TOKEN(7, ",")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -192,7 +192,7 @@ RULE(name_list) {
 //     | '*' bitwise_or
 RULE(star_expr) {
     ENTER(18);
-    (TOKEN(p, 23, "*")) &&
+    (TOKEN(23, "*")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -203,7 +203,7 @@ RULE(star_expr) {
 RULE(exprlist) {
     ENTER(19);
     (a = DELIMITED(p, 7, ",", expr)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -217,7 +217,7 @@ RULE(target) {
     ENTER(20);
     (a = target_1(p)) ||
     (a = target_2(p)) ||
-    (a = TOKEN(p, 3, "NAME")) ||
+    (a = TOKEN(3, "NAME")) ||
     (a = target_4(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -226,8 +226,8 @@ RULE(target) {
 RULE(target_1) {
     ENTER(21);
     (a = t_primary(p)) &&
-    (TOKEN(p, 6, ".")) &&
-    (b = TOKEN(p, 3, "NAME")) &&
+    (TOKEN(6, ".")) &&
+    (b = TOKEN(3, "NAME")) &&
     (!TEST(p, t_lookahead(p)))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -244,9 +244,9 @@ RULE(target_2) {
 
 RULE(target_4) {
     ENTER(23);
-    (TOKEN(p, 13, "(")) &&
+    (TOKEN(13, "(")) &&
     (a = targetlist_sp(p)) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -282,8 +282,8 @@ RULE(t_primary) {
 RULE(t_primary_1) {
     ENTER(26);
     (a = t_primary(p)) &&
-    (TOKEN(p, 6, ".")) &&
-    (b = TOKEN(p, 3, "NAME")) &&
+    (TOKEN(6, ".")) &&
+    (b = TOKEN(3, "NAME")) &&
     (TEST(p, t_lookahead(p)))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -321,9 +321,9 @@ RULE(t_primary_4) {
 //     | '['
 RULE(t_lookahead) {
     ENTER(30);
-    (a = TOKEN(p, 6, ".")) ||
-    (a = TOKEN(p, 13, "(")) ||
-    (a = TOKEN(p, 17, "["))
+    (a = TOKEN(6, ".")) ||
+    (a = TOKEN(13, "(")) ||
+    (a = TOKEN(17, "["))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -333,7 +333,7 @@ RULE(t_lookahead) {
 RULE(targetlist) {
     ENTER(31);
     (a = DELIMITED(p, 7, ",", target)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -354,7 +354,7 @@ RULE(expr_or_star) {
 RULE(exprlist_star) {
     ENTER(33);
     (a = DELIMITED(p, 7, ",", expr_or_star)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -363,9 +363,9 @@ RULE(exprlist_star) {
 //     | '[' slicelist ']'
 RULE(subscript) {
     ENTER(34);
-    (TOKEN(p, 17, "[")) &&
+    (TOKEN(17, "[")) &&
     (a = slicelist(p)) &&
-    (TOKEN(p, 18, "]"))
+    (TOKEN(18, "]"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -375,7 +375,7 @@ RULE(subscript) {
 RULE(slicelist) {
     ENTER(35);
     (a = DELIMITED(p, 7, ",", slice)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -404,7 +404,7 @@ RULE(slice_1) {
 //     | ':' [expr]
 RULE(slice_expr) {
     ENTER(38);
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (a = OPTIONAL(expr(p)))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -424,7 +424,7 @@ RULE(dict_item) {
 RULE(dict_item_1) {
     ENTER(40);
     (a = expr(p)) &&
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (b = expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -432,7 +432,7 @@ RULE(dict_item_1) {
 
 RULE(dict_item_2) {
     ENTER(41);
-    (TOKEN(p, 38, "**")) &&
+    (TOKEN(38, "**")) &&
     (a = bitwise_or(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -444,7 +444,7 @@ RULE(dict_items) {
     ENTER(42);
     WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", dict_item)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     WS_POP(p);
     EXIT();
@@ -467,7 +467,7 @@ RULE(list_items) {
     ENTER(44);
     WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", list_item)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     WS_POP(p);
     EXIT();
@@ -488,8 +488,8 @@ RULE(set_items) {
 //     | 'as' NAME
 RULE(as_name) {
     ENTER(46);
-    (TOKEN(p, 65, "as")) &&
-    (a = TOKEN(p, 3, "NAME"))
+    (TOKEN(65, "as")) &&
+    (a = TOKEN(3, "NAME"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -498,9 +498,9 @@ RULE(as_name) {
 //     | 'for' targetlist 'in' disjunction [iter_if]
 RULE(iter_for) {
     ENTER(47);
-    (TOKEN(p, 72, "for")) &&
+    (TOKEN(72, "for")) &&
     (a = targetlist(p)) &&
-    (TOKEN(p, 63, "in")) &&
+    (TOKEN(63, "in")) &&
     (b = disjunction(p)) &&
     (c = OPTIONAL(iter_if(p)))
     ? (r = NODE_3(p, a, b, c)) : 0;
@@ -511,7 +511,7 @@ RULE(iter_for) {
 //     | 'if' named_expr
 RULE(iter_if) {
     ENTER(48);
-    (TOKEN(p, 56, "if")) &&
+    (TOKEN(56, "if")) &&
     (a = named_expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -522,7 +522,7 @@ RULE(iter_if) {
 RULE(iterator) {
     ENTER(49);
     (a = SEQ_OR_NONE(p, iter_for)) &&
-    (TOKEN(p, 72, "for")) &&
+    (TOKEN(72, "for")) &&
     (b = targetlist(p)) &&
     (c = OPTIONAL(iter_if(p)))
     ? (r = NODE_3(p, a, b, c)) : 0;
@@ -572,9 +572,9 @@ RULE(assignment) {
 //     | '/' NAME '=' exprlist
 RULE(pubassign) {
     ENTER(53);
-    (TOKEN(p, 24, "/")) &&
-    (a = TOKEN(p, 3, "NAME")) &&
-    (TOKEN(p, 8, "=")) &&
+    (TOKEN(24, "/")) &&
+    (a = TOKEN(3, "NAME")) &&
+    (TOKEN(8, "=")) &&
     (b = exprlist(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -585,7 +585,7 @@ RULE(pubassign) {
 RULE(annassign) {
     ENTER(54);
     (a = target(p)) &&
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (b = expr(p)) &&
     (c = OPTIONAL(annassign_4(p)))
     ? (r = NODE_3(p, a, b, c)) : 0;
@@ -594,7 +594,7 @@ RULE(annassign) {
 
 RULE(annassign_4) {
     ENTER(55);
-    (TOKEN(p, 8, "=")) &&
+    (TOKEN(8, "=")) &&
     (a = exprlist(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -624,7 +624,7 @@ RULE(simple_assign) {
 RULE(simple_assign_1) {
     ENTER(58);
     (a = targetlist(p)) &&
-    (TOKEN(p, 8, "="))
+    (TOKEN(8, "="))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -645,19 +645,19 @@ RULE(simple_assign_1) {
 //     | '//='
 RULE(augassign_op) {
     ENTER(59);
-    (a = TOKEN(p, 39, "+=")) ||
-    (a = TOKEN(p, 40, "-=")) ||
-    (a = TOKEN(p, 41, "*=")) ||
-    (a = TOKEN(p, 44, "@=")) ||
-    (a = TOKEN(p, 42, "/=")) ||
-    (a = TOKEN(p, 43, "%=")) ||
-    (a = TOKEN(p, 46, "&=")) ||
-    (a = TOKEN(p, 45, "|=")) ||
-    (a = TOKEN(p, 47, "^=")) ||
-    (a = TOKEN(p, 52, "<<=")) ||
-    (a = TOKEN(p, 53, ">>=")) ||
-    (a = TOKEN(p, 51, "**=")) ||
-    (a = TOKEN(p, 50, "//="))
+    (a = TOKEN(39, "+=")) ||
+    (a = TOKEN(40, "-=")) ||
+    (a = TOKEN(41, "*=")) ||
+    (a = TOKEN(44, "@=")) ||
+    (a = TOKEN(42, "/=")) ||
+    (a = TOKEN(43, "%=")) ||
+    (a = TOKEN(46, "&=")) ||
+    (a = TOKEN(45, "|=")) ||
+    (a = TOKEN(47, "^=")) ||
+    (a = TOKEN(52, "<<=")) ||
+    (a = TOKEN(53, ">>=")) ||
+    (a = TOKEN(51, "**=")) ||
+    (a = TOKEN(50, "//="))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -666,7 +666,7 @@ RULE(augassign_op) {
 //     | 'import' dotted_as_names
 RULE(import_name) {
     ENTER(60);
-    (TOKEN(p, 67, "import")) &&
+    (TOKEN(67, "import")) &&
     (a = dotted_as_names(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -676,9 +676,9 @@ RULE(import_name) {
 //     | 'from' import_from_names 'import' import_from_items
 RULE(import_from) {
     ENTER(61);
-    (TOKEN(p, 66, "from")) &&
+    (TOKEN(66, "from")) &&
     (a = import_from_names(p)) &&
-    (TOKEN(p, 67, "import")) &&
+    (TOKEN(67, "import")) &&
     (b = import_from_items(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -709,7 +709,7 @@ RULE(import_from_names_2) {
 //     | import_as_names
 RULE(import_from_items) {
     ENTER(64);
-    (a = TOKEN(p, 23, "*")) ||
+    (a = TOKEN(23, "*")) ||
     (a = import_as_names_sp(p)) ||
     (a = import_as_names(p))
     ? (r = NODE_1(p, a)) : 0;
@@ -721,10 +721,10 @@ RULE(import_from_items) {
 RULE(import_as_names_sp) {
     ENTER(65);
     WS_PUSH_1(p);
-    (TOKEN(p, 13, "(")) &&
+    (TOKEN(13, "(")) &&
     (a = import_as_names(p)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ","))) &&
-    (TOKEN(p, 14, ")"))
+    (b = OPTIONAL(TOKEN(7, ","))) &&
+    (TOKEN(14, ")"))
     ? (r = NODE_2(p, a, b)) : 0;
     WS_POP(p);
     EXIT();
@@ -734,7 +734,7 @@ RULE(import_as_names_sp) {
 //     | NAME [as_name]
 RULE(import_as_name) {
     ENTER(66);
-    (a = TOKEN(p, 3, "NAME")) &&
+    (a = TOKEN(3, "NAME")) &&
     (b = OPTIONAL(as_name(p)))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -798,7 +798,7 @@ RULE(compound_stmt) {
 //     | 'if' named_expr suite elif_stmt* [else_suite]
 RULE(if_stmt) {
     ENTER(72);
-    (TOKEN(p, 56, "if")) &&
+    (TOKEN(56, "if")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
     (c = SEQ_OR_NONE(p, elif_stmt)) &&
@@ -811,7 +811,7 @@ RULE(if_stmt) {
 //     | 'elif' named_expr suite
 RULE(elif_stmt) {
     ENTER(73);
-    (TOKEN(p, 57, "elif")) &&
+    (TOKEN(57, "elif")) &&
     (a = named_expr(p)) &&
     (b = suite(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -822,7 +822,7 @@ RULE(elif_stmt) {
 //     | 'while' named_expr suite [else_suite]
 RULE(while_stmt) {
     ENTER(74);
-    (TOKEN(p, 71, "while")) &&
+    (TOKEN(71, "while")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
     (c = OPTIONAL(else_suite(p)))
@@ -834,9 +834,9 @@ RULE(while_stmt) {
 //     | 'for' targetlist 'in' exprlist suite [else_suite]
 RULE(for_stmt) {
     ENTER(75);
-    (TOKEN(p, 72, "for")) &&
+    (TOKEN(72, "for")) &&
     (a = targetlist(p)) &&
-    (TOKEN(p, 63, "in")) &&
+    (TOKEN(63, "in")) &&
     (b = exprlist(p)) &&
     (c = suite(p)) &&
     (d = OPTIONAL(else_suite(p)))
@@ -848,7 +848,7 @@ RULE(for_stmt) {
 //     | 'try' suite (except_suite | finally_suite)
 RULE(try_stmt) {
     ENTER(76);
-    (TOKEN(p, 75, "try")) &&
+    (TOKEN(75, "try")) &&
     (a = suite(p)) &&
     (b = try_stmt_3(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -867,7 +867,7 @@ RULE(try_stmt_3) {
 //     | 'with' ','.expr_as_name+ suite
 RULE(with_stmt) {
     ENTER(78);
-    (TOKEN(p, 68, "with")) &&
+    (TOKEN(68, "with")) &&
     (a = DELIMITED(p, 7, ",", expr_as_name)) &&
     (b = suite(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -899,19 +899,19 @@ RULE(block_suite) {
 
 RULE(block_suite_1) {
     ENTER(81);
-    (TOKEN(p, 15, "{")) &&
-    (a = TOKEN(p, 2, "NEWLINE")) &&
+    (TOKEN(15, "{")) &&
+    (a = TOKEN(2, "NEWLINE")) &&
     (b = stmt_list(p)) &&
-    (TOKEN(p, 16, "}"))
+    (TOKEN(16, "}"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
 
 RULE(block_suite_2) {
     ENTER(82);
-    (TOKEN(p, 15, "{")) &&
+    (TOKEN(15, "{")) &&
     (a = OPTIONAL(simple_stmt(p))) &&
-    (TOKEN(p, 16, "}"))
+    (TOKEN(16, "}"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -929,7 +929,7 @@ RULE(suite) {
 
 RULE(suite_1) {
     ENTER(84);
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (a = simple_stmt(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -939,7 +939,7 @@ RULE(suite_1) {
 //     | 'else' suite
 RULE(else_suite) {
     ENTER(85);
-    (TOKEN(p, 58, "else")) &&
+    (TOKEN(58, "else")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -949,7 +949,7 @@ RULE(else_suite) {
 //     | 'finally' suite
 RULE(finally_suite) {
     ENTER(86);
-    (TOKEN(p, 77, "finally")) &&
+    (TOKEN(77, "finally")) &&
     (a = suite(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -959,7 +959,7 @@ RULE(finally_suite) {
 //     | 'except' [expr_as_name] suite
 RULE(except_clause) {
     ENTER(87);
-    (TOKEN(p, 76, "except")) &&
+    (TOKEN(76, "except")) &&
     (a = OPTIONAL(expr_as_name(p))) &&
     (b = suite(p))
     ? (r = NODE_2(p, a, b)) : 0;
@@ -981,9 +981,9 @@ RULE(except_suite) {
 //     | '(' [call_arg_list] ')'
 RULE(invocation) {
     ENTER(89);
-    (TOKEN(p, 13, "(")) &&
+    (TOKEN(13, "(")) &&
     (a = OPTIONAL(call_arg_list(p))) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -994,7 +994,7 @@ RULE(call_arg_list) {
     ENTER(90);
     WS_PUSH_1(p);
     (a = DELIMITED(p, 7, ",", call_arg)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     WS_POP(p);
     EXIT();
@@ -1019,8 +1019,8 @@ RULE(call_arg) {
 
 RULE(call_arg_1) {
     ENTER(92);
-    (a = TOKEN(p, 3, "NAME")) &&
-    (TOKEN(p, 36, ":=")) &&
+    (a = TOKEN(3, "NAME")) &&
+    (TOKEN(36, ":=")) &&
     (b = expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1028,8 +1028,8 @@ RULE(call_arg_1) {
 
 RULE(call_arg_2) {
     ENTER(93);
-    (a = TOKEN(p, 3, "NAME")) &&
-    (TOKEN(p, 8, "=")) &&
+    (a = TOKEN(3, "NAME")) &&
+    (TOKEN(8, "=")) &&
     (b = expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1037,7 +1037,7 @@ RULE(call_arg_2) {
 
 RULE(call_arg_3) {
     ENTER(94);
-    (TOKEN(p, 38, "**")) &&
+    (TOKEN(38, "**")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1045,7 +1045,7 @@ RULE(call_arg_3) {
 
 RULE(call_arg_4) {
     ENTER(95);
-    (TOKEN(p, 23, "*")) &&
+    (TOKEN(23, "*")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1078,7 +1078,7 @@ RULE(full_arg_list) {
 
 RULE(full_arg_list_2) {
     ENTER(98);
-    (TOKEN(p, 7, ",")) &&
+    (TOKEN(7, ",")) &&
     (a = OPTIONAL(full_arg_list_2_2(p)))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1096,7 +1096,7 @@ RULE(full_arg_list_2_2) {
 //     | '*' [typed_arg] (',' default_arg)* [',' [kwargs]]
 RULE(args_kwargs) {
     ENTER(100);
-    (TOKEN(p, 23, "*")) &&
+    (TOKEN(23, "*")) &&
     (a = OPTIONAL(typed_arg(p))) &&
     (b = SEQ_OR_NONE(p, args_kwargs_3)) &&
     (c = OPTIONAL(args_kwargs_4(p)))
@@ -1106,7 +1106,7 @@ RULE(args_kwargs) {
 
 RULE(args_kwargs_3) {
     ENTER(101);
-    (TOKEN(p, 7, ",")) &&
+    (TOKEN(7, ",")) &&
     (a = default_arg(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1114,7 +1114,7 @@ RULE(args_kwargs_3) {
 
 RULE(args_kwargs_4) {
     ENTER(102);
-    (TOKEN(p, 7, ",")) &&
+    (TOKEN(7, ",")) &&
     (a = OPTIONAL(kwargs(p)))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1124,9 +1124,9 @@ RULE(args_kwargs_4) {
 //     | '**' typed_arg [',']
 RULE(kwargs) {
     ENTER(103);
-    (TOKEN(p, 38, "**")) &&
+    (TOKEN(38, "**")) &&
     (a = typed_arg(p)) &&
-    (b = OPTIONAL(TOKEN(p, 7, ",")))
+    (b = OPTIONAL(TOKEN(7, ",")))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -1143,7 +1143,7 @@ RULE(default_arg) {
 
 RULE(default_arg_2) {
     ENTER(105);
-    (TOKEN(p, 8, "=")) &&
+    (TOKEN(8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1153,7 +1153,7 @@ RULE(default_arg_2) {
 //     | NAME [':' expr]
 RULE(typed_arg) {
     ENTER(106);
-    (a = TOKEN(p, 3, "NAME")) &&
+    (a = TOKEN(3, "NAME")) &&
     (b = OPTIONAL(typed_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1161,7 +1161,7 @@ RULE(typed_arg) {
 
 RULE(typed_arg_2) {
     ENTER(107);
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1171,7 +1171,7 @@ RULE(typed_arg_2) {
 //     | NAME ['=' expr]
 RULE(simple_arg) {
     ENTER(108);
-    (a = TOKEN(p, 3, "NAME")) &&
+    (a = TOKEN(3, "NAME")) &&
     (b = OPTIONAL(simple_arg_2(p)))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1179,7 +1179,7 @@ RULE(simple_arg) {
 
 RULE(simple_arg_2) {
     ENTER(109);
-    (TOKEN(p, 8, "=")) &&
+    (TOKEN(8, "=")) &&
     (a = expr(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1198,9 +1198,9 @@ RULE(simple_args) {
 //     | '<' name_list '>'
 RULE(builder_hint) {
     ENTER(111);
-    (TOKEN(p, 19, "<")) &&
+    (TOKEN(19, "<")) &&
     (a = name_list(p)) &&
-    (TOKEN(p, 20, ">"))
+    (TOKEN(20, ">"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1218,9 +1218,9 @@ RULE(builder_args) {
 
 RULE(builder_args_2) {
     ENTER(113);
-    (TOKEN(p, 13, "(")) &&
+    (TOKEN(13, "(")) &&
     (a = OPTIONAL(typed_arg_list(p))) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1238,8 +1238,8 @@ RULE(named_expr) {
 
 RULE(named_expr_1) {
     ENTER(115);
-    (a = TOKEN(p, 3, "NAME")) &&
-    (TOKEN(p, 36, ":=")) &&
+    (a = TOKEN(3, "NAME")) &&
+    (TOKEN(36, ":=")) &&
     (b = expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1249,11 +1249,11 @@ RULE(named_expr_1) {
 //     | 'if' disjunction '?' disjunction ':' expr
 RULE(conditional) {
     ENTER(116);
-    (TOKEN(p, 56, "if")) &&
+    (TOKEN(56, "if")) &&
     (a = disjunction(p)) &&
-    (TOKEN(p, 10, "?")) &&
+    (TOKEN(10, "?")) &&
     (b = disjunction(p)) &&
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (c = expr(p))
     ? (r = NODE_3(p, a, b, c)) : 0;
     EXIT();
@@ -1286,7 +1286,7 @@ RULE(disjunction) {
 RULE(disjunction_1) {
     ENTER(119);
     (a = disjunction(p)) &&
-    (TOKEN(p, 60, "or")) &&
+    (TOKEN(60, "or")) &&
     (b = conjunction(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1308,7 +1308,7 @@ RULE(conjunction) {
 RULE(conjunction_1) {
     ENTER(121);
     (a = conjunction(p)) &&
-    (TOKEN(p, 59, "and")) &&
+    (TOKEN(59, "and")) &&
     (b = inversion(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1327,7 +1327,7 @@ RULE(inversion) {
 
 RULE(inversion_1) {
     ENTER(123);
-    (TOKEN(p, 61, "not")) &&
+    (TOKEN(61, "not")) &&
     (a = inversion(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1373,15 +1373,15 @@ RULE(comparison_1_2) {
 //     | 'is' 'not'
 RULE(comp_op) {
     ENTER(127);
-    (a = TOKEN(p, 19, "<")) ||
-    (a = TOKEN(p, 20, ">")) ||
-    (a = TOKEN(p, 31, "==")) ||
-    (a = TOKEN(p, 34, ">=")) ||
-    (a = TOKEN(p, 33, "<=")) ||
-    (a = TOKEN(p, 32, "!=")) ||
-    (a = TOKEN(p, 63, "in")) ||
+    (a = TOKEN(19, "<")) ||
+    (a = TOKEN(20, ">")) ||
+    (a = TOKEN(31, "==")) ||
+    (a = TOKEN(34, ">=")) ||
+    (a = TOKEN(33, "<=")) ||
+    (a = TOKEN(32, "!=")) ||
+    (a = TOKEN(63, "in")) ||
     (a = comp_op_8(p)) ||
-    (a = TOKEN(p, 62, "is")) ||
+    (a = TOKEN(62, "is")) ||
     (a = comp_op_10(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1389,15 +1389,15 @@ RULE(comp_op) {
 
 RULE(comp_op_8) {
     ENTER(128);
-    (TOKEN(p, 61, "not")) &&
-    (TOKEN(p, 63, "in"));
+    (TOKEN(61, "not")) &&
+    (TOKEN(63, "in"));
     EXIT();
 }
 
 RULE(comp_op_10) {
     ENTER(129);
-    (TOKEN(p, 62, "is")) &&
-    (TOKEN(p, 61, "not"));
+    (TOKEN(62, "is")) &&
+    (TOKEN(61, "not"));
     EXIT();
 }
 
@@ -1417,7 +1417,7 @@ RULE(bitwise_or) {
 RULE(bitwise_or_1) {
     ENTER(131);
     (a = bitwise_or(p)) &&
-    (TOKEN(p, 27, "|")) &&
+    (TOKEN(27, "|")) &&
     (b = bitwise_xor(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1439,7 +1439,7 @@ RULE(bitwise_xor) {
 RULE(bitwise_xor_1) {
     ENTER(133);
     (a = bitwise_xor(p)) &&
-    (TOKEN(p, 30, "^")) &&
+    (TOKEN(30, "^")) &&
     (b = bitwise_and(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1461,7 +1461,7 @@ RULE(bitwise_and) {
 RULE(bitwise_and_1) {
     ENTER(135);
     (a = bitwise_and(p)) &&
-    (TOKEN(p, 28, "&")) &&
+    (TOKEN(28, "&")) &&
     (b = shift_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1485,7 +1485,7 @@ RULE(shift_expr) {
 RULE(shift_expr_1) {
     ENTER(137);
     (a = shift_expr(p)) &&
-    (TOKEN(p, 48, "<<")) &&
+    (TOKEN(48, "<<")) &&
     (b = sum(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1494,7 +1494,7 @@ RULE(shift_expr_1) {
 RULE(shift_expr_2) {
     ENTER(138);
     (a = shift_expr(p)) &&
-    (TOKEN(p, 49, ">>")) &&
+    (TOKEN(49, ">>")) &&
     (b = sum(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1518,7 +1518,7 @@ RULE(sum) {
 RULE(sum_1) {
     ENTER(140);
     (a = sum(p)) &&
-    (TOKEN(p, 21, "+")) &&
+    (TOKEN(21, "+")) &&
     (b = term(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1527,7 +1527,7 @@ RULE(sum_1) {
 RULE(sum_2) {
     ENTER(141);
     (a = sum(p)) &&
-    (TOKEN(p, 22, "-")) &&
+    (TOKEN(22, "-")) &&
     (b = term(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1557,7 +1557,7 @@ RULE(term) {
 RULE(term_1) {
     ENTER(143);
     (a = term(p)) &&
-    (TOKEN(p, 23, "*")) &&
+    (TOKEN(23, "*")) &&
     (b = pipe_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1566,7 +1566,7 @@ RULE(term_1) {
 RULE(term_2) {
     ENTER(144);
     (a = term(p)) &&
-    (TOKEN(p, 24, "/")) &&
+    (TOKEN(24, "/")) &&
     (b = pipe_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1575,7 +1575,7 @@ RULE(term_2) {
 RULE(term_3) {
     ENTER(145);
     (a = term(p)) &&
-    (TOKEN(p, 25, "%")) &&
+    (TOKEN(25, "%")) &&
     (b = pipe_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1584,7 +1584,7 @@ RULE(term_3) {
 RULE(term_4) {
     ENTER(146);
     (a = term(p)) &&
-    (TOKEN(p, 37, "//")) &&
+    (TOKEN(37, "//")) &&
     (b = pipe_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1593,7 +1593,7 @@ RULE(term_4) {
 RULE(term_5) {
     ENTER(147);
     (a = term(p)) &&
-    (TOKEN(p, 26, "@")) &&
+    (TOKEN(26, "@")) &&
     (b = pipe_expr(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1615,7 +1615,7 @@ RULE(pipe_expr) {
 RULE(pipe_expr_1) {
     ENTER(149);
     (a = pipe_expr(p)) &&
-    (TOKEN(p, 35, "->")) &&
+    (TOKEN(35, "->")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1638,7 +1638,7 @@ RULE(factor) {
 
 RULE(factor_1) {
     ENTER(151);
-    (TOKEN(p, 21, "+")) &&
+    (TOKEN(21, "+")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1646,7 +1646,7 @@ RULE(factor_1) {
 
 RULE(factor_2) {
     ENTER(152);
-    (TOKEN(p, 22, "-")) &&
+    (TOKEN(22, "-")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1654,7 +1654,7 @@ RULE(factor_2) {
 
 RULE(factor_3) {
     ENTER(153);
-    (TOKEN(p, 29, "~")) &&
+    (TOKEN(29, "~")) &&
     (a = factor(p))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
@@ -1674,7 +1674,7 @@ RULE(power) {
 RULE(power_1) {
     ENTER(155);
     (a = primary(p)) &&
-    (TOKEN(p, 38, "**")) &&
+    (TOKEN(38, "**")) &&
     (b = factor(p))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
@@ -1700,8 +1700,8 @@ RULE(primary) {
 RULE(primary_1) {
     ENTER(157);
     (a = primary(p)) &&
-    (TOKEN(p, 6, ".")) &&
-    (b = TOKEN(p, 3, "NAME"))
+    (TOKEN(6, ".")) &&
+    (b = TOKEN(3, "NAME"))
     ? (r = NODE_2(p, a, b)) : 0;
     EXIT();
 }
@@ -1726,9 +1726,9 @@ RULE(primary_3) {
 //     | '(' [list_items] ')'
 RULE(tuple_atom) {
     ENTER(160);
-    (TOKEN(p, 13, "(")) &&
+    (TOKEN(13, "(")) &&
     (a = OPTIONAL(list_items(p))) &&
-    (TOKEN(p, 14, ")"))
+    (TOKEN(14, ")"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1737,9 +1737,9 @@ RULE(tuple_atom) {
 //     | '[' list_iterator ']'
 RULE(list_iterable) {
     ENTER(161);
-    (TOKEN(p, 17, "[")) &&
+    (TOKEN(17, "[")) &&
     (a = list_iterator(p)) &&
-    (TOKEN(p, 18, "]"))
+    (TOKEN(18, "]"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1748,9 +1748,9 @@ RULE(list_iterable) {
 //     | '[' [list_items] ']'
 RULE(list_atom) {
     ENTER(162);
-    (TOKEN(p, 17, "[")) &&
+    (TOKEN(17, "[")) &&
     (a = OPTIONAL(list_items(p))) &&
-    (TOKEN(p, 18, "]"))
+    (TOKEN(18, "]"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1759,9 +1759,9 @@ RULE(list_atom) {
 //     | '{' [set_items] '}'
 RULE(set_atom) {
     ENTER(163);
-    (TOKEN(p, 15, "{")) &&
+    (TOKEN(15, "{")) &&
     (a = OPTIONAL(set_items(p))) &&
-    (TOKEN(p, 16, "}"))
+    (TOKEN(16, "}"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1770,9 +1770,9 @@ RULE(set_atom) {
 //     | '{' dict_iterator '}'
 RULE(dict_iterable) {
     ENTER(164);
-    (TOKEN(p, 15, "{")) &&
+    (TOKEN(15, "{")) &&
     (a = dict_iterator(p)) &&
-    (TOKEN(p, 16, "}"))
+    (TOKEN(16, "}"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1781,9 +1781,9 @@ RULE(dict_iterable) {
 //     | '{' [dict_items] '}'
 RULE(dict_atom) {
     ENTER(165);
-    (TOKEN(p, 15, "{")) &&
+    (TOKEN(15, "{")) &&
     (a = OPTIONAL(dict_items(p))) &&
-    (TOKEN(p, 16, "}"))
+    (TOKEN(16, "}"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }
@@ -1801,9 +1801,9 @@ RULE(builder) {
 
 RULE(builder_1) {
     ENTER(167);
-    (a = TOKEN(p, 3, "NAME")) &&
+    (a = TOKEN(3, "NAME")) &&
     (b = simple_args(p)) &&
-    (TOKEN(p, 9, ":")) &&
+    (TOKEN(9, ":")) &&
     (c = expr(p))
     ? (r = NODE_3(p, a, b, c)) : 0;
     EXIT();
@@ -1811,7 +1811,7 @@ RULE(builder_1) {
 
 RULE(builder_2) {
     ENTER(168);
-    (a = TOKEN(p, 3, "NAME")) &&
+    (a = TOKEN(3, "NAME")) &&
     (b = OPTIONAL(builder_hint(p))) &&
     (c = OPTIONAL(builder_args(p))) &&
     (d = block_suite(p))
@@ -1842,12 +1842,12 @@ RULE(atom) {
     (a = dict_iterable(p)) ||
     (a = dict_atom(p)) ||
     (a = builder(p)) ||
-    (a = TOKEN(p, 3, "NAME")) ||
-    (a = TOKEN(p, 4, "NUMBER")) ||
-    (a = TOKEN(p, 5, "STRING")) ||
-    (a = TOKEN(p, 81, "None")) ||
-    (a = TOKEN(p, 82, "True")) ||
-    (a = TOKEN(p, 83, "False"))
+    (a = TOKEN(3, "NAME")) ||
+    (a = TOKEN(4, "NUMBER")) ||
+    (a = TOKEN(5, "STRING")) ||
+    (a = TOKEN(81, "None")) ||
+    (a = TOKEN(82, "True")) ||
+    (a = TOKEN(83, "False"))
     ? (r = NODE_1(p, a)) : 0;
     EXIT();
 }

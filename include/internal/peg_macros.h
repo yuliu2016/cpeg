@@ -71,7 +71,7 @@
 
 #define TEST(p, node) (node || (p->pos = pos, 0))
 
-#define TOKEN(p, type, value) AST_CONSUME(p, type, value)
+#define TOKEN(type, value) AST_CONSUME(p, type, value)
 
 #define NODE_1(p, a) AST_NEW_NODE(p, f_type, 1, a)
 #define NODE_2(p, a, b) AST_NEW_NODE(p, f_type, 2, a, b)
