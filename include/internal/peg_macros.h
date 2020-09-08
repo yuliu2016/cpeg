@@ -19,14 +19,14 @@
 
 #define DEBUG_EXTRAS f_type, __func__
 
-#define ENTER_FRAME(p, type) \
+#define ENTER(type) \
     const int f_type = type; \
     size_t pos = p->pos; \
     IF_DEBUG(p->dh->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
     FAstNode *r = 0, *a, *b, *c, *d \
 
-#define EXIT_FRAME(p) \
+#define EXIT() \
     IF_DEBUG(p->dh->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
     if (!r) { p->pos = pos; } \
     return r
