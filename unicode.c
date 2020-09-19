@@ -2,15 +2,15 @@
 #include "mem.h"
 #include "unicode_type.h"
 
-FObject *FUnicode_from_ascii(const char *array) {
-    if (!array) return NULL;
+struct stringbuffer_t {
+    size_t len;
+    size_t capacity;
+    FObject *objects;
+};
 
-    size_t len = 0;
+FObject *FUnicode_from_ascii_and_size(const char * array, size_t len) {
+    if (!array) return NULL;
     const char *p = array;
-    while (*p) {
-        ++len;
-        ++p;
-    }
 
     FUnicode *u = FMem_malloc(sizeof(FUnicode) + len);
     if (!u) return NULL;
@@ -27,7 +27,6 @@ FObject *FUnicode_from_ascii(const char *array) {
     uint8_t *cp = (uint8_t *) (u + 1);
     u->data.ucs1 = cp;
 
-    p = array;
     for (int i = 0; i < len; ++i) {
         *cp = *p;
         cp++;
@@ -37,4 +36,17 @@ FObject *FUnicode_from_ascii(const char *array) {
     u->buffer = NULL;
 
     return (FObject *) u;
+}
+
+FObject *FUnicode_from_ascii(const char *array) {
+    if (!array) return NULL;
+
+    size_t len = 0;
+    const char *p = array;
+    while (*p) {
+        ++len;
+        ++p;
+    }
+
+    return FUnicode_from_ascii_and_size(array, len);
 }

@@ -29,7 +29,7 @@ FToken *create_token(FLexerState *ls,
 #define PEEK_SAFE(ls, i) ((i) < (ls)->src_len ? (ls)->src[i] : 0)
 #define PEEK_NEXT(ls, n) PEEK_SAFE(ls, (ls)->curr_index + (n))
 
-#define ADVANCE(ls) ls->curr_index++;
+#define ADVANCE(ls) ++(ls)->curr_index;
 
 void tokenizer_set_error(FLexerState *ls, char *msg, int offset) {
     ls->error = msg + offset;
