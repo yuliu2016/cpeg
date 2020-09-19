@@ -7,7 +7,7 @@
 typedef struct stringbuffer_t FStringBuffer;
 
 typedef struct unicode_t {
-    FObject base;
+    FObject_Base;
 
     // Number of code-points
     size_t length;

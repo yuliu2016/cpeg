@@ -5,10 +5,10 @@
 struct stringbuffer_t {
     size_t len;
     size_t capacity;
-    FObject *objects;
+    VALUE *objects;
 };
 
-FObject *FUnicode_from_ascii_and_size(const char * array, size_t len) {
+VALUE FUnicode_from_ascii_and_size(const char * array, size_t len) {
     if (!array) return NULL;
     const char *p = array;
 
@@ -35,10 +35,10 @@ FObject *FUnicode_from_ascii_and_size(const char * array, size_t len) {
 
     u->buffer = NULL;
 
-    return (FObject *) u;
+    return (VALUE) u;
 }
 
-FObject *FUnicode_from_ascii(const char *array) {
+VALUE FUnicode_from_ascii(const char *array) {
     if (!array) return NULL;
 
     size_t len = 0;

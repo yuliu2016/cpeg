@@ -13,8 +13,8 @@ typedef enum result_state_t {
 
 typedef struct result_t {
     FResultState res_state;
-    FObject *res_coroutine;
-    FObject *res_value;
+    VALUE res_coroutine;
+    VALUE res_args;
 } FResult;
 
 typedef FResult *RESULT;
