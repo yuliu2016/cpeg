@@ -1,14 +1,146 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnreachableCode"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma clang diagnostic ignored "-Wunused-label"
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "bugprone-branch-clone"
 #include "include/vm.h"
-#include "mem.h"
+#include "include/mem.h"
+#include "include/internal/opcode.h"
 
-void FCoroutine_suspend(RESULT r) {
-    r->res_state = FResult_Suspend;
-    r->res_coroutine = NULL;
-    r->res_args = NULL;
+
+FOpcode get_op() {
+    return 0;
 }
 
-void FCoroutine_resume(RESULT r, VALUE coroutine, VALUE args) {
-    r->res_state = FResult_Resume;
-    r->res_coroutine = coroutine;
-    r->res_args = args;
+void FCoroutine_run() {
+    FOpcode opcode = get_op();
+    int opcode_arg = 0;
+    VALUE dummy;
+
+#define POP() 0
+#define PUSH(ob) dummy = ob
+
+switch_opcode:
+    VALUE a, b, c, d; /* Stack values; a=TOS, b=TOS~1, etc. */
+    switch (opcode) {
+        case NOP:
+            break;
+        case POP_TOP:
+            POP();
+            break;
+        case ROT_TWO:
+            a = POP();
+            b = POP();
+            PUSH(b);
+            PUSH(a);
+            break;
+        case ROT_THREE:
+            a = POP();
+            b = POP();
+            c = POP();
+            PUSH(b);
+            PUSH(c);
+            PUSH(a);
+            break;
+        case ROT_FOUR:
+            a = POP();
+            b = POP();
+            c = POP();
+            d = POP();
+            PUSH(b);
+            PUSH(c);
+            PUSH(d);
+            PUSH(a);
+            break;
+        case DUP_TOP:
+            a = POP();
+            PUSH(a);
+            PUSH(a);
+            break;
+        case DUP_TOP_TWO:
+            a = POP();
+            b = POP();
+            PUSH(b);
+            PUSH(b);
+            PUSH(a);
+            PUSH(a);
+            break;
+        case LOAD_CONST:
+            a = 0;
+            PUSH(a);
+            break;
+        case LOAD_NAME:
+            a = 0;
+            PUSH(a);
+            break;
+        case LOAD_INDEX:
+            break;
+        case LOAD_ATTR:
+            break;
+        case STORE_NAME:
+            break;
+        case STORE_INDEX:
+            break;
+        case STORE_ATTR:
+            break;
+        case STORE_SUBSCR:
+            break;
+        case DELETE_SUBSCR:
+            break;
+        case DELETE_NAME:
+            break;
+        case DELETE_ATTR:
+            break;
+        case UNARY_OP:
+            a = POP();
+            a->type->tp_unary_op(a, 0);
+            break;
+        case BINARY_OP:
+            break;
+        case INPLACE_OP:
+            break;
+        case COMPARE_OP:
+            break;
+        case CALL_FUNCTION:
+            break;
+        case RETURN_VALUE:
+            break;
+        case JUMP_FORWARD:
+            break;
+        case JUMP_ABSOLUTE:
+            break;
+        case POP_JUMP_IF_TRUE:
+            break;
+        case POP_JUMP_IF_FALSE:
+            break;
+        case JUMP_IF_TRUE_OR_POP:
+            break;
+        case JUMP_IF_FALSE_OR_POP:
+            break;
+        case FOR_ITER:
+            break;
+        default:
+            break;
+    };
+
+process_result:
+    switch (0) {
+        case FResult_Pending:
+            break;
+        case FResult_Ok:
+            break;
+        case FResult_Exception:
+            break;
+        case FResult_Suspend:
+            break;
+        case FResult_Resume:
+            break;
+        case FResult_ResumeError:
+            break;
+        case FResult_InvokeCompiled:
+            break;
+    }
 }
+#pragma clang diagnostic pop
