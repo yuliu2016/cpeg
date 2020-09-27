@@ -18,7 +18,6 @@ void FCoroutine_run() {
     FOpcode opcode = get_op();
     int opcode_arg = 0;
     VALUE dummy;
-    ca
 
 #define POP() 0
 #define PUSH(ob) dummy = ob
@@ -96,7 +95,7 @@ switch_opcode:
             break;
         case UNARY_OP:
             a = POP();
-            a->type->unary_op(a, 0);
+            a->type->obj_fast_unary_op(a, 0);
             break;
         case BINARY_OP:
             break;
