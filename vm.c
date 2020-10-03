@@ -95,7 +95,9 @@ switch_opcode:
             break;
         case UNARY_OP:
             a = POP();
-            a->type->obj_fast_unary_op(a, 0);
+            if (a->type->fast_unary_op) {
+                PUSH(a->type->fast_unary_op(a, (FUnaryOp) opcode_arg));
+            }
             break;
         case BINARY_OP:
             break;
