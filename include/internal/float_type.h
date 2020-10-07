@@ -6,7 +6,7 @@
 typedef struct float_t {
     FObject_Base;
 
-    double x;
+    double float_val;
 } FFloat;
 
 #endif //CPEG_FLOAT_TYPE_H
