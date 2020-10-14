@@ -34,6 +34,7 @@ char *tokenizer_repl(char *in) {
         }
         printf("T(type=%d, len=%zu, '%s')\n", token->type, token->len, literal);
     }
+    FLexer_free_state(ls);
     return "\n";
 }
 

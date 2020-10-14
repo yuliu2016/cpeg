@@ -89,7 +89,7 @@ FToken *lexer_fetch_token(FParser *p, size_t pos) {
 
 int FLexer_did_finish(FLexerState *ls, size_t pos) {
     return pos >= ls->token_len
-           && ls->next_token == NULL;
+            && ls->next_token == NULL;
 }
 
 void FLexer_free_state(FLexerState *ls) {
@@ -98,6 +98,9 @@ void FLexer_free_state(FLexerState *ls) {
     }
     FMem_free(ls->tokens);
     FMem_free(ls->line_to_index);
+    if (ls->error) {
+        FMem_free(ls->error);
+    }
 }
 
 FParser *FPeg_init_new_parser(
@@ -140,6 +143,7 @@ FParser *FPeg_init_new_parser(
 
 void FPeg_free_parser(FParser *p) {
     FLexer_free_state(&p->lexer_state);
+    FMemRegion_free(p->region);
     FMem_free(p);
 }
 

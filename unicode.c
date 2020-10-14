@@ -1,6 +1,7 @@
 #include "unicode.h"
 #include "mem.h"
 #include "unicode_type.h"
+#include "string.h"
 
 struct stringbuffer_t {
     size_t len;
@@ -40,13 +41,5 @@ VALUE FUnicode_from_ascii_and_size(const char * array, size_t len) {
 
 VALUE FUnicode_from_ascii(const char *array) {
     if (!array) return NULL;
-
-    size_t len = 0;
-    const char *p = array;
-    while (*p) {
-        ++len;
-        ++p;
-    }
-
-    return FUnicode_from_ascii_and_size(array, len);
+    return FUnicode_from_ascii_and_size(array, strlen(array));
 }

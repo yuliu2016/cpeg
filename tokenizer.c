@@ -2,6 +2,7 @@
 #include "include/tokenmap.h"
 #include "stdbool.h"
 #include "stdio.h"
+#include "string.h"
 
 FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
     FToken *token = FMem_malloc(sizeof(FToken));
@@ -30,9 +31,62 @@ FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
 
 #define ADVANCE(ls) ++(ls)->curr_index;
 
-void tokenizer_set_error(FLexerState *ls, char *msg, int offset) {
-    ls->error = msg + offset;
+// * returns the line end (exclusive) given line number
+size_t get_line_end(FLexerState *ls, size_t lineno) {
+    if (lineno < ls->lines_size - 1) {
+        return ls->line_to_index[lineno + 1];
+    } else if (lineno == ls->lines_size - 1) {
+        size_t i = ls->line_to_index[lineno] + 1;
+        while (i < ls->src_len)
+        {
+            char ch = ls->src[i];
+            if (ch == '\r' || ch == '\n') {
+                break;
+            }
+            i++;
+        }
+        return i;
+    } else {
+        return ls->src_len;
+    }
 }
+
+void tokenizer_error(FLexerState *ls, char *msg, int char_offset) {
+    size_t lineno = ls->lines_size - 1;
+    size_t line_start = ls->line_to_index[lineno];
+    size_t line_end = get_line_end(ls, lineno);
+    if (char_offset < 0) {
+        char_offset = 0;
+    }
+    size_t col = ls->curr_index - line_start + char_offset;
+
+    // include an extra char for \0
+    char *line_buf = FMem_calloc(line_end - line_start + 1, sizeof(char));
+    int j = 0;
+    for (size_t i = line_start; i < line_end; ++i) {
+        line_buf[j] = ls->src[i];
+        ++j;
+    }
+    printf("%zu, %zu, %s", line_start, line_end, line_buf);
+
+    char *caret_buf = FMem_calloc(col + 5, sizeof(char));
+    for (size_t i = 0; i < col + 4; ++i) {
+        caret_buf[i] = ' ';
+    }
+    
+    size_t max_len = 45 + (line_end - line_start) + col + strlen(msg);
+    char *err_buf = FMem_calloc(max_len, sizeof(char));
+    
+    sprintf(err_buf, "line %zu:\n    %s\n%s^\nError: %s", 
+            lineno + 1, line_buf, caret_buf, msg);
+
+    ls->error = err_buf;
+
+    FMem_free(line_buf);
+    FMem_free(caret_buf);
+}
+
+#define SET_ERROR(ls, msg, char_offset) tokenizer_error(ls, msg, char_offset)
 
 int char_is_whitespace(char ch) {
     return ch == ' ' || ch == '\t';
@@ -102,13 +156,13 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
 
 
     if (indent == ls->indent) {
-        *ptoken = create_token(ls, T_NEWLINE, 1);
+        *ptoken = create_token(ls, T_NEWLINE, true);
     } else if (indent == (ls->indent + 4)) {
-        *ptoken = create_token(ls, T_INDENT, 1);
+        *ptoken = create_token(ls, T_INDENT, true);
     } else if (indent == (ls->indent - 4)) {
-        *ptoken = create_token(ls, T_DEDENT, 1);
+        *ptoken = create_token(ls, T_DEDENT, true);
     } else {
-        ls->error = "Incorrect indentation";
+        SET_ERROR(ls, "Incorrect indentation", 0);
         return false;
     }
 
@@ -131,7 +185,7 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
     if (j == ls->curr_index + 2) {
         char buf[60];
         sprintf(buf, "Cannot parser %s number after leading literal", name);
-        ls->error = buf;
+        SET_ERROR(ls, buf, 0);
         return false;
     }
 
@@ -139,7 +193,7 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
     if (ls->src[j - 1] == '_') {
         char buf[30];
         sprintf(buf, "Invalid %s literal", name);
-        ls->error = buf;
+        SET_ERROR(ls, buf, 0);
         return false;
     }
 
@@ -178,7 +232,7 @@ size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
 
     // make sure the number literal doesn't start or end with '_'
     if (j == i || ls->src[j - 1] == '_' || ls->src[ls->curr_index + 2] == '_') {
-        ls->error = "Invalid decimal literal";
+        SET_ERROR(ls, "Invalid decimal literal", 0);
         return false;
     }
 
@@ -244,7 +298,7 @@ bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
             }
         }
         if (ls->src[ls->curr_index] == '0' && !all_zero) {
-            ls->error = "Integer with leading zero; use 0o for octal numbers";
+            SET_ERROR(ls, "Integer with leading zero; use 0o for octal numbers", 0);
             return false;
         }
     }
@@ -252,7 +306,7 @@ bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
     ls->curr_index = j;
     *ptoken = create_token(ls, T_NUMBER, false);
 
-    return false;
+    return true;
 }
 
 bool tokenize_number(FLexerState *ls, FToken **ptoken) {
@@ -345,7 +399,8 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     }
 
     if (!closed) {
-        tokenizer_set_error(ls, "String not closed, unexpected EOL", 4);
+        // todo add correct offsets for strings
+        SET_ERROR(ls, "String not closed, unexpected EOL", multi_line ? 1 : 3);
     }
 
     ls->curr_index = i;
@@ -518,7 +573,7 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
 
     int n_operators = sizeof(operators) / sizeof(struct token_literal);
 
-    // reverse because the longest operators first
+    // reversed because the longest operators has to be checked first
     for (int i = n_operators - 1; i >= 0; --i) {
         struct token_literal pair = operators[i];
 
@@ -571,7 +626,7 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
     }
 
     if (!token) {
-        tokenizer_set_error(ls, "Unknown Syntax", 0);
+        tokenizer_error(ls, "Unknown Syntax", 0);
         return NULL;
     }
 
@@ -582,9 +637,7 @@ FLexerState *FLexer_analyze_all(char *src) {
     FLexerState *ls = FMem_malloc(sizeof(FLexerState));
 
     // find length of string
-    size_t len = 0;
-    char *ptr = src;
-    while (*(ptr++)) ++len;
+    size_t len = strlen(src);
 
     FLexer_init_state(ls, src, len, false);
 
