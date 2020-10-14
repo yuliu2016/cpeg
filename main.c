@@ -3,10 +3,6 @@
 #include "include/tokenizer.h"
 #include "include/parser.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-
 char *idchptr(char *in) {
     return in;
 }
@@ -40,8 +36,6 @@ char *tokenizer_repl(char *in) {
     }
     return "\n";
 }
-
-#pragma clang diagnostic pop
 
 int main() {
     FMem_set_allocator(default_allocator());

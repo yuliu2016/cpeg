@@ -149,14 +149,9 @@ struct ast_node_t {
     } ast_v;
 };
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
-
 #define R_CHECK(node, t) (!((node)->ast_t & 2u) && (node)->ast_t >> 2u == (t))
 #define T_CHECK(node, t) ((node)->ast_t & 2u && (node)->ast_t >> 2u == (t))
 #define S_CHECK(node) !((node)->ast_t & 1u)
-
-#pragma clang diagnostic pop
 
 FParser *FPeg_init_new_parser(
         char *src,

@@ -3,8 +3,7 @@
 #include "stdbool.h"
 #include "stdio.h"
 
-FToken *create_token(FLexerState *ls,
-                     unsigned int type, bool is_whitespace) {
+FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
     FToken *token = FMem_malloc(sizeof(FToken));
     if (!token) {
         return NULL;
@@ -151,8 +150,8 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
 
 bool test_hex(char ch) {
     return (ch >= 'A' && ch <= 'F') ||
-           (ch >= 'a' && ch <= 'f') ||
-           ch >= '0' && ch <= '9';
+            (ch >= 'a' && ch <= 'f') ||
+            ch >= '0' && ch <= '9';
 }
 
 bool test_oct(char ch) {
@@ -357,9 +356,9 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
 
 bool test_name(char ch) {
     return (ch >= 'A' && ch <= 'Z') ||
-           (ch >= 'a' && ch <= 'z') ||
-           (ch >= '0' && ch <= '9') ||
-           (ch == '_');
+            (ch >= 'a' && ch <= 'z') ||
+            (ch >= '0' && ch <= '9') ||
+            (ch == '_');
 }
 
 struct token_literal {

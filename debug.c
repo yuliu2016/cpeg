@@ -83,10 +83,6 @@ void print_buf(void *head, int size) {
     printf("%s\n", buf);
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
 void test_block() {
     FMem_set_allocator(default_allocator());
     FMemBlock *block = mem_block_new(256);
@@ -119,14 +115,6 @@ void test_region() {
     FMem_free(x);
 }
 
-#pragma clang diagnostic pop
-
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "ConstantConditionsOC"
-#pragma ide diagnostic ignored "UnreachableCode"
-#pragma clang diagnostic ignored "-Wformat"
-
 void print_address(void *ptr, const char *name) {
     uintptr_t i = (uintptr_t) ptr;
     size_t s = sizeof(uintptr_t) / 4;
@@ -136,9 +124,6 @@ void print_address(void *ptr, const char *name) {
         printf("%-16s = %#016llx\n", name, (unsigned long long) i);
     }
 }
-
-#pragma clang diagnostic pop
-
 
 void *dbmalloc(size_t size) {
     void *r = malloc(size);

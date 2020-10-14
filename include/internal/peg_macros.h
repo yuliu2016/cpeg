@@ -13,9 +13,6 @@
 # define IF_DEBUG(s)
 #endif
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "bugprone-macro-parentheses"
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #define DEBUG_EXTRAS f_type, __func__
 
@@ -80,9 +77,6 @@
 
 // FAstNode \*[a-z0-9_]+\(FParser \*p\)
 // RULE($1)
-
-#pragma clang diagnostic pop
-
 
 
 #endif //CPEG_PEG_MACROS_H

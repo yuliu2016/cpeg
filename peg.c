@@ -167,7 +167,7 @@ FAstNode *FPeg_consume_token(FParser *p, size_t type) {
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
         while (curr_token->is_whitespace &&
-               !FLexer_did_finish(&p->lexer_state, pos + 1)) {
+                !FLexer_did_finish(&p->lexer_state, pos + 1)) {
             pos += 1;
             curr_token = lexer_fetch_token(p, pos);
         }

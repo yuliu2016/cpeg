@@ -1,10 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnreachableCode"
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "UnusedLocalVariable"
-#pragma clang diagnostic ignored "-Wunused-label"
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "bugprone-branch-clone"
 #include "include/vm.h"
 #include "include/mem.h"
 #include "include/internal/opcode.h"
@@ -128,7 +121,8 @@ switch_opcode:
     };
 
 process_result:
-    switch (0) {
+    FCallState *call = 0;
+    switch (call->result) {
         case FResult_Pending:
             break;
         case FResult_Ok:
@@ -145,4 +139,3 @@ process_result:
             break;
     }
 }
-#pragma clang diagnostic pop
