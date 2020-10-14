@@ -5,6 +5,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "inttypes.h"
+#include "include/tokenizer.h"
 
 
 void input_loop(char *prompt, char *(*func)(char *)) {
@@ -12,15 +13,14 @@ void input_loop(char *prompt, char *(*func)(char *)) {
     char line[1024];
     for (;;) {
         fgets(line, 1024, stdin);
+        if (strlen(line) == 0) {
+            continue;
+        }
         if (strcmp(line, "exit\n") == 0) {
             break;
         }
         // remove the newline character at the end
-        for (int i = 0; i < 1024; ++i) {
-            if (i && !line[i]) {
-                line[i - 1] = 0;
-            }
-        }
+        line[strlen(line) - 1] = 0;
         char *s = func(line);
         if (!s) {
             break;
@@ -192,4 +192,85 @@ void exit_frame(FAstNode *res, size_t level, size_t pos, size_t rule_index, cons
 
 FPegDebugHook FPeg_print_debug_hook() {
     return (FPegDebugHook) {enter_frame, memo_hit, exit_frame};
+}
+
+typedef struct token_kind {
+    const char * name;
+    const char * style;
+    size_t min;
+    size_t max;
+} TokenKind;
+
+static TokenKind token_kinds[] = {
+    {"ENDMARKER", "\033[31m", 1, 2},
+    {"NEWLINE", "", 2, 3},
+    {"NAME", "\033[35m", 3, 4}, // magenta
+    {"NUMBER", "\033[34m", 4, 5}, // blue
+    {"STRING", "\033[32m", 5, 6}, // green
+    {"OPERATOR", "\033[33m", 6, 54}, // yellow
+    {"KEYWORD", "\033[34;1m", 55, 84}, // bright blue
+};
+
+char *tokenizer_repl(char *in) {
+    FLexerState *ls = FLexer_analyze_all(in);
+    if (ls->error) {
+        printf("\033[31mFile <repl>, %s\033[0m", ls->error);
+        FLexer_free_state(ls);
+        return "\n";
+    }
+
+    if (ls->token_len == 0) {
+        printf("[Empty Token List]\n");
+        FLexer_free_state(ls);
+        return "";
+    }
+
+    size_t previous_line = -1;
+    size_t literal_len = 100;
+    char *literal = FMem_malloc(literal_len);
+
+    for (int i = 0; i < ls->token_len; ++i) {
+        FToken *token = ls->tokens[i];
+
+        if (token->len > literal_len) {
+            literal_len = token->len;
+            literal = FMem_realloc(literal, literal_len);
+        }
+
+        for (int j = 0; j < literal_len; ++j) {
+            literal[j] = 0;
+        }
+        for (size_t j = 0; j < token->len; ++j) {
+            char ch = token->start[j];
+            if (ch == '\n') {
+                literal[j++] = '\\';
+                literal[j] = 'n';
+            } else {
+                literal[j] = ch;
+            }
+        }
+
+        size_t line = token->lineno;
+        previous_line = line;
+
+        size_t type = token->type;
+        TokenKind kind;
+        for (int i = 0; i < 7; ++i) {
+            kind = token_kinds[i];
+            if (type >= kind.min && type < kind.max) {
+                break;
+            }
+        }
+
+        printf("L%zu:%zu\t%-10s%s%s\033[0m\n", line + 1, token->column,
+                kind.name, kind.style, literal);
+    }
+
+    FMem_free(literal);
+    FLexer_free_state(ls);
+    return "";
+}
+
+char *idchptr(char *in) {
+    return in;
 }

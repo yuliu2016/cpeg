@@ -23,7 +23,7 @@ typedef struct token_memo_t {
 } FTokenMemo;
 
 typedef struct {
-    unsigned int type;
+    size_t type;
     char *start;
     size_t len;
     size_t lineno;
