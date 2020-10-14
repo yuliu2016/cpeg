@@ -67,7 +67,6 @@ void tokenizer_error(FLexerState *ls, char *msg, int char_offset) {
         line_buf[j] = ls->src[i];
         ++j;
     }
-    printf("%zu, %zu, %s", line_start, line_end, line_buf);
 
     char *caret_buf = FMem_calloc(col + 5, sizeof(char));
     for (size_t i = 0; i < col + 4; ++i) {

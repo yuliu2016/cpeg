@@ -3,6 +3,10 @@
 #include "include/tokenizer.h"
 #include "include/parser.h"
 
+#ifdef WIN32
+#include "windows.h"
+#endif
+
 char *idchptr(char *in) {
     return in;
 }
@@ -16,7 +20,13 @@ void *parse() {
 
 char *tokenizer_repl(char *in) {
     FLexerState *ls = FLexer_analyze_all(in);
-    printf("# of tokens: %zu, error: %s\n", ls->token_len, ls->error);
+    if (ls->error) {
+        printf("\033[31;1mFile <repl>, %s\033[0m", ls->error);
+        FLexer_free_state(ls);
+        return "\n";
+    }
+
+    printf("# of tokens: %zu\n", ls->token_len);
     for (int i = 0; i < ls->token_len; ++i) {
         FToken *token = ls->tokens[i];
         char literal[100];
@@ -34,11 +44,35 @@ char *tokenizer_repl(char *in) {
         }
         printf("T(type=%d, len=%zu, '%s')\n", token->type, token->len, literal);
     }
+
     FLexer_free_state(ls);
     return "\n";
 }
 
 int main() {
+
+#ifdef WIN32
+    // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+    // Set output mode to handle virtual terminal sequences
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE)
+    {
+        return GetLastError();
+    }
+
+    DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode))
+    {
+        return GetLastError();
+    }
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(hOut, dwMode))
+    {
+        return GetLastError();
+    }
+#endif
+
     FMem_set_allocator(default_allocator());
     test_region();
 
