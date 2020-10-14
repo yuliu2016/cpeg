@@ -21,7 +21,7 @@ void *parse() {
 char *tokenizer_repl(char *in) {
     FLexerState *ls = FLexer_analyze_all(in);
     if (ls->error) {
-        printf("\033[31;1mFile <repl>, %s\033[0m", ls->error);
+        printf("\033[31mFile <repl>, %s\033[0m", ls->error);
         FLexer_free_state(ls);
         return "\n";
     }
@@ -74,7 +74,6 @@ int main() {
 #endif
 
     FMem_set_allocator(default_allocator());
-    test_region();
 
     input_loop(">>>", tokenizer_repl);
     return 0;

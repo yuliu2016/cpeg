@@ -21,7 +21,11 @@ void input_loop(char *prompt, char *(*func)(char *)) {
                 line[i - 1] = 0;
             }
         }
-        print(func(line));
+        char *s = func(line);
+        if (!s) {
+            break;
+        }
+        print(s);
         print(prompt);
     }
 }

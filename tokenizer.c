@@ -19,6 +19,7 @@ FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
     token->start = ls->src + ls->start_index;
     token->type = type;
     token->is_whitespace = (int) is_whitespace;
+    token->memo = NULL;
 
     return token;
 }
@@ -353,9 +354,11 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     if (!(open_char == '\'' || open_char == '\"')) {
         return false;
     }
+    i += 1;
 
     if (PEEK_SAFE(ls, i + 1) == open_char && PEEK_SAFE(ls, i + 2) == open_char) {
         multi_line = true;
+        i += 2;
     }
 
     bool closed = false;
@@ -397,12 +400,15 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
         }
     }
 
+    ls->curr_index = i;
+
     if (!closed) {
         // todo add correct offsets for strings
-        SET_ERROR(ls, "String not closed, unexpected EOL", multi_line ? 1 : 3);
+        SET_ERROR(ls, "String not closed, unexpected EOL", 0);
+        return false;
     }
 
-    ls->curr_index = i;
+    ++ls->curr_index;
     *ptoken = create_token(ls, T_STRING, false);
 
     return true;
