@@ -4,26 +4,6 @@
 #include "stdio.h"
 #include "string.h"
 
-FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
-    FToken *token = FMem_malloc(sizeof(FToken));
-    if (!token) {
-        return NULL;
-    }
-
-    size_t line_start = ls->lines_size - 1;
-    size_t col_start = ls->start_index - ls->line_to_index[line_start];
-
-    token->lineno = line_start;
-    token->column = col_start;
-    token->len = ls->curr_index - ls->start_index;
-    token->start = ls->src + ls->start_index;
-    token->type = type;
-    token->is_whitespace = (int) is_whitespace;
-    token->memo = NULL;
-
-    return token;
-}
-
 
 #define HAS_REMAINING(ls) ((ls)->curr_index < (ls)->src_len)
 #define PEEK(ls) ls->src[(ls)->curr_index]
@@ -32,61 +12,8 @@ FToken *create_token(FLexerState *ls, unsigned int type, bool is_whitespace) {
 
 #define ADVANCE(ls) ++(ls)->curr_index;
 
-// * returns the line end (exclusive) given line number
-size_t get_line_end(FLexerState *ls, size_t lineno) {
-    if (lineno < ls->lines_size - 1) {
-        return ls->line_to_index[lineno + 1];
-    } else if (lineno == ls->lines_size - 1) {
-        size_t i = ls->line_to_index[lineno] + 1;
-        while (i < ls->src_len)
-        {
-            char ch = ls->src[i];
-            if (ch == '\r' || ch == '\n') {
-                break;
-            }
-            i++;
-        }
-        return i;
-    } else {
-        return ls->src_len;
-    }
-}
-
-void tokenizer_error(FLexerState *ls, char *msg, int char_offset) {
-    size_t lineno = ls->lines_size - 1;
-    size_t line_start = ls->line_to_index[lineno];
-    size_t line_end = get_line_end(ls, lineno);
-    if (char_offset < 0) {
-        char_offset = 0;
-    }
-    size_t col = ls->curr_index - line_start + char_offset;
-
-    // include an extra char for \0
-    char *line_buf = FMem_calloc(line_end - line_start + 1, sizeof(char));
-    int j = 0;
-    for (size_t i = line_start; i < line_end; ++i) {
-        line_buf[j] = ls->src[i];
-        ++j;
-    }
-
-    char *caret_buf = FMem_calloc(col + 5, sizeof(char));
-    for (size_t i = 0; i < col + 4; ++i) {
-        caret_buf[i] = ' ';
-    }
-    
-    size_t max_len = 45 + (line_end - line_start) + col + strlen(msg);
-    char *err_buf = FMem_calloc(max_len, sizeof(char));
-    
-    sprintf(err_buf, "line %zu:\n    %s\n%s^\nError: %s", 
-            lineno + 1, line_buf, caret_buf, msg);
-
-    ls->error = err_buf;
-
-    FMem_free(line_buf);
-    FMem_free(caret_buf);
-}
-
-#define SET_ERROR(ls, msg, char_offset) tokenizer_error(ls, msg, char_offset)
+#define SET_ERROR(ls, msg, char_offset) FLexer_set_error(ls, msg, char_offset)
+#define CREATE_TOKEN(ls, type, is_whitespace) FLexer_create_token(ls, type, is_whitespace)
 
 int char_is_whitespace(char ch) {
     return ch == ' ' || ch == '\t';
@@ -156,11 +83,11 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
 
 
     if (indent == ls->indent) {
-        *ptoken = create_token(ls, T_NEWLINE, true);
+        *ptoken = CREATE_TOKEN(ls, T_NEWLINE, true);
     } else if (indent == (ls->indent + 4)) {
-        *ptoken = create_token(ls, T_INDENT, true);
+        *ptoken = CREATE_TOKEN(ls, T_INDENT, true);
     } else if (indent == (ls->indent - 4)) {
-        *ptoken = create_token(ls, T_DEDENT, true);
+        *ptoken = CREATE_TOKEN(ls, T_DEDENT, true);
     } else {
         SET_ERROR(ls, "Incorrect indentation", 0);
         return false;
@@ -198,7 +125,7 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
     }
 
     ls->curr_index = j;
-    *ptoken = create_token(ls, T_NUMBER, false);
+    *ptoken = CREATE_TOKEN(ls, T_NUMBER, false);
     return true;
 }
 
@@ -304,7 +231,7 @@ bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
     }
 
     ls->curr_index = j;
-    *ptoken = create_token(ls, T_NUMBER, false);
+    *ptoken = CREATE_TOKEN(ls, T_NUMBER, false);
 
     return true;
 }
@@ -409,7 +336,7 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     }
 
     ++ls->curr_index;
-    *ptoken = create_token(ls, T_STRING, false);
+    *ptoken = CREATE_TOKEN(ls, T_STRING, false);
 
     return true;
 }
@@ -498,13 +425,13 @@ bool tokenize_name_or_keyword(FLexerState *ls, FToken **ptoken) {
         }
 
         if (matching && j == ls->curr_index) {
-            *ptoken = create_token(ls, pair.type, false);
+            *ptoken = CREATE_TOKEN(ls, pair.type, false);
             return true;
         }
     }
 
     // not any of the keywords
-    *ptoken = create_token(ls, T_NAME, false);
+    *ptoken = CREATE_TOKEN(ls, T_NAME, false);
     return true;
 }
 
@@ -598,7 +525,7 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
 
         if (matching) {
             ls->curr_index = j;
-            *ptoken = create_token(ls, pair.type, false);
+            *ptoken = CREATE_TOKEN(ls, pair.type, false);
             return true;
         }
     }
@@ -612,7 +539,7 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
     if (!HAS_REMAINING(ls)) {
         if (ls->endmarker) {
             ls->endmarker = 0;
-            return create_token(ls, T_ENDMARKER, 0);
+            return CREATE_TOKEN(ls, T_ENDMARKER, 0);
         }
         return NULL;
     }
@@ -631,7 +558,7 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
     }
 
     if (!token) {
-        tokenizer_error(ls, "Unknown Syntax", 0);
+        SET_ERROR(ls, "Unknown Syntax", 0);
         return NULL;
     }
 

@@ -74,6 +74,10 @@ void FLexer_add_token(FLexerState *ls, FToken *token);
 
 int FLexer_did_finish(FLexerState *ls, size_t pos);
 
+void FLexer_set_error(FLexerState *ls, char *error_msg, size_t char_offset);
+
+FToken *FLexer_create_token(FLexerState *ls, unsigned int type, int is_whitespace);
+
 void FLexer_free_state(FLexerState *ls);
 
 typedef FToken *(*FLexerFunc)(FLexerState *);
