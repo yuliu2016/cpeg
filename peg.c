@@ -1,5 +1,6 @@
 #include "include/peg.h"
 #include "stdarg.h"
+#include "stdio.h"
 
 void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker) {
     ls->src = src;
@@ -177,8 +178,7 @@ void FLexer_free_state(FLexerState *ls) {
 FParser *FPeg_init_new_parser(
         char *src,
         size_t len,
-        FLexerFunc lexer_func,
-        FPegDebugHook *dh) {
+        FLexerFunc lexer_func) {
 
     if (!src || !lexer_func) {
         return NULL;
@@ -202,7 +202,6 @@ FParser *FPeg_init_new_parser(
     p->max_reached_pos = 0;
     p->ignore_whitespace = 0;
     p->level = 0;
-    p->dh = dh;
     p->error = 0;
 
     // Need to scan at least one token to see
@@ -219,9 +218,6 @@ void FPeg_free_parser(FParser *p) {
 }
 
 char *FPeg_check_state(FParser *p) {
-    if (p->dh) {
-        return 0;
-    }
     if (p->level != 0) {
         return "p->level is not 0";
     }
@@ -310,6 +306,42 @@ FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
         memo = memo->next;
     }
     return NULL;
+}
+
+void print_indent_level(size_t s) {
+    char *b = FMem_malloc(sizeof(char) * (s + 1));
+    if (!b) {
+        return;
+    }
+    for (size_t i = 0; i < s; ++i) {
+        b[i] = ' ';
+    }
+    b[s] = '\0';
+    printf("%s", b);
+    FMem_free(b);
+}
+
+void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
+    p->level++;
+    print_indent_level(p->level);
+    printf("Entering frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+}
+
+void FPeg_debug_exit(FParser *p, FAstNode *res, size_t rule_index, const char *rule_name) {
+    p->level--;
+    print_indent_level(p->level);
+    if (res) {
+        printf("Success in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+    } else {
+        printf("Failure in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+    }
+}
+
+void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
+    p->level--;
+    if (!memo) return;
+    print_indent_level(p->level);
+    printf("Memo found in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
 }
 
 FAstNode *seq_new(FParser *p) {

@@ -19,19 +19,19 @@
 #define ENTER(type) \
     const int f_type = type; \
     size_t pos = p->pos; \
-    IF_DEBUG(p->dh->enter_frame(++p->level, pos, DEBUG_EXTRAS);) \
+    IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
-    FAstNode *r = 0, *a, *b, *c, *d \
+    FAstNode *r = 0, *a, *b, *c, *d
 
 #define EXIT() \
-    IF_DEBUG(p->dh->exit_frame(r, --p->level, p->pos, DEBUG_EXTRAS);) \
+    IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);) \
     if (!r) { p->pos = pos; } \
     return r
 
 #define RETURN_IF_MEMOIZED() \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
-    if (memo) { IF_DEBUG(p->dh->memo_hit(--p->level, pos, DEBUG_EXTRAS);) \
-    return memo->node; } \
+    IF_DEBUG(FPeg_debug_memo(p, memo, DEBUG_EXTRAS);) \
+    if (memo) { return memo->node; }
 
 #define MEMOIZE() \
     FPeg_put_memo(p, f_type, r, p->pos)
@@ -51,7 +51,7 @@
     max = a; \
     goto left_rec_enter; \
     left_rec_exit: \
-    r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0 \
+    r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0
 
 #define WS_PUSH_1() \
     int old_ws = p->ignore_whitespace; \

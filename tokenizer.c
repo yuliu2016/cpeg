@@ -20,14 +20,19 @@ int char_is_whitespace(char ch) {
 }
 
 // skip spaces and comments
-void skip_spaces(FLexerState *ls) {
+void skip_whitespace(FLexerState *ls) {
     if (ls->error) {
         return;
     }
     int in_comment = false;
     while (HAS_REMAINING(ls)) {
-        in_comment = in_comment || PEEK(ls) == '#';
-        if (!(in_comment || char_is_whitespace(PEEK(ls)))) {
+        char ch = PEEK(ls);
+        if (ch == '#') {
+            in_comment = true;
+        } else if (ch == '\n' || ch == '\r') {
+            in_comment = false;
+        }
+        if (!in_comment && !char_is_whitespace(ch)) {
             return;
         }
         ADVANCE(ls);
@@ -67,20 +72,19 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
             FLexer_add_index_for_line(ls, ls->curr_index);
             in_comment = false;
         } else {
-            in_comment = in_comment || ch == '#';
-            if (in_comment || char_is_whitespace(ch)) {
-                if (ch == ' ') {
-                    // indentation is only with spaces
-                    indent += 1;
-                }
-            } else {
+            if (ch == '#') {
+                in_comment = true;
+            }
+            if (!in_comment && ch == ' ') {
+                ++indent;
+            }
+            if (!in_comment && !char_is_whitespace(ch)) {
                 break;
             }
         }
 
         ADVANCE(ls);
     }
-
 
     if (indent == ls->indent) {
         *ptoken = CREATE_TOKEN(ls, T_NEWLINE, true);
@@ -533,7 +537,8 @@ bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
 }
 
 FToken *FLexer_get_next_token(FLexerState *ls) {
-    ls->start_index = ls->curr_index;
+
+    skip_whitespace(ls);
 
     // lexer still needs an ending token
     if (!HAS_REMAINING(ls)) {
@@ -544,7 +549,7 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
         return NULL;
     }
 
-    skip_spaces(ls);
+    ls->start_index = ls->curr_index;
 
     FToken *token = NULL;
     (tokenize_newline_or_indent(ls, &token)) ||

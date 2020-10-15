@@ -84,25 +84,6 @@ typedef FToken *(*FLexerFunc)(FLexerState *);
 
 typedef struct ast_node_t FAstNode;
 
-typedef struct {
-    void (*enter_frame)(
-            size_t level,
-            size_t pos,
-            size_t rule_index,
-            const char *rule_name);
-    void (*memo_hit)(
-            size_t level,
-            size_t pos,
-            size_t rule_index,
-            const char *rule_name);
-    void (*exit_frame)(
-            FAstNode *res,
-            size_t level,
-            size_t pos,
-            size_t rule_index,
-            const char *rule_name);
-} FPegDebugHook;
-
 typedef struct parser_state_t {
     // Use to get lazily scan the next token
     FLexerState lexer_state;
@@ -123,7 +104,6 @@ typedef struct parser_state_t {
 
     // Debugging
     size_t level;
-    FPegDebugHook *dh;
 
 } FParser;
 
@@ -160,8 +140,7 @@ struct ast_node_t {
 FParser *FPeg_init_new_parser(
         char *src,
         size_t len,
-        FLexerFunc lexer_func,
-        FPegDebugHook *dh
+        FLexerFunc lexer_func
 );
 
 void FPeg_free_parser(FParser *p);
@@ -171,6 +150,12 @@ char *FPeg_check_state(FParser *p);
 void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end);
 
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type);
+
+void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name);
+
+void FPeg_debug_exit(FParser *p, FAstNode *res, size_t rule_index, const char *rule_name);
+
+void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
 
 // Macros used in the parser
 
@@ -183,12 +168,23 @@ FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
 typedef FAstNode *(*FRuleFunc)(FParser *);
 
-#define SEQ_OR_NONE(p, rule) FPeg_parse_sequece_or_none(p, rule)
-#define SEQUENCE(p, rule) FPeg_parse_sequence(p, rule)
-#define DELIMITED(p, delimiter, literal, rule) FPeg_parse_delimited(p, delimiter, rule)
-#define TOKEN_SEQ_OR_NONE(p, t, v) FPeg_parse_token_sequence_or_none(p, t)
-#define TOKEN_SEQUENCE(p, t, v) FPeg_parse_token_sequence(p, t)
-#define TOKEN_DELIMITED(p, delimiter, literal, t, v) FPeg_parse_token_delimited(p, delimiter, t)
+#define SEQ_OR_NONE(p, rule) \
+    FPeg_parse_sequece_or_none(p, rule)
+
+#define SEQUENCE(p, rule) \
+    FPeg_parse_sequence(p, rule)
+
+#define DELIMITED(p, delimiter, literal, rule) \
+    FPeg_parse_delimited(p, delimiter, rule)
+
+#define TOKEN_SEQ_OR_NONE(p, t, v) \
+    FPeg_parse_token_sequence_or_none(p, t)
+
+#define TOKEN_SEQUENCE(p, t, v) \
+    FPeg_parse_token_sequence(p, t)
+
+#define TOKEN_DELIMITED(p, delimiter, literal, t, v) \
+    FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
 

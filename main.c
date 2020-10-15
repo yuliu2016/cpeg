@@ -8,7 +8,7 @@
 #endif
 
 void *parse() {
-    FParser *p = FPeg_init_new_parser(0, 0, FLexer_get_next_token, 0);
+    FParser *p = FPeg_init_new_parser(0, 0, FLexer_get_next_token);
     return single_input(p);
 }
 
