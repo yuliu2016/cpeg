@@ -7,13 +7,15 @@
 #include "windows.h"
 #endif
 
-void *parse() {
-    FParser *p = FPeg_init_new_parser(0, 0, FLexer_get_next_token);
-    return single_input(p);
-}
-
 #include "stdio.h"
+#include "string.h"
 
+char *tokparse(char *in) {
+    FParser *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
+    single_input(p);
+    FPeg_free_parser(p);
+    return "\n";
+}
 
 int main() {
 
@@ -41,6 +43,6 @@ int main() {
 
     FMem_set_allocator(default_allocator());
 
-    input_loop(">>>", tokenizer_repl);
+    input_loop(">>>", tokparse);
     return 0;
 }

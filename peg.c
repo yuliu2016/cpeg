@@ -80,7 +80,7 @@ FToken *lexer_fetch_token(FParser *p, size_t pos) {
 
             return this_token;
         } else {
-            p->error = "attempting to get token when stream has finished";
+            // end of token stream
             return NULL;
         }
     }
@@ -234,6 +234,9 @@ FAstNode *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = lexer_fetch_token(p, pos);
+    if (!curr_token) {
+        return NULL;
+    }
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
@@ -241,6 +244,9 @@ FAstNode *FPeg_consume_token(FParser *p, size_t type) {
                 !FLexer_did_finish(&p->lexer_state, pos + 1)) {
             pos += 1;
             curr_token = lexer_fetch_token(p, pos);
+            if (!curr_token) {
+                return NULL;
+            }
         }
     }
 
@@ -274,7 +280,10 @@ FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
 }
 
 void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end) {
-    FToken *curr_token = p->lexer_state.tokens[p->pos];
+    FToken *curr_token = lexer_fetch_token(p, p->pos);
+    if (!curr_token) {
+        return;
+    }
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
         curr_token->memo = new_memo(p, type, node, end);
@@ -292,7 +301,10 @@ void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end) {
 }
 
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
-    FToken *curr_token = p->lexer_state.tokens[p->pos];
+    FToken *curr_token = lexer_fetch_token(p, p->pos);
+    if (!curr_token) {
+        return NULL;
+    }
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
         if (memo->type == type) {
@@ -309,14 +321,22 @@ FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
 }
 
 void print_indent_level(size_t s) {
-    char *b = FMem_malloc(sizeof(char) * (s + 1));
+    if (s > 30) {
+        s = 0;
+    }
+    char *b = FMem_malloc(sizeof(char) * (s * 2 + 1));
     if (!b) {
         return;
     }
     for (size_t i = 0; i < s; ++i) {
-        b[i] = ' ';
+        if (i && i % 2 == 0) {
+            b[i * 2] = '|';
+        } else {
+            b[i * 2] = ' ';
+        }
+        b[i * 2 + 1] = ' ';
     }
-    b[s] = '\0';
+    b[s * 2] = '\0';
     printf("%s", b);
     FMem_free(b);
 }
@@ -324,24 +344,49 @@ void print_indent_level(size_t s) {
 void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
     p->level++;
     print_indent_level(p->level);
-    printf("Entering frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+
+    // fetch_token needed over direct access
+    FToken *curr_token = lexer_fetch_token(p, p->pos);
+    if (!curr_token) {
+        printf("No token to enter into");
+        return;
+    }
+
+    char *token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
+    for (size_t i = 0; i < curr_token->len; ++i) {
+        token_buf[i] = curr_token->start[i];
+    }
+
+    printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[32m t='%s'\033[0m)\n",
+            rule_name, p->level, p->pos, token_buf);
+    FMem_free(token_buf);
 }
 
 void FPeg_debug_exit(FParser *p, FAstNode *res, size_t rule_index, const char *rule_name) {
-    p->level--;
     print_indent_level(p->level);
     if (res) {
-        printf("Success in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+        printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
     } else {
-        printf("Failure in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+        printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
     }
+    p->level--;
 }
 
 void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
-    p->level--;
-    if (!memo) return;
+    if (!memo) {
+        p->level--;
+        return;
+    };
     print_indent_level(p->level);
-    printf("Memo found in frame %zu:%s at pos %zu", rule_index, rule_name, p->pos);
+    char *succ;
+    if (memo->node) {
+        succ = ", was a \033[32mSuccess\033[0m";
+    } else {
+        succ = ", was a \033[31mFailure\033[0m";
+    }
+    printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
+            rule_name, p->level, p->pos, succ);
+    p->level--;
 }
 
 FAstNode *seq_new(FParser *p) {
