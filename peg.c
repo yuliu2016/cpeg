@@ -279,25 +279,31 @@ FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
     return new_memo;
 }
 
-void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end) {
-    FToken *curr_token = lexer_fetch_token(p, p->pos);
+void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos) {
+    FToken *curr_token = lexer_fetch_token(p, token_pos);
     if (!curr_token) {
         return;
     }
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
-        curr_token->memo = new_memo(p, type, node, end);
+        // create a "head" memo
+        curr_token->memo = new_memo(p, type, node, endpos);
         return;
     }
-    while (memo->next) {
+    for(;;) {
         if (memo->type == type) {
+            // Update an existing memo of a certain type
             memo->node = node;
-            memo->end_pos = end;
+            memo->end_pos = endpos;
+            return;
+        }
+        if (!memo->next) {
+            // Add a new memo to the end of the chain
+            memo->next = new_memo(p, type, node, endpos);
             return;
         }
         memo = memo->next;
     }
-    memo->next = new_memo(p, type, node, end);
 }
 
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
@@ -342,13 +348,13 @@ void print_indent_level(size_t s) {
 }
 
 void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
-    p->level++;
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
     FToken *curr_token = lexer_fetch_token(p, p->pos);
     if (!curr_token) {
-        printf("No token to enter into");
+        printf("\033[33mNo token to enter into\033[0m\n");
+        p->level++;
         return;
     }
 
@@ -360,33 +366,33 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
     printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[32m t='%s'\033[0m)\n",
             rule_name, p->level, p->pos, token_buf);
     FMem_free(token_buf);
+    p->level++;
 }
 
 void FPeg_debug_exit(FParser *p, FAstNode *res, size_t rule_index, const char *rule_name) {
+    p->level--;
     print_indent_level(p->level);
     if (res) {
         printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
     } else {
         printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
     }
-    p->level--;
 }
 
 void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
     if (!memo) {
-        p->level--;
         return;
     };
+    p->level--;
     print_indent_level(p->level);
     char *succ;
     if (memo->node) {
-        succ = ", was a \033[32mSuccess\033[0m";
+        succ = "was a \033[32mSuccess\033[0m";
     } else {
-        succ = ", was a \033[31mFailure\033[0m";
+        succ = "was a \033[31mFailure\033[0m";
     }
     printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
             rule_name, p->level, p->pos, succ);
-    p->level--;
 }
 
 FAstNode *seq_new(FParser *p) {

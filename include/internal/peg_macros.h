@@ -17,7 +17,8 @@
 #define DEBUG_EXTRAS f_type, __func__
 
 #define ENTER(type) \
-    const int f_type = type; \
+    if (p->error) { return 0; } \
+    const size_t f_type = type; \
     size_t pos = p->pos; \
     IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
@@ -34,14 +35,14 @@
     if (memo) { return memo->node; }
 
 #define MEMOIZE() \
-    FPeg_put_memo(p, f_type, r, p->pos)
+    FPeg_put_memo(p, pos, f_type, r, p->pos)
 
 #define ENTER_LEFT_RECURSION() \
     FAstNode *max = 0; \
     a = 0; \
     size_t lastpos = pos; \
     left_rec_enter: \
-    FPeg_put_memo(p, f_type, max, lastpos); \
+    FPeg_put_memo(p, pos, f_type, max, lastpos); \
     p->pos = pos
 
 #define EXIT_LEFT_RECURSION() \

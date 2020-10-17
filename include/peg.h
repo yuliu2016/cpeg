@@ -147,7 +147,7 @@ void FPeg_free_parser(FParser *p);
 
 char *FPeg_check_state(FParser *p);
 
-void FPeg_put_memo(FParser *p, size_t type, void *node, size_t end);
+void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos);
 
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type);
 
