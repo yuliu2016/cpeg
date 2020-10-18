@@ -159,10 +159,10 @@ void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char
 
 // Macros used in the parser
 
-#define AST_CONSUME(p, type, value) FPeg_consume_token(p, type)
 #define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
 
 FAstNode *FPeg_consume_token(FParser *p, size_t type);
+FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 

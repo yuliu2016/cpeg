@@ -69,7 +69,11 @@
 
 #define TEST(node) (node || (p->pos = pos, 0))
 
-#define TOKEN(type, value) AST_CONSUME(p, type, value)
+#ifdef PEG_DEBUG
+#define TOKEN(type, value) FPeg_consume_token_and_debug(p, type, value)
+#else
+#define TOKEN(type, value) FPeg_consume_token(p, type)
+#endif
 
 #define NODE_1() AST_NEW_NODE(p, f_type, 1, a)
 #define NODE_2() AST_NEW_NODE(p, f_type, 2, a, b)

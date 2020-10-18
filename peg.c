@@ -230,9 +230,21 @@ char *FPeg_check_state(FParser *p) {
     return 0;
 }
 
-FAstNode *FPeg_consume_token(FParser *p, size_t type) {
-    size_t pos = p->pos;
+FAstNode *ast_node_from_token(FParser *p, size_t type, FToken *curr_token) {
+    FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
+    if (!node) {
+        return NULL;
+    }
 
+    // not sequence -> | 1u
+    // is token -> | 2u
+    node->ast_t = type << 2u | 1u | 2u;
+    node->ast_v.token = curr_token;
+    return node;
+}
+
+FToken *get_next_token_to_consume(FParser *p, size_t *ppos) {
+    size_t pos = p->pos;
     FToken *curr_token = lexer_fetch_token(p, pos);
     if (!curr_token) {
         return NULL;
@@ -249,22 +261,9 @@ FAstNode *FPeg_consume_token(FParser *p, size_t type) {
             }
         }
     }
-
-    // now check for correct type
-    if (curr_token->type == type) {
-        p->pos = pos + 1;
-        FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
-        if (!node) {
-            return NULL;
-        }
-        // not sequence -> | 1u
-        // is token -> | 2u
-        node->ast_t = type << 2u | 1u | 2u;
-        node->ast_v.token = curr_token;
-        return node;
-    } else {
-        return NULL;
-    }
+    
+    *ppos = pos;
+    return curr_token;
 }
 
 FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
@@ -393,6 +392,56 @@ void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char
     }
     printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
             rule_name, p->level, p->pos, succ);
+}
+
+
+FAstNode *FPeg_consume_token(FParser *p, size_t type) {
+    size_t pos = p->pos;
+
+    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    if (!curr_token) {
+        return NULL;
+    }
+
+    // now check for correct type
+    if (curr_token->type == type) {
+        p->pos = pos + 1;
+        return ast_node_from_token(p, type, curr_token);
+    } else {
+        return NULL;
+    }
+}
+
+FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal) {
+    size_t pos = p->pos;
+
+    print_indent_level(p->level);
+    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    if (!curr_token) {
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
+                literal, p->level, p->pos);
+        return NULL;
+    }
+
+    // now check for correct type
+    if (curr_token->type == type) {
+        p->pos = pos + 1;
+        printf("Matching   \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
+                literal, p->level, p->pos);
+        return ast_node_from_token(p, type, curr_token);
+    } else {
+        char *token_buf;
+
+        token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
+        for (size_t i = 0; i < curr_token->len; ++i) {
+            token_buf[i] = curr_token->start[i];
+        }
+
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[32mt='%s'\033[0m)\n",
+                literal, p->level, p->pos, token_buf);
+        FMem_free(token_buf);
+        return NULL;
+    }
 }
 
 FAstNode *seq_new(FParser *p) {
