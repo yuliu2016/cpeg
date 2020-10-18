@@ -28,7 +28,7 @@ RULE(single_input_4) {
 //     | [stmt_list] ENDMARKER
 RULE(file_input) {
     ENTER(3);
-    (a = OPTIONAL(stmt_list(p))) &&
+    (a = OPT(stmt_list(p))) &&
     (b = TOKEN(1, "ENDMARKER"))
     ? (r = NODE_2()) : 0; 
     EXIT();
@@ -77,7 +77,7 @@ RULE(stmt_1) {
 RULE(simple_stmt) {
     ENTER(8);
     (a = DELIMITED(p, 12, ";", small_stmt)) &&
-    (b = OPTIONAL(TOKEN(12, ";")))
+    (b = OPT(TOKEN(12, ";")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -126,7 +126,7 @@ RULE(del_stmt) {
 RULE(return_stmt) {
     ENTER(11);
     (TOKEN(54, "return")) &&
-    (a = OPTIONAL(exprlist_star(p)))
+    (a = OPT(exprlist_star(p)))
     ? (r = NODE_1()) : 0; 
     EXIT();
 }
@@ -137,7 +137,7 @@ RULE(raise_stmt) {
     ENTER(12);
     (TOKEN(78, "raise")) &&
     (a = expr(p)) &&
-    (b = OPTIONAL(raise_stmt_3(p)))
+    (b = OPT(raise_stmt_3(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -166,7 +166,7 @@ RULE(assert_stmt) {
     ENTER(15);
     (TOKEN(80, "assert")) &&
     (a = expr(p)) &&
-    (b = OPTIONAL(assert_stmt_3(p)))
+    (b = OPT(assert_stmt_3(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -203,7 +203,7 @@ RULE(star_expr) {
 RULE(exprlist) {
     ENTER(19);
     (a = DELIMITED(p, 7, ",", expr)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -333,7 +333,7 @@ RULE(t_lookahead) {
 RULE(targetlist) {
     ENTER(31);
     (a = DELIMITED(p, 7, ",", target)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -354,7 +354,7 @@ RULE(expr_or_star) {
 RULE(exprlist_star) {
     ENTER(33);
     (a = DELIMITED(p, 7, ",", expr_or_star)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -375,7 +375,7 @@ RULE(subscript) {
 RULE(slicelist) {
     ENTER(35);
     (a = DELIMITED(p, 7, ",", slice)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -393,9 +393,9 @@ RULE(slice) {
 
 RULE(slice_1) {
     ENTER(37);
-    (a = OPTIONAL(expr(p))) &&
+    (a = OPT(expr(p))) &&
     (b = slice_expr(p)) &&
-    (c = OPTIONAL(slice_expr(p)))
+    (c = OPT(slice_expr(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -405,7 +405,7 @@ RULE(slice_1) {
 RULE(slice_expr) {
     ENTER(38);
     (TOKEN(9, ":")) &&
-    (a = OPTIONAL(expr(p)))
+    (a = OPT(expr(p)))
     ? (r = NODE_1()) : 0; 
     EXIT();
 }
@@ -444,7 +444,7 @@ RULE(dict_items) {
     ENTER(42);
     WS_PUSH_1();
     (a = DELIMITED(p, 7, ",", dict_item)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     WS_POP();
     EXIT();
@@ -467,7 +467,7 @@ RULE(list_items) {
     ENTER(44);
     WS_PUSH_1();
     (a = DELIMITED(p, 7, ",", list_item)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     WS_POP();
     EXIT();
@@ -502,7 +502,7 @@ RULE(iter_for) {
     (a = targetlist(p)) &&
     (TOKEN(63, "in")) &&
     (b = disjunction(p)) &&
-    (c = OPTIONAL(iter_if(p)))
+    (c = OPT(iter_if(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -524,7 +524,7 @@ RULE(iterator) {
     (a = SEQ_OR_NONE(p, iter_for)) &&
     (TOKEN(72, "for")) &&
     (b = targetlist(p)) &&
-    (c = OPTIONAL(iter_if(p)))
+    (c = OPT(iter_if(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -587,7 +587,7 @@ RULE(annassign) {
     (a = target(p)) &&
     (TOKEN(9, ":")) &&
     (b = expr(p)) &&
-    (c = OPTIONAL(annassign_4(p)))
+    (c = OPT(annassign_4(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -698,7 +698,7 @@ RULE(import_from_names) {
 RULE(import_from_names_2) {
     ENTER(63);
     (TOKEN_SEQUENCE(p, 6, ".")) &&
-    (a = OPTIONAL(dotted_name(p)))
+    (a = OPT(dotted_name(p)))
     ? (r = NODE_1()) : 0; 
     EXIT();
 }
@@ -723,7 +723,7 @@ RULE(import_as_names_sp) {
     WS_PUSH_1();
     (TOKEN(13, "(")) &&
     (a = import_as_names(p)) &&
-    (b = OPTIONAL(TOKEN(7, ","))) &&
+    (b = OPT(TOKEN(7, ","))) &&
     (TOKEN(14, ")"))
     ? (r = NODE_2()) : 0; 
     WS_POP();
@@ -735,7 +735,7 @@ RULE(import_as_names_sp) {
 RULE(import_as_name) {
     ENTER(66);
     (a = TOKEN(3, "NAME")) &&
-    (b = OPTIONAL(as_name(p)))
+    (b = OPT(as_name(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -745,7 +745,7 @@ RULE(import_as_name) {
 RULE(dotted_as_name) {
     ENTER(67);
     (a = dotted_name(p)) &&
-    (b = OPTIONAL(as_name(p)))
+    (b = OPT(as_name(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -802,7 +802,7 @@ RULE(if_stmt) {
     (a = named_expr(p)) &&
     (b = suite(p)) &&
     (c = SEQ_OR_NONE(p, elif_stmt)) &&
-    (d = OPTIONAL(else_suite(p)))
+    (d = OPT(else_suite(p)))
     ? (r = NODE_4()) : 0; 
     EXIT();
 }
@@ -825,7 +825,7 @@ RULE(while_stmt) {
     (TOKEN(71, "while")) &&
     (a = named_expr(p)) &&
     (b = suite(p)) &&
-    (c = OPTIONAL(else_suite(p)))
+    (c = OPT(else_suite(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -839,7 +839,7 @@ RULE(for_stmt) {
     (TOKEN(63, "in")) &&
     (b = exprlist(p)) &&
     (c = suite(p)) &&
-    (d = OPTIONAL(else_suite(p)))
+    (d = OPT(else_suite(p)))
     ? (r = NODE_4()) : 0; 
     EXIT();
 }
@@ -879,7 +879,7 @@ RULE(with_stmt) {
 RULE(expr_as_name) {
     ENTER(79);
     (a = expr(p)) &&
-    (b = OPTIONAL(as_name(p)))
+    (b = OPT(as_name(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -910,7 +910,7 @@ RULE(block_suite_1) {
 RULE(block_suite_2) {
     ENTER(82);
     (TOKEN(15, "{")) &&
-    (a = OPTIONAL(simple_stmt(p))) &&
+    (a = OPT(simple_stmt(p))) &&
     (TOKEN(16, "}"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -960,7 +960,7 @@ RULE(finally_suite) {
 RULE(except_clause) {
     ENTER(87);
     (TOKEN(76, "except")) &&
-    (a = OPTIONAL(expr_as_name(p))) &&
+    (a = OPT(expr_as_name(p))) &&
     (b = suite(p))
     ? (r = NODE_2()) : 0; 
     EXIT();
@@ -971,8 +971,8 @@ RULE(except_clause) {
 RULE(except_suite) {
     ENTER(88);
     (a = SEQUENCE(p, except_clause)) &&
-    (b = OPTIONAL(else_suite(p))) &&
-    (c = OPTIONAL(finally_suite(p)))
+    (b = OPT(else_suite(p))) &&
+    (c = OPT(finally_suite(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -982,7 +982,7 @@ RULE(except_suite) {
 RULE(invocation) {
     ENTER(89);
     (TOKEN(13, "(")) &&
-    (a = OPTIONAL(call_arg_list(p))) &&
+    (a = OPT(call_arg_list(p))) &&
     (TOKEN(14, ")"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -994,7 +994,7 @@ RULE(call_arg_list) {
     ENTER(90);
     WS_PUSH_1();
     (a = DELIMITED(p, 7, ",", call_arg)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     WS_POP();
     EXIT();
@@ -1071,7 +1071,7 @@ RULE(typed_arg_list) {
 RULE(full_arg_list) {
     ENTER(97);
     (a = DELIMITED(p, 7, ",", default_arg)) &&
-    (b = OPTIONAL(full_arg_list_2(p)))
+    (b = OPT(full_arg_list_2(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -1079,7 +1079,7 @@ RULE(full_arg_list) {
 RULE(full_arg_list_2) {
     ENTER(98);
     (TOKEN(7, ",")) &&
-    (a = OPTIONAL(full_arg_list_2_2(p)))
+    (a = OPT(full_arg_list_2_2(p)))
     ? (r = NODE_1()) : 0; 
     EXIT();
 }
@@ -1097,9 +1097,9 @@ RULE(full_arg_list_2_2) {
 RULE(args_kwargs) {
     ENTER(100);
     (TOKEN(23, "*")) &&
-    (a = OPTIONAL(typed_arg(p))) &&
+    (a = OPT(typed_arg(p))) &&
     (b = SEQ_OR_NONE(p, args_kwargs_3)) &&
-    (c = OPTIONAL(args_kwargs_4(p)))
+    (c = OPT(args_kwargs_4(p)))
     ? (r = NODE_3()) : 0; 
     EXIT();
 }
@@ -1115,7 +1115,7 @@ RULE(args_kwargs_3) {
 RULE(args_kwargs_4) {
     ENTER(102);
     (TOKEN(7, ",")) &&
-    (a = OPTIONAL(kwargs(p)))
+    (a = OPT(kwargs(p)))
     ? (r = NODE_1()) : 0; 
     EXIT();
 }
@@ -1126,7 +1126,7 @@ RULE(kwargs) {
     ENTER(103);
     (TOKEN(38, "**")) &&
     (a = typed_arg(p)) &&
-    (b = OPTIONAL(TOKEN(7, ",")))
+    (b = OPT(TOKEN(7, ",")))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -1136,7 +1136,7 @@ RULE(kwargs) {
 RULE(default_arg) {
     ENTER(104);
     (a = typed_arg(p)) &&
-    (b = OPTIONAL(default_arg_2(p)))
+    (b = OPT(default_arg_2(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -1154,7 +1154,7 @@ RULE(default_arg_2) {
 RULE(typed_arg) {
     ENTER(106);
     (a = TOKEN(3, "NAME")) &&
-    (b = OPTIONAL(typed_arg_2(p)))
+    (b = OPT(typed_arg_2(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -1172,7 +1172,7 @@ RULE(typed_arg_2) {
 RULE(simple_arg) {
     ENTER(108);
     (a = TOKEN(3, "NAME")) &&
-    (b = OPTIONAL(simple_arg_2(p)))
+    (b = OPT(simple_arg_2(p)))
     ? (r = NODE_2()) : 0; 
     EXIT();
 }
@@ -1219,7 +1219,7 @@ RULE(builder_args) {
 RULE(builder_args_2) {
     ENTER(113);
     (TOKEN(13, "(")) &&
-    (a = OPTIONAL(typed_arg_list(p))) &&
+    (a = OPT(typed_arg_list(p))) &&
     (TOKEN(14, ")"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -1727,7 +1727,7 @@ RULE(primary_3) {
 RULE(tuple_atom) {
     ENTER(160);
     (TOKEN(13, "(")) &&
-    (a = OPTIONAL(list_items(p))) &&
+    (a = OPT(list_items(p))) &&
     (TOKEN(14, ")"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -1749,7 +1749,7 @@ RULE(list_iterable) {
 RULE(list_atom) {
     ENTER(162);
     (TOKEN(17, "[")) &&
-    (a = OPTIONAL(list_items(p))) &&
+    (a = OPT(list_items(p))) &&
     (TOKEN(18, "]"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -1760,7 +1760,7 @@ RULE(list_atom) {
 RULE(set_atom) {
     ENTER(163);
     (TOKEN(15, "{")) &&
-    (a = OPTIONAL(set_items(p))) &&
+    (a = OPT(set_items(p))) &&
     (TOKEN(16, "}"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -1782,7 +1782,7 @@ RULE(dict_iterable) {
 RULE(dict_atom) {
     ENTER(165);
     (TOKEN(15, "{")) &&
-    (a = OPTIONAL(dict_items(p))) &&
+    (a = OPT(dict_items(p))) &&
     (TOKEN(16, "}"))
     ? (r = NODE_1()) : 0; 
     EXIT();
@@ -1812,8 +1812,8 @@ RULE(builder_1) {
 RULE(builder_2) {
     ENTER(168);
     (a = TOKEN(3, "NAME")) &&
-    (b = OPTIONAL(builder_hint(p))) &&
-    (c = OPTIONAL(builder_args(p))) &&
+    (b = OPT(builder_hint(p))) &&
+    (c = OPT(builder_args(p))) &&
     (d = block_suite(p))
     ? (r = NODE_4()) : 0; 
     EXIT();

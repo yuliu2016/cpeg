@@ -66,7 +66,7 @@
 #define WS_POP() \
     p->ignore_whitespace = old_ws;
 
-#define OPTIONAL(node) node, 1
+#define OPT(node) node, 1
 
 #define TEST(node) (node || (p->pos = pos, 0))
 
