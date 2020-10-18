@@ -12,7 +12,25 @@
 
 char *tokparse(char *in) {
     FParser *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
-    single_input(p);
+    FAstNode *n = single_input(p);
+    FLexerState *ls = &p->lexer_state;
+    if (p->error) {
+        printf("======================\n\033[31;1m");
+        printf("parser error: %s\n\033[0m", p->error);
+        printf("======================");
+    } else if (ls->error) {
+        printf("======================\n\033[31;1m");
+        printf("lexer error: %s\n\033[0m", ls->error);
+        printf("======================");
+    } else if (!n) {
+        printf("======================\n\033[31;1m");
+        printf("Not a valid parse tree\n\033[0m");
+        printf("======================");
+    } else if (!(p->pos >= ls->token_len && !ls->next_token)) {
+        printf("=====================\n\033[31;1m");
+        printf("Not all tokens parsed\n\033[0m");
+        printf("=====================");
+    }
     FPeg_free_parser(p);
     return "\n";
 }

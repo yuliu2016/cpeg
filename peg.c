@@ -326,7 +326,7 @@ FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
 }
 
 void print_indent_level(size_t s) {
-    if (s > 30) {
+    if (s > 40) {
         s = 0;
     }
     char *b = FMem_malloc(sizeof(char) * (s * 2 + 1));
@@ -362,7 +362,7 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
         token_buf[i] = curr_token->start[i];
     }
 
-    printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[32m t='%s'\033[0m)\n",
+    printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             rule_name, p->level, p->pos, token_buf);
     FMem_free(token_buf);
     p->level++;
@@ -437,7 +437,7 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
             token_buf[i] = curr_token->start[i];
         }
 
-        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[32mt='%s'\033[0m)\n",
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
         FMem_free(token_buf);
         return NULL;

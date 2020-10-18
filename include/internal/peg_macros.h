@@ -22,7 +22,7 @@
     size_t pos = p->pos; \
     IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
     if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
-    FAstNode *r = 0, *a, *b, *c, *d
+    FAstNode *r = 0, *a = 0, *b = 0, *c = 0, *d = 0
 
 #define EXIT() \
     IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);) \
@@ -52,6 +52,7 @@
     max = a; \
     goto left_rec_enter; \
     left_rec_exit: \
+    p->pos = lastpos; \
     r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0
 
 #define WS_PUSH_1() \
