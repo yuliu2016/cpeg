@@ -76,6 +76,26 @@
 #define TOKEN(type, value) FPeg_consume_token(p, type)
 #endif
 
+#define SEQ_OR_NONE(p, rule) \
+    FPeg_parse_sequece_or_none(p, rule)
+
+#define SEQUENCE(p, rule) \
+    FPeg_parse_sequence(p, rule)
+
+#define DELIMITED(p, delimiter, literal, rule) \
+    FPeg_parse_delimited(p, delimiter, rule)
+
+#define TOKEN_SEQ_OR_NONE(p, t, v) \
+    FPeg_parse_token_sequence_or_none(p, t)
+
+#define TOKEN_SEQUENCE(p, t, v) \
+    FPeg_parse_token_sequence(p, t)
+
+#define TOKEN_DELIMITED(p, delimiter, literal, t, v) \
+    FPeg_parse_token_delimited(p, delimiter, t)
+
+
+#define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
 #define NODE_1() AST_NEW_NODE(p, f_type, 1, a)
 #define NODE_2() AST_NEW_NODE(p, f_type, 2, a, b)
 #define NODE_3() AST_NEW_NODE(p, f_type, 3, a, b, c)

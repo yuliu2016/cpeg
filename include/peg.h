@@ -16,7 +16,7 @@
 // Memo stored in a linked list, assuming not storing
 // too many types at the same position
 typedef struct token_memo_t {
-    unsigned int type;
+    size_t type;
     void *node;
     size_t end_pos;
     struct token_memo_t *next;
@@ -157,34 +157,13 @@ void FPeg_debug_exit(FParser *p, FAstNode *res, size_t rule_index, const char *r
 
 void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
 
-// Macros used in the parser
-
-#define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
-
 FAstNode *FPeg_consume_token(FParser *p, size_t type);
+
 FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
 typedef FAstNode *(*FRuleFunc)(FParser *);
-
-#define SEQ_OR_NONE(p, rule) \
-    FPeg_parse_sequece_or_none(p, rule)
-
-#define SEQUENCE(p, rule) \
-    FPeg_parse_sequence(p, rule)
-
-#define DELIMITED(p, delimiter, literal, rule) \
-    FPeg_parse_delimited(p, delimiter, rule)
-
-#define TOKEN_SEQ_OR_NONE(p, t, v) \
-    FPeg_parse_token_sequence_or_none(p, t)
-
-#define TOKEN_SEQUENCE(p, t, v) \
-    FPeg_parse_token_sequence(p, t)
-
-#define TOKEN_DELIMITED(p, delimiter, literal, t, v) \
-    FPeg_parse_token_delimited(p, delimiter, t)
 
 FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
 

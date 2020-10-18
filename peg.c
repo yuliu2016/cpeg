@@ -327,7 +327,7 @@ FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
 
 void print_indent_level(size_t s) {
     if (s > 40) {
-        s = 0;
+        s = s % 40u;
     }
     char *b = FMem_malloc(sizeof(char) * (s * 2 + 1));
     if (!b) {
@@ -351,20 +351,24 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
 
     // fetch_token needed over direct access
     FToken *curr_token = lexer_fetch_token(p, p->pos);
-    if (!curr_token) {
-        printf("\033[33mNo token to enter into\033[0m\n");
-        p->level++;
-        return;
-    }
 
-    char *token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
-    for (size_t i = 0; i < curr_token->len; ++i) {
-        token_buf[i] = curr_token->start[i];
+    char *token_buf;
+    if (!curr_token) {
+        token_buf = "(null)";
+    } else {
+        token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
+        for (size_t i = 0; i < curr_token->len; ++i) {
+            token_buf[i] = curr_token->start[i];
+        }
     }
 
     printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             rule_name, p->level, p->pos, token_buf);
-    FMem_free(token_buf);
+
+    if (curr_token) {
+        FMem_free(token_buf);
+    }
+
     p->level++;
 }
 
