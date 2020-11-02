@@ -38,22 +38,24 @@
     FPeg_put_memo(p, pos, f_type, r, p->pos)
 
 #define ENTER_LEFT_RECURSION() \
-    FAstNode *max = 0; \
+    FAstNode *max_node = 0; \
     a = 0; \
-    size_t lastpos = pos; \
-    left_rec_enter: \
-    FPeg_put_memo(p, pos, f_type, max, lastpos); \
+    size_t max_end_pos = pos; \
+    \
+    parse_with_memo: \
+    FPeg_put_memo(p, pos, f_type, max_node, max_end_pos); \
     p->pos = pos
 
 #define EXIT_LEFT_RECURSION() \
     size_t end_pos = p->pos; \
-    if (end_pos <= lastpos) { goto left_rec_exit; }\
-    lastpos = end_pos; \
-    max = a; \
-    goto left_rec_enter; \
-    left_rec_exit: \
-    p->pos = lastpos; \
-    r = max ? AST_NEW_NODE(p, f_type, 1, max) : 0
+    if (end_pos <= max_end_pos) { goto max_reached; }\
+    max_end_pos = end_pos; \
+    max_node = a; \
+    goto parse_with_memo; \
+    \
+    max_reached: \
+    p->pos = max_end_pos; \
+    r = max_node ? AST_NEW_NODE(p, f_type, 1, max_node) : 0
 
 #define WS_PUSH_1() \
     int old_ws = p->ignore_whitespace; \

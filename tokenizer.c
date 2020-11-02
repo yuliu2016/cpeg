@@ -164,7 +164,7 @@ size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
     // make sure the number literal doesn't start or end with '_'
     if (j == i || ls->src[j - 1] == '_' || ls->src[ls->curr_index + 2] == '_') {
         SET_ERROR(ls, "Invalid decimal literal", 0);
-        return false;
+        return i;
     }
 
     return j;
