@@ -72,8 +72,6 @@ void FLexer_add_index_for_line(FLexerState *ls, size_t i);
 
 void FLexer_add_token(FLexerState *ls, FToken *token);
 
-int FLexer_did_finish(FLexerState *ls, size_t pos);
-
 void FLexer_set_error(FLexerState *ls, char *error_msg, size_t char_offset);
 
 FToken *FLexer_create_token(FLexerState *ls, unsigned int type, int is_whitespace);
@@ -145,7 +143,7 @@ FParser *FPeg_init_new_parser(
 
 void FPeg_free_parser(FParser *p);
 
-char *FPeg_check_state(FParser *p);
+int FPeg_is_done(FParser *p);
 
 void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos);
 

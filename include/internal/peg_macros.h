@@ -17,11 +17,10 @@
 #define DEBUG_EXTRAS f_type, __func__
 
 #define ENTER(type) \
-    if (p->error) { return 0; } \
+    if (FPeg_is_done(p)) { return 0; } \
     const size_t f_type = type; \
     size_t pos = p->pos; \
     IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
-    if (pos > p->max_reached_pos) { p->max_reached_pos = pos; }     \
     FAstNode *r = 0, *a = 0, *b = 0, *c = 0, *d = 0
 
 #define EXIT() \

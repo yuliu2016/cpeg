@@ -88,11 +88,6 @@ FToken *lexer_fetch_token(FParser *p, size_t pos) {
     return ls->tokens[pos];
 }
 
-int FLexer_did_finish(FLexerState *ls, size_t pos) {
-    return pos >= ls->token_len
-            && ls->next_token == NULL;
-}
-
 // * returns the line end (exclusive) given line number
 size_t lexer_get_line_end(FLexerState *ls, size_t lineno) {
     if (lineno < ls->lines_size - 1) {
@@ -217,16 +212,25 @@ void FPeg_free_parser(FParser *p) {
     FMem_free(p);
 }
 
-char *FPeg_check_state(FParser *p) {
-    if (p->level != 0) {
-        return "p->level is not 0";
+int FPeg_is_done(FParser *p) {
+    if (p->error || p->lexer_state.error) {
+        // Early exit the function when there is already an error
+        return 1;
     }
-    if (p->pos < p->lexer_state.token_len) {
-        return "Finished AST without all tokens";
+    size_t pos = p->pos;
+
+    FToken *curr_token = lexer_fetch_token(p, pos);
+    if (!curr_token) {
+        // there is no more tokens; no need to test anymore
+        // this avoids the infinite recursion problem caused by
+        // nonexistent token
+        return 1;
     }
-    if (p->error) {
-        return p->error;
+
+    if (pos > p->max_reached_pos) {
+        p->max_reached_pos = pos;
     }
+
     return 0;
 }
 
@@ -252,8 +256,14 @@ FToken *get_next_token_to_consume(FParser *p, size_t *ppos) {
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
-        while (curr_token->is_whitespace &&
-                !FLexer_did_finish(&p->lexer_state, pos + 1)) {
+        FLexerState *ls = &p->lexer_state;
+        for(;;) {
+            if (!curr_token->is_whitespace) {
+                break;
+            }
+            if (pos + 1 >= ls->token_len && !ls->next_token) {
+                break;
+            }
             pos += 1;
             curr_token = lexer_fetch_token(p, pos);
             if (!curr_token) {
@@ -308,6 +318,8 @@ void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
     FToken *curr_token = lexer_fetch_token(p, p->pos);
     if (!curr_token) {
+        // should never reach here
+        p->error = "Attempting to get memo without any more tokens";
         return NULL;
     }
     FTokenMemo *memo = curr_token->memo;
@@ -362,7 +374,7 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
         }
     }
 
-    printf("Entering   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
+    printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             rule_name, p->level, p->pos, token_buf);
 
     if (curr_token) {
@@ -430,7 +442,7 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
     // now check for correct type
     if (curr_token->type == type) {
         p->pos = pos + 1;
-        printf("Matching   \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
+        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
                 literal, p->level, p->pos);
         return ast_node_from_token(p, type, curr_token);
     } else {
