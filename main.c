@@ -1,7 +1,6 @@
 #include "include/internal/mem_debug.h"
 #include "include/internal/debugcli.h"
 #include "include/tokenizer.h"
-#include "include/parser.h"
 
 #ifdef WIN32
 #include "windows.h"

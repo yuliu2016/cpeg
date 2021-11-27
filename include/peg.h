@@ -107,8 +107,6 @@ typedef struct parser_state_t {
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
-#define RULE(name) FAstNode *name(FParser *p)
-
 typedef struct ast_sequence_t {
     size_t len;
     size_t capacity;
