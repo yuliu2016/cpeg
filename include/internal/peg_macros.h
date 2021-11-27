@@ -73,21 +73,21 @@ static void exit(FParser *p, size_t initial_pos, FAstNode *r) {
 #define WS_POP() \
     p->ignore_whitespace = old_ws;
 
-#define OPT(node) node, 1
 
 #define TEST(node) (node || (p->pos = pos, 0))
 
-#ifdef PEG_DEBUG
-#define TOKEN(type, value) FPeg_consume_token_and_debug(p, type, value)
-#else
-#define TOKEN(type, value) FPeg_consume_token(p, type)
-#endif
 
-#define SEQ_OR_NONE(p, rule) \
-    FPeg_parse_sequece_or_none(p, rule)
+static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
+    return FPeg_consume_token_and_debug(p, type, literal);
+}
 
-#define SEQUENCE(p, rule) \
-    FPeg_parse_sequence(p, rule)
+static inline FAstNode *sequence(FParser *p, size_t type, int allow_empty) {
+    if (allow_empty) {
+        return FPeg_parse_sequece_or_none(p, type);
+    } else {
+        return FPeg_parse_sequence(p, type);
+    }
+}
 
 #define DELIMITED(p, delimiter, literal, rule) \
     FPeg_parse_delimited(p, delimiter, rule)
