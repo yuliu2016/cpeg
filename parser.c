@@ -196,7 +196,7 @@ static FAstNode *single_input_4(FParser *p) {
     r = enter(p, &f, 2, FUNC) && (
         (a = compound_stmt(p)) &&
         (b = consume(p, 2, "NEWLINE"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -208,7 +208,7 @@ static FAstNode *file_input(FParser *p) {
     r = enter(p, &f, 3, FUNC) && (
         (a = stmt_list(p), 1) &&
         (b = consume(p, 1, "ENDMARKER"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -219,9 +219,9 @@ static FAstNode *eval_input(FParser *p) {
     FAstNode *a, *b, *c, *r;
     r = enter(p, &f, 4, FUNC) && (
         (a = exprlist(p)) &&
-        (b = t_sequence(p, 2, "NEWLINE",1)) &&
+        (b = t_sequence(p, 2, "NEWLINE", 1)) &&
         (c = consume(p, 1, "ENDMARKER"))
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -232,7 +232,7 @@ static FAstNode *stmt_list(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 5, FUNC) && (
         (a = sequence(p, stmt, 0))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -244,7 +244,7 @@ static FAstNode *stmt(FParser *p) {
     r = enter(p, &f, 6, FUNC) && (
         (a = stmt_1(p)) &&
         (b = consume(p, 2, "NEWLINE"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -266,7 +266,7 @@ static FAstNode *simple_stmt(FParser *p) {
     r = enter(p, &f, 8, FUNC) && (
         (a = delimited(p, 12, ";", small_stmt)) &&
         (b = consume(p, 12, ";"), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -309,7 +309,7 @@ static FAstNode *del_stmt(FParser *p) {
     r = enter(p, &f, 10, FUNC) && (
         (consume(p, 79, "del")) &&
         (a = targetlist(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -321,7 +321,7 @@ static FAstNode *return_stmt(FParser *p) {
     r = enter(p, &f, 11, FUNC) && (
         (consume(p, 54, "return")) &&
         (a = exprlist_star(p), 1)
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -334,7 +334,7 @@ static FAstNode *raise_stmt(FParser *p) {
         (consume(p, 78, "raise")) &&
         (a = expr(p)) &&
         (b = raise_stmt_3(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -344,7 +344,7 @@ static FAstNode *raise_stmt_3(FParser *p) {
     r = enter(p, &f, 13, FUNC) && (
         (consume(p, 66, "from")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -356,7 +356,7 @@ static FAstNode *nonlocal_stmt(FParser *p) {
     r = enter(p, &f, 14, FUNC) && (
         (consume(p, 55, "nonlocal")) &&
         (a = name_list(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -369,7 +369,7 @@ static FAstNode *assert_stmt(FParser *p) {
         (consume(p, 80, "assert")) &&
         (a = expr(p)) &&
         (b = assert_stmt_3(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -379,7 +379,7 @@ static FAstNode *assert_stmt_3(FParser *p) {
     r = enter(p, &f, 16, FUNC) && (
         (consume(p, 7, ",")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -390,7 +390,7 @@ static FAstNode *name_list(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 17, FUNC) && (
         (a = t_delimited(p, 7, ",", 3, "NAME"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -402,7 +402,7 @@ static FAstNode *star_expr(FParser *p) {
     r = enter(p, &f, 18, FUNC) && (
         (consume(p, 23, "*")) &&
         (a = bitwise_or(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -414,7 +414,7 @@ static FAstNode *exprlist(FParser *p) {
     r = enter(p, &f, 19, FUNC) && (
         (a = delimited(p, 7, ",", expr)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -443,7 +443,7 @@ static FAstNode *target_1(FParser *p) {
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
         (!test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -454,7 +454,7 @@ static FAstNode *target_2(FParser *p) {
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
         (!test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -465,7 +465,7 @@ static FAstNode *target_4(FParser *p) {
         (consume(p, 13, "(")) &&
         (a = targetlist_sp(p)) &&
         (consume(p, 14, ")"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -477,7 +477,7 @@ static FAstNode *targetlist_sp(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 24, FUNC) && (
         (a = targetlist(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -511,7 +511,7 @@ static FAstNode *t_primary_1(FParser *p) {
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -522,7 +522,7 @@ static FAstNode *t_primary_2(FParser *p) {
         (a = t_primary(p)) &&
         (b = invocation(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -533,7 +533,7 @@ static FAstNode *t_primary_3(FParser *p) {
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -543,7 +543,7 @@ static FAstNode *t_primary_4(FParser *p) {
     r = enter(p, &f, 29, FUNC) && (
         (a = atom(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -570,7 +570,7 @@ static FAstNode *targetlist(FParser *p) {
     r = enter(p, &f, 31, FUNC) && (
         (a = delimited(p, 7, ",", target)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -595,7 +595,7 @@ static FAstNode *exprlist_star(FParser *p) {
     r = enter(p, &f, 33, FUNC) && (
         (a = delimited(p, 7, ",", expr_or_star)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -608,7 +608,7 @@ static FAstNode *subscript(FParser *p) {
         (consume(p, 17, "[")) &&
         (a = slicelist(p)) &&
         (consume(p, 18, "]"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -620,7 +620,7 @@ static FAstNode *slicelist(FParser *p) {
     r = enter(p, &f, 35, FUNC) && (
         (a = delimited(p, 7, ",", slice)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -644,7 +644,7 @@ static FAstNode *slice_1(FParser *p) {
         (a = expr(p), 1) &&
         (b = slice_expr(p)) &&
         (c = slice_expr(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -656,7 +656,7 @@ static FAstNode *slice_expr(FParser *p) {
     r = enter(p, &f, 38, FUNC) && (
         (consume(p, 9, ":")) &&
         (a = expr(p), 1)
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -680,7 +680,7 @@ static FAstNode *dict_item_1(FParser *p) {
         (a = expr(p)) &&
         (consume(p, 9, ":")) &&
         (b = expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -690,7 +690,7 @@ static FAstNode *dict_item_2(FParser *p) {
     r = enter(p, &f, 41, FUNC) && (
         (consume(p, 38, "**")) &&
         (a = bitwise_or(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -703,7 +703,7 @@ static FAstNode *dict_items(FParser *p) {
     r = enter(p, &f, 42, FUNC) && (
         (a = delimited(p, 7, ",", dict_item)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -730,7 +730,7 @@ static FAstNode *list_items(FParser *p) {
     r = enter(p, &f, 44, FUNC) && (
         (a = delimited(p, 7, ",", list_item)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -743,7 +743,7 @@ static FAstNode *set_items(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 45, FUNC) && (
         (a = exprlist_star(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -756,7 +756,7 @@ static FAstNode *as_name(FParser *p) {
     r = enter(p, &f, 46, FUNC) && (
         (consume(p, 65, "as")) &&
         (a = consume(p, 3, "NAME"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -771,7 +771,7 @@ static FAstNode *iter_for(FParser *p) {
         (consume(p, 63, "in")) &&
         (b = disjunction(p)) &&
         (c = iter_if(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -783,7 +783,7 @@ static FAstNode *iter_if(FParser *p) {
     r = enter(p, &f, 48, FUNC) && (
         (consume(p, 56, "if")) &&
         (a = named_expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -797,7 +797,7 @@ static FAstNode *iterator(FParser *p) {
         (consume(p, 72, "for")) &&
         (b = targetlist(p)) &&
         (c = iter_if(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -810,7 +810,7 @@ static FAstNode *list_iterator(FParser *p) {
     r = enter(p, &f, 50, FUNC) && (
         (a = expr_or_star(p)) &&
         (b = iterator(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -824,7 +824,7 @@ static FAstNode *dict_iterator(FParser *p) {
     r = enter(p, &f, 51, FUNC) && (
         (a = dict_item(p)) &&
         (b = iterator(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -856,7 +856,7 @@ static FAstNode *pubassign(FParser *p) {
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (b = exprlist(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -870,7 +870,7 @@ static FAstNode *annassign(FParser *p) {
         (consume(p, 9, ":")) &&
         (b = expr(p)) &&
         (c = annassign_4(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -880,7 +880,7 @@ static FAstNode *annassign_4(FParser *p) {
     r = enter(p, &f, 55, FUNC) && (
         (consume(p, 8, "=")) &&
         (a = exprlist(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -893,7 +893,7 @@ static FAstNode *augassign(FParser *p) {
         (a = target(p)) &&
         (b = augassign_op(p)) &&
         (c = exprlist(p))
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -905,7 +905,7 @@ static FAstNode *simple_assign(FParser *p) {
     r = enter(p, &f, 57, FUNC) && (
         (a = sequence(p, simple_assign_1, 1)) &&
         (b = exprlist_star(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -915,7 +915,7 @@ static FAstNode *simple_assign_1(FParser *p) {
     r = enter(p, &f, 58, FUNC) && (
         (a = targetlist(p)) &&
         (consume(p, 8, "="))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -962,7 +962,7 @@ static FAstNode *import_name(FParser *p) {
     r = enter(p, &f, 60, FUNC) && (
         (consume(p, 67, "import")) &&
         (a = dotted_as_names(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -976,7 +976,7 @@ static FAstNode *import_from(FParser *p) {
         (a = import_from_names(p)) &&
         (consume(p, 67, "import")) &&
         (b = import_from_items(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -997,9 +997,9 @@ static FAstNode *import_from_names_2(FParser *p) {
     frame_t f;
     FAstNode *a, *r;
     r = enter(p, &f, 63, FUNC) && (
-        (t_sequence(p, 6, ".",0)) &&
+        (t_sequence(p, 6, ".", 0)) &&
         (a = dotted_name(p), 1)
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1029,7 +1029,7 @@ static FAstNode *import_as_names_sp(FParser *p) {
         (a = import_as_names(p)) &&
         (b = consume(p, 7, ","), 1) &&
         (consume(p, 14, ")"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -1042,7 +1042,7 @@ static FAstNode *import_as_name(FParser *p) {
     r = enter(p, &f, 66, FUNC) && (
         (a = consume(p, 3, "NAME")) &&
         (b = as_name(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1054,7 +1054,7 @@ static FAstNode *dotted_as_name(FParser *p) {
     r = enter(p, &f, 67, FUNC) && (
         (a = dotted_name(p)) &&
         (b = as_name(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1065,7 +1065,7 @@ static FAstNode *import_as_names(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 68, FUNC) && (
         (a = delimited(p, 7, ",", import_as_name))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1076,7 +1076,7 @@ static FAstNode *dotted_as_names(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 69, FUNC) && (
         (a = delimited(p, 7, ",", dotted_as_name))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1087,7 +1087,7 @@ static FAstNode *dotted_name(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 70, FUNC) && (
         (a = t_delimited(p, 6, ".", 3, "NAME"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1121,7 +1121,7 @@ static FAstNode *if_stmt(FParser *p) {
         (b = suite(p)) &&
         (c = sequence(p, elif_stmt, 1)) &&
         (d = else_suite(p), 1)
-    ) ? node_4(p, &f, a, b, c, d) : 0; 
+    ) ? node_4(p, &f, a, b, c, d) : 0;
     return exit(p, &f, r);
 }
 
@@ -1134,7 +1134,7 @@ static FAstNode *elif_stmt(FParser *p) {
         (consume(p, 57, "elif")) &&
         (a = named_expr(p)) &&
         (b = suite(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1148,7 +1148,7 @@ static FAstNode *while_stmt(FParser *p) {
         (a = named_expr(p)) &&
         (b = suite(p)) &&
         (c = else_suite(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -1164,7 +1164,7 @@ static FAstNode *for_stmt(FParser *p) {
         (b = exprlist(p)) &&
         (c = suite(p)) &&
         (d = else_suite(p), 1)
-    ) ? node_4(p, &f, a, b, c, d) : 0; 
+    ) ? node_4(p, &f, a, b, c, d) : 0;
     return exit(p, &f, r);
 }
 
@@ -1177,7 +1177,7 @@ static FAstNode *try_stmt(FParser *p) {
         (consume(p, 75, "try")) &&
         (a = suite(p)) &&
         (b = try_stmt_3(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1200,7 +1200,7 @@ static FAstNode *with_stmt(FParser *p) {
         (consume(p, 68, "with")) &&
         (a = delimited(p, 7, ",", expr_as_name)) &&
         (b = suite(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1212,7 +1212,7 @@ static FAstNode *expr_as_name(FParser *p) {
     r = enter(p, &f, 79, FUNC) && (
         (a = expr(p)) &&
         (b = as_name(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1239,7 +1239,7 @@ static FAstNode *block_suite_1(FParser *p) {
         (a = consume(p, 2, "NEWLINE")) &&
         (b = stmt_list(p)) &&
         (consume(p, 16, "}"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1250,7 +1250,7 @@ static FAstNode *block_suite_2(FParser *p) {
         (consume(p, 15, "{")) &&
         (a = simple_stmt(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1273,7 +1273,7 @@ static FAstNode *suite_1(FParser *p) {
     r = enter(p, &f, 84, FUNC) && (
         (consume(p, 9, ":")) &&
         (a = simple_stmt(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1285,7 +1285,7 @@ static FAstNode *else_suite(FParser *p) {
     r = enter(p, &f, 85, FUNC) && (
         (consume(p, 58, "else")) &&
         (a = suite(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1297,7 +1297,7 @@ static FAstNode *finally_suite(FParser *p) {
     r = enter(p, &f, 86, FUNC) && (
         (consume(p, 77, "finally")) &&
         (a = suite(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1310,7 +1310,7 @@ static FAstNode *except_clause(FParser *p) {
         (consume(p, 76, "except")) &&
         (a = expr_as_name(p), 1) &&
         (b = suite(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1323,7 +1323,7 @@ static FAstNode *except_suite(FParser *p) {
         (a = sequence(p, except_clause, 0)) &&
         (b = else_suite(p), 1) &&
         (c = finally_suite(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -1336,7 +1336,7 @@ static FAstNode *invocation(FParser *p) {
         (consume(p, 13, "(")) &&
         (a = call_arg_list(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1349,7 +1349,7 @@ static FAstNode *call_arg_list(FParser *p) {
     r = enter(p, &f, 90, FUNC) && (
         (a = delimited(p, 7, ",", call_arg)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     WS_POP();
     return exit(p, &f, r);
 }
@@ -1380,7 +1380,7 @@ static FAstNode *call_arg_1(FParser *p) {
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (b = expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1391,7 +1391,7 @@ static FAstNode *call_arg_2(FParser *p) {
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (b = expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1401,7 +1401,7 @@ static FAstNode *call_arg_3(FParser *p) {
     r = enter(p, &f, 94, FUNC) && (
         (consume(p, 38, "**")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1411,7 +1411,7 @@ static FAstNode *call_arg_4(FParser *p) {
     r = enter(p, &f, 95, FUNC) && (
         (consume(p, 23, "*")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1440,7 +1440,7 @@ static FAstNode *full_arg_list(FParser *p) {
     r = enter(p, &f, 97, FUNC) && (
         (a = delimited(p, 7, ",", default_arg)) &&
         (b = full_arg_list_2(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1450,7 +1450,7 @@ static FAstNode *full_arg_list_2(FParser *p) {
     r = enter(p, &f, 98, FUNC) && (
         (consume(p, 7, ",")) &&
         (a = full_arg_list_2_2(p), 1)
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1474,7 +1474,7 @@ static FAstNode *args_kwargs(FParser *p) {
         (a = typed_arg(p), 1) &&
         (b = sequence(p, args_kwargs_3, 1)) &&
         (c = args_kwargs_4(p), 1)
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -1484,7 +1484,7 @@ static FAstNode *args_kwargs_3(FParser *p) {
     r = enter(p, &f, 101, FUNC) && (
         (consume(p, 7, ",")) &&
         (a = default_arg(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1494,7 +1494,7 @@ static FAstNode *args_kwargs_4(FParser *p) {
     r = enter(p, &f, 102, FUNC) && (
         (consume(p, 7, ",")) &&
         (a = kwargs(p), 1)
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1507,7 +1507,7 @@ static FAstNode *kwargs(FParser *p) {
         (consume(p, 38, "**")) &&
         (a = typed_arg(p)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1519,7 +1519,7 @@ static FAstNode *default_arg(FParser *p) {
     r = enter(p, &f, 104, FUNC) && (
         (a = typed_arg(p)) &&
         (b = default_arg_2(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1529,7 +1529,7 @@ static FAstNode *default_arg_2(FParser *p) {
     r = enter(p, &f, 105, FUNC) && (
         (consume(p, 8, "=")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1541,7 +1541,7 @@ static FAstNode *typed_arg(FParser *p) {
     r = enter(p, &f, 106, FUNC) && (
         (a = consume(p, 3, "NAME")) &&
         (b = typed_arg_2(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1551,7 +1551,7 @@ static FAstNode *typed_arg_2(FParser *p) {
     r = enter(p, &f, 107, FUNC) && (
         (consume(p, 9, ":")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1563,7 +1563,7 @@ static FAstNode *simple_arg(FParser *p) {
     r = enter(p, &f, 108, FUNC) && (
         (a = consume(p, 3, "NAME")) &&
         (b = simple_arg_2(p), 1)
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1573,7 +1573,7 @@ static FAstNode *simple_arg_2(FParser *p) {
     r = enter(p, &f, 109, FUNC) && (
         (consume(p, 8, "=")) &&
         (a = expr(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1584,7 +1584,7 @@ static FAstNode *simple_args(FParser *p) {
     FAstNode *a, *r;
     r = enter(p, &f, 110, FUNC) && (
         (a = delimited(p, 7, ",", simple_arg))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1597,7 +1597,7 @@ static FAstNode *builder_hint(FParser *p) {
         (consume(p, 19, "<")) &&
         (a = name_list(p)) &&
         (consume(p, 20, ">"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1621,7 +1621,7 @@ static FAstNode *builder_args_2(FParser *p) {
         (consume(p, 13, "(")) &&
         (a = typed_arg_list(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1645,7 +1645,7 @@ static FAstNode *named_expr_1(FParser *p) {
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (b = expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1661,7 +1661,7 @@ static FAstNode *conditional(FParser *p) {
         (b = disjunction(p)) &&
         (consume(p, 9, ":")) &&
         (c = expr(p))
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -1702,7 +1702,7 @@ static FAstNode *disjunction_1(FParser *p) {
         (a = disjunction(p)) &&
         (consume(p, 60, "or")) &&
         (b = conjunction(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1730,7 +1730,7 @@ static FAstNode *conjunction_1(FParser *p) {
         (a = conjunction(p)) &&
         (consume(p, 59, "and")) &&
         (b = inversion(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1753,7 +1753,7 @@ static FAstNode *inversion_1(FParser *p) {
     r = enter(p, &f, 123, FUNC) && (
         (consume(p, 61, "not")) &&
         (a = inversion(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -1776,7 +1776,7 @@ static FAstNode *comparison_1(FParser *p) {
     r = enter(p, &f, 125, FUNC) && (
         (a = bitwise_or(p)) &&
         (b = sequence(p, comparison_1_2, 0))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1786,7 +1786,7 @@ static FAstNode *comparison_1_2(FParser *p) {
     r = enter(p, &f, 126, FUNC) && (
         (a = comp_op(p)) &&
         (b = bitwise_or(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1825,7 +1825,7 @@ static FAstNode *comp_op_8(FParser *p) {
     r = enter(p, &f, 128, FUNC) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
-    ) ? node_0(p, &f) : 0; 
+    ) ? node_0(p, &f) : 0;
     return exit(p, &f, r);
 }
 
@@ -1835,7 +1835,7 @@ static FAstNode *comp_op_10(FParser *p) {
     r = enter(p, &f, 129, FUNC) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
-    ) ? node_0(p, &f) : 0; 
+    ) ? node_0(p, &f) : 0;
     return exit(p, &f, r);
 }
 
@@ -1863,7 +1863,7 @@ static FAstNode *bitwise_or_1(FParser *p) {
         (a = bitwise_or(p)) &&
         (consume(p, 27, "|")) &&
         (b = bitwise_xor(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1891,7 +1891,7 @@ static FAstNode *bitwise_xor_1(FParser *p) {
         (a = bitwise_xor(p)) &&
         (consume(p, 30, "^")) &&
         (b = bitwise_and(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1919,7 +1919,7 @@ static FAstNode *bitwise_and_1(FParser *p) {
         (a = bitwise_and(p)) &&
         (consume(p, 28, "&")) &&
         (b = shift_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1949,7 +1949,7 @@ static FAstNode *shift_expr_1(FParser *p) {
         (a = shift_expr(p)) &&
         (consume(p, 48, "<<")) &&
         (b = sum(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1960,7 +1960,7 @@ static FAstNode *shift_expr_2(FParser *p) {
         (a = shift_expr(p)) &&
         (consume(p, 49, ">>")) &&
         (b = sum(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -1990,7 +1990,7 @@ static FAstNode *sum_1(FParser *p) {
         (a = sum(p)) &&
         (consume(p, 21, "+")) &&
         (b = term(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2001,7 +2001,7 @@ static FAstNode *sum_2(FParser *p) {
         (a = sum(p)) &&
         (consume(p, 22, "-")) &&
         (b = term(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2037,7 +2037,7 @@ static FAstNode *term_1(FParser *p) {
         (a = term(p)) &&
         (consume(p, 23, "*")) &&
         (b = pipe_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2048,7 +2048,7 @@ static FAstNode *term_2(FParser *p) {
         (a = term(p)) &&
         (consume(p, 24, "/")) &&
         (b = pipe_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2059,7 +2059,7 @@ static FAstNode *term_3(FParser *p) {
         (a = term(p)) &&
         (consume(p, 25, "%")) &&
         (b = pipe_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2070,7 +2070,7 @@ static FAstNode *term_4(FParser *p) {
         (a = term(p)) &&
         (consume(p, 37, "//")) &&
         (b = pipe_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2081,7 +2081,7 @@ static FAstNode *term_5(FParser *p) {
         (a = term(p)) &&
         (consume(p, 26, "@")) &&
         (b = pipe_expr(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2109,7 +2109,7 @@ static FAstNode *pipe_expr_1(FParser *p) {
         (a = pipe_expr(p)) &&
         (consume(p, 35, "->")) &&
         (b = factor(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2136,7 +2136,7 @@ static FAstNode *factor_1(FParser *p) {
     r = enter(p, &f, 151, FUNC) && (
         (consume(p, 21, "+")) &&
         (a = factor(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2146,7 +2146,7 @@ static FAstNode *factor_2(FParser *p) {
     r = enter(p, &f, 152, FUNC) && (
         (consume(p, 22, "-")) &&
         (a = factor(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2156,7 +2156,7 @@ static FAstNode *factor_3(FParser *p) {
     r = enter(p, &f, 153, FUNC) && (
         (consume(p, 29, "~")) &&
         (a = factor(p))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2180,7 +2180,7 @@ static FAstNode *power_1(FParser *p) {
         (a = primary(p)) &&
         (consume(p, 38, "**")) &&
         (b = factor(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2212,7 +2212,7 @@ static FAstNode *primary_1(FParser *p) {
         (a = primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME"))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2222,7 +2222,7 @@ static FAstNode *primary_2(FParser *p) {
     r = enter(p, &f, 158, FUNC) && (
         (a = primary(p)) &&
         (b = invocation(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2232,7 +2232,7 @@ static FAstNode *primary_3(FParser *p) {
     r = enter(p, &f, 159, FUNC) && (
         (a = primary(p)) &&
         (b = subscript(p))
-    ) ? node_2(p, &f, a, b) : 0; 
+    ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
@@ -2245,7 +2245,7 @@ static FAstNode *tuple_atom(FParser *p) {
         (consume(p, 13, "(")) &&
         (a = list_items(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2258,7 +2258,7 @@ static FAstNode *list_iterable(FParser *p) {
         (consume(p, 17, "[")) &&
         (a = list_iterator(p)) &&
         (consume(p, 18, "]"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2271,7 +2271,7 @@ static FAstNode *list_atom(FParser *p) {
         (consume(p, 17, "[")) &&
         (a = list_items(p), 1) &&
         (consume(p, 18, "]"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2284,7 +2284,7 @@ static FAstNode *set_atom(FParser *p) {
         (consume(p, 15, "{")) &&
         (a = set_items(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2297,7 +2297,7 @@ static FAstNode *dict_iterable(FParser *p) {
         (consume(p, 15, "{")) &&
         (a = dict_iterator(p)) &&
         (consume(p, 16, "}"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2310,7 +2310,7 @@ static FAstNode *dict_atom(FParser *p) {
         (consume(p, 15, "{")) &&
         (a = dict_items(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node_1(p, &f, a) : 0; 
+    ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
@@ -2335,7 +2335,7 @@ static FAstNode *builder_1(FParser *p) {
         (b = simple_args(p)) &&
         (consume(p, 9, ":")) &&
         (c = expr(p))
-    ) ? node_3(p, &f, a, b, c) : 0; 
+    ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
 }
 
@@ -2347,7 +2347,7 @@ static FAstNode *builder_2(FParser *p) {
         (b = builder_hint(p), 1) &&
         (c = builder_args(p), 1) &&
         (d = block_suite(p))
-    ) ? node_4(p, &f, a, b, c, d) : 0; 
+    ) ? node_4(p, &f, a, b, c, d) : 0;
     return exit(p, &f, r);
 }
 
