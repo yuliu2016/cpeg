@@ -30,17 +30,15 @@ typedef struct frame {
     void *memo;
 } frame_t;
 
-static inline frame_t enter(FParser *p, size_t f_type, char *rule_name) {
-    frame_t f;
-    f.f_type = f_type;
-    IF_DEBUG(f.f_rule_name = rule_name;)
-    f.f_initial_pos = p->pos;
+static inline void enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) {
+    f->f_type = f_type;
+    IF_DEBUG(f->f_rule_name = rule_name;)
+    f->f_initial_pos = p->pos;
     if (FPeg_is_done(p)) {
-        f.memo = 1;
+        f->memo = 1;
     } else {
-        f.memo = 0;
+        f->memo = 0;
     }
-    return f;
 }
 
 #define FUNC __func__
