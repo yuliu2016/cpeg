@@ -26,15 +26,12 @@
 typedef struct frame {
     size_t f_type;
     size_t f_pos;
-    IF_DEBUG(char *f_rule_name;)
+    char *f_rule;
     void *memo;
-    int short_circuit;
+    size_t flags;
 } frame_t;
 
-static inline int enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) {
-    f->f_type = f_type;
-    IF_DEBUG(f->f_rule_name = rule_name;)
-    f->f_pos = p->pos;
+static inline int enter(FParser *p, frame_t *f) {
     if (FPeg_is_done(p)) {
         f->memo = 0;
     } else {
@@ -43,6 +40,10 @@ static inline int enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) 
 }
 
 #define FUNC __func__
+#define F_MEMO (1 << 16u)
+#define F_LR (1 << 19u)
+#define F_ALLOW_SPACES (11 << 17u)
+#define F_DISALLOW_SPACES (10 << 17u)
 
 static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
