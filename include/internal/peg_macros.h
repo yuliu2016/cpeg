@@ -45,11 +45,6 @@ static inline frame_t enter(FParser *p, size_t f_type, char *rule_name) {
 
 #define FUNC __func__
 
-#define EXIT() \
-    IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);) \
-    if (!r) { p->pos = pos; } \
-    return r
-
 static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
     //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
     IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
@@ -111,27 +106,39 @@ static inline FAstNode *sequence(FParser *p, size_t type, int allow_empty) {
     }
 }
 
-#define DELIMITED(p, delimiter, literal, rule) \
-    FPeg_parse_delimited(p, delimiter, rule)
 
-#define TOKEN_SEQ_OR_NONE(p, t, v) \
-    FPeg_parse_token_sequence_or_none(p, t)
-
-#define TOKEN_SEQUENCE(p, t, v) \
-    FPeg_parse_token_sequence(p, t)
-
-#define TOKEN_DELIMITED(p, delimiter, literal, t, v) \
-    FPeg_parse_token_delimited(p, delimiter, t)
+static inline FAstNode *delimited(FParser *p, size_t delimiter, FRuleFunc rule) {
+    return FPeg_parse_delimited(p, delimiter, rule);
+}
 
 
-#define AST_NEW_NODE(p, t, nargs, ...) FAst_new_node(p, t, nargs, __VA_ARGS__)
-#define NODE_1() AST_NEW_NODE(p, f_type, 1, a)
-#define NODE_2() AST_NEW_NODE(p, f_type, 2, a, b)
-#define NODE_3() AST_NEW_NODE(p, f_type, 3, a, b, c)
-#define NODE_4() AST_NEW_NODE(p, f_type, 4, a, b, c, d)
+static inline FAstNode *t_sequence(FParser *p, size_t t, char *value, int allow_empty) {
+    if (allow_empty) {
+        return FPeg_parse_token_sequence_or_none(p, t);
+    } else {
+        return FPeg_parse_token_sequence(p, t);
+    }
+}
 
-// FAstNode \*[a-z0-9_]+\(FParser \*p\)
-// RULE($1)
+static inline FAstNode *t_delimited(FParser *p, size_t delimiter, char *literal, size_t t, char *v) {
+    return FPeg_parse_token_delimited(p, delimiter, t);
+}
+
+static inline FAstNode *node_1(FParser *p, frame_t *f, FAstNode *a) {
+    return FAst_new_node(p, f->f_type, 1, a);
+}
+
+static inline FAstNode *node_2(FParser *p, frame_t *f, FAstNode *a , FAstNode *b) {
+    return FAst_new_node(p, f->f_type, 2, a, b);
+}
+
+static inline FAstNode *node_3(FParser *p, frame_t *f, FAstNode *a, FAstNode *b, FAstNode *c) {
+    return FAst_new_node(p, f->f_type, 3, a, b, c);
+}
+
+static inline FAstNode *node_4(FParser *p, frame_t *f, FAstNode *a, FAstNode *b, FAstNode *c, FAstNode *d) {
+    return FAst_new_node(p, f->f_type, 4, a, b, c, d);
+}
 
 
 #endif //CPEG_PEG_MACROS_H
