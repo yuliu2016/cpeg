@@ -25,16 +25,16 @@
 
 typedef struct frame {
     size_t f_type;
-    size_t f_initial_pos;
+    size_t f_pos;
     IF_DEBUG(char *f_rule_name;)
     void *memo;
     int short_circuit;
 } frame_t;
 
-static inline void enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) {
+static inline int enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) {
     f->f_type = f_type;
     IF_DEBUG(f->f_rule_name = rule_name;)
-    f->f_initial_pos = p->pos;
+    f->f_pos = p->pos;
     if (FPeg_is_done(p)) {
         f->memo = 1;
     } else {
@@ -47,7 +47,7 @@ static inline void enter(FParser *p, frame_t *f, size_t f_type, char *rule_name)
 static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
     IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
-    if (!r) { p->pos = f->f_initial_pos; } 
+    if (!r) { p->pos = f->f_pos; } 
 }
 
 #define RETURN_IF_MEMOIZED() \
@@ -56,16 +56,20 @@ static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     if (memo) { return memo->node; }
 
 #define MEMOIZE() \
-    FPeg_put_memo(p, f.f_initial_pos, f.f_type, r, p->pos)
+    FPeg_put_memo(p, f.f_pos, f.f_type, r, p->pos)
 
 #define ENTER_LEFT_RECURSION() \
     FAstNode *max_node = 0; \
     a = 0; \
-    size_t max_end_pos = f.f_initial_pos; \
+    size_t max_end_pos = f.f_pos; \
     \
     parse_with_memo: \
-    FPeg_put_memo(p, f.f_initial_pos, f.f_type, max_node, max_end_pos); \
-    p->pos = f.f_initial_pos
+    FPeg_put_memo(p, f.f_pos, f.f_type, max_node, max_end_pos); \
+    p->pos = f.f_pos
+
+void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
+    FPeg_put_memo(p, f->f_pos, f->f_type, node, endpos);
+}
 
 #define EXIT_LEFT_RECURSION() \
     size_t end_pos = p->pos; \
@@ -90,7 +94,11 @@ static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     p->ignore_whitespace = old_ws;
 
 
-#define TEST(node) (node || (p->pos = f.f_initial_pos, 0))
+// #define TEST(node) (node && (p->pos = f.f_pos, 1))
+
+static inline int test_and_reset(FParser *p, frame_t *f, void *node) {
+    return node && (p->pos = f->f_pos, 1);
+}
 
 
 static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {

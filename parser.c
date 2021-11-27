@@ -463,7 +463,7 @@ static FAstNode *target_1(FParser *p) {
         (a = t_primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
-        (!TEST(t_lookahead(p)))
+        (!test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_2(p, &f, a, b) : 0; 
     return exit(p, &f, r);
 }
@@ -475,7 +475,7 @@ static FAstNode *target_2(FParser *p) {
     r = !f.short_circuit && (
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
-        (!TEST(t_lookahead(p)))
+        (!test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_2(p, &f, a, b) : 0; 
     return exit(p, &f, r);
 }
@@ -535,7 +535,7 @@ static FAstNode *t_primary_1(FParser *p) {
         (a = t_primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
-        (TEST(t_lookahead(p)))
+        (test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_2(p, &f, a, b) : 0; 
     return exit(p, &f, r);
 }
@@ -547,7 +547,7 @@ static FAstNode *t_primary_2(FParser *p) {
     r = !f.short_circuit && (
         (a = t_primary(p)) &&
         (b = invocation(p)) &&
-        (TEST(t_lookahead(p)))
+        (test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_2(p, &f, a, b) : 0; 
     return exit(p, &f, r);
 }
@@ -559,7 +559,7 @@ static FAstNode *t_primary_3(FParser *p) {
     r = !f.short_circuit && (
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
-        (TEST(t_lookahead(p)))
+        (test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_2(p, &f, a, b) : 0; 
     return exit(p, &f, r);
 }
@@ -570,7 +570,7 @@ static FAstNode *t_primary_4(FParser *p) {
     FAstNode *a, *b, *c, *d, *r;
     r = !f.short_circuit && (
         (a = atom(p)) &&
-        (TEST(t_lookahead(p)))
+        (test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_1(p, &f, a) : 0; 
     return exit(p, &f, r);
 }
