@@ -28,6 +28,7 @@ typedef struct frame {
     size_t f_initial_pos;
     IF_DEBUG(char *f_rule_name;)
     void *memo;
+    int short_circuit;
 } frame_t;
 
 static inline void enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) {
@@ -43,7 +44,7 @@ static inline void enter(FParser *p, frame_t *f, size_t f_type, char *rule_name)
 
 #define FUNC __func__
 
-static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
+static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
     IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
     if (!r) { p->pos = f->f_initial_pos; } 
