@@ -28,6 +28,12 @@
     if (!r) { p->pos = pos; } \
     return r
 
+static void exit(FParser *p, size_t initial_pos, FAstNode *r) {
+    //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
+    IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
+    if (!r) { p->pos = initial_pos; } 
+}
+
 #define RETURN_IF_MEMOIZED() \
     FTokenMemo *memo = FPeg_get_memo(p, f_type); \
     IF_DEBUG(FPeg_debug_memo(p, memo, DEBUG_EXTRAS);) \
