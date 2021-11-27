@@ -23,15 +23,37 @@
     IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
     FAstNode *r = 0, *a = 0, *b = 0, *c = 0, *d = 0
 
+typedef struct frame {
+    size_t f_type;
+    size_t f_initial_pos;
+    IF_DEBUG(char *f_rule_name;)
+    void *memo;
+} frame_t;
+
+static inline frame_t enter(FParser *p, size_t f_type, char *rule_name) {
+    frame_t f;
+    f.f_type = f_type;
+    IF_DEBUG(f.f_rule_name = rule_name;)
+    f.f_initial_pos = p->pos;
+    if (FPeg_is_done(p)) {
+        f.memo = 1;
+    } else {
+        f.memo = 0;
+    }
+    return f;
+}
+
+#define FUNC __func__
+
 #define EXIT() \
     IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);) \
     if (!r) { p->pos = pos; } \
     return r
 
-static void exit(FParser *p, size_t initial_pos, FAstNode *r) {
+static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
     //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
     IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
-    if (!r) { p->pos = initial_pos; } 
+    if (!r) { p->pos = f->f_initial_pos; } 
 }
 
 #define RETURN_IF_MEMOIZED() \
