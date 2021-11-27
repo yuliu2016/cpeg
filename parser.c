@@ -493,7 +493,7 @@ static FAstNode *t_primary(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = t_primary_1(p)) ||
         (a = t_primary_2(p)) ||
         (a = t_primary_3(p)) ||
@@ -1687,7 +1687,7 @@ static FAstNode *disjunction(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = disjunction_1(p)) ||
         (a = conjunction(p))
     );
@@ -1715,7 +1715,7 @@ static FAstNode *conjunction(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = conjunction_1(p)) ||
         (a = inversion(p))
     );
@@ -1825,7 +1825,7 @@ static FAstNode *comp_op_8(FParser *p) {
     r = enter(p, &f, 128, FUNC) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
-    );
+    ) ? node_0(p, &f) : 0; 
     return exit(p, &f, r);
 }
 
@@ -1835,7 +1835,7 @@ static FAstNode *comp_op_10(FParser *p) {
     r = enter(p, &f, 129, FUNC) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
-    );
+    ) ? node_0(p, &f) : 0; 
     return exit(p, &f, r);
 }
 
@@ -1848,7 +1848,7 @@ static FAstNode *bitwise_or(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = bitwise_or_1(p)) ||
         (a = bitwise_xor(p))
     );
@@ -1876,7 +1876,7 @@ static FAstNode *bitwise_xor(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = bitwise_xor_1(p)) ||
         (a = bitwise_and(p))
     );
@@ -1904,7 +1904,7 @@ static FAstNode *bitwise_and(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = bitwise_and_1(p)) ||
         (a = shift_expr(p))
     );
@@ -1933,7 +1933,7 @@ static FAstNode *shift_expr(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = shift_expr_1(p)) ||
         (a = shift_expr_2(p)) ||
         (a = sum(p))
@@ -1974,7 +1974,7 @@ static FAstNode *sum(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = sum_1(p)) ||
         (a = sum_2(p)) ||
         (a = term(p))
@@ -2018,7 +2018,7 @@ static FAstNode *term(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = term_1(p)) ||
         (a = term_2(p)) ||
         (a = term_3(p)) ||
@@ -2094,7 +2094,7 @@ static FAstNode *pipe_expr(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = pipe_expr_1(p)) ||
         (a = factor(p))
     );
@@ -2195,7 +2195,7 @@ static FAstNode *primary(FParser *p) {
     FAstNode *a, *r;
     RETURN_IF_MEMOIZED();
     ENTER_LEFT_RECURSION();
-    r = (
+    (
         (a = primary_1(p)) ||
         (a = primary_2(p)) ||
         (a = primary_3(p)) ||

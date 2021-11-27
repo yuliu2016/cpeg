@@ -36,7 +36,7 @@ static inline int enter(FParser *p, frame_t *f, size_t f_type, char *rule_name) 
     IF_DEBUG(f->f_rule_name = rule_name;)
     f->f_pos = p->pos;
     if (FPeg_is_done(p)) {
-        f->memo = 1;
+        f->memo = 0;
     } else {
         f->memo = 0;
     }
@@ -80,7 +80,7 @@ void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
     \
     max_reached: \
     p->pos = max_end_pos; \
-    r = max_node ? AST_NEW_NODE(p, f.f_type, 1, max_node) : 0
+    r = max_node ? FAst_new_node(p, f.f_type, 1, max_node) : 0
 
 #define WS_PUSH_1() \
     int old_ws = p->ignore_whitespace; \
@@ -105,16 +105,16 @@ static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
     return FPeg_consume_token_and_debug(p, type, literal);
 }
 
-static inline FAstNode *sequence(FParser *p, size_t type, int allow_empty) {
+static inline FAstNode *sequence(FParser *p, FRuleFunc rule, int allow_empty) {
     if (allow_empty) {
-        return FPeg_parse_sequece_or_none(p, type);
+        return FPeg_parse_sequece_or_none(p, rule);
     } else {
-        return FPeg_parse_sequence(p, type);
+        return FPeg_parse_sequence(p, rule);
     }
 }
 
 
-static inline FAstNode *delimited(FParser *p, size_t delimiter, FRuleFunc rule) {
+static inline FAstNode *delimited(FParser *p, size_t delimiter, char *literal, FRuleFunc rule) {
     return FPeg_parse_delimited(p, delimiter, rule);
 }
 
@@ -129,6 +129,10 @@ static inline FAstNode *t_sequence(FParser *p, size_t t, char *value, int allow_
 
 static inline FAstNode *t_delimited(FParser *p, size_t delimiter, char *literal, size_t t, char *v) {
     return FPeg_parse_token_delimited(p, delimiter, t);
+}
+
+static inline FAstNode *node_0(FParser *p, frame_t *f) {
+    return FAst_new_node(p, f->f_type, 0);
 }
 
 static inline FAstNode *node_1(FParser *p, frame_t *f, FAstNode *a) {
