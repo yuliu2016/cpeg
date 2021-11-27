@@ -52,21 +52,21 @@ static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
 }
 
 #define RETURN_IF_MEMOIZED() \
-    FTokenMemo *memo = FPeg_get_memo(p, f_type); \
-    IF_DEBUG(FPeg_debug_memo(p, memo, DEBUG_EXTRAS);) \
+    FTokenMemo *memo = FPeg_get_memo(p, f.f_type); \
+    IF_DEBUG(FPeg_debug_memo(p, memo, 0,0);) \
     if (memo) { return memo->node; }
 
 #define MEMOIZE() \
-    FPeg_put_memo(p, pos, f_type, r, p->pos)
+    FPeg_put_memo(p, f.f_initial_pos, f.f_type, r, p->pos)
 
 #define ENTER_LEFT_RECURSION() \
     FAstNode *max_node = 0; \
     a = 0; \
-    size_t max_end_pos = pos; \
+    size_t max_end_pos = f.f_initial_pos; \
     \
     parse_with_memo: \
-    FPeg_put_memo(p, pos, f_type, max_node, max_end_pos); \
-    p->pos = pos
+    FPeg_put_memo(p, f.f_initial_pos, f.f_type, max_node, max_end_pos); \
+    p->pos = f.f_initial_pos
 
 #define EXIT_LEFT_RECURSION() \
     size_t end_pos = p->pos; \
@@ -77,7 +77,7 @@ static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
     \
     max_reached: \
     p->pos = max_end_pos; \
-    r = max_node ? AST_NEW_NODE(p, f_type, 1, max_node) : 0
+    r = max_node ? AST_NEW_NODE(p, f.f_type, 1, max_node) : 0
 
 #define WS_PUSH_1() \
     int old_ws = p->ignore_whitespace; \
@@ -91,7 +91,7 @@ static inline void exit(FParser *p, frame_t *f, FAstNode *r) {
     p->ignore_whitespace = old_ws;
 
 
-#define TEST(node) (node || (p->pos = pos, 0))
+#define TEST(node) (node || (p->pos = f.f_initial_pos, 0))
 
 
 static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
