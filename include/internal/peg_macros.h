@@ -16,12 +16,11 @@
 
 #define DEBUG_EXTRAS f_type, __func__
 
-#define ENTER(type) \
-    if (FPeg_is_done(p)) { return 0; } \
-    const size_t f_type = type; \
-    size_t pos = p->pos; \
-    IF_DEBUG(FPeg_debug_enter(p, DEBUG_EXTRAS);) \
-    FAstNode *r = 0, *a = 0, *b = 0, *c = 0, *d = 0
+#define F_MEMO (1 << 16u)
+#define F_LR (1 << 19u)
+#define F_ALLOW_SPACES (11 << 17u)
+#define F_DISALLOW_SPACES (10 << 17u)
+#define FUNC __func__
 
 typedef struct frame {
     size_t f_type;
@@ -33,69 +32,42 @@ typedef struct frame {
 
 static inline int enter(FParser *p, frame_t *f) {
     if (FPeg_is_done(p)) {
-        f->memo = 0;
-    } else {
-        f->memo = 0;
+        return 0;
     }
+
+    IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
+
+    if (f->flags & F_MEMO || f->flags & F_LR) {
+        FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
+        IF_DEBUG(FPeg_debug_memo(p, memo, 0, 0);)
+        if (memo) { 
+            f->memo = memo->node;
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
-#define FUNC __func__
-#define F_MEMO (1 << 16u)
-#define F_LR (1 << 19u)
-#define F_ALLOW_SPACES (11 << 17u)
-#define F_DISALLOW_SPACES (10 << 17u)
 
 static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
-    //  IF_DEBUG(FPeg_debug_exit(p, r, DEBUG_EXTRAS);)
-    IF_DEBUG(FPeg_debug_exit(p, r, 0, 0);)
-    if (!r) { p->pos = f->f_pos; } 
+
+    IF_DEBUG(FPeg_debug_exit(p, r, f->f_type, f->f_rule);)
+
+    if (!r) { 
+        p->pos = f->f_pos;
+        if (f->memo) {
+            return f->memo;
+        }
+    } 
+    // todo add memo if applicable
+
+    return r;
 }
-
-#define RETURN_IF_MEMOIZED() \
-    FTokenMemo *memo = FPeg_get_memo(p, f.f_type); \
-    IF_DEBUG(FPeg_debug_memo(p, memo, 0,0);) \
-    if (memo) { return memo->node; }
-
-#define MEMOIZE() \
-    FPeg_put_memo(p, f.f_pos, f.f_type, r, p->pos)
-
-#define ENTER_LEFT_RECURSION() \
-    FAstNode *max_node = 0; \
-    a = 0; \
-    size_t max_end_pos = f.f_pos; \
-    \
-    parse_with_memo: \
-    FPeg_put_memo(p, f.f_pos, f.f_type, max_node, max_end_pos); \
-    p->pos = f.f_pos
 
 void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
     FPeg_put_memo(p, f->f_pos, f->f_type, node, endpos);
 }
-
-#define EXIT_LEFT_RECURSION() \
-    size_t end_pos = p->pos; \
-    if (end_pos <= max_end_pos) { goto max_reached; }\
-    max_end_pos = end_pos; \
-    max_node = a; \
-    goto parse_with_memo; \
-    \
-    max_reached: \
-    p->pos = max_end_pos; \
-    r = max_node ? FAst_new_node(p, f.f_type, 1, max_node) : 0
-
-#define WS_PUSH_1() \
-    int old_ws = p->ignore_whitespace; \
-    p->ignore_whitespace = 1;
-
-#define WS_PUSH_0() \
-    int old_ws = p->ignore_whitespace; \
-    p->ignore_whitespace = 0;
-
-#define WS_POP() \
-    p->ignore_whitespace = old_ws;
-
-
-// #define TEST(node) (node && (p->pos = f.f_pos, 1))
 
 static inline int test_and_reset(FParser *p, frame_t *f, void *node) {
     return node && (p->pos = f->f_pos, 1);
