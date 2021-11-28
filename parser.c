@@ -487,17 +487,22 @@ static FAstNode *targetlist_sp(FParser *p) {
 //     | atom &t_lookahead
 static FAstNode *t_primary(FParser *p) {
     frame_t f = {25, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = t_primary_1(p)) ||
         (a = t_primary_2(p)) ||
         (a = t_primary_3(p)) ||
-        (a = t_primary_4(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = t_primary_4(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1663,15 +1668,20 @@ static FAstNode *expr(FParser *p) {
 //     | conjunction
 static FAstNode *disjunction(FParser *p) {
     frame_t f = {118, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = disjunction_1(p)) ||
-        (a = conjunction(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = conjunction(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1691,15 +1701,20 @@ static FAstNode *disjunction_1(FParser *p) {
 //     | inversion
 static FAstNode *conjunction(FParser *p) {
     frame_t f = {120, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = conjunction_1(p)) ||
-        (a = inversion(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = inversion(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1824,15 +1839,20 @@ static FAstNode *comp_op_10(FParser *p) {
 //     | bitwise_xor
 static FAstNode *bitwise_or(FParser *p) {
     frame_t f = {130, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = bitwise_or_1(p)) ||
-        (a = bitwise_xor(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = bitwise_xor(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1852,15 +1872,20 @@ static FAstNode *bitwise_or_1(FParser *p) {
 //     | bitwise_and
 static FAstNode *bitwise_xor(FParser *p) {
     frame_t f = {132, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = bitwise_xor_1(p)) ||
-        (a = bitwise_and(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = bitwise_and(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1880,15 +1905,20 @@ static FAstNode *bitwise_xor_1(FParser *p) {
 //     | shift_expr
 static FAstNode *bitwise_and(FParser *p) {
     frame_t f = {134, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = bitwise_and_1(p)) ||
-        (a = shift_expr(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = shift_expr(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1909,16 +1939,21 @@ static FAstNode *bitwise_and_1(FParser *p) {
 //     | sum
 static FAstNode *shift_expr(FParser *p) {
     frame_t f = {136, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = shift_expr_1(p)) ||
         (a = shift_expr_2(p)) ||
-        (a = sum(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = sum(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1950,16 +1985,21 @@ static FAstNode *shift_expr_2(FParser *p) {
 //     | term
 static FAstNode *sum(FParser *p) {
     frame_t f = {139, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = sum_1(p)) ||
         (a = sum_2(p)) ||
-        (a = term(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = term(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -1994,19 +2034,24 @@ static FAstNode *sum_2(FParser *p) {
 //     | pipe_expr
 static FAstNode *term(FParser *p) {
     frame_t f = {142, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = term_1(p)) ||
         (a = term_2(p)) ||
         (a = term_3(p)) ||
         (a = term_4(p)) ||
         (a = term_5(p)) ||
-        (a = pipe_expr(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = pipe_expr(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -2070,15 +2115,20 @@ static FAstNode *term_5(FParser *p) {
 //     | factor
 static FAstNode *pipe_expr(FParser *p) {
     frame_t f = {148, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = pipe_expr_1(p)) ||
-        (a = factor(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = factor(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
@@ -2171,17 +2221,22 @@ static FAstNode *power_1(FParser *p) {
 //     | atom
 static FAstNode *primary(FParser *p) {
     frame_t f = {156, p->pos, FUNC, 0, F_LR};
-    enter(p, &f);
-    FAstNode *a, *r;
-    RETURN_IF_MEMOIZED();
-    ENTER_LEFT_RECURSION();
-    (
+    FAstNode *a = 0, *r = 0, *m = 0;
+    if (!enter(p, &f)) goto exit;
+    size_t i = f.f_pos;
+    while(1) {
+        memoize(p, &f, m, i);
+        p->pos = f.f_pos;
         (a = primary_1(p)) ||
         (a = primary_2(p)) ||
         (a = primary_3(p)) ||
-        (a = atom(p))
-    );
-    EXIT_LEFT_RECURSION();
+        (a = atom(p));
+        if (p->pos <= i) break;
+        m = a, i = p->pos;
+    }
+    p->pos = i;
+    r = m ? node_1(p, &f, m) : 0;
+exit:
     return exit(p, &f, r);
 }
 
