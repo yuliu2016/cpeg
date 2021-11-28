@@ -9,6 +9,10 @@
 #include "stdio.h"
 #include "string.h"
 
+FAstNode *single_input(FParser * p) {
+    return 0;
+}
+
 char *tokparse(char *in) {
     FParser *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
     FAstNode *n = single_input(p);

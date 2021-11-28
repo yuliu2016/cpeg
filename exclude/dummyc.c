@@ -1151,7 +1151,7 @@ void dummy_typed_arg_list(FAstNode *n) {
 void dummy_full_arg_list(FAstNode *n) {
     UNPACK_FULL_ARG_LIST(n)
     dummy_default_arg(default_args);
-    dummy_full_arg_list_2(full_arg_list);
+    dummy_full_arg_list_2(full_arg_list_2);
 }
 
 void dummy_full_arg_list_2(FAstNode *n) {
@@ -1177,7 +1177,7 @@ void dummy_args_kwargs(FAstNode *n) {
     UNPACK_ARGS_KWARGS(n)
     dummy_typed_arg(typed_arg);
     dummy_args_kwargs_3(op_comma_default_args);
-    dummy_args_kwargs_4(args_kwargs);
+    dummy_args_kwargs_4(args_kwargs_4);
 }
 
 void dummy_args_kwargs_3(FAstNode *n) {

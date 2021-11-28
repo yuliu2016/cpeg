@@ -410,7 +410,7 @@
 #define R_FULL_ARG_LIST 97
 #define UNPACK_FULL_ARG_LIST(n) \
     FVAR(default_args, n, 0); \
-    FVAR(full_arg_list, n, 1); \
+    FVAR(full_arg_list_2, n, 1); \
 
 #define R_FULL_ARG_LIST_2 98
 #define UNPACK_FULL_ARG_LIST_2(n) \
@@ -422,7 +422,7 @@
 #define UNPACK_ARGS_KWARGS(n) \
     FVAR(typed_arg, n, 0); \
     FVAR(op_comma_default_args, n, 1); \
-    FVAR(args_kwargs, n, 2); \
+    FVAR(args_kwargs_4, n, 2); \
 
 #define R_ARGS_KWARGS_3 101
 #define UNPACK_ARGS_KWARGS_3(n) \
