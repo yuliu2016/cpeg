@@ -2,7 +2,7 @@
 #ifndef CPEG_PEG_MACROS_H
 #define CPEG_PEG_MACROS_H
 
-#include "../peg.h"
+#include "../ast.h"
 
 
 #define PEG_DEBUG
