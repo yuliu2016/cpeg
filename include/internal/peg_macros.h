@@ -65,7 +65,7 @@ static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
     return r;
 }
 
-void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
+int memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
     FPeg_put_memo(p, f->f_pos, f->f_type, node, endpos);
 }
 
