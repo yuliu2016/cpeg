@@ -1,4 +1,4 @@
-#include "include/internal/peg_macros.h"
+#include "include/internal/parser.h"
 
 
 static void *single_input(FParser *);
@@ -172,6 +172,20 @@ static void *builder_2(FParser *);
 static void *atom(FParser *);
 
 
+
+// Parser Entry Point
+void *parse_grammar(FParser *p, int entry_point) {
+    switch (entry_point) {
+    case 0:
+        return single_input(p);
+    case 1:
+        return file_input(p);
+    case 2:
+        return eval_input(p);
+    default:
+        return 0;
+    }
+}
 
 // single_input:
 //     | NEWLINE

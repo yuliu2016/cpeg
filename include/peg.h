@@ -132,4 +132,6 @@ typedef void *(*FRuleFunc)(FParser *);
 
 FToken *get_next_token_to_consume(FParser *p, size_t *ppos); // todo remove private function
 
+void *parse_grammar(FParser *p, int entry_point); // todo where should this go?
+
 #endif //CPEG_PEG_H

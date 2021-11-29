@@ -10,13 +10,10 @@
 #include "stdio.h"
 #include "string.h"
 
-FAstNode *single_input(FParser * p) {
-    return 0;
-}
 
 char *tokparse(char *in) {
     FParser *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
-    FAstNode *n = single_input(p);
+    FAstNode *n = parse_grammar(p, 0);
     FLexerState *ls = &p->lexer_state;
     if (p->error) {
         printf("======================\n\033[31;1m");
