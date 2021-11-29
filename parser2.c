@@ -1,20 +1,45 @@
-#include "calc2_parser.h"
-#include "peg_macros.h"
+#include "include/internal/parser.h"
 
-// sum:
-//     | sum '+' term
-//     | sum '-' term
-//     | term
-static void *sum(FParser *p) {
+
+static void *csum(FParser *);
+static void *csum_1(FParser *);
+static void *csum_2(FParser *);
+static void *cterm(FParser *);
+static void *cterm_1(FParser *);
+static void *cterm_2(FParser *);
+static void *cterm_3(FParser *);
+static void *cfactor(FParser *);
+static void *cfactor_1(FParser *);
+static void *cfactor_2(FParser *);
+static void *cfactor_3(FParser *);
+static void *cpower(FParser *);
+static void *cpower_1(FParser *);
+static void *catom(FParser *);
+static void *catom_1(FParser *);
+static void *catom_2(FParser *);
+static void *cparameters(FParser *);
+
+
+
+// Parser Entry Point
+void *parse_calc(FParser *p) {
+    return csum(p);
+}
+
+// csum:
+//     | csum '+' cterm
+//     | csum '-' cterm
+//     | cterm
+static void *csum(FParser *p) {
     frame_t f = {1, p->pos, FUNC, 0, F_LR};
     void *a = 0, *r = 0, *m = 0;
     if (!enter(p, &f)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
-        (a = sum_1(p)) ||
-        (a = sum_2(p)) ||
-        (a = term(p));
+        (a = csum_1(p)) ||
+        (a = csum_2(p)) ||
+        (a = cterm(p));
         if (p->pos <= i) break;
         m = a, i = p->pos;
     }
@@ -24,44 +49,44 @@ exit:
     return exit(p, &f, r);
 }
 
-static void *sum_1(FParser *p) {
+static void *csum_1(FParser *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = sum(p)) &&
+        (a = csum(p)) &&
         (consume(p, 21, "+")) &&
-        (b = term(p))
+        (b = cterm(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-static void *sum_2(FParser *p) {
+static void *csum_2(FParser *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = sum(p)) &&
+        (a = csum(p)) &&
         (consume(p, 22, "-")) &&
-        (b = term(p))
+        (b = cterm(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-// term:
-//     | term '*' factor
-//     | term '/' factor
-//     | term '%' factor
-//     | factor
-static void *term(FParser *p) {
+// cterm:
+//     | cterm '*' cfactor
+//     | cterm '/' cfactor
+//     | cterm '%' cfactor
+//     | cfactor
+static void *cterm(FParser *p) {
     frame_t f = {4, p->pos, FUNC, 0, F_LR};
     void *a = 0, *r = 0, *m = 0;
     if (!enter(p, &f)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
-        (a = term_1(p)) ||
-        (a = term_2(p)) ||
-        (a = term_3(p)) ||
-        (a = factor(p));
+        (a = cterm_1(p)) ||
+        (a = cterm_2(p)) ||
+        (a = cterm_3(p)) ||
+        (a = cfactor(p));
         if (p->pos <= i) break;
         m = a, i = p->pos;
     }
@@ -71,157 +96,157 @@ exit:
     return exit(p, &f, r);
 }
 
-static void *term_1(FParser *p) {
+static void *cterm_1(FParser *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = term(p)) &&
+        (a = cterm(p)) &&
         (consume(p, 23, "*")) &&
-        (b = factor(p))
+        (b = cfactor(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-static void *term_2(FParser *p) {
+static void *cterm_2(FParser *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = term(p)) &&
+        (a = cterm(p)) &&
         (consume(p, 24, "/")) &&
-        (b = factor(p))
+        (b = cfactor(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-static void *term_3(FParser *p) {
+static void *cterm_3(FParser *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = term(p)) &&
+        (a = cterm(p)) &&
         (consume(p, 25, "%")) &&
-        (b = factor(p))
+        (b = cfactor(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-// factor:
-//     | '+' factor
-//     | '-' factor
-//     | '~' factor
-//     | power
-static void *factor(FParser *p) {
+// cfactor:
+//     | '+' cfactor
+//     | '-' cfactor
+//     | '~' cfactor
+//     | cpower
+static void *cfactor(FParser *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = factor_1(p)) ||
-        (a = factor_2(p)) ||
-        (a = factor_3(p)) ||
-        (a = power(p))
+        (a = cfactor_1(p)) ||
+        (a = cfactor_2(p)) ||
+        (a = cfactor_3(p)) ||
+        (a = cpower(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *factor_1(FParser *p) {
+static void *cfactor_1(FParser *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 21, "+")) &&
-        (a = factor(p))
+        (a = cfactor(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *factor_2(FParser *p) {
+static void *cfactor_2(FParser *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 22, "-")) &&
-        (a = factor(p))
+        (a = cfactor(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *factor_3(FParser *p) {
+static void *cfactor_3(FParser *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 29, "~")) &&
-        (a = factor(p))
+        (a = cfactor(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-// power:
-//     | atom '**' factor
-//     | atom
-static void *power(FParser *p) {
+// cpower:
+//     | catom '**' cfactor
+//     | catom
+static void *cpower(FParser *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = power_1(p)) ||
-        (a = atom(p))
+        (a = cpower_1(p)) ||
+        (a = catom(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *power_1(FParser *p) {
+static void *cpower_1(FParser *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = atom(p)) &&
+        (a = catom(p)) &&
         (consume(p, 38, "**")) &&
-        (b = factor(p))
+        (b = cfactor(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-// atom:
-//     | '(' sum ')'
-//     | NAME '(' [parameters] ')'
+// catom:
+//     | '(' csum ')'
+//     | NAME '(' [cparameters] ')'
 //     | NAME
 //     | NUMBER
-static void *atom(FParser *p) {
+static void *catom(FParser *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = atom_1(p)) ||
-        (a = atom_2(p)) ||
+        (a = catom_1(p)) ||
+        (a = catom_2(p)) ||
         (a = consume(p, 3, "NAME")) ||
         (a = consume(p, 4, "NUMBER"))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *atom_1(FParser *p) {
+static void *catom_1(FParser *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 13, "(")) &&
-        (a = sum(p)) &&
+        (a = csum(p)) &&
         (consume(p, 14, ")"))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
 
-static void *atom_2(FParser *p) {
+static void *catom_2(FParser *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
-        (b = parameters(p), 1) &&
+        (b = cparameters(p), 1) &&
         (consume(p, 14, ")"))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
 
-// parameters:
-//     | ','.sum+ [',']
-static void *parameters(FParser *p) {
+// cparameters:
+//     | ','.csum+ [',']
+static void *cparameters(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", sum)) &&
+        (a = delimited(p, 7, ",", csum)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);

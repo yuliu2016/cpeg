@@ -1,5 +1,4 @@
 #include "include/peg.h"
-#include "stdarg.h"
 #include "stdio.h"
 
 void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker) {
@@ -372,6 +371,10 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
 }
 
 void FPeg_debug_exit(FParser *p, void *res, size_t rule_index, const char *rule_name) {
+    if (p->level == 0) {
+        p->error = "Negative recursion depth; aborted";
+        return;
+    }
     p->level--;
     print_indent_level(p->level);
     if (res) {
