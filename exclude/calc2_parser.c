@@ -5,13 +5,12 @@
 //     | sum '+' term
 //     | sum '-' term
 //     | term
-static FAstNode *sum(FParser *p) {
+static void *sum(FParser *p) {
     frame_t f = {1, p->pos, FUNC, 0, F_LR};
-    FAstNode *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *m = 0;
     if (!enter(p, &f)) goto exit;
     size_t i = f.f_pos;
-    while(1) {
-        memoize(p, &f, m, i);
+    while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
         (a = sum_1(p)) ||
         (a = sum_2(p)) ||
@@ -25,9 +24,9 @@ exit:
     return exit(p, &f, r);
 }
 
-static FAstNode *sum_1(FParser *p) {
+static void *sum_1(FParser *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = sum(p)) &&
         (consume(p, 21, "+")) &&
@@ -36,9 +35,9 @@ static FAstNode *sum_1(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *sum_2(FParser *p) {
+static void *sum_2(FParser *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = sum(p)) &&
         (consume(p, 22, "-")) &&
@@ -52,13 +51,12 @@ static FAstNode *sum_2(FParser *p) {
 //     | term '/' factor
 //     | term '%' factor
 //     | factor
-static FAstNode *term(FParser *p) {
+static void *term(FParser *p) {
     frame_t f = {4, p->pos, FUNC, 0, F_LR};
-    FAstNode *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *m = 0;
     if (!enter(p, &f)) goto exit;
     size_t i = f.f_pos;
-    while(1) {
-        memoize(p, &f, m, i);
+    while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
         (a = term_1(p)) ||
         (a = term_2(p)) ||
@@ -73,9 +71,9 @@ exit:
     return exit(p, &f, r);
 }
 
-static FAstNode *term_1(FParser *p) {
+static void *term_1(FParser *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = term(p)) &&
         (consume(p, 23, "*")) &&
@@ -84,9 +82,9 @@ static FAstNode *term_1(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *term_2(FParser *p) {
+static void *term_2(FParser *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = term(p)) &&
         (consume(p, 24, "/")) &&
@@ -95,9 +93,9 @@ static FAstNode *term_2(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *term_3(FParser *p) {
+static void *term_3(FParser *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = term(p)) &&
         (consume(p, 25, "%")) &&
@@ -111,9 +109,9 @@ static FAstNode *term_3(FParser *p) {
 //     | '-' factor
 //     | '~' factor
 //     | power
-static FAstNode *factor(FParser *p) {
+static void *factor(FParser *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (a = factor_1(p)) ||
         (a = factor_2(p)) ||
@@ -123,9 +121,9 @@ static FAstNode *factor(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *factor_1(FParser *p) {
+static void *factor_1(FParser *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 21, "+")) &&
         (a = factor(p))
@@ -133,9 +131,9 @@ static FAstNode *factor_1(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *factor_2(FParser *p) {
+static void *factor_2(FParser *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 22, "-")) &&
         (a = factor(p))
@@ -143,9 +141,9 @@ static FAstNode *factor_2(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *factor_3(FParser *p) {
+static void *factor_3(FParser *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 29, "~")) &&
         (a = factor(p))
@@ -156,9 +154,9 @@ static FAstNode *factor_3(FParser *p) {
 // power:
 //     | atom '**' factor
 //     | atom
-static FAstNode *power(FParser *p) {
+static void *power(FParser *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (a = power_1(p)) ||
         (a = atom(p))
@@ -166,9 +164,9 @@ static FAstNode *power(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *power_1(FParser *p) {
+static void *power_1(FParser *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = atom(p)) &&
         (consume(p, 38, "**")) &&
@@ -182,9 +180,9 @@ static FAstNode *power_1(FParser *p) {
 //     | NAME '(' [parameters] ')'
 //     | NAME
 //     | NUMBER
-static FAstNode *atom(FParser *p) {
+static void *atom(FParser *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (a = atom_1(p)) ||
         (a = atom_2(p)) ||
@@ -194,9 +192,9 @@ static FAstNode *atom(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *atom_1(FParser *p) {
+static void *atom_1(FParser *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
-    FAstNode *a, *r;
+    void *a, *r;
     r = enter(p, &f) && (
         (consume(p, 13, "(")) &&
         (a = sum(p)) &&
@@ -205,9 +203,9 @@ static FAstNode *atom_1(FParser *p) {
     return exit(p, &f, r);
 }
 
-static FAstNode *atom_2(FParser *p) {
+static void *atom_2(FParser *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
@@ -219,9 +217,9 @@ static FAstNode *atom_2(FParser *p) {
 
 // parameters:
 //     | ','.sum+ [',']
-static FAstNode *parameters(FParser *p) {
+static void *parameters(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
-    FAstNode *a, *b, *r;
+    void *a, *b, *r;
     r = enter(p, &f) && (
         (a = delimited(p, 7, ",", sum)) &&
         (b = consume(p, 7, ","), 1)
