@@ -159,7 +159,7 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
-typedef FAstNode *(*FRuleFunc)(FParser *);
+typedef void *(*FRuleFunc)(FParser *);
 
 FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
 
