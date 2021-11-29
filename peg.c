@@ -388,7 +388,6 @@ void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char
     if (!memo) {
         return;
     };
-    p->level--;
     print_indent_level(p->level);
     char *succ;
     if (memo->node) {

@@ -62,6 +62,23 @@ int main() {
 
     FMem_set_allocator(default_allocator());
 
-    input_loop(">>>", tokparse);
+    printf(">>>");
+    char line[1024];
+
+    fgets(line, 1024, stdin);
+    if (strlen(line) == 0) {
+        return 1;
+    }
+    if (strcmp(line, "exit\n") == 0) {
+        return 1;
+    }
+    // remove the newline character at the end
+    line[strlen(line) - 1] = 0;
+    char *s = tokparse(line);
+    if (!s) {
+        return 1;
+    }
+    print(s);
+
     return 0;
 }
