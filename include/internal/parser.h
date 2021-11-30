@@ -1,6 +1,6 @@
 
-#ifndef CPEG_PEG_MACROS_H
-#define CPEG_PEG_MACROS_H
+#ifndef CPEG_PARSER_H
+#define CPEG_PARSER_H
 
 #include "../ast.h"
 
@@ -17,15 +17,17 @@
 #define DEBUG_EXTRAS f_type, __func__
 
 #define F_MEMO (1 << 16u)
-#define F_LR (1 << 19u)
+#define F_LR (1 << 20u)
 #define F_ALLOW_SPACES (11 << 17u)
 #define F_DISALLOW_SPACES (10 << 17u)
 #define FUNC __func__
 
+#define CURRENT_SPACE (1 << 19u)
+
 typedef struct frame {
     size_t f_type;
     size_t f_pos;
-    char *f_rule;
+    const char *f_rule;
     void *memo;
     size_t flags;
 } frame_t;
@@ -39,30 +41,49 @@ static inline int enter(FParser *p, frame_t *f) {
 
     if (f->flags & F_MEMO || f->flags & F_LR) {
         FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
-        IF_DEBUG(FPeg_debug_memo(p, memo, 0, 0);)
+        IF_DEBUG(FPeg_debug_memo(p, memo, f->f_type, f->f_rule);)
         if (memo) { 
             f->memo = memo->node;
             return 0;
         }
     }
 
+
+    if (f->flags & F_ALLOW_SPACES) {
+        f->flags |= p->ignore_whitespace & F_ALLOW_SPACES;
+        p->ignore_whitespace = 1;
+    }
+
+    if (f->flags & F_ALLOW_SPACES) {
+        f->flags |= p->ignore_whitespace & F_ALLOW_SPACES;
+        p->ignore_whitespace = 0;
+    }
+
     return 1;
 }
 
 
-static inline void *exit(FParser *p, frame_t *f, FAstNode *r) {
+static inline void *exit(FParser *p, frame_t *f, FAstNode *result) {
 
-    IF_DEBUG(FPeg_debug_exit(p, r, f->f_type, f->f_rule);)
+    IF_DEBUG(FPeg_debug_exit(p, result, f->f_type, f->f_rule);)
 
-    if (!r) { 
+    if (f->memo) {
+        return f->memo;
+    }
+
+    if (f->flags & F_ALLOW_SPACES | f->flags & F_DISALLOW_SPACES) {
+        p->ignore_whitespace = !!(f->flags & F_ALLOW_SPACES);
+    }
+
+    if (f->flags & F_MEMO || f->flags & F_LR) {
+        FPeg_put_memo(p, f->f_pos, f->f_type, result, p->pos);
+    }
+
+    if (!result) { 
         p->pos = f->f_pos;
-        if (f->memo) {
-            return f->memo;
-        }
-    } 
-    // todo add memo if applicable
+    }
 
-    return r;
+    return result;
 }
 
 static inline void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
@@ -125,4 +146,4 @@ static inline FAstNode *node_4(FParser *p, frame_t *f, FAstNode *a, FAstNode *b,
 }
 
 
-#endif //CPEG_PEG_MACROS_H
+#endif //CPEG_PARSER_H
