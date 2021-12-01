@@ -18,6 +18,7 @@ static void *catom(FParser *);
 static void *catom_1(FParser *);
 static void *catom_2(FParser *);
 static void *cparameters(FParser *);
+static ast_list *csum_delimited(FParser *);
 
 
 
@@ -246,8 +247,23 @@ static void *cparameters(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", csum)) &&
+        (a = csum_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *csum_delimited(FParser *p) {
+    ast_list *s;
+    void *a = csum(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = csum(p)));
+    p->pos = pos;
+    return s;
 }
