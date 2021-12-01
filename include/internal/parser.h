@@ -99,31 +99,6 @@ static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
     return FPeg_consume_token_and_debug(p, type, literal);
 }
 
-static inline FAstNode *sequence(FParser *p, FRuleFunc rule, int allow_empty) {
-    if (allow_empty) {
-        return FPeg_parse_sequece_or_none(p, rule);
-    } else {
-        return FPeg_parse_sequence(p, rule);
-    }
-}
-
-
-static inline FAstNode *delimited(FParser *p, size_t delimiter, char *literal, FRuleFunc rule) {
-    return FPeg_parse_delimited(p, delimiter, rule);
-}
-
-
-static inline FAstNode *t_sequence(FParser *p, size_t t, char *value, int allow_empty) {
-    if (allow_empty) {
-        return FPeg_parse_token_sequence_or_none(p, t);
-    } else {
-        return FPeg_parse_token_sequence(p, t);
-    }
-}
-
-static inline FAstNode *t_delimited(FParser *p, size_t delimiter, char *literal, size_t t, char *v) {
-    return FPeg_parse_token_delimited(p, delimiter, t);
-}
 
 static inline FAstNode *node_0(FParser *p, frame_t *f) {
     return FAst_new_node(p, f->f_type, 0);
