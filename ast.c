@@ -81,6 +81,16 @@ FAstNode *seq_new(FParser *p) {
     return node;
 }
 
+ast_list *ast_list_new(FParser *p) {
+    ast_list *seq = PARSER_ALLOC(p, sizeof(ast_list));
+    if (!seq) {
+        return NULL;
+    }
+    seq->capacity = 0;
+    seq->len = 0;
+    seq->items = NULL;
+}
+
 void seq_append(FParser *p, FAstNode *node, void *item) {
     FAstSequence *seq = &node->ast_v.sequence;
     if (seq->len >= seq->capacity) {
@@ -101,6 +111,26 @@ void seq_append(FParser *p, FAstNode *node, void *item) {
     }
     seq->items[seq->len] = item;
     seq->len += 1;
+}
+
+ast_list *ast_list_append(FParser *p, ast_list *seq, void *item) {
+    if (seq->len >= seq->capacity) {
+        if (!seq->capacity) {
+            seq->capacity = 1;
+            seq->len = 0;
+            seq->items = PARSER_ALLOC(p, sizeof(void *));
+        } else {
+            seq->capacity = seq->capacity << 1u;
+            // Since realloc isn't available with memory regions,
+            // the nodes needs to be copied in a loop
+            void **old_items = seq->items;
+            seq->items = PARSER_ALLOC(p, seq->capacity * sizeof(void *));
+            for (int i = 0; i < seq->len; ++i) {
+                seq->items[i] = old_items[i];
+            }
+        }
+    }
+    seq->items[seq->len++] = item;
 }
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
