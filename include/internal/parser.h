@@ -29,17 +29,17 @@ typedef struct frame {
     size_t f_pos;
     const char *f_rule;
     void *memo;
-    size_t flags;
+    int memoize;
 } frame_t;
 
-static inline int enter(FParser *p, frame_t *f, int memoize) {
+static inline int enter(FParser *p, frame_t *f) {
     if (FPeg_is_done(p)) {
         return 0;
     }
 
     IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
 
-    if (f->flags & F_MEMO || f->flags & F_LR) {
+    if (f->memoize) {
         FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
         IF_DEBUG(FPeg_debug_memo(p, memo, f->f_type, f->f_rule);)
         if (memo) { 
@@ -48,16 +48,6 @@ static inline int enter(FParser *p, frame_t *f, int memoize) {
         }
     }
 
-
-    if (f->flags & F_ALLOW_SPACES) {
-        f->flags |= p->ignore_whitespace & F_ALLOW_SPACES;
-        p->ignore_whitespace = 1;
-    }
-
-    if (f->flags & F_ALLOW_SPACES) {
-        f->flags |= p->ignore_whitespace & F_ALLOW_SPACES;
-        p->ignore_whitespace = 0;
-    }
 
     return 1;
 }
@@ -69,14 +59,6 @@ static inline void *exit(FParser *p, frame_t *f, FAstNode *result) {
 
     if (f->memo) {
         return f->memo;
-    }
-
-    if (f->flags & F_ALLOW_SPACES | f->flags & F_DISALLOW_SPACES) {
-        p->ignore_whitespace = !!(f->flags & F_ALLOW_SPACES);
-    }
-
-    if (f->flags & F_MEMO || f->flags & F_LR) {
-        FPeg_put_memo(p, f->f_pos, f->f_type, result, p->pos);
     }
 
     if (!result) { 
