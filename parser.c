@@ -257,7 +257,7 @@ static void *eval_input(FParser *p) {
     void *a, *b, *c, *r;
     r = enter(p, &f) && (
         (a = exprlist(p)) &&
-        (b = t_sequence(p, 2, "NEWLINE", 1)) &&
+        (b = eval_input_loop(p)) &&
         (c = consume(p, 1, "ENDMARKER"))
     ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
@@ -278,7 +278,7 @@ static void *stmt_list(FParser *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = sequence(p, stmt, 0))
+        (a = stmt_loop(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -322,7 +322,7 @@ static void *simple_stmt(FParser *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 12, ";", small_stmt)) &&
+        (a = small_stmt_delimited(p)) &&
         (b = consume(p, 12, ";"), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -462,7 +462,7 @@ static void *name_list(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = t_delimited(p, 7, ",", 3, "NAME"))
+        (a = name_list_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -500,7 +500,7 @@ static void *exprlist(FParser *p) {
     frame_t f = {19, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", expr)) &&
+        (a = expr_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -673,7 +673,7 @@ static void *targetlist(FParser *p) {
     frame_t f = {31, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", target)) &&
+        (a = target_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -713,7 +713,7 @@ static void *exprlist_star(FParser *p) {
     frame_t f = {33, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", expr_or_star)) &&
+        (a = expr_or_star_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -753,7 +753,7 @@ static void *slicelist(FParser *p) {
     frame_t f = {35, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", slice)) &&
+        (a = slice_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -850,7 +850,7 @@ static void *dict_items(FParser *p) {
     frame_t f = {42, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", dict_item)) &&
+        (a = dict_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -890,7 +890,7 @@ static void *list_items(FParser *p) {
     frame_t f = {44, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", list_item)) &&
+        (a = list_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -967,7 +967,7 @@ static void *iterator(FParser *p) {
     frame_t f = {49, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
     r = enter(p, &f) && (
-        (a = sequence(p, iter_for, 1)) &&
+        (a = iter_for_loop(p)) &&
         (consume(p, 72, "for")) &&
         (b = targetlist(p)) &&
         (c = iter_if(p), 1)
@@ -1082,7 +1082,7 @@ static void *simple_assign(FParser *p) {
     frame_t f = {57, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = sequence(p, simple_assign_1, 1)) &&
+        (a = simple_assign_1_loop(p)) &&
         (b = exprlist_star(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -1185,7 +1185,7 @@ static void *import_from_names_2(FParser *p) {
     frame_t f = {63, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (t_sequence(p, 6, ".", 0)) &&
+        (import_from_names_2_loop(p)) &&
         (a = dotted_name(p), 1)
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -1261,7 +1261,7 @@ static void *import_as_names(FParser *p) {
     frame_t f = {68, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", import_as_name))
+        (a = import_as_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -1287,7 +1287,7 @@ static void *dotted_as_names(FParser *p) {
     frame_t f = {69, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", dotted_as_name))
+        (a = dotted_as_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -1313,7 +1313,7 @@ static void *dotted_name(FParser *p) {
     frame_t f = {70, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = t_delimited(p, 6, ".", 3, "NAME"))
+        (a = dotted_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -1361,7 +1361,7 @@ static void *if_stmt(FParser *p) {
         (consume(p, 56, "if")) &&
         (a = named_expr(p)) &&
         (b = suite(p)) &&
-        (c = sequence(p, elif_stmt, 1)) &&
+        (c = elif_stmt_loop(p)) &&
         (d = else_suite(p), 1)
     ) ? node_4(p, &f, a, b, c, d) : 0;
     return exit(p, &f, r);
@@ -1449,7 +1449,7 @@ static void *with_stmt(FParser *p) {
     void *a, *b, *r;
     r = enter(p, &f) && (
         (consume(p, 68, "with")) &&
-        (a = delimited(p, 7, ",", expr_as_name)) &&
+        (a = expr_as_name_delimited(p)) &&
         (b = suite(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -1584,7 +1584,7 @@ static void *except_suite(FParser *p) {
     frame_t f = {88, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
     r = enter(p, &f) && (
-        (a = sequence(p, except_clause, 0)) &&
+        (a = except_clause_loop(p)) &&
         (b = else_suite(p), 1) &&
         (c = finally_suite(p), 1)
     ) ? node_3(p, &f, a, b, c) : 0;
@@ -1621,7 +1621,7 @@ static void *call_arg_list(FParser *p) {
     frame_t f = {90, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", call_arg)) &&
+        (a = call_arg_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -1724,7 +1724,7 @@ static void *full_arg_list(FParser *p) {
     frame_t f = {97, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", default_arg)) &&
+        (a = default_arg_delimited(p)) &&
         (b = full_arg_list_2(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
@@ -1773,7 +1773,7 @@ static void *args_kwargs(FParser *p) {
     r = enter(p, &f) && (
         (consume(p, 23, "*")) &&
         (a = typed_arg(p), 1) &&
-        (b = sequence(p, args_kwargs_3, 1)) &&
+        (b = args_kwargs_3_loop(p)) &&
         (c = args_kwargs_4(p), 1)
     ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
@@ -1893,7 +1893,7 @@ static void *simple_args(FParser *p) {
     frame_t f = {110, p->pos, FUNC, 0, 0};
     void *a, *r;
     r = enter(p, &f) && (
-        (a = delimited(p, 7, ",", simple_arg))
+        (a = simple_arg_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
 }
@@ -2108,7 +2108,7 @@ static void *comparison_1(FParser *p) {
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = bitwise_or(p)) &&
-        (b = sequence(p, comparison_1_2, 0))
+        (b = comparison_1_2_loop(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
 }
