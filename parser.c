@@ -242,7 +242,7 @@ static void *eval_input(FParser *p) {
 static ast_list *eval_input_loop(FParser *p) {
     ast_list *s = ast_list_new(p);
     void *a;
-    while((a = consume(p, 2, "NEWLINE"))) {
+    while ((a = consume(p, 2, "NEWLINE"))) {
         ast_list_append(p, s, a);
     }
     return s;
@@ -266,7 +266,7 @@ static ast_list *stmt_loop(FParser *p) {
     s = ast_list_new(p);
     do {
         ast_list_append(p, s, a);
-    } while((a = stmt(p)));
+    } while ((a = stmt(p)));
     return s;
 }
 
@@ -302,6 +302,21 @@ static void *simple_stmt(FParser *p) {
         (b = consume(p, 12, ";"), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *small_stmt_delimited(FParser *p) {
+    ast_list *s;
+    void *a = small_stmt(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 12, ";") &&
+            (a = small_stmt(p)));
+    p->pos = pos;
+    return s;
 }
 
 // small_stmt:
@@ -428,6 +443,21 @@ static void *name_list(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *name_list_delimited(FParser *p) {
+    ast_list *s;
+    void *a = consume(p, 3, "NAME");
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = consume(p, 3, "NAME")));
+    p->pos = pos;
+    return s;
+}
+
 // star_expr:
 //     | '*' bitwise_or
 static void *star_expr(FParser *p) {
@@ -450,6 +480,21 @@ static void *exprlist(FParser *p) {
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *expr_delimited(FParser *p) {
+    ast_list *s;
+    void *a = expr(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = expr(p)));
+    p->pos = pos;
+    return s;
 }
 
 // target:
@@ -610,6 +655,21 @@ static void *targetlist(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *target_delimited(FParser *p) {
+    ast_list *s;
+    void *a = target(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = target(p)));
+    p->pos = pos;
+    return s;
+}
+
 // expr_or_star:
 //     | star_expr
 //     | expr
@@ -635,6 +695,21 @@ static void *exprlist_star(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *expr_or_star_delimited(FParser *p) {
+    ast_list *s;
+    void *a = expr_or_star(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = expr_or_star(p)));
+    p->pos = pos;
+    return s;
+}
+
 // subscript:
 //     | '[' slicelist ']'
 static void *subscript(FParser *p) {
@@ -658,6 +733,21 @@ static void *slicelist(FParser *p) {
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *slice_delimited(FParser *p) {
+    ast_list *s;
+    void *a = slice(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = slice(p)));
+    p->pos = pos;
+    return s;
 }
 
 // slice:
@@ -742,6 +832,21 @@ static void *dict_items(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *dict_item_delimited(FParser *p) {
+    ast_list *s;
+    void *a = dict_item(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = dict_item(p)));
+    p->pos = pos;
+    return s;
+}
+
 // list_item:
 //     | star_expr
 //     | named_expr
@@ -765,6 +870,21 @@ static void *list_items(FParser *p) {
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *list_item_delimited(FParser *p) {
+    ast_list *s;
+    void *a = list_item(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = list_item(p)));
+    p->pos = pos;
+    return s;
 }
 
 // set_items (allow_whitespace=true):
@@ -834,7 +954,7 @@ static void *iterator(FParser *p) {
 static ast_list *iter_for_loop(FParser *p) {
     ast_list *s = ast_list_new(p);
     void *a;
-    while((a = iter_for(p))) {
+    while ((a = iter_for(p))) {
         ast_list_append(p, s, a);
     }
     return s;
@@ -947,7 +1067,7 @@ static void *simple_assign(FParser *p) {
 static ast_list *simple_assign_1_loop(FParser *p) {
     ast_list *s = ast_list_new(p);
     void *a;
-    while((a = simple_assign_1(p))) {
+    while ((a = simple_assign_1(p))) {
         ast_list_append(p, s, a);
     }
     return s;
@@ -1054,7 +1174,7 @@ static ast_list *import_from_names_2_loop(FParser *p) {
     s = ast_list_new(p);
     do {
         ast_list_append(p, s, a);
-    } while((a = consume(p, 6, ".")));
+    } while ((a = consume(p, 6, ".")));
     return s;
 }
 
@@ -1122,6 +1242,21 @@ static void *import_as_names(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *import_as_name_delimited(FParser *p) {
+    ast_list *s;
+    void *a = import_as_name(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = import_as_name(p)));
+    p->pos = pos;
+    return s;
+}
+
 // dotted_as_names:
 //     | ','.dotted_as_name+
 static void *dotted_as_names(FParser *p) {
@@ -1133,6 +1268,21 @@ static void *dotted_as_names(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *dotted_as_name_delimited(FParser *p) {
+    ast_list *s;
+    void *a = dotted_as_name(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = dotted_as_name(p)));
+    p->pos = pos;
+    return s;
+}
+
 // dotted_name:
 //     | '.'.NAME+
 static void *dotted_name(FParser *p) {
@@ -1142,6 +1292,21 @@ static void *dotted_name(FParser *p) {
         (a = t_delimited(p, 6, ".", 3, "NAME"))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *dotted_name_delimited(FParser *p) {
+    ast_list *s;
+    void *a = consume(p, 3, "NAME");
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 6, ".") &&
+            (a = consume(p, 3, "NAME")));
+    p->pos = pos;
+    return s;
 }
 
 // compound_stmt:
@@ -1181,7 +1346,7 @@ static void *if_stmt(FParser *p) {
 static ast_list *elif_stmt_loop(FParser *p) {
     ast_list *s = ast_list_new(p);
     void *a;
-    while((a = elif_stmt(p))) {
+    while ((a = elif_stmt(p))) {
         ast_list_append(p, s, a);
     }
     return s;
@@ -1264,6 +1429,21 @@ static void *with_stmt(FParser *p) {
         (b = suite(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *expr_as_name_delimited(FParser *p) {
+    ast_list *s;
+    void *a = expr_as_name(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = expr_as_name(p)));
+    p->pos = pos;
+    return s;
 }
 
 // expr_as_name:
@@ -1394,7 +1574,7 @@ static ast_list *except_clause_loop(FParser *p) {
     s = ast_list_new(p);
     do {
         ast_list_append(p, s, a);
-    } while((a = except_clause(p)));
+    } while ((a = except_clause(p)));
     return s;
 }
 
@@ -1421,6 +1601,21 @@ static void *call_arg_list(FParser *p) {
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *call_arg_delimited(FParser *p) {
+    ast_list *s;
+    void *a = call_arg(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = call_arg(p)));
+    p->pos = pos;
+    return s;
 }
 
 // call_arg:
@@ -1511,6 +1706,21 @@ static void *full_arg_list(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *default_arg_delimited(FParser *p) {
+    ast_list *s;
+    void *a = default_arg(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = default_arg(p)));
+    p->pos = pos;
+    return s;
+}
+
 static void *full_arg_list_2(FParser *p) {
     frame_t f = {98, p->pos, FUNC, 0, 0};
     void *a, *r;
@@ -1548,7 +1758,7 @@ static void *args_kwargs(FParser *p) {
 static ast_list *args_kwargs_3_loop(FParser *p) {
     ast_list *s = ast_list_new(p);
     void *a;
-    while((a = args_kwargs_3(p))) {
+    while ((a = args_kwargs_3(p))) {
         ast_list_append(p, s, a);
     }
     return s;
@@ -1662,6 +1872,21 @@ static void *simple_args(FParser *p) {
         (a = delimited(p, 7, ",", simple_arg))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *simple_arg_delimited(FParser *p) {
+    ast_list *s;
+    void *a = simple_arg(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, s, a);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (a = simple_arg(p)));
+    p->pos = pos;
+    return s;
 }
 
 // builder_hint:
@@ -1871,7 +2096,7 @@ static ast_list *comparison_1_2_loop(FParser *p) {
     s = ast_list_new(p);
     do {
         ast_list_append(p, s, a);
-    } while((a = comparison_1_2(p)));
+    } while ((a = comparison_1_2(p)));
     return s;
 }
 
