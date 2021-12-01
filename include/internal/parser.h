@@ -5,7 +5,9 @@
 #include "../ast.h"
 
 
+#ifndef PEG_NODEBUG
 #define PEG_DEBUG
+#endif
 
 #ifdef PEG_DEBUG
 #define IF_DEBUG(s) s
@@ -14,15 +16,7 @@
 #endif
 
 
-#define DEBUG_EXTRAS f_type, __func__
-
-#define F_MEMO (1 << 16u)
-#define F_LR (1 << 20u)
-#define F_ALLOW_SPACES (11 << 17u)
-#define F_DISALLOW_SPACES (10 << 17u)
 #define FUNC __func__
-
-#define CURRENT_SPACE (1 << 19u)
 
 typedef struct frame {
     size_t f_type;
@@ -59,6 +53,10 @@ static inline void *exit(FParser *p, frame_t *f, FAstNode *result) {
 
     if (f->memo) {
         return f->memo;
+    }
+
+    if (f->memoize) {
+        FPeg_put_memo(p, f->f_pos, f->f_type, result, p->pos);
     }
 
     if (!result) { 

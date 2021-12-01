@@ -593,20 +593,19 @@ static void *targetlist_sp(FParser *p) {
 //     | atom &t_lookahead
 static void *t_primary(FParser *p) {
     frame_t f = {25, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = t_primary_1(p)) ||
         (a = t_primary_2(p)) ||
         (a = t_primary_3(p)) ||
         (a = t_primary_4(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2038,18 +2037,17 @@ static void *expr(FParser *p) {
 //     | conjunction
 static void *disjunction(FParser *p) {
     frame_t f = {118, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = disjunction_1(p)) ||
         (a = conjunction(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2070,18 +2068,17 @@ static void *disjunction_1(FParser *p) {
 //     | inversion
 static void *conjunction(FParser *p) {
     frame_t f = {120, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = conjunction_1(p)) ||
         (a = inversion(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2218,18 +2215,17 @@ static void *comp_op_10(FParser *p) {
 //     | bitwise_xor
 static void *bitwise_or(FParser *p) {
     frame_t f = {130, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = bitwise_or_1(p)) ||
         (a = bitwise_xor(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2250,18 +2246,17 @@ static void *bitwise_or_1(FParser *p) {
 //     | bitwise_and
 static void *bitwise_xor(FParser *p) {
     frame_t f = {132, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = bitwise_xor_1(p)) ||
         (a = bitwise_and(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2282,18 +2277,17 @@ static void *bitwise_xor_1(FParser *p) {
 //     | shift_expr
 static void *bitwise_and(FParser *p) {
     frame_t f = {134, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = bitwise_and_1(p)) ||
         (a = shift_expr(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2315,19 +2309,18 @@ static void *bitwise_and_1(FParser *p) {
 //     | sum
 static void *shift_expr(FParser *p) {
     frame_t f = {136, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = shift_expr_1(p)) ||
         (a = shift_expr_2(p)) ||
         (a = sum(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2360,19 +2353,18 @@ static void *shift_expr_2(FParser *p) {
 //     | term
 static void *sum(FParser *p) {
     frame_t f = {139, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = sum_1(p)) ||
         (a = sum_2(p)) ||
         (a = term(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2408,10 +2400,11 @@ static void *sum_2(FParser *p) {
 //     | pipe_expr
 static void *term(FParser *p) {
     frame_t f = {142, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = term_1(p)) ||
         (a = term_2(p)) ||
@@ -2419,11 +2412,9 @@ static void *term(FParser *p) {
         (a = term_4(p)) ||
         (a = term_5(p)) ||
         (a = pipe_expr(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2488,18 +2479,17 @@ static void *term_5(FParser *p) {
 //     | factor
 static void *pipe_expr(FParser *p) {
     frame_t f = {148, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = pipe_expr_1(p)) ||
         (a = factor(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -2593,20 +2583,19 @@ static void *power_1(FParser *p) {
 //     | atom
 static void *primary(FParser *p) {
     frame_t f = {156, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = primary_1(p)) ||
         (a = primary_2(p)) ||
         (a = primary_3(p)) ||
         (a = atom(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }

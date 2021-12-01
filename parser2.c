@@ -33,19 +33,18 @@ void *parse_calc(FParser *p) {
 //     | cterm
 static void *csum(FParser *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = csum_1(p)) ||
         (a = csum_2(p)) ||
         (a = cterm(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
@@ -79,20 +78,19 @@ static void *csum_2(FParser *p) {
 //     | cfactor
 static void *cterm(FParser *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
-    void *a = 0, *r = 0, *m = 0;
+    void *a = 0, *r = 0, *max = 0;
+    size_t maxpos;
     if (!enter(p, &f)) goto exit;
-    size_t i = f.f_pos;
-    while(memoize(p, &f, m, i), 1) {
+    do {
+        memoize(p, &f, max = a, maxpos = p->pos);
         p->pos = f.f_pos;
         (a = cterm_1(p)) ||
         (a = cterm_2(p)) ||
         (a = cterm_3(p)) ||
         (a = cfactor(p));
-        if (p->pos <= i) break;
-        m = a, i = p->pos;
-    }
-    p->pos = i;
-    r = m ? node_1(p, &f, m) : 0;
+    } while (p->pos > maxpos);
+    p->pos = maxpos;
+    r = max ? node_1(p, &f, max) : 0;
 exit:
     return exit(p, &f, r);
 }
