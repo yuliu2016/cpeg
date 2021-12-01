@@ -240,8 +240,8 @@ static void *eval_input(FParser *p) {
 }
 
 static ast_list *eval_input_loop(FParser *p) {
-    void *a;
     ast_list *s = ast_list_new(p);
+    void *a;
     while((a = consume(p, 2, "NEWLINE"))) {
         ast_list_append(p, s, a);
     }
@@ -257,6 +257,17 @@ static void *stmt_list(FParser *p) {
         (a = sequence(p, stmt, 0))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *stmt_loop(FParser *p) {
+    ast_list *s;
+    void *a = stmt(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    do {
+        ast_list_append(p, s, a);
+    } while((a = stmt(p)));
+    return s;
 }
 
 // stmt:
@@ -821,8 +832,8 @@ static void *iterator(FParser *p) {
 }
 
 static ast_list *iter_for_loop(FParser *p) {
-    void *a;
     ast_list *s = ast_list_new(p);
+    void *a;
     while((a = iter_for(p))) {
         ast_list_append(p, s, a);
     }
@@ -934,8 +945,8 @@ static void *simple_assign(FParser *p) {
 }
 
 static ast_list *simple_assign_1_loop(FParser *p) {
-    void *a;
     ast_list *s = ast_list_new(p);
+    void *a;
     while((a = simple_assign_1(p))) {
         ast_list_append(p, s, a);
     }
@@ -1034,6 +1045,17 @@ static void *import_from_names_2(FParser *p) {
         (a = dotted_name(p), 1)
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *import_from_names_2_loop(FParser *p) {
+    ast_list *s;
+    void *a = consume(p, 6, ".");
+    if (!a) return 0;
+    s = ast_list_new(p);
+    do {
+        ast_list_append(p, s, a);
+    } while((a = consume(p, 6, ".")));
+    return s;
 }
 
 // import_from_items:
@@ -1157,8 +1179,8 @@ static void *if_stmt(FParser *p) {
 }
 
 static ast_list *elif_stmt_loop(FParser *p) {
-    void *a;
     ast_list *s = ast_list_new(p);
+    void *a;
     while((a = elif_stmt(p))) {
         ast_list_append(p, s, a);
     }
@@ -1365,6 +1387,17 @@ static void *except_suite(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *except_clause_loop(FParser *p) {
+    ast_list *s;
+    void *a = except_clause(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    do {
+        ast_list_append(p, s, a);
+    } while((a = except_clause(p)));
+    return s;
+}
+
 // invocation:
 //     | '(' [call_arg_list] ')'
 static void *invocation(FParser *p) {
@@ -1513,8 +1546,8 @@ static void *args_kwargs(FParser *p) {
 }
 
 static ast_list *args_kwargs_3_loop(FParser *p) {
-    void *a;
     ast_list *s = ast_list_new(p);
+    void *a;
     while((a = args_kwargs_3(p))) {
         ast_list_append(p, s, a);
     }
@@ -1829,6 +1862,17 @@ static void *comparison_1(FParser *p) {
         (b = sequence(p, comparison_1_2, 0))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *comparison_1_2_loop(FParser *p) {
+    ast_list *s;
+    void *a = comparison_1_2(p);
+    if (!a) return 0;
+    s = ast_list_new(p);
+    do {
+        ast_list_append(p, s, a);
+    } while((a = comparison_1_2(p)));
+    return s;
 }
 
 static void *comparison_1_2(FParser *p) {
