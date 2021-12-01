@@ -43,4 +43,25 @@ ast_list *ast_list_new(FParser *p);
 
 void ast_list_append(FParser *p, ast_list *seq, void *item);
 
+
+static inline FAstNode *node_0(FParser *p, void *f) {
+    return FAst_new_node(p, 0, 0);
+}
+
+static inline FAstNode *node_1(FParser *p, void *f, FAstNode *a) {
+    return FAst_new_node(p, 0, 1, a);
+}
+
+static inline FAstNode *node_2(FParser *p, void *f, FAstNode *a , FAstNode *b) {
+    return FAst_new_node(p, 0, 2, a, b);
+}
+
+static inline FAstNode *node_3(FParser *p, void *f, FAstNode *a, FAstNode *b, FAstNode *c) {
+    return FAst_new_node(p, 0, 3, a, b, c);
+}
+
+static inline FAstNode *node_4(FParser *p, void *f, FAstNode *a, FAstNode *b, FAstNode *c, FAstNode *d) {
+    return FAst_new_node(p, 0, 4, a, b, c, d);
+}
+
 #endif //CPEG_AST_H

@@ -27,11 +27,12 @@ typedef struct frame {
 } frame_t;
 
 static inline int enter_frame(FParser *p, frame_t *f) {
+
+    IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
+
     if (FPeg_is_done(p)) {
         return 0;
     }
-
-    IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
 
     if (f->memoize) {
         FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
@@ -41,7 +42,6 @@ static inline int enter_frame(FParser *p, frame_t *f) {
             return 0;
         }
     }
-
 
     return 1;
 }
@@ -78,27 +78,5 @@ static inline int test_and_reset(FParser *p, frame_t *f, void *node) {
 static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
     return FPeg_consume_token_and_debug(p, type, literal);
 }
-
-
-static inline FAstNode *node_0(FParser *p, frame_t *f) {
-    return FAst_new_node(p, f->f_type, 0);
-}
-
-static inline FAstNode *node_1(FParser *p, frame_t *f, FAstNode *a) {
-    return FAst_new_node(p, f->f_type, 1, a);
-}
-
-static inline FAstNode *node_2(FParser *p, frame_t *f, FAstNode *a , FAstNode *b) {
-    return FAst_new_node(p, f->f_type, 2, a, b);
-}
-
-static inline FAstNode *node_3(FParser *p, frame_t *f, FAstNode *a, FAstNode *b, FAstNode *c) {
-    return FAst_new_node(p, f->f_type, 3, a, b, c);
-}
-
-static inline FAstNode *node_4(FParser *p, frame_t *f, FAstNode *a, FAstNode *b, FAstNode *c, FAstNode *d) {
-    return FAst_new_node(p, f->f_type, 4, a, b, c, d);
-}
-
 
 #endif //CPEG_PARSER_H
