@@ -219,7 +219,7 @@ void *parse_grammar(FParser *p, int entry_point) {
 static void *single_input(FParser *p) {
     frame_t f = {1, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 2, "NEWLINE")) ||
         (a = consume(p, 1, "ENDMARKER")) ||
         (a = simple_stmt(p)) ||
@@ -231,7 +231,7 @@ static void *single_input(FParser *p) {
 static void *single_input_4(FParser *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = compound_stmt(p)) &&
         (b = consume(p, 2, "NEWLINE"))
     ) ? node_2(p, &f, a, b) : 0;
@@ -243,7 +243,7 @@ static void *single_input_4(FParser *p) {
 static void *file_input(FParser *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = stmt_list(p), 1) &&
         (b = consume(p, 1, "ENDMARKER"))
     ) ? node_2(p, &f, a, b) : 0;
@@ -255,7 +255,7 @@ static void *file_input(FParser *p) {
 static void *eval_input(FParser *p) {
     frame_t f = {4, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = exprlist(p)) &&
         (b = eval_input_loop(p)) &&
         (c = consume(p, 1, "ENDMARKER"))
@@ -277,7 +277,7 @@ static ast_list *eval_input_loop(FParser *p) {
 static void *stmt_list(FParser *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = stmt_loop(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -299,7 +299,7 @@ static ast_list *stmt_loop(FParser *p) {
 static void *stmt(FParser *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = stmt_1(p)) &&
         (b = consume(p, 2, "NEWLINE"))
     ) ? node_2(p, &f, a, b) : 0;
@@ -309,7 +309,7 @@ static void *stmt(FParser *p) {
 static void *stmt_1(FParser *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = simple_stmt(p)) ||
         (a = compound_stmt(p))
     ) ? node_1(p, &f, a) : 0;
@@ -321,7 +321,7 @@ static void *stmt_1(FParser *p) {
 static void *simple_stmt(FParser *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = small_stmt_delimited(p)) &&
         (b = consume(p, 12, ";"), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -358,7 +358,7 @@ static ast_list *small_stmt_delimited(FParser *p) {
 static void *small_stmt(FParser *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 64, "pass")) ||
         (a = consume(p, 74, "break")) ||
         (a = consume(p, 73, "continue")) ||
@@ -379,7 +379,7 @@ static void *small_stmt(FParser *p) {
 static void *del_stmt(FParser *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 79, "del")) &&
         (a = targetlist(p))
     ) ? node_1(p, &f, a) : 0;
@@ -391,7 +391,7 @@ static void *del_stmt(FParser *p) {
 static void *return_stmt(FParser *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 54, "return")) &&
         (a = exprlist_star(p), 1)
     ) ? node_1(p, &f, a) : 0;
@@ -403,7 +403,7 @@ static void *return_stmt(FParser *p) {
 static void *raise_stmt(FParser *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 78, "raise")) &&
         (a = expr(p)) &&
         (b = raise_stmt_3(p), 1)
@@ -414,7 +414,7 @@ static void *raise_stmt(FParser *p) {
 static void *raise_stmt_3(FParser *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 66, "from")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -426,7 +426,7 @@ static void *raise_stmt_3(FParser *p) {
 static void *nonlocal_stmt(FParser *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 55, "nonlocal")) &&
         (a = name_list(p))
     ) ? node_1(p, &f, a) : 0;
@@ -438,7 +438,7 @@ static void *nonlocal_stmt(FParser *p) {
 static void *assert_stmt(FParser *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 80, "assert")) &&
         (a = expr(p)) &&
         (b = assert_stmt_3(p), 1)
@@ -449,7 +449,7 @@ static void *assert_stmt(FParser *p) {
 static void *assert_stmt_3(FParser *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 7, ",")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -461,7 +461,7 @@ static void *assert_stmt_3(FParser *p) {
 static void *name_list(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = name_list_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -487,7 +487,7 @@ static ast_list *name_list_delimited(FParser *p) {
 static void *star_expr(FParser *p) {
     frame_t f = {18, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 23, "*")) &&
         (a = bitwise_or(p))
     ) ? node_1(p, &f, a) : 0;
@@ -499,7 +499,7 @@ static void *star_expr(FParser *p) {
 static void *exprlist(FParser *p) {
     frame_t f = {19, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -529,7 +529,7 @@ static ast_list *expr_delimited(FParser *p) {
 static void *target(FParser *p) {
     frame_t f = {20, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = target_1(p)) ||
         (a = target_2(p)) ||
         (a = consume(p, 3, "NAME")) ||
@@ -541,7 +541,7 @@ static void *target(FParser *p) {
 static void *target_1(FParser *p) {
     frame_t f = {21, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = t_primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
@@ -553,7 +553,7 @@ static void *target_1(FParser *p) {
 static void *target_2(FParser *p) {
     frame_t f = {22, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
         (!test_and_reset(p, &f, t_lookahead(p)))
@@ -564,7 +564,7 @@ static void *target_2(FParser *p) {
 static void *target_4(FParser *p) {
     frame_t f = {23, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 13, "(")) &&
         (a = targetlist_sp(p)) &&
         (consume(p, 14, ")"))
@@ -577,7 +577,7 @@ static void *target_4(FParser *p) {
 static void *targetlist_sp(FParser *p) {
     frame_t f = {24, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = targetlist(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -589,9 +589,9 @@ static void *targetlist_sp(FParser *p) {
 //     | t_primary subscript &t_lookahead
 //     | atom &t_lookahead
 static void *t_primary(FParser *p) {
-    frame_t f = {25, p->pos, FUNC, 0, F_LR};
+    frame_t f = {25, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -611,7 +611,7 @@ exit:
 static void *t_primary_1(FParser *p) {
     frame_t f = {26, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = t_primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME")) &&
@@ -623,7 +623,7 @@ static void *t_primary_1(FParser *p) {
 static void *t_primary_2(FParser *p) {
     frame_t f = {27, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = t_primary(p)) &&
         (b = invocation(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
@@ -634,7 +634,7 @@ static void *t_primary_2(FParser *p) {
 static void *t_primary_3(FParser *p) {
     frame_t f = {28, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = t_primary(p)) &&
         (b = subscript(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
@@ -645,7 +645,7 @@ static void *t_primary_3(FParser *p) {
 static void *t_primary_4(FParser *p) {
     frame_t f = {29, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = atom(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
     ) ? node_1(p, &f, a) : 0;
@@ -659,7 +659,7 @@ static void *t_primary_4(FParser *p) {
 static void *t_lookahead(FParser *p) {
     frame_t f = {30, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 6, ".")) ||
         (a = consume(p, 13, "(")) ||
         (a = consume(p, 17, "["))
@@ -672,7 +672,7 @@ static void *t_lookahead(FParser *p) {
 static void *targetlist(FParser *p) {
     frame_t f = {31, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = target_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -700,7 +700,7 @@ static ast_list *target_delimited(FParser *p) {
 static void *expr_or_star(FParser *p) {
     frame_t f = {32, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = star_expr(p)) ||
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -712,7 +712,7 @@ static void *expr_or_star(FParser *p) {
 static void *exprlist_star(FParser *p) {
     frame_t f = {33, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr_or_star_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -739,7 +739,7 @@ static ast_list *expr_or_star_delimited(FParser *p) {
 static void *subscript(FParser *p) {
     frame_t f = {34, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 17, "[")) &&
         (a = slicelist(p)) &&
         (consume(p, 18, "]"))
@@ -752,7 +752,7 @@ static void *subscript(FParser *p) {
 static void *slicelist(FParser *p) {
     frame_t f = {35, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = slice_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -780,7 +780,7 @@ static ast_list *slice_delimited(FParser *p) {
 static void *slice(FParser *p) {
     frame_t f = {36, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = slice_1(p)) ||
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -790,7 +790,7 @@ static void *slice(FParser *p) {
 static void *slice_1(FParser *p) {
     frame_t f = {37, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr(p), 1) &&
         (b = slice_expr(p)) &&
         (c = slice_expr(p), 1)
@@ -803,7 +803,7 @@ static void *slice_1(FParser *p) {
 static void *slice_expr(FParser *p) {
     frame_t f = {38, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 9, ":")) &&
         (a = expr(p), 1)
     ) ? node_1(p, &f, a) : 0;
@@ -816,7 +816,7 @@ static void *slice_expr(FParser *p) {
 static void *dict_item(FParser *p) {
     frame_t f = {39, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dict_item_1(p)) ||
         (a = dict_item_2(p))
     ) ? node_1(p, &f, a) : 0;
@@ -826,7 +826,7 @@ static void *dict_item(FParser *p) {
 static void *dict_item_1(FParser *p) {
     frame_t f = {40, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr(p)) &&
         (consume(p, 9, ":")) &&
         (b = expr(p))
@@ -837,7 +837,7 @@ static void *dict_item_1(FParser *p) {
 static void *dict_item_2(FParser *p) {
     frame_t f = {41, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 38, "**")) &&
         (a = bitwise_or(p))
     ) ? node_1(p, &f, a) : 0;
@@ -849,7 +849,7 @@ static void *dict_item_2(FParser *p) {
 static void *dict_items(FParser *p) {
     frame_t f = {42, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dict_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -877,7 +877,7 @@ static ast_list *dict_item_delimited(FParser *p) {
 static void *list_item(FParser *p) {
     frame_t f = {43, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = star_expr(p)) ||
         (a = named_expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -889,7 +889,7 @@ static void *list_item(FParser *p) {
 static void *list_items(FParser *p) {
     frame_t f = {44, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = list_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -916,7 +916,7 @@ static ast_list *list_item_delimited(FParser *p) {
 static void *set_items(FParser *p) {
     frame_t f = {45, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = exprlist_star(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -927,7 +927,7 @@ static void *set_items(FParser *p) {
 static void *as_name(FParser *p) {
     frame_t f = {46, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 65, "as")) &&
         (a = consume(p, 3, "NAME"))
     ) ? node_1(p, &f, a) : 0;
@@ -939,7 +939,7 @@ static void *as_name(FParser *p) {
 static void *iter_for(FParser *p) {
     frame_t f = {47, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 72, "for")) &&
         (a = targetlist(p)) &&
         (consume(p, 63, "in")) &&
@@ -954,7 +954,7 @@ static void *iter_for(FParser *p) {
 static void *iter_if(FParser *p) {
     frame_t f = {48, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 56, "if")) &&
         (a = named_expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -966,7 +966,7 @@ static void *iter_if(FParser *p) {
 static void *iterator(FParser *p) {
     frame_t f = {49, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = iter_for_loop(p)) &&
         (consume(p, 72, "for")) &&
         (b = targetlist(p)) &&
@@ -989,7 +989,7 @@ static ast_list *iter_for_loop(FParser *p) {
 static void *list_iterator(FParser *p) {
     frame_t f = {50, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr_or_star(p)) &&
         (b = iterator(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -1001,7 +1001,7 @@ static void *list_iterator(FParser *p) {
 static void *dict_iterator(FParser *p) {
     frame_t f = {51, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dict_item(p)) &&
         (b = iterator(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -1016,7 +1016,7 @@ static void *dict_iterator(FParser *p) {
 static void *assignment(FParser *p) {
     frame_t f = {52, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = pubassign(p)) ||
         (a = annassign(p)) ||
         (a = augassign(p)) ||
@@ -1030,7 +1030,7 @@ static void *assignment(FParser *p) {
 static void *pubassign(FParser *p) {
     frame_t f = {53, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 24, "/")) &&
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
@@ -1044,7 +1044,7 @@ static void *pubassign(FParser *p) {
 static void *annassign(FParser *p) {
     frame_t f = {54, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = target(p)) &&
         (consume(p, 9, ":")) &&
         (b = expr(p)) &&
@@ -1056,7 +1056,7 @@ static void *annassign(FParser *p) {
 static void *annassign_4(FParser *p) {
     frame_t f = {55, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 8, "=")) &&
         (a = exprlist(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1068,7 +1068,7 @@ static void *annassign_4(FParser *p) {
 static void *augassign(FParser *p) {
     frame_t f = {56, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = target(p)) &&
         (b = augassign_op(p)) &&
         (c = exprlist(p))
@@ -1081,7 +1081,7 @@ static void *augassign(FParser *p) {
 static void *simple_assign(FParser *p) {
     frame_t f = {57, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = simple_assign_1_loop(p)) &&
         (b = exprlist_star(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -1100,7 +1100,7 @@ static ast_list *simple_assign_1_loop(FParser *p) {
 static void *simple_assign_1(FParser *p) {
     frame_t f = {58, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = targetlist(p)) &&
         (consume(p, 8, "="))
     ) ? node_1(p, &f, a) : 0;
@@ -1124,7 +1124,7 @@ static void *simple_assign_1(FParser *p) {
 static void *augassign_op(FParser *p) {
     frame_t f = {59, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 39, "+=")) ||
         (a = consume(p, 40, "-=")) ||
         (a = consume(p, 41, "*=")) ||
@@ -1147,7 +1147,7 @@ static void *augassign_op(FParser *p) {
 static void *import_name(FParser *p) {
     frame_t f = {60, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 67, "import")) &&
         (a = dotted_as_names(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1159,7 +1159,7 @@ static void *import_name(FParser *p) {
 static void *import_from(FParser *p) {
     frame_t f = {61, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 66, "from")) &&
         (a = import_from_names(p)) &&
         (consume(p, 67, "import")) &&
@@ -1174,7 +1174,7 @@ static void *import_from(FParser *p) {
 static void *import_from_names(FParser *p) {
     frame_t f = {62, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dotted_name(p)) ||
         (a = import_from_names_2(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1184,7 +1184,7 @@ static void *import_from_names(FParser *p) {
 static void *import_from_names_2(FParser *p) {
     frame_t f = {63, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (import_from_names_2_loop(p)) &&
         (a = dotted_name(p), 1)
     ) ? node_1(p, &f, a) : 0;
@@ -1209,7 +1209,7 @@ static ast_list *import_from_names_2_loop(FParser *p) {
 static void *import_from_items(FParser *p) {
     frame_t f = {64, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 23, "*")) ||
         (a = import_as_names_sp(p)) ||
         (a = import_as_names(p))
@@ -1222,7 +1222,7 @@ static void *import_from_items(FParser *p) {
 static void *import_as_names_sp(FParser *p) {
     frame_t f = {65, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 13, "(")) &&
         (a = import_as_names(p)) &&
         (b = consume(p, 7, ","), 1) &&
@@ -1236,7 +1236,7 @@ static void *import_as_names_sp(FParser *p) {
 static void *import_as_name(FParser *p) {
     frame_t f = {66, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (b = as_name(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1248,7 +1248,7 @@ static void *import_as_name(FParser *p) {
 static void *dotted_as_name(FParser *p) {
     frame_t f = {67, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dotted_name(p)) &&
         (b = as_name(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1260,7 +1260,7 @@ static void *dotted_as_name(FParser *p) {
 static void *import_as_names(FParser *p) {
     frame_t f = {68, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = import_as_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -1286,7 +1286,7 @@ static ast_list *import_as_name_delimited(FParser *p) {
 static void *dotted_as_names(FParser *p) {
     frame_t f = {69, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dotted_as_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -1312,7 +1312,7 @@ static ast_list *dotted_as_name_delimited(FParser *p) {
 static void *dotted_name(FParser *p) {
     frame_t f = {70, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = dotted_name_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -1342,7 +1342,7 @@ static ast_list *dotted_name_delimited(FParser *p) {
 static void *compound_stmt(FParser *p) {
     frame_t f = {71, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = if_stmt(p)) ||
         (a = while_stmt(p)) ||
         (a = for_stmt(p)) ||
@@ -1357,7 +1357,7 @@ static void *compound_stmt(FParser *p) {
 static void *if_stmt(FParser *p) {
     frame_t f = {72, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *d, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 56, "if")) &&
         (a = named_expr(p)) &&
         (b = suite(p)) &&
@@ -1381,7 +1381,7 @@ static ast_list *elif_stmt_loop(FParser *p) {
 static void *elif_stmt(FParser *p) {
     frame_t f = {73, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 57, "elif")) &&
         (a = named_expr(p)) &&
         (b = suite(p))
@@ -1394,7 +1394,7 @@ static void *elif_stmt(FParser *p) {
 static void *while_stmt(FParser *p) {
     frame_t f = {74, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 71, "while")) &&
         (a = named_expr(p)) &&
         (b = suite(p)) &&
@@ -1408,7 +1408,7 @@ static void *while_stmt(FParser *p) {
 static void *for_stmt(FParser *p) {
     frame_t f = {75, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *d, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 72, "for")) &&
         (a = targetlist(p)) &&
         (consume(p, 63, "in")) &&
@@ -1424,7 +1424,7 @@ static void *for_stmt(FParser *p) {
 static void *try_stmt(FParser *p) {
     frame_t f = {76, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 75, "try")) &&
         (a = suite(p)) &&
         (b = try_stmt_3(p))
@@ -1435,7 +1435,7 @@ static void *try_stmt(FParser *p) {
 static void *try_stmt_3(FParser *p) {
     frame_t f = {77, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = except_suite(p)) ||
         (a = finally_suite(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1447,7 +1447,7 @@ static void *try_stmt_3(FParser *p) {
 static void *with_stmt(FParser *p) {
     frame_t f = {78, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 68, "with")) &&
         (a = expr_as_name_delimited(p)) &&
         (b = suite(p))
@@ -1475,7 +1475,7 @@ static ast_list *expr_as_name_delimited(FParser *p) {
 static void *expr_as_name(FParser *p) {
     frame_t f = {79, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = expr(p)) &&
         (b = as_name(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1488,7 +1488,7 @@ static void *expr_as_name(FParser *p) {
 static void *block_suite(FParser *p) {
     frame_t f = {80, p->pos, FUNC, 0, F_DISALLOW_SPACES};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = block_suite_1(p)) ||
         (a = block_suite_2(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1498,7 +1498,7 @@ static void *block_suite(FParser *p) {
 static void *block_suite_1(FParser *p) {
     frame_t f = {81, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 15, "{")) &&
         (a = consume(p, 2, "NEWLINE")) &&
         (b = stmt_list(p)) &&
@@ -1510,7 +1510,7 @@ static void *block_suite_1(FParser *p) {
 static void *block_suite_2(FParser *p) {
     frame_t f = {82, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 15, "{")) &&
         (a = simple_stmt(p), 1) &&
         (consume(p, 16, "}"))
@@ -1524,7 +1524,7 @@ static void *block_suite_2(FParser *p) {
 static void *suite(FParser *p) {
     frame_t f = {83, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = suite_1(p)) ||
         (a = block_suite(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1534,7 +1534,7 @@ static void *suite(FParser *p) {
 static void *suite_1(FParser *p) {
     frame_t f = {84, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 9, ":")) &&
         (a = simple_stmt(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1546,7 +1546,7 @@ static void *suite_1(FParser *p) {
 static void *else_suite(FParser *p) {
     frame_t f = {85, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 58, "else")) &&
         (a = suite(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1558,7 +1558,7 @@ static void *else_suite(FParser *p) {
 static void *finally_suite(FParser *p) {
     frame_t f = {86, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 77, "finally")) &&
         (a = suite(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1570,7 +1570,7 @@ static void *finally_suite(FParser *p) {
 static void *except_clause(FParser *p) {
     frame_t f = {87, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 76, "except")) &&
         (a = expr_as_name(p), 1) &&
         (b = suite(p))
@@ -1583,7 +1583,7 @@ static void *except_clause(FParser *p) {
 static void *except_suite(FParser *p) {
     frame_t f = {88, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = except_clause_loop(p)) &&
         (b = else_suite(p), 1) &&
         (c = finally_suite(p), 1)
@@ -1607,7 +1607,7 @@ static ast_list *except_clause_loop(FParser *p) {
 static void *invocation(FParser *p) {
     frame_t f = {89, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 13, "(")) &&
         (a = call_arg_list(p), 1) &&
         (consume(p, 14, ")"))
@@ -1620,7 +1620,7 @@ static void *invocation(FParser *p) {
 static void *call_arg_list(FParser *p) {
     frame_t f = {90, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = call_arg_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1651,7 +1651,7 @@ static ast_list *call_arg_delimited(FParser *p) {
 static void *call_arg(FParser *p) {
     frame_t f = {91, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = call_arg_1(p)) ||
         (a = call_arg_2(p)) ||
         (a = call_arg_3(p)) ||
@@ -1664,7 +1664,7 @@ static void *call_arg(FParser *p) {
 static void *call_arg_1(FParser *p) {
     frame_t f = {92, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (b = expr(p))
@@ -1675,7 +1675,7 @@ static void *call_arg_1(FParser *p) {
 static void *call_arg_2(FParser *p) {
     frame_t f = {93, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (b = expr(p))
@@ -1686,7 +1686,7 @@ static void *call_arg_2(FParser *p) {
 static void *call_arg_3(FParser *p) {
     frame_t f = {94, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 38, "**")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1696,7 +1696,7 @@ static void *call_arg_3(FParser *p) {
 static void *call_arg_4(FParser *p) {
     frame_t f = {95, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 23, "*")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1710,7 +1710,7 @@ static void *call_arg_4(FParser *p) {
 static void *typed_arg_list(FParser *p) {
     frame_t f = {96, p->pos, FUNC, 0, F_ALLOW_SPACES};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = kwargs(p)) ||
         (a = args_kwargs(p)) ||
         (a = full_arg_list(p))
@@ -1723,7 +1723,7 @@ static void *typed_arg_list(FParser *p) {
 static void *full_arg_list(FParser *p) {
     frame_t f = {97, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = default_arg_delimited(p)) &&
         (b = full_arg_list_2(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1748,7 +1748,7 @@ static ast_list *default_arg_delimited(FParser *p) {
 static void *full_arg_list_2(FParser *p) {
     frame_t f = {98, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 7, ",")) &&
         (a = full_arg_list_2_2(p), 1)
     ) ? node_1(p, &f, a) : 0;
@@ -1758,7 +1758,7 @@ static void *full_arg_list_2(FParser *p) {
 static void *full_arg_list_2_2(FParser *p) {
     frame_t f = {99, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = kwargs(p)) ||
         (a = args_kwargs(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1770,7 +1770,7 @@ static void *full_arg_list_2_2(FParser *p) {
 static void *args_kwargs(FParser *p) {
     frame_t f = {100, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 23, "*")) &&
         (a = typed_arg(p), 1) &&
         (b = args_kwargs_3_loop(p)) &&
@@ -1791,7 +1791,7 @@ static ast_list *args_kwargs_3_loop(FParser *p) {
 static void *args_kwargs_3(FParser *p) {
     frame_t f = {101, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 7, ",")) &&
         (a = default_arg(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1801,7 +1801,7 @@ static void *args_kwargs_3(FParser *p) {
 static void *args_kwargs_4(FParser *p) {
     frame_t f = {102, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 7, ",")) &&
         (a = kwargs(p), 1)
     ) ? node_1(p, &f, a) : 0;
@@ -1813,7 +1813,7 @@ static void *args_kwargs_4(FParser *p) {
 static void *kwargs(FParser *p) {
     frame_t f = {103, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 38, "**")) &&
         (a = typed_arg(p)) &&
         (b = consume(p, 7, ","), 1)
@@ -1826,7 +1826,7 @@ static void *kwargs(FParser *p) {
 static void *default_arg(FParser *p) {
     frame_t f = {104, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = typed_arg(p)) &&
         (b = default_arg_2(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1836,7 +1836,7 @@ static void *default_arg(FParser *p) {
 static void *default_arg_2(FParser *p) {
     frame_t f = {105, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 8, "=")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1848,7 +1848,7 @@ static void *default_arg_2(FParser *p) {
 static void *typed_arg(FParser *p) {
     frame_t f = {106, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (b = typed_arg_2(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1858,7 +1858,7 @@ static void *typed_arg(FParser *p) {
 static void *typed_arg_2(FParser *p) {
     frame_t f = {107, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 9, ":")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1870,7 +1870,7 @@ static void *typed_arg_2(FParser *p) {
 static void *simple_arg(FParser *p) {
     frame_t f = {108, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (b = simple_arg_2(p), 1)
     ) ? node_2(p, &f, a, b) : 0;
@@ -1880,7 +1880,7 @@ static void *simple_arg(FParser *p) {
 static void *simple_arg_2(FParser *p) {
     frame_t f = {109, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 8, "=")) &&
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1892,7 +1892,7 @@ static void *simple_arg_2(FParser *p) {
 static void *simple_args(FParser *p) {
     frame_t f = {110, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = simple_arg_delimited(p))
     ) ? node_1(p, &f, a) : 0;
     return exit(p, &f, r);
@@ -1918,7 +1918,7 @@ static ast_list *simple_arg_delimited(FParser *p) {
 static void *builder_hint(FParser *p) {
     frame_t f = {111, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 19, "<")) &&
         (a = name_list(p)) &&
         (consume(p, 20, ">"))
@@ -1932,7 +1932,7 @@ static void *builder_hint(FParser *p) {
 static void *builder_args(FParser *p) {
     frame_t f = {112, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = simple_args(p)) ||
         (a = builder_args_2(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1942,7 +1942,7 @@ static void *builder_args(FParser *p) {
 static void *builder_args_2(FParser *p) {
     frame_t f = {113, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 13, "(")) &&
         (a = typed_arg_list(p), 1) &&
         (consume(p, 14, ")"))
@@ -1956,7 +1956,7 @@ static void *builder_args_2(FParser *p) {
 static void *named_expr(FParser *p) {
     frame_t f = {114, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = named_expr_1(p)) ||
         (a = expr(p))
     ) ? node_1(p, &f, a) : 0;
@@ -1966,7 +1966,7 @@ static void *named_expr(FParser *p) {
 static void *named_expr_1(FParser *p) {
     frame_t f = {115, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (b = expr(p))
@@ -1979,7 +1979,7 @@ static void *named_expr_1(FParser *p) {
 static void *conditional(FParser *p) {
     frame_t f = {116, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 56, "if")) &&
         (a = disjunction(p)) &&
         (consume(p, 10, "?")) &&
@@ -1996,7 +1996,7 @@ static void *conditional(FParser *p) {
 static void *expr(FParser *p) {
     frame_t f = {117, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = conditional(p)) ||
         (a = disjunction(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2007,9 +2007,9 @@ static void *expr(FParser *p) {
 //     | disjunction 'or' conjunction
 //     | conjunction
 static void *disjunction(FParser *p) {
-    frame_t f = {118, p->pos, FUNC, 0, F_LR};
+    frame_t f = {118, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2027,7 +2027,7 @@ exit:
 static void *disjunction_1(FParser *p) {
     frame_t f = {119, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = disjunction(p)) &&
         (consume(p, 60, "or")) &&
         (b = conjunction(p))
@@ -2039,9 +2039,9 @@ static void *disjunction_1(FParser *p) {
 //     | conjunction 'and' inversion
 //     | inversion
 static void *conjunction(FParser *p) {
-    frame_t f = {120, p->pos, FUNC, 0, F_LR};
+    frame_t f = {120, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2059,7 +2059,7 @@ exit:
 static void *conjunction_1(FParser *p) {
     frame_t f = {121, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = conjunction(p)) &&
         (consume(p, 59, "and")) &&
         (b = inversion(p))
@@ -2073,7 +2073,7 @@ static void *conjunction_1(FParser *p) {
 static void *inversion(FParser *p) {
     frame_t f = {122, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = inversion_1(p)) ||
         (a = comparison(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2083,7 +2083,7 @@ static void *inversion(FParser *p) {
 static void *inversion_1(FParser *p) {
     frame_t f = {123, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 61, "not")) &&
         (a = inversion(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2096,7 +2096,7 @@ static void *inversion_1(FParser *p) {
 static void *comparison(FParser *p) {
     frame_t f = {124, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = comparison_1(p)) ||
         (a = bitwise_or(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2106,7 +2106,7 @@ static void *comparison(FParser *p) {
 static void *comparison_1(FParser *p) {
     frame_t f = {125, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = bitwise_or(p)) &&
         (b = comparison_1_2_loop(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -2127,7 +2127,7 @@ static ast_list *comparison_1_2_loop(FParser *p) {
 static void *comparison_1_2(FParser *p) {
     frame_t f = {126, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = comp_op(p)) &&
         (b = bitwise_or(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -2148,7 +2148,7 @@ static void *comparison_1_2(FParser *p) {
 static void *comp_op(FParser *p) {
     frame_t f = {127, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 19, "<")) ||
         (a = consume(p, 20, ">")) ||
         (a = consume(p, 31, "==")) ||
@@ -2166,7 +2166,7 @@ static void *comp_op(FParser *p) {
 static void *comp_op_8(FParser *p) {
     frame_t f = {128, p->pos, FUNC, 0, 0};
     void *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
     ) ? node_0(p, &f) : 0;
@@ -2176,7 +2176,7 @@ static void *comp_op_8(FParser *p) {
 static void *comp_op_10(FParser *p) {
     frame_t f = {129, p->pos, FUNC, 0, 0};
     void *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
     ) ? node_0(p, &f) : 0;
@@ -2187,9 +2187,9 @@ static void *comp_op_10(FParser *p) {
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
 static void *bitwise_or(FParser *p) {
-    frame_t f = {130, p->pos, FUNC, 0, F_LR};
+    frame_t f = {130, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2207,7 +2207,7 @@ exit:
 static void *bitwise_or_1(FParser *p) {
     frame_t f = {131, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = bitwise_or(p)) &&
         (consume(p, 27, "|")) &&
         (b = bitwise_xor(p))
@@ -2219,9 +2219,9 @@ static void *bitwise_or_1(FParser *p) {
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
 static void *bitwise_xor(FParser *p) {
-    frame_t f = {132, p->pos, FUNC, 0, F_LR};
+    frame_t f = {132, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2239,7 +2239,7 @@ exit:
 static void *bitwise_xor_1(FParser *p) {
     frame_t f = {133, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = bitwise_xor(p)) &&
         (consume(p, 30, "^")) &&
         (b = bitwise_and(p))
@@ -2251,9 +2251,9 @@ static void *bitwise_xor_1(FParser *p) {
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
 static void *bitwise_and(FParser *p) {
-    frame_t f = {134, p->pos, FUNC, 0, F_LR};
+    frame_t f = {134, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2271,7 +2271,7 @@ exit:
 static void *bitwise_and_1(FParser *p) {
     frame_t f = {135, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = bitwise_and(p)) &&
         (consume(p, 28, "&")) &&
         (b = shift_expr(p))
@@ -2284,9 +2284,9 @@ static void *bitwise_and_1(FParser *p) {
 //     | shift_expr '>>' sum
 //     | sum
 static void *shift_expr(FParser *p) {
-    frame_t f = {136, p->pos, FUNC, 0, F_LR};
+    frame_t f = {136, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2305,7 +2305,7 @@ exit:
 static void *shift_expr_1(FParser *p) {
     frame_t f = {137, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = shift_expr(p)) &&
         (consume(p, 48, "<<")) &&
         (b = sum(p))
@@ -2316,7 +2316,7 @@ static void *shift_expr_1(FParser *p) {
 static void *shift_expr_2(FParser *p) {
     frame_t f = {138, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = shift_expr(p)) &&
         (consume(p, 49, ">>")) &&
         (b = sum(p))
@@ -2329,9 +2329,9 @@ static void *shift_expr_2(FParser *p) {
 //     | sum '-' term
 //     | term
 static void *sum(FParser *p) {
-    frame_t f = {139, p->pos, FUNC, 0, F_LR};
+    frame_t f = {139, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2350,7 +2350,7 @@ exit:
 static void *sum_1(FParser *p) {
     frame_t f = {140, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = sum(p)) &&
         (consume(p, 21, "+")) &&
         (b = term(p))
@@ -2361,7 +2361,7 @@ static void *sum_1(FParser *p) {
 static void *sum_2(FParser *p) {
     frame_t f = {141, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = sum(p)) &&
         (consume(p, 22, "-")) &&
         (b = term(p))
@@ -2377,9 +2377,9 @@ static void *sum_2(FParser *p) {
 //     | term '@' pipe_expr
 //     | pipe_expr
 static void *term(FParser *p) {
-    frame_t f = {142, p->pos, FUNC, 0, F_LR};
+    frame_t f = {142, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2401,7 +2401,7 @@ exit:
 static void *term_1(FParser *p) {
     frame_t f = {143, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = term(p)) &&
         (consume(p, 23, "*")) &&
         (b = pipe_expr(p))
@@ -2412,7 +2412,7 @@ static void *term_1(FParser *p) {
 static void *term_2(FParser *p) {
     frame_t f = {144, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = term(p)) &&
         (consume(p, 24, "/")) &&
         (b = pipe_expr(p))
@@ -2423,7 +2423,7 @@ static void *term_2(FParser *p) {
 static void *term_3(FParser *p) {
     frame_t f = {145, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = term(p)) &&
         (consume(p, 25, "%")) &&
         (b = pipe_expr(p))
@@ -2434,7 +2434,7 @@ static void *term_3(FParser *p) {
 static void *term_4(FParser *p) {
     frame_t f = {146, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = term(p)) &&
         (consume(p, 37, "//")) &&
         (b = pipe_expr(p))
@@ -2445,7 +2445,7 @@ static void *term_4(FParser *p) {
 static void *term_5(FParser *p) {
     frame_t f = {147, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = term(p)) &&
         (consume(p, 26, "@")) &&
         (b = pipe_expr(p))
@@ -2457,9 +2457,9 @@ static void *term_5(FParser *p) {
 //     | pipe_expr '->' factor
 //     | factor
 static void *pipe_expr(FParser *p) {
-    frame_t f = {148, p->pos, FUNC, 0, F_LR};
+    frame_t f = {148, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2477,7 +2477,7 @@ exit:
 static void *pipe_expr_1(FParser *p) {
     frame_t f = {149, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = pipe_expr(p)) &&
         (consume(p, 35, "->")) &&
         (b = factor(p))
@@ -2493,7 +2493,7 @@ static void *pipe_expr_1(FParser *p) {
 static void *factor(FParser *p) {
     frame_t f = {150, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = factor_1(p)) ||
         (a = factor_2(p)) ||
         (a = factor_3(p)) ||
@@ -2505,7 +2505,7 @@ static void *factor(FParser *p) {
 static void *factor_1(FParser *p) {
     frame_t f = {151, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 21, "+")) &&
         (a = factor(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2515,7 +2515,7 @@ static void *factor_1(FParser *p) {
 static void *factor_2(FParser *p) {
     frame_t f = {152, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 22, "-")) &&
         (a = factor(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2525,7 +2525,7 @@ static void *factor_2(FParser *p) {
 static void *factor_3(FParser *p) {
     frame_t f = {153, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 29, "~")) &&
         (a = factor(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2538,7 +2538,7 @@ static void *factor_3(FParser *p) {
 static void *power(FParser *p) {
     frame_t f = {154, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = power_1(p)) ||
         (a = primary(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2548,7 +2548,7 @@ static void *power(FParser *p) {
 static void *power_1(FParser *p) {
     frame_t f = {155, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = primary(p)) &&
         (consume(p, 38, "**")) &&
         (b = factor(p))
@@ -2562,9 +2562,9 @@ static void *power_1(FParser *p) {
 //     | primary subscript
 //     | atom
 static void *primary(FParser *p) {
-    frame_t f = {156, p->pos, FUNC, 0, F_LR};
+    frame_t f = {156, p->pos, FUNC, 0, 0};
     void *a = 0, *r = 0, *m = 0;
-    if (!enter(p, &f)) goto exit;
+    if (!enter(p, &f, 1)) goto exit;
     size_t i = f.f_pos;
     while(memoize(p, &f, m, i), 1) {
         p->pos = f.f_pos;
@@ -2584,7 +2584,7 @@ exit:
 static void *primary_1(FParser *p) {
     frame_t f = {157, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = primary(p)) &&
         (consume(p, 6, ".")) &&
         (b = consume(p, 3, "NAME"))
@@ -2595,7 +2595,7 @@ static void *primary_1(FParser *p) {
 static void *primary_2(FParser *p) {
     frame_t f = {158, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = primary(p)) &&
         (b = invocation(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -2605,7 +2605,7 @@ static void *primary_2(FParser *p) {
 static void *primary_3(FParser *p) {
     frame_t f = {159, p->pos, FUNC, 0, 0};
     void *a, *b, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = primary(p)) &&
         (b = subscript(p))
     ) ? node_2(p, &f, a, b) : 0;
@@ -2617,7 +2617,7 @@ static void *primary_3(FParser *p) {
 static void *tuple_atom(FParser *p) {
     frame_t f = {160, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 13, "(")) &&
         (a = list_items(p), 1) &&
         (consume(p, 14, ")"))
@@ -2630,7 +2630,7 @@ static void *tuple_atom(FParser *p) {
 static void *list_iterable(FParser *p) {
     frame_t f = {161, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 17, "[")) &&
         (a = list_iterator(p)) &&
         (consume(p, 18, "]"))
@@ -2643,7 +2643,7 @@ static void *list_iterable(FParser *p) {
 static void *list_atom(FParser *p) {
     frame_t f = {162, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 17, "[")) &&
         (a = list_items(p), 1) &&
         (consume(p, 18, "]"))
@@ -2656,7 +2656,7 @@ static void *list_atom(FParser *p) {
 static void *set_atom(FParser *p) {
     frame_t f = {163, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 15, "{")) &&
         (a = set_items(p), 1) &&
         (consume(p, 16, "}"))
@@ -2669,7 +2669,7 @@ static void *set_atom(FParser *p) {
 static void *dict_iterable(FParser *p) {
     frame_t f = {164, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 15, "{")) &&
         (a = dict_iterator(p)) &&
         (consume(p, 16, "}"))
@@ -2682,7 +2682,7 @@ static void *dict_iterable(FParser *p) {
 static void *dict_atom(FParser *p) {
     frame_t f = {165, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (consume(p, 15, "{")) &&
         (a = dict_items(p), 1) &&
         (consume(p, 16, "}"))
@@ -2696,7 +2696,7 @@ static void *dict_atom(FParser *p) {
 static void *builder(FParser *p) {
     frame_t f = {166, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = builder_1(p)) ||
         (a = builder_2(p))
     ) ? node_1(p, &f, a) : 0;
@@ -2706,7 +2706,7 @@ static void *builder(FParser *p) {
 static void *builder_1(FParser *p) {
     frame_t f = {167, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (b = simple_args(p)) &&
         (consume(p, 9, ":")) &&
@@ -2718,7 +2718,7 @@ static void *builder_1(FParser *p) {
 static void *builder_2(FParser *p) {
     frame_t f = {168, p->pos, FUNC, 0, 0};
     void *a, *b, *c, *d, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = consume(p, 3, "NAME")) &&
         (b = builder_hint(p), 1) &&
         (c = builder_args(p), 1) &&
@@ -2744,7 +2744,7 @@ static void *builder_2(FParser *p) {
 static void *atom(FParser *p) {
     frame_t f = {169, p->pos, FUNC, 0, 0};
     void *a, *r;
-    r = enter(p, &f) && (
+    r = enter(p, &f, 0) && (
         (a = tuple_atom(p)) ||
         (a = list_iterable(p)) ||
         (a = list_atom(p)) ||

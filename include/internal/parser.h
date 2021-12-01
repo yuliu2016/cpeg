@@ -32,7 +32,7 @@ typedef struct frame {
     size_t flags;
 } frame_t;
 
-static inline int enter(FParser *p, frame_t *f) {
+static inline int enter(FParser *p, frame_t *f, int memoize) {
     if (FPeg_is_done(p)) {
         return 0;
     }
