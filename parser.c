@@ -239,6 +239,15 @@ static void *eval_input(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *eval_input_loop(FParser *p) {
+    void *a;
+    ast_list *s = ast_list_new(p);
+    while((a = consume(p, 2, "NEWLINE"))) {
+        ast_list_append(p, s, a);
+    }
+    return s;
+}
+
 // stmt_list:
 //     | stmt+
 static void *stmt_list(FParser *p) {
@@ -811,6 +820,15 @@ static void *iterator(FParser *p) {
     return exit(p, &f, r);
 }
 
+static ast_list *iter_for_loop(FParser *p) {
+    void *a;
+    ast_list *s = ast_list_new(p);
+    while((a = iter_for(p))) {
+        ast_list_append(p, s, a);
+    }
+    return s;
+}
+
 // list_iterator (allow_whitespace=true):
 //     | expr_or_star iterator
 static void *list_iterator(FParser *p) {
@@ -913,6 +931,15 @@ static void *simple_assign(FParser *p) {
         (b = exprlist_star(p))
     ) ? node_2(p, &f, a, b) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *simple_assign_1_loop(FParser *p) {
+    void *a;
+    ast_list *s = ast_list_new(p);
+    while((a = simple_assign_1(p))) {
+        ast_list_append(p, s, a);
+    }
+    return s;
 }
 
 static void *simple_assign_1(FParser *p) {
@@ -1127,6 +1154,15 @@ static void *if_stmt(FParser *p) {
         (d = else_suite(p), 1)
     ) ? node_4(p, &f, a, b, c, d) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *elif_stmt_loop(FParser *p) {
+    void *a;
+    ast_list *s = ast_list_new(p);
+    while((a = elif_stmt(p))) {
+        ast_list_append(p, s, a);
+    }
+    return s;
 }
 
 // elif_stmt:
@@ -1474,6 +1510,15 @@ static void *args_kwargs(FParser *p) {
         (c = args_kwargs_4(p), 1)
     ) ? node_3(p, &f, a, b, c) : 0;
     return exit(p, &f, r);
+}
+
+static ast_list *args_kwargs_3_loop(FParser *p) {
+    void *a;
+    ast_list *s = ast_list_new(p);
+    while((a = args_kwargs_3(p))) {
+        ast_list_append(p, s, a);
+    }
+    return s;
 }
 
 static void *args_kwargs_3(FParser *p) {
