@@ -67,19 +67,7 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
     }
 }
 
-FAstNode *seq_new(FParser *p) {
-    FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
-    if (!node) {
-        return NULL;
-    }
-    // sequence type has a t of 0
-    node->ast_t = 0;
-    FAstSequence *seq = &node->ast_v.sequence;
-    seq->capacity = 0;
-    seq->len = 0;
-    seq->items = NULL;
-    return node;
-}
+
 
 ast_list *ast_list_new(FParser *p) {
     ast_list *seq = PARSER_ALLOC(p, sizeof(ast_list));
@@ -89,31 +77,11 @@ ast_list *ast_list_new(FParser *p) {
     seq->capacity = 0;
     seq->len = 0;
     seq->items = NULL;
+    return seq;
 }
 
-void seq_append(FParser *p, FAstNode *node, void *item) {
-    FAstSequence *seq = &node->ast_v.sequence;
-    if (seq->len >= seq->capacity) {
-        if (!seq->capacity) {
-            seq->capacity = 1;
-            seq->len = 0;
-            seq->items = PARSER_ALLOC(p, sizeof(FAstNode *));
-        } else {
-            seq->capacity = seq->capacity << 1u;
-            // Since realloc isn't available with memory regions,
-            // the nodes needs to be copied in a loop
-            FAstNode **old_items = seq->items;
-            seq->items = PARSER_ALLOC(p, seq->capacity * sizeof(FAstNode *));
-            for (int i = 0; i < seq->len; ++i) {
-                seq->items[i] = old_items[i];
-            }
-        }
-    }
-    seq->items[seq->len] = item;
-    seq->len += 1;
-}
 
-ast_list *ast_list_append(FParser *p, ast_list *seq, void *item) {
+void ast_list_append(FParser *p, ast_list *seq, void *item) {
     if (seq->len >= seq->capacity) {
         if (!seq->capacity) {
             seq->capacity = 1;
@@ -149,74 +117,4 @@ FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
     
     va_end(valist);
     return res;
-}
-
-FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule) {
-    FAstNode *node, *seq = seq_new(p);
-    while ((node = rule(p))) {
-        seq_append(p, seq, node);
-    }
-    return seq;
-}
-
-FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule) {
-    FAstNode *node, *seq;
-    if (!(node = rule(p))) return 0;
-    seq = seq_new(p);
-
-    do {
-        seq_append(p, seq, node);
-    } while ((node = rule(p)));
-
-    return seq;
-}
-
-FAstNode *FPeg_parse_delimited(FParser *p, size_t delimiter, FRuleFunc rule) {
-    FAstNode *node, *seq;
-    if (!(node = rule(p))) return 0;
-    seq = seq_new(p);
-    size_t pos;
-
-    do {
-        seq_append(p, seq, node);
-        pos = p->pos;
-    } while (FPeg_consume_token(p, delimiter) && rule(p));
-
-    p->pos = pos;
-    return seq;
-}
-
-FAstNode *FPeg_parse_token_sequence(FParser *p, size_t token) {
-    FAstNode *node, *seq;
-    if (!(node = FPeg_consume_token(p, token))) return 0;
-    seq = seq_new(p);
-
-    do {
-        seq_append(p, seq, node);
-    } while ((node = FPeg_consume_token(p, token)));
-
-    return seq;
-}
-
-FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, size_t token) {
-    FAstNode *node, *seq = seq_new(p);
-    while ((node = FPeg_consume_token(p, token))) {
-        seq_append(p, seq, node);
-    }
-    return seq;
-}
-
-FAstNode *FPeg_parse_token_delimited(FParser *p, size_t delimiter, size_t token) {
-    FAstNode *node, *seq;
-    if (!(node = FPeg_consume_token(p, token))) return 0;
-    seq = seq_new(p);
-    size_t pos;
-
-    do {
-        seq_append(p, seq, node);
-        pos = p->pos;
-    } while (FPeg_consume_token(p, delimiter) && FPeg_consume_token(p, token));
-
-    p->pos = pos;
-    return seq;
 }

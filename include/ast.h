@@ -6,11 +6,6 @@
 
 typedef struct ast_node_t FAstNode;
 
-typedef struct ast_sequence_t {
-    size_t len;
-    size_t capacity;
-    FAstNode **items;
-} FAstSequence;
 
 #define AST_NODE_MAX_FIELD 4
 
@@ -23,7 +18,6 @@ struct ast_node_t {
     unsigned int ast_t;
     union ast_v {
         FToken *token;
-        FAstSequence sequence;
         FAstNode *fields[AST_NODE_MAX_FIELD];
     } ast_v;
 };
@@ -45,20 +39,8 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
-FAstNode *FPeg_parse_sequece_or_none(FParser *p, FRuleFunc rule);
-
-FAstNode *FPeg_parse_sequence(FParser *p, FRuleFunc rule);
-
-FAstNode *FPeg_parse_delimited(FParser *p, size_t delimiter, FRuleFunc rule);
-
-FAstNode *FPeg_parse_token_sequence(FParser *p, size_t token);
-
-FAstNode *FPeg_parse_token_sequence_or_none(FParser *p, size_t token);
-
-FAstNode *FPeg_parse_token_delimited(FParser *p, size_t delimiter, size_t token);
-
 ast_list *ast_list_new(FParser *p);
 
-ast_list *ast_list_append(FParser *p, ast_list *seq, void *item);
+void ast_list_append(FParser *p, ast_list *seq, void *item);
 
 #endif //CPEG_AST_H
