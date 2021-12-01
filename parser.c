@@ -576,10 +576,13 @@ static void *target_4(FParser *p) {
 //     | targetlist
 static void *targetlist_sp(FParser *p) {
     frame_t f = {24, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *r;
     r = enter(p, &f) && (
         (a = targetlist(p))
     ) ? node_1(p, &f, a) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -848,11 +851,14 @@ static void *dict_item_2(FParser *p) {
 //     | ','.dict_item+ [',']
 static void *dict_items(FParser *p) {
     frame_t f = {42, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = dict_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -888,11 +894,14 @@ static void *list_item(FParser *p) {
 //     | ','.list_item+ [',']
 static void *list_items(FParser *p) {
     frame_t f = {44, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = list_item_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -915,10 +924,13 @@ static ast_list *list_item_delimited(FParser *p) {
 //     | exprlist_star
 static void *set_items(FParser *p) {
     frame_t f = {45, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *r;
     r = enter(p, &f) && (
         (a = exprlist_star(p))
     ) ? node_1(p, &f, a) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -988,11 +1000,14 @@ static ast_list *iter_for_loop(FParser *p) {
 //     | expr_or_star iterator
 static void *list_iterator(FParser *p) {
     frame_t f = {50, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = expr_or_star(p)) &&
         (b = iterator(p))
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -1000,11 +1015,14 @@ static void *list_iterator(FParser *p) {
 //     | dict_item iterator
 static void *dict_iterator(FParser *p) {
     frame_t f = {51, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = dict_item(p)) &&
         (b = iterator(p))
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -1221,6 +1239,8 @@ static void *import_from_items(FParser *p) {
 //     | '(' import_as_names [','] ')'
 static void *import_as_names_sp(FParser *p) {
     frame_t f = {65, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (consume(p, 13, "(")) &&
@@ -1228,6 +1248,7 @@ static void *import_as_names_sp(FParser *p) {
         (b = consume(p, 7, ","), 1) &&
         (consume(p, 14, ")"))
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -1487,11 +1508,14 @@ static void *expr_as_name(FParser *p) {
 //     | '{' [simple_stmt] '}'
 static void *block_suite(FParser *p) {
     frame_t f = {80, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace=0;
     void *a, *r;
     r = enter(p, &f) && (
         (a = block_suite_1(p)) ||
         (a = block_suite_2(p))
     ) ? node_1(p, &f, a) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -1619,11 +1643,14 @@ static void *invocation(FParser *p) {
 //     | ','.call_arg+ [',']
 static void *call_arg_list(FParser *p) {
     frame_t f = {90, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *b, *r;
     r = enter(p, &f) && (
         (a = call_arg_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? node_2(p, &f, a, b) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
@@ -1709,12 +1736,15 @@ static void *call_arg_4(FParser *p) {
 //     | full_arg_list
 static void *typed_arg_list(FParser *p) {
     frame_t f = {96, p->pos, FUNC, 0, 0};
+    int ws = p->ignore_whitespace;
+    p->ignore_whitespace = 1;
     void *a, *r;
     r = enter(p, &f) && (
         (a = kwargs(p)) ||
         (a = args_kwargs(p)) ||
         (a = full_arg_list(p))
     ) ? node_1(p, &f, a) : 0;
+    p->ignore_whitespace = ws;
     return exit(p, &f, r);
 }
 
