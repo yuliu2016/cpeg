@@ -51,7 +51,9 @@ exit:
 
 static void *csum_1(FParser *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = csum(p)) &&
         (consume(p, 21, "+")) &&
@@ -62,7 +64,9 @@ static void *csum_1(FParser *p) {
 
 static void *csum_2(FParser *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = csum(p)) &&
         (consume(p, 22, "-")) &&
@@ -97,7 +101,9 @@ exit:
 
 static void *cterm_1(FParser *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 23, "*")) &&
@@ -108,7 +114,9 @@ static void *cterm_1(FParser *p) {
 
 static void *cterm_2(FParser *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 24, "/")) &&
@@ -119,7 +127,9 @@ static void *cterm_2(FParser *p) {
 
 static void *cterm_3(FParser *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 25, "%")) &&
@@ -135,7 +145,8 @@ static void *cterm_3(FParser *p) {
 //     | cpower
 static void *cfactor(FParser *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = cfactor_1(p)) ||
         (a = cfactor_2(p)) ||
@@ -147,7 +158,8 @@ static void *cfactor(FParser *p) {
 
 static void *cfactor_1(FParser *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (a = cfactor(p))
@@ -157,7 +169,8 @@ static void *cfactor_1(FParser *p) {
 
 static void *cfactor_2(FParser *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (a = cfactor(p))
@@ -167,7 +180,8 @@ static void *cfactor_2(FParser *p) {
 
 static void *cfactor_3(FParser *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (a = cfactor(p))
@@ -180,7 +194,8 @@ static void *cfactor_3(FParser *p) {
 //     | catom
 static void *cpower(FParser *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = cpower_1(p)) ||
         (a = catom(p))
@@ -190,7 +205,9 @@ static void *cpower(FParser *p) {
 
 static void *cpower_1(FParser *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = catom(p)) &&
         (consume(p, 38, "**")) &&
@@ -206,7 +223,8 @@ static void *cpower_1(FParser *p) {
 //     | NUMBER
 static void *catom(FParser *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = catom_1(p)) ||
         (a = catom_2(p)) ||
@@ -218,7 +236,8 @@ static void *catom(FParser *p) {
 
 static void *catom_1(FParser *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
-    void *a, *r;
+    void *a;
+    void *r;
     r = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (a = csum(p)) &&
@@ -229,7 +248,9 @@ static void *catom_1(FParser *p) {
 
 static void *catom_2(FParser *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
@@ -243,7 +264,9 @@ static void *catom_2(FParser *p) {
 //     | ','.csum+ [',']
 static void *cparameters(FParser *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
-    void *a, *b, *r;
+    void *a;
+    void *b;
+    void *r;
     r = enter_frame(p, &f) && (
         (a = csum_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
