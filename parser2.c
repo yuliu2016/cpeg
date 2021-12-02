@@ -152,7 +152,7 @@ static void *cfactor(parser_t *p) {
         (a = cfactor_2(p)) ||
         (a = cfactor_3(p)) ||
         (a = cpower(p))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? a : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -199,7 +199,7 @@ static void *cpower(parser_t *p) {
     r = enter_frame(p, &f) && (
         (a = cpower_1(p)) ||
         (a = catom(p))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? a : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -230,7 +230,7 @@ static void *catom(parser_t *p) {
         (a = catom_2(p)) ||
         (a = consume(p, 3, "NAME")) ||
         (a = consume(p, 4, "NUMBER"))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? a : 0;
     return exit_frame(p, &f, r);
 }
 
