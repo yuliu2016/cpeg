@@ -1,199 +1,199 @@
 #include "include/internal/parser.h"
 
 
-static void *single_input(FParser *);
-static void *single_input_4(FParser *);
-static void *file_input(FParser *);
-static void *eval_input(FParser *);
-static ast_list *eval_input_loop(FParser *);
-static void *stmt_list(FParser *);
-static ast_list *stmt_loop(FParser *);
-static void *stmt(FParser *);
-static void *stmt_1(FParser *);
-static void *simple_stmt(FParser *);
-static ast_list *small_stmt_delimited(FParser *);
-static void *small_stmt(FParser *);
-static void *del_stmt(FParser *);
-static void *return_stmt(FParser *);
-static void *raise_stmt(FParser *);
-static void *raise_stmt_3(FParser *);
-static void *nonlocal_stmt(FParser *);
-static void *assert_stmt(FParser *);
-static void *assert_stmt_3(FParser *);
-static void *name_list(FParser *);
-static ast_list *name_list_delimited(FParser *);
-static void *star_expr(FParser *);
-static void *exprlist(FParser *);
-static ast_list *expr_delimited(FParser *);
-static void *target(FParser *);
-static void *target_1(FParser *);
-static void *target_2(FParser *);
-static void *target_4(FParser *);
-static void *targetlist_sp(FParser *);
-static void *t_primary(FParser *);
-static void *t_primary_1(FParser *);
-static void *t_primary_2(FParser *);
-static void *t_primary_3(FParser *);
-static void *t_primary_4(FParser *);
-static void *t_lookahead(FParser *);
-static void *targetlist(FParser *);
-static ast_list *target_delimited(FParser *);
-static void *expr_or_star(FParser *);
-static void *exprlist_star(FParser *);
-static ast_list *expr_or_star_delimited(FParser *);
-static void *subscript(FParser *);
-static void *slicelist(FParser *);
-static ast_list *slice_delimited(FParser *);
-static void *slice(FParser *);
-static void *slice_1(FParser *);
-static void *slice_expr(FParser *);
-static void *dict_item(FParser *);
-static void *dict_item_1(FParser *);
-static void *dict_item_2(FParser *);
-static void *dict_items(FParser *);
-static ast_list *dict_item_delimited(FParser *);
-static void *list_item(FParser *);
-static void *list_items(FParser *);
-static ast_list *list_item_delimited(FParser *);
-static void *set_items(FParser *);
-static void *as_name(FParser *);
-static void *iter_for(FParser *);
-static void *iter_if(FParser *);
-static void *iterator(FParser *);
-static ast_list *iter_for_loop(FParser *);
-static void *list_iterator(FParser *);
-static void *dict_iterator(FParser *);
-static void *assignment(FParser *);
-static void *pubassign(FParser *);
-static void *annassign(FParser *);
-static void *annassign_4(FParser *);
-static void *augassign(FParser *);
-static void *simple_assign(FParser *);
-static ast_list *simple_assign_1_loop(FParser *);
-static void *simple_assign_1(FParser *);
-static void *augassign_op(FParser *);
-static void *import_name(FParser *);
-static void *import_from(FParser *);
-static void *import_from_names(FParser *);
-static void *import_from_names_2(FParser *);
-static ast_list *import_from_names_2_loop(FParser *);
-static void *import_from_items(FParser *);
-static void *import_as_names_sp(FParser *);
-static void *import_as_name(FParser *);
-static void *dotted_as_name(FParser *);
-static void *import_as_names(FParser *);
-static ast_list *import_as_name_delimited(FParser *);
-static void *dotted_as_names(FParser *);
-static ast_list *dotted_as_name_delimited(FParser *);
-static void *dotted_name(FParser *);
-static ast_list *dotted_name_delimited(FParser *);
-static void *compound_stmt(FParser *);
-static void *if_stmt(FParser *);
-static ast_list *elif_stmt_loop(FParser *);
-static void *elif_stmt(FParser *);
-static void *while_stmt(FParser *);
-static void *for_stmt(FParser *);
-static void *try_stmt(FParser *);
-static void *try_stmt_3(FParser *);
-static void *with_stmt(FParser *);
-static ast_list *expr_as_name_delimited(FParser *);
-static void *expr_as_name(FParser *);
-static void *block_suite(FParser *);
-static void *block_suite_1(FParser *);
-static void *block_suite_2(FParser *);
-static void *suite(FParser *);
-static void *suite_1(FParser *);
-static void *else_suite(FParser *);
-static void *finally_suite(FParser *);
-static void *except_clause(FParser *);
-static void *except_suite(FParser *);
-static ast_list *except_clause_loop(FParser *);
-static void *invocation(FParser *);
-static void *call_arg_list(FParser *);
-static ast_list *call_arg_delimited(FParser *);
-static void *call_arg(FParser *);
-static void *call_arg_1(FParser *);
-static void *call_arg_2(FParser *);
-static void *call_arg_3(FParser *);
-static void *call_arg_4(FParser *);
-static void *typed_arg_list(FParser *);
-static void *full_arg_list(FParser *);
-static ast_list *default_arg_delimited(FParser *);
-static void *full_arg_list_2(FParser *);
-static void *full_arg_list_2_2(FParser *);
-static void *args_kwargs(FParser *);
-static ast_list *args_kwargs_3_loop(FParser *);
-static void *args_kwargs_3(FParser *);
-static void *args_kwargs_4(FParser *);
-static void *kwargs(FParser *);
-static void *default_arg(FParser *);
-static void *default_arg_2(FParser *);
-static void *typed_arg(FParser *);
-static void *typed_arg_2(FParser *);
-static void *simple_arg(FParser *);
-static void *simple_arg_2(FParser *);
-static void *simple_args(FParser *);
-static ast_list *simple_arg_delimited(FParser *);
-static void *builder_hint(FParser *);
-static void *builder_args(FParser *);
-static void *builder_args_2(FParser *);
-static void *named_expr(FParser *);
-static void *named_expr_1(FParser *);
-static void *conditional(FParser *);
-static void *expr(FParser *);
-static void *disjunction(FParser *);
-static void *disjunction_1(FParser *);
-static void *conjunction(FParser *);
-static void *conjunction_1(FParser *);
-static void *inversion(FParser *);
-static void *inversion_1(FParser *);
-static void *comparison(FParser *);
-static void *comparison_1(FParser *);
-static ast_list *comparison_1_2_loop(FParser *);
-static void *comparison_1_2(FParser *);
-static void *comp_op(FParser *);
-static void *comp_op_8(FParser *);
-static void *comp_op_10(FParser *);
-static void *bitwise_or(FParser *);
-static void *bitwise_or_1(FParser *);
-static void *bitwise_xor(FParser *);
-static void *bitwise_xor_1(FParser *);
-static void *bitwise_and(FParser *);
-static void *bitwise_and_1(FParser *);
-static void *shift_expr(FParser *);
-static void *shift_expr_1(FParser *);
-static void *shift_expr_2(FParser *);
-static void *sum(FParser *);
-static void *sum_1(FParser *);
-static void *sum_2(FParser *);
-static void *term(FParser *);
-static void *term_1(FParser *);
-static void *term_2(FParser *);
-static void *term_3(FParser *);
-static void *term_4(FParser *);
-static void *term_5(FParser *);
-static void *pipe_expr(FParser *);
-static void *pipe_expr_1(FParser *);
-static void *factor(FParser *);
-static void *factor_1(FParser *);
-static void *factor_2(FParser *);
-static void *factor_3(FParser *);
-static void *power(FParser *);
-static void *power_1(FParser *);
-static void *primary(FParser *);
-static void *primary_1(FParser *);
-static void *primary_2(FParser *);
-static void *primary_3(FParser *);
-static void *tuple_atom(FParser *);
-static void *list_iterable(FParser *);
-static void *list_atom(FParser *);
-static void *set_atom(FParser *);
-static void *dict_iterable(FParser *);
-static void *dict_atom(FParser *);
-static void *builder(FParser *);
-static void *builder_1(FParser *);
-static void *builder_2(FParser *);
-static void *atom(FParser *);
+static void *single_input(parser_t *);
+static void *single_input_4(parser_t *);
+static void *file_input(parser_t *);
+static void *eval_input(parser_t *);
+static ast_list *eval_input_loop(parser_t *);
+static void *stmt_list(parser_t *);
+static ast_list *stmt_loop(parser_t *);
+static void *stmt(parser_t *);
+static void *stmt_1(parser_t *);
+static void *simple_stmt(parser_t *);
+static ast_list *small_stmt_delimited(parser_t *);
+static void *small_stmt(parser_t *);
+static void *del_stmt(parser_t *);
+static void *return_stmt(parser_t *);
+static void *raise_stmt(parser_t *);
+static void *raise_stmt_3(parser_t *);
+static void *nonlocal_stmt(parser_t *);
+static void *assert_stmt(parser_t *);
+static void *assert_stmt_3(parser_t *);
+static void *name_list(parser_t *);
+static ast_list *name_list_delimited(parser_t *);
+static void *star_expr(parser_t *);
+static void *exprlist(parser_t *);
+static ast_list *expr_delimited(parser_t *);
+static void *target(parser_t *);
+static void *target_1(parser_t *);
+static void *target_2(parser_t *);
+static void *target_4(parser_t *);
+static void *targetlist_sp(parser_t *);
+static void *t_primary(parser_t *);
+static void *t_primary_1(parser_t *);
+static void *t_primary_2(parser_t *);
+static void *t_primary_3(parser_t *);
+static void *t_primary_4(parser_t *);
+static void *t_lookahead(parser_t *);
+static void *targetlist(parser_t *);
+static ast_list *target_delimited(parser_t *);
+static void *expr_or_star(parser_t *);
+static void *exprlist_star(parser_t *);
+static ast_list *expr_or_star_delimited(parser_t *);
+static void *subscript(parser_t *);
+static void *slicelist(parser_t *);
+static ast_list *slice_delimited(parser_t *);
+static void *slice(parser_t *);
+static void *slice_1(parser_t *);
+static void *slice_expr(parser_t *);
+static void *dict_item(parser_t *);
+static void *dict_item_1(parser_t *);
+static void *dict_item_2(parser_t *);
+static void *dict_items(parser_t *);
+static ast_list *dict_item_delimited(parser_t *);
+static void *list_item(parser_t *);
+static void *list_items(parser_t *);
+static ast_list *list_item_delimited(parser_t *);
+static void *set_items(parser_t *);
+static void *as_name(parser_t *);
+static void *iter_for(parser_t *);
+static void *iter_if(parser_t *);
+static void *iterator(parser_t *);
+static ast_list *iter_for_loop(parser_t *);
+static void *list_iterator(parser_t *);
+static void *dict_iterator(parser_t *);
+static void *assignment(parser_t *);
+static void *pubassign(parser_t *);
+static void *annassign(parser_t *);
+static void *annassign_4(parser_t *);
+static void *augassign(parser_t *);
+static void *simple_assign(parser_t *);
+static ast_list *simple_assign_1_loop(parser_t *);
+static void *simple_assign_1(parser_t *);
+static void *augassign_op(parser_t *);
+static void *import_name(parser_t *);
+static void *import_from(parser_t *);
+static void *import_from_names(parser_t *);
+static void *import_from_names_2(parser_t *);
+static ast_list *import_from_names_2_loop(parser_t *);
+static void *import_from_items(parser_t *);
+static void *import_as_names_sp(parser_t *);
+static void *import_as_name(parser_t *);
+static void *dotted_as_name(parser_t *);
+static void *import_as_names(parser_t *);
+static ast_list *import_as_name_delimited(parser_t *);
+static void *dotted_as_names(parser_t *);
+static ast_list *dotted_as_name_delimited(parser_t *);
+static void *dotted_name(parser_t *);
+static ast_list *dotted_name_delimited(parser_t *);
+static void *compound_stmt(parser_t *);
+static void *if_stmt(parser_t *);
+static ast_list *elif_stmt_loop(parser_t *);
+static void *elif_stmt(parser_t *);
+static void *while_stmt(parser_t *);
+static void *for_stmt(parser_t *);
+static void *try_stmt(parser_t *);
+static void *try_stmt_3(parser_t *);
+static void *with_stmt(parser_t *);
+static ast_list *expr_as_name_delimited(parser_t *);
+static void *expr_as_name(parser_t *);
+static void *block_suite(parser_t *);
+static void *block_suite_1(parser_t *);
+static void *block_suite_2(parser_t *);
+static void *suite(parser_t *);
+static void *suite_1(parser_t *);
+static void *else_suite(parser_t *);
+static void *finally_suite(parser_t *);
+static void *except_clause(parser_t *);
+static void *except_suite(parser_t *);
+static ast_list *except_clause_loop(parser_t *);
+static void *invocation(parser_t *);
+static void *call_arg_list(parser_t *);
+static ast_list *call_arg_delimited(parser_t *);
+static void *call_arg(parser_t *);
+static void *call_arg_1(parser_t *);
+static void *call_arg_2(parser_t *);
+static void *call_arg_3(parser_t *);
+static void *call_arg_4(parser_t *);
+static void *typed_arg_list(parser_t *);
+static void *full_arg_list(parser_t *);
+static ast_list *default_arg_delimited(parser_t *);
+static void *full_arg_list_2(parser_t *);
+static void *full_arg_list_2_2(parser_t *);
+static void *args_kwargs(parser_t *);
+static ast_list *args_kwargs_3_loop(parser_t *);
+static void *args_kwargs_3(parser_t *);
+static void *args_kwargs_4(parser_t *);
+static void *kwargs(parser_t *);
+static void *default_arg(parser_t *);
+static void *default_arg_2(parser_t *);
+static void *typed_arg(parser_t *);
+static void *typed_arg_2(parser_t *);
+static void *simple_arg(parser_t *);
+static void *simple_arg_2(parser_t *);
+static void *simple_args(parser_t *);
+static ast_list *simple_arg_delimited(parser_t *);
+static void *builder_hint(parser_t *);
+static void *builder_args(parser_t *);
+static void *builder_args_2(parser_t *);
+static void *named_expr(parser_t *);
+static void *named_expr_1(parser_t *);
+static void *conditional(parser_t *);
+static void *expr(parser_t *);
+static void *disjunction(parser_t *);
+static void *disjunction_1(parser_t *);
+static void *conjunction(parser_t *);
+static void *conjunction_1(parser_t *);
+static void *inversion(parser_t *);
+static void *inversion_1(parser_t *);
+static void *comparison(parser_t *);
+static void *comparison_1(parser_t *);
+static ast_list *comparison_1_2_loop(parser_t *);
+static void *comparison_1_2(parser_t *);
+static void *comp_op(parser_t *);
+static void *comp_op_8(parser_t *);
+static void *comp_op_10(parser_t *);
+static void *bitwise_or(parser_t *);
+static void *bitwise_or_1(parser_t *);
+static void *bitwise_xor(parser_t *);
+static void *bitwise_xor_1(parser_t *);
+static void *bitwise_and(parser_t *);
+static void *bitwise_and_1(parser_t *);
+static void *shift_expr(parser_t *);
+static void *shift_expr_1(parser_t *);
+static void *shift_expr_2(parser_t *);
+static void *sum(parser_t *);
+static void *sum_1(parser_t *);
+static void *sum_2(parser_t *);
+static void *term(parser_t *);
+static void *term_1(parser_t *);
+static void *term_2(parser_t *);
+static void *term_3(parser_t *);
+static void *term_4(parser_t *);
+static void *term_5(parser_t *);
+static void *pipe_expr(parser_t *);
+static void *pipe_expr_1(parser_t *);
+static void *factor(parser_t *);
+static void *factor_1(parser_t *);
+static void *factor_2(parser_t *);
+static void *factor_3(parser_t *);
+static void *power(parser_t *);
+static void *power_1(parser_t *);
+static void *primary(parser_t *);
+static void *primary_1(parser_t *);
+static void *primary_2(parser_t *);
+static void *primary_3(parser_t *);
+static void *tuple_atom(parser_t *);
+static void *list_iterable(parser_t *);
+static void *list_atom(parser_t *);
+static void *set_atom(parser_t *);
+static void *dict_iterable(parser_t *);
+static void *dict_atom(parser_t *);
+static void *builder(parser_t *);
+static void *builder_1(parser_t *);
+static void *builder_2(parser_t *);
+static void *atom(parser_t *);
 
 
 
@@ -216,7 +216,7 @@ void *parse_grammar(FParser *p, int entry_point) {
 //     | ENDMARKER
 //     | simple_stmt
 //     | compound_stmt NEWLINE
-static void *single_input(FParser *p) {
+static void *single_input(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -229,7 +229,7 @@ static void *single_input(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *single_input_4(FParser *p) {
+static void *single_input_4(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -243,7 +243,7 @@ static void *single_input_4(FParser *p) {
 
 // file_input:
 //     | [stmt_list] ENDMARKER
-static void *file_input(FParser *p) {
+static void *file_input(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -257,7 +257,7 @@ static void *file_input(FParser *p) {
 
 // eval_input:
 //     | exprlist NEWLINE* ENDMARKER
-static void *eval_input(FParser *p) {
+static void *eval_input(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -271,7 +271,7 @@ static void *eval_input(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *eval_input_loop(FParser *p) {
+static ast_list *eval_input_loop(parser_t *p) {
     ast_list *s = ast_list_new(p);
     void *a;
     while ((a = consume(p, 2, "NEWLINE"))) {
@@ -282,7 +282,7 @@ static ast_list *eval_input_loop(FParser *p) {
 
 // stmt_list:
 //     | stmt+
-static void *stmt_list(FParser *p) {
+static void *stmt_list(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -292,7 +292,7 @@ static void *stmt_list(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *stmt_loop(FParser *p) {
+static ast_list *stmt_loop(parser_t *p) {
     ast_list *s;
     void *a = stmt(p);
     if (!a) return 0;
@@ -305,7 +305,7 @@ static ast_list *stmt_loop(FParser *p) {
 
 // stmt:
 //     | (simple_stmt | compound_stmt) NEWLINE
-static void *stmt(FParser *p) {
+static void *stmt(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -317,7 +317,7 @@ static void *stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *stmt_1(FParser *p) {
+static void *stmt_1(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -330,7 +330,7 @@ static void *stmt_1(FParser *p) {
 
 // simple_stmt:
 //     | ';'.small_stmt+ [';']
-static void *simple_stmt(FParser *p) {
+static void *simple_stmt(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -342,7 +342,7 @@ static void *simple_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *small_stmt_delimited(FParser *p) {
+static ast_list *small_stmt_delimited(parser_t *p) {
     ast_list *s;
     void *a = small_stmt(p);
     if (!a) return 0;
@@ -369,7 +369,7 @@ static ast_list *small_stmt_delimited(FParser *p) {
 //     | import_name
 //     | import_from
 //     | assignment
-static void *small_stmt(FParser *p) {
+static void *small_stmt(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -391,7 +391,7 @@ static void *small_stmt(FParser *p) {
 
 // del_stmt:
 //     | 'del' targetlist
-static void *del_stmt(FParser *p) {
+static void *del_stmt(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -404,7 +404,7 @@ static void *del_stmt(FParser *p) {
 
 // return_stmt:
 //     | 'return' [exprlist_star]
-static void *return_stmt(FParser *p) {
+static void *return_stmt(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -417,7 +417,7 @@ static void *return_stmt(FParser *p) {
 
 // raise_stmt:
 //     | 'raise' expr ['from' expr]
-static void *raise_stmt(FParser *p) {
+static void *raise_stmt(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -430,7 +430,7 @@ static void *raise_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *raise_stmt_3(FParser *p) {
+static void *raise_stmt_3(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -443,7 +443,7 @@ static void *raise_stmt_3(FParser *p) {
 
 // nonlocal_stmt:
 //     | 'nonlocal' name_list
-static void *nonlocal_stmt(FParser *p) {
+static void *nonlocal_stmt(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -456,7 +456,7 @@ static void *nonlocal_stmt(FParser *p) {
 
 // assert_stmt:
 //     | 'assert' expr [',' expr]
-static void *assert_stmt(FParser *p) {
+static void *assert_stmt(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -469,7 +469,7 @@ static void *assert_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *assert_stmt_3(FParser *p) {
+static void *assert_stmt_3(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -482,7 +482,7 @@ static void *assert_stmt_3(FParser *p) {
 
 // name_list:
 //     | ','.NAME+
-static void *name_list(FParser *p) {
+static void *name_list(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -492,7 +492,7 @@ static void *name_list(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *name_list_delimited(FParser *p) {
+static ast_list *name_list_delimited(parser_t *p) {
     ast_list *s;
     void *a = consume(p, 3, "NAME");
     if (!a) return 0;
@@ -509,7 +509,7 @@ static ast_list *name_list_delimited(FParser *p) {
 
 // star_expr:
 //     | '*' bitwise_or
-static void *star_expr(FParser *p) {
+static void *star_expr(parser_t *p) {
     frame_t f = {18, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -522,7 +522,7 @@ static void *star_expr(FParser *p) {
 
 // exprlist:
 //     | ','.expr+ [',']
-static void *exprlist(FParser *p) {
+static void *exprlist(parser_t *p) {
     frame_t f = {19, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -534,7 +534,7 @@ static void *exprlist(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_delimited(FParser *p) {
+static ast_list *expr_delimited(parser_t *p) {
     ast_list *s;
     void *a = expr(p);
     if (!a) return 0;
@@ -554,7 +554,7 @@ static ast_list *expr_delimited(FParser *p) {
 //     | t_primary subscript !t_lookahead
 //     | NAME
 //     | '(' targetlist_sp ')'
-static void *target(FParser *p) {
+static void *target(parser_t *p) {
     frame_t f = {20, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -567,7 +567,7 @@ static void *target(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *target_1(FParser *p) {
+static void *target_1(parser_t *p) {
     frame_t f = {21, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -581,7 +581,7 @@ static void *target_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *target_2(FParser *p) {
+static void *target_2(parser_t *p) {
     frame_t f = {22, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -594,7 +594,7 @@ static void *target_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *target_4(FParser *p) {
+static void *target_4(parser_t *p) {
     frame_t f = {23, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -608,7 +608,7 @@ static void *target_4(FParser *p) {
 
 // targetlist_sp (allow_whitespace=true):
 //     | targetlist
-static void *targetlist_sp(FParser *p) {
+static void *targetlist_sp(parser_t *p) {
     frame_t f = {24, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -626,7 +626,7 @@ static void *targetlist_sp(FParser *p) {
 //     | t_primary invocation &t_lookahead
 //     | t_primary subscript &t_lookahead
 //     | atom &t_lookahead
-static void *t_primary(FParser *p) {
+static void *t_primary(parser_t *p) {
     frame_t f = {25, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -645,7 +645,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *t_primary_1(FParser *p) {
+static void *t_primary_1(parser_t *p) {
     frame_t f = {26, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -659,7 +659,7 @@ static void *t_primary_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *t_primary_2(FParser *p) {
+static void *t_primary_2(parser_t *p) {
     frame_t f = {27, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -672,7 +672,7 @@ static void *t_primary_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *t_primary_3(FParser *p) {
+static void *t_primary_3(parser_t *p) {
     frame_t f = {28, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -685,7 +685,7 @@ static void *t_primary_3(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *t_primary_4(FParser *p) {
+static void *t_primary_4(parser_t *p) {
     frame_t f = {29, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -700,7 +700,7 @@ static void *t_primary_4(FParser *p) {
 //     | '.'
 //     | '('
 //     | '['
-static void *t_lookahead(FParser *p) {
+static void *t_lookahead(parser_t *p) {
     frame_t f = {30, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -714,7 +714,7 @@ static void *t_lookahead(FParser *p) {
 
 // targetlist:
 //     | ','.target+ [',']
-static void *targetlist(FParser *p) {
+static void *targetlist(parser_t *p) {
     frame_t f = {31, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -726,7 +726,7 @@ static void *targetlist(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *target_delimited(FParser *p) {
+static ast_list *target_delimited(parser_t *p) {
     ast_list *s;
     void *a = target(p);
     if (!a) return 0;
@@ -744,7 +744,7 @@ static ast_list *target_delimited(FParser *p) {
 // expr_or_star:
 //     | star_expr
 //     | expr
-static void *expr_or_star(FParser *p) {
+static void *expr_or_star(parser_t *p) {
     frame_t f = {32, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -757,7 +757,7 @@ static void *expr_or_star(FParser *p) {
 
 // exprlist_star:
 //     | ','.expr_or_star+ [',']
-static void *exprlist_star(FParser *p) {
+static void *exprlist_star(parser_t *p) {
     frame_t f = {33, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -769,7 +769,7 @@ static void *exprlist_star(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_or_star_delimited(FParser *p) {
+static ast_list *expr_or_star_delimited(parser_t *p) {
     ast_list *s;
     void *a = expr_or_star(p);
     if (!a) return 0;
@@ -786,7 +786,7 @@ static ast_list *expr_or_star_delimited(FParser *p) {
 
 // subscript:
 //     | '[' slicelist ']'
-static void *subscript(FParser *p) {
+static void *subscript(parser_t *p) {
     frame_t f = {34, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -800,7 +800,7 @@ static void *subscript(FParser *p) {
 
 // slicelist:
 //     | ','.slice+ [',']
-static void *slicelist(FParser *p) {
+static void *slicelist(parser_t *p) {
     frame_t f = {35, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -812,7 +812,7 @@ static void *slicelist(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *slice_delimited(FParser *p) {
+static ast_list *slice_delimited(parser_t *p) {
     ast_list *s;
     void *a = slice(p);
     if (!a) return 0;
@@ -830,7 +830,7 @@ static ast_list *slice_delimited(FParser *p) {
 // slice:
 //     | [expr] slice_expr [slice_expr]
 //     | expr
-static void *slice(FParser *p) {
+static void *slice(parser_t *p) {
     frame_t f = {36, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -841,7 +841,7 @@ static void *slice(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *slice_1(FParser *p) {
+static void *slice_1(parser_t *p) {
     frame_t f = {37, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -857,7 +857,7 @@ static void *slice_1(FParser *p) {
 
 // slice_expr:
 //     | ':' [expr]
-static void *slice_expr(FParser *p) {
+static void *slice_expr(parser_t *p) {
     frame_t f = {38, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -871,7 +871,7 @@ static void *slice_expr(FParser *p) {
 // dict_item:
 //     | expr ':' expr
 //     | '**' bitwise_or
-static void *dict_item(FParser *p) {
+static void *dict_item(parser_t *p) {
     frame_t f = {39, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -882,7 +882,7 @@ static void *dict_item(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *dict_item_1(FParser *p) {
+static void *dict_item_1(parser_t *p) {
     frame_t f = {40, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -895,7 +895,7 @@ static void *dict_item_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *dict_item_2(FParser *p) {
+static void *dict_item_2(parser_t *p) {
     frame_t f = {41, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -908,7 +908,7 @@ static void *dict_item_2(FParser *p) {
 
 // dict_items (allow_whitespace=true):
 //     | ','.dict_item+ [',']
-static void *dict_items(FParser *p) {
+static void *dict_items(parser_t *p) {
     frame_t f = {42, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -923,7 +923,7 @@ static void *dict_items(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dict_item_delimited(FParser *p) {
+static ast_list *dict_item_delimited(parser_t *p) {
     ast_list *s;
     void *a = dict_item(p);
     if (!a) return 0;
@@ -941,7 +941,7 @@ static ast_list *dict_item_delimited(FParser *p) {
 // list_item:
 //     | star_expr
 //     | named_expr
-static void *list_item(FParser *p) {
+static void *list_item(parser_t *p) {
     frame_t f = {43, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -954,7 +954,7 @@ static void *list_item(FParser *p) {
 
 // list_items (allow_whitespace=true):
 //     | ','.list_item+ [',']
-static void *list_items(FParser *p) {
+static void *list_items(parser_t *p) {
     frame_t f = {44, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -969,7 +969,7 @@ static void *list_items(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *list_item_delimited(FParser *p) {
+static ast_list *list_item_delimited(parser_t *p) {
     ast_list *s;
     void *a = list_item(p);
     if (!a) return 0;
@@ -986,7 +986,7 @@ static ast_list *list_item_delimited(FParser *p) {
 
 // set_items (allow_whitespace=true):
 //     | exprlist_star
-static void *set_items(FParser *p) {
+static void *set_items(parser_t *p) {
     frame_t f = {45, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1001,7 +1001,7 @@ static void *set_items(FParser *p) {
 
 // as_name:
 //     | 'as' NAME
-static void *as_name(FParser *p) {
+static void *as_name(parser_t *p) {
     frame_t f = {46, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1014,7 +1014,7 @@ static void *as_name(FParser *p) {
 
 // iter_for:
 //     | 'for' targetlist 'in' disjunction [iter_if]
-static void *iter_for(FParser *p) {
+static void *iter_for(parser_t *p) {
     frame_t f = {47, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1032,7 +1032,7 @@ static void *iter_for(FParser *p) {
 
 // iter_if:
 //     | 'if' named_expr
-static void *iter_if(FParser *p) {
+static void *iter_if(parser_t *p) {
     frame_t f = {48, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1045,7 +1045,7 @@ static void *iter_if(FParser *p) {
 
 // iterator:
 //     | iter_for* 'for' targetlist [iter_if]
-static void *iterator(FParser *p) {
+static void *iterator(parser_t *p) {
     frame_t f = {49, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1060,7 +1060,7 @@ static void *iterator(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *iter_for_loop(FParser *p) {
+static ast_list *iter_for_loop(parser_t *p) {
     ast_list *s = ast_list_new(p);
     void *a;
     while ((a = iter_for(p))) {
@@ -1071,7 +1071,7 @@ static ast_list *iter_for_loop(FParser *p) {
 
 // list_iterator (allow_whitespace=true):
 //     | expr_or_star iterator
-static void *list_iterator(FParser *p) {
+static void *list_iterator(parser_t *p) {
     frame_t f = {50, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1088,7 +1088,7 @@ static void *list_iterator(FParser *p) {
 
 // dict_iterator (allow_whitespace=true):
 //     | dict_item iterator
-static void *dict_iterator(FParser *p) {
+static void *dict_iterator(parser_t *p) {
     frame_t f = {51, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1108,7 +1108,7 @@ static void *dict_iterator(FParser *p) {
 //     | annassign
 //     | augassign
 //     | simple_assign
-static void *assignment(FParser *p) {
+static void *assignment(parser_t *p) {
     frame_t f = {52, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1123,7 +1123,7 @@ static void *assignment(FParser *p) {
 
 // pubassign:
 //     | '/' NAME '=' exprlist
-static void *pubassign(FParser *p) {
+static void *pubassign(parser_t *p) {
     frame_t f = {53, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1139,7 +1139,7 @@ static void *pubassign(FParser *p) {
 
 // annassign:
 //     | target ':' expr ['=' exprlist]
-static void *annassign(FParser *p) {
+static void *annassign(parser_t *p) {
     frame_t f = {54, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1154,7 +1154,7 @@ static void *annassign(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *annassign_4(FParser *p) {
+static void *annassign_4(parser_t *p) {
     frame_t f = {55, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1167,7 +1167,7 @@ static void *annassign_4(FParser *p) {
 
 // augassign:
 //     | target augassign_op exprlist
-static void *augassign(FParser *p) {
+static void *augassign(parser_t *p) {
     frame_t f = {56, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1183,7 +1183,7 @@ static void *augassign(FParser *p) {
 
 // simple_assign:
 //     | (targetlist '=')* exprlist_star
-static void *simple_assign(FParser *p) {
+static void *simple_assign(parser_t *p) {
     frame_t f = {57, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1195,7 +1195,7 @@ static void *simple_assign(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *simple_assign_1_loop(FParser *p) {
+static ast_list *simple_assign_1_loop(parser_t *p) {
     ast_list *s = ast_list_new(p);
     void *a;
     while ((a = simple_assign_1(p))) {
@@ -1204,7 +1204,7 @@ static ast_list *simple_assign_1_loop(FParser *p) {
     return s;
 }
 
-static void *simple_assign_1(FParser *p) {
+static void *simple_assign_1(parser_t *p) {
     frame_t f = {58, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1229,7 +1229,7 @@ static void *simple_assign_1(FParser *p) {
 //     | '>>='
 //     | '**='
 //     | '//='
-static void *augassign_op(FParser *p) {
+static void *augassign_op(parser_t *p) {
     frame_t f = {59, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1253,7 +1253,7 @@ static void *augassign_op(FParser *p) {
 
 // import_name:
 //     | 'import' dotted_as_names
-static void *import_name(FParser *p) {
+static void *import_name(parser_t *p) {
     frame_t f = {60, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1266,7 +1266,7 @@ static void *import_name(FParser *p) {
 
 // import_from:
 //     | 'from' import_from_names 'import' import_from_items
-static void *import_from(FParser *p) {
+static void *import_from(parser_t *p) {
     frame_t f = {61, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1283,7 +1283,7 @@ static void *import_from(FParser *p) {
 // import_from_names:
 //     | dotted_name
 //     | '.'+ [dotted_name]
-static void *import_from_names(FParser *p) {
+static void *import_from_names(parser_t *p) {
     frame_t f = {62, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1294,7 +1294,7 @@ static void *import_from_names(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *import_from_names_2(FParser *p) {
+static void *import_from_names_2(parser_t *p) {
     frame_t f = {63, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1305,7 +1305,7 @@ static void *import_from_names_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *import_from_names_2_loop(FParser *p) {
+static ast_list *import_from_names_2_loop(parser_t *p) {
     ast_list *s;
     void *a = consume(p, 6, ".");
     if (!a) return 0;
@@ -1320,7 +1320,7 @@ static ast_list *import_from_names_2_loop(FParser *p) {
 //     | '*'
 //     | import_as_names_sp
 //     | import_as_names
-static void *import_from_items(FParser *p) {
+static void *import_from_items(parser_t *p) {
     frame_t f = {64, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1334,7 +1334,7 @@ static void *import_from_items(FParser *p) {
 
 // import_as_names_sp (allow_whitespace=true):
 //     | '(' import_as_names [','] ')'
-static void *import_as_names_sp(FParser *p) {
+static void *import_as_names_sp(parser_t *p) {
     frame_t f = {65, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1353,7 +1353,7 @@ static void *import_as_names_sp(FParser *p) {
 
 // import_as_name:
 //     | NAME [as_name]
-static void *import_as_name(FParser *p) {
+static void *import_as_name(parser_t *p) {
     frame_t f = {66, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1367,7 +1367,7 @@ static void *import_as_name(FParser *p) {
 
 // dotted_as_name:
 //     | dotted_name [as_name]
-static void *dotted_as_name(FParser *p) {
+static void *dotted_as_name(parser_t *p) {
     frame_t f = {67, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1381,7 +1381,7 @@ static void *dotted_as_name(FParser *p) {
 
 // import_as_names:
 //     | ','.import_as_name+
-static void *import_as_names(FParser *p) {
+static void *import_as_names(parser_t *p) {
     frame_t f = {68, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1391,7 +1391,7 @@ static void *import_as_names(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *import_as_name_delimited(FParser *p) {
+static ast_list *import_as_name_delimited(parser_t *p) {
     ast_list *s;
     void *a = import_as_name(p);
     if (!a) return 0;
@@ -1408,7 +1408,7 @@ static ast_list *import_as_name_delimited(FParser *p) {
 
 // dotted_as_names:
 //     | ','.dotted_as_name+
-static void *dotted_as_names(FParser *p) {
+static void *dotted_as_names(parser_t *p) {
     frame_t f = {69, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1418,7 +1418,7 @@ static void *dotted_as_names(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dotted_as_name_delimited(FParser *p) {
+static ast_list *dotted_as_name_delimited(parser_t *p) {
     ast_list *s;
     void *a = dotted_as_name(p);
     if (!a) return 0;
@@ -1435,7 +1435,7 @@ static ast_list *dotted_as_name_delimited(FParser *p) {
 
 // dotted_name:
 //     | '.'.NAME+
-static void *dotted_name(FParser *p) {
+static void *dotted_name(parser_t *p) {
     frame_t f = {70, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1445,7 +1445,7 @@ static void *dotted_name(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dotted_name_delimited(FParser *p) {
+static ast_list *dotted_name_delimited(parser_t *p) {
     ast_list *s;
     void *a = consume(p, 3, "NAME");
     if (!a) return 0;
@@ -1466,7 +1466,7 @@ static ast_list *dotted_name_delimited(FParser *p) {
 //     | for_stmt
 //     | try_stmt
 //     | with_stmt
-static void *compound_stmt(FParser *p) {
+static void *compound_stmt(parser_t *p) {
     frame_t f = {71, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1482,7 +1482,7 @@ static void *compound_stmt(FParser *p) {
 
 // if_stmt:
 //     | 'if' named_expr suite elif_stmt* [else_suite]
-static void *if_stmt(FParser *p) {
+static void *if_stmt(parser_t *p) {
     frame_t f = {72, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1499,7 +1499,7 @@ static void *if_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *elif_stmt_loop(FParser *p) {
+static ast_list *elif_stmt_loop(parser_t *p) {
     ast_list *s = ast_list_new(p);
     void *a;
     while ((a = elif_stmt(p))) {
@@ -1510,7 +1510,7 @@ static ast_list *elif_stmt_loop(FParser *p) {
 
 // elif_stmt:
 //     | 'elif' named_expr suite
-static void *elif_stmt(FParser *p) {
+static void *elif_stmt(parser_t *p) {
     frame_t f = {73, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1525,7 +1525,7 @@ static void *elif_stmt(FParser *p) {
 
 // while_stmt:
 //     | 'while' named_expr suite [else_suite]
-static void *while_stmt(FParser *p) {
+static void *while_stmt(parser_t *p) {
     frame_t f = {74, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1542,7 +1542,7 @@ static void *while_stmt(FParser *p) {
 
 // for_stmt:
 //     | 'for' targetlist 'in' exprlist suite [else_suite]
-static void *for_stmt(FParser *p) {
+static void *for_stmt(parser_t *p) {
     frame_t f = {75, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1562,7 +1562,7 @@ static void *for_stmt(FParser *p) {
 
 // try_stmt:
 //     | 'try' suite (except_suite | finally_suite)
-static void *try_stmt(FParser *p) {
+static void *try_stmt(parser_t *p) {
     frame_t f = {76, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1575,7 +1575,7 @@ static void *try_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *try_stmt_3(FParser *p) {
+static void *try_stmt_3(parser_t *p) {
     frame_t f = {77, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1588,7 +1588,7 @@ static void *try_stmt_3(FParser *p) {
 
 // with_stmt:
 //     | 'with' ','.expr_as_name+ suite
-static void *with_stmt(FParser *p) {
+static void *with_stmt(parser_t *p) {
     frame_t f = {78, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1601,7 +1601,7 @@ static void *with_stmt(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_as_name_delimited(FParser *p) {
+static ast_list *expr_as_name_delimited(parser_t *p) {
     ast_list *s;
     void *a = expr_as_name(p);
     if (!a) return 0;
@@ -1618,7 +1618,7 @@ static ast_list *expr_as_name_delimited(FParser *p) {
 
 // expr_as_name:
 //     | expr [as_name]
-static void *expr_as_name(FParser *p) {
+static void *expr_as_name(parser_t *p) {
     frame_t f = {79, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1633,7 +1633,7 @@ static void *expr_as_name(FParser *p) {
 // block_suite (allow_whitespace=false):
 //     | '{' NEWLINE stmt_list '}'
 //     | '{' [simple_stmt] '}'
-static void *block_suite(FParser *p) {
+static void *block_suite(parser_t *p) {
     frame_t f = {80, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace=0;
@@ -1647,7 +1647,7 @@ static void *block_suite(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *block_suite_1(FParser *p) {
+static void *block_suite_1(parser_t *p) {
     frame_t f = {81, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1661,7 +1661,7 @@ static void *block_suite_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *block_suite_2(FParser *p) {
+static void *block_suite_2(parser_t *p) {
     frame_t f = {82, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1676,7 +1676,7 @@ static void *block_suite_2(FParser *p) {
 // suite:
 //     | ':' simple_stmt
 //     | block_suite
-static void *suite(FParser *p) {
+static void *suite(parser_t *p) {
     frame_t f = {83, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1687,7 +1687,7 @@ static void *suite(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *suite_1(FParser *p) {
+static void *suite_1(parser_t *p) {
     frame_t f = {84, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1700,7 +1700,7 @@ static void *suite_1(FParser *p) {
 
 // else_suite:
 //     | 'else' suite
-static void *else_suite(FParser *p) {
+static void *else_suite(parser_t *p) {
     frame_t f = {85, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1713,7 +1713,7 @@ static void *else_suite(FParser *p) {
 
 // finally_suite:
 //     | 'finally' suite
-static void *finally_suite(FParser *p) {
+static void *finally_suite(parser_t *p) {
     frame_t f = {86, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1726,7 +1726,7 @@ static void *finally_suite(FParser *p) {
 
 // except_clause:
 //     | 'except' [expr_as_name] suite
-static void *except_clause(FParser *p) {
+static void *except_clause(parser_t *p) {
     frame_t f = {87, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1741,7 +1741,7 @@ static void *except_clause(FParser *p) {
 
 // except_suite:
 //     | except_clause+ [else_suite] [finally_suite]
-static void *except_suite(FParser *p) {
+static void *except_suite(parser_t *p) {
     frame_t f = {88, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1755,7 +1755,7 @@ static void *except_suite(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *except_clause_loop(FParser *p) {
+static ast_list *except_clause_loop(parser_t *p) {
     ast_list *s;
     void *a = except_clause(p);
     if (!a) return 0;
@@ -1768,7 +1768,7 @@ static ast_list *except_clause_loop(FParser *p) {
 
 // invocation:
 //     | '(' [call_arg_list] ')'
-static void *invocation(FParser *p) {
+static void *invocation(parser_t *p) {
     frame_t f = {89, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1782,7 +1782,7 @@ static void *invocation(FParser *p) {
 
 // call_arg_list (allow_whitespace=true):
 //     | ','.call_arg+ [',']
-static void *call_arg_list(FParser *p) {
+static void *call_arg_list(parser_t *p) {
     frame_t f = {90, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1797,7 +1797,7 @@ static void *call_arg_list(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *call_arg_delimited(FParser *p) {
+static ast_list *call_arg_delimited(parser_t *p) {
     ast_list *s;
     void *a = call_arg(p);
     if (!a) return 0;
@@ -1818,7 +1818,7 @@ static ast_list *call_arg_delimited(FParser *p) {
 //     | '**' expr
 //     | '*' expr
 //     | expr
-static void *call_arg(FParser *p) {
+static void *call_arg(parser_t *p) {
     frame_t f = {91, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1832,7 +1832,7 @@ static void *call_arg(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *call_arg_1(FParser *p) {
+static void *call_arg_1(parser_t *p) {
     frame_t f = {92, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1845,7 +1845,7 @@ static void *call_arg_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *call_arg_2(FParser *p) {
+static void *call_arg_2(parser_t *p) {
     frame_t f = {93, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1858,7 +1858,7 @@ static void *call_arg_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *call_arg_3(FParser *p) {
+static void *call_arg_3(parser_t *p) {
     frame_t f = {94, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1869,7 +1869,7 @@ static void *call_arg_3(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *call_arg_4(FParser *p) {
+static void *call_arg_4(parser_t *p) {
     frame_t f = {95, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1884,7 +1884,7 @@ static void *call_arg_4(FParser *p) {
 //     | kwargs
 //     | args_kwargs
 //     | full_arg_list
-static void *typed_arg_list(FParser *p) {
+static void *typed_arg_list(parser_t *p) {
     frame_t f = {96, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
@@ -1901,7 +1901,7 @@ static void *typed_arg_list(FParser *p) {
 
 // full_arg_list:
 //     | ','.default_arg+ [',' [kwargs | args_kwargs]]
-static void *full_arg_list(FParser *p) {
+static void *full_arg_list(parser_t *p) {
     frame_t f = {97, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1913,7 +1913,7 @@ static void *full_arg_list(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *default_arg_delimited(FParser *p) {
+static ast_list *default_arg_delimited(parser_t *p) {
     ast_list *s;
     void *a = default_arg(p);
     if (!a) return 0;
@@ -1928,7 +1928,7 @@ static ast_list *default_arg_delimited(FParser *p) {
     return s;
 }
 
-static void *full_arg_list_2(FParser *p) {
+static void *full_arg_list_2(parser_t *p) {
     frame_t f = {98, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1939,7 +1939,7 @@ static void *full_arg_list_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *full_arg_list_2_2(FParser *p) {
+static void *full_arg_list_2_2(parser_t *p) {
     frame_t f = {99, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1952,7 +1952,7 @@ static void *full_arg_list_2_2(FParser *p) {
 
 // args_kwargs:
 //     | '*' [typed_arg] (',' default_arg)* [',' [kwargs]]
-static void *args_kwargs(FParser *p) {
+static void *args_kwargs(parser_t *p) {
     frame_t f = {100, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -1967,7 +1967,7 @@ static void *args_kwargs(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *args_kwargs_3_loop(FParser *p) {
+static ast_list *args_kwargs_3_loop(parser_t *p) {
     ast_list *s = ast_list_new(p);
     void *a;
     while ((a = args_kwargs_3(p))) {
@@ -1976,7 +1976,7 @@ static ast_list *args_kwargs_3_loop(FParser *p) {
     return s;
 }
 
-static void *args_kwargs_3(FParser *p) {
+static void *args_kwargs_3(parser_t *p) {
     frame_t f = {101, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -1987,7 +1987,7 @@ static void *args_kwargs_3(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *args_kwargs_4(FParser *p) {
+static void *args_kwargs_4(parser_t *p) {
     frame_t f = {102, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2000,7 +2000,7 @@ static void *args_kwargs_4(FParser *p) {
 
 // kwargs:
 //     | '**' typed_arg [',']
-static void *kwargs(FParser *p) {
+static void *kwargs(parser_t *p) {
     frame_t f = {103, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2015,7 +2015,7 @@ static void *kwargs(FParser *p) {
 
 // default_arg:
 //     | typed_arg ['=' expr]
-static void *default_arg(FParser *p) {
+static void *default_arg(parser_t *p) {
     frame_t f = {104, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2027,7 +2027,7 @@ static void *default_arg(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *default_arg_2(FParser *p) {
+static void *default_arg_2(parser_t *p) {
     frame_t f = {105, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2040,7 +2040,7 @@ static void *default_arg_2(FParser *p) {
 
 // typed_arg:
 //     | NAME [':' expr]
-static void *typed_arg(FParser *p) {
+static void *typed_arg(parser_t *p) {
     frame_t f = {106, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2052,7 +2052,7 @@ static void *typed_arg(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *typed_arg_2(FParser *p) {
+static void *typed_arg_2(parser_t *p) {
     frame_t f = {107, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2065,7 +2065,7 @@ static void *typed_arg_2(FParser *p) {
 
 // simple_arg:
 //     | NAME ['=' expr]
-static void *simple_arg(FParser *p) {
+static void *simple_arg(parser_t *p) {
     frame_t f = {108, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2077,7 +2077,7 @@ static void *simple_arg(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *simple_arg_2(FParser *p) {
+static void *simple_arg_2(parser_t *p) {
     frame_t f = {109, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2090,7 +2090,7 @@ static void *simple_arg_2(FParser *p) {
 
 // simple_args:
 //     | ','.simple_arg+
-static void *simple_args(FParser *p) {
+static void *simple_args(parser_t *p) {
     frame_t f = {110, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2100,7 +2100,7 @@ static void *simple_args(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *simple_arg_delimited(FParser *p) {
+static ast_list *simple_arg_delimited(parser_t *p) {
     ast_list *s;
     void *a = simple_arg(p);
     if (!a) return 0;
@@ -2117,7 +2117,7 @@ static ast_list *simple_arg_delimited(FParser *p) {
 
 // builder_hint:
 //     | '<' name_list '>'
-static void *builder_hint(FParser *p) {
+static void *builder_hint(parser_t *p) {
     frame_t f = {111, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2132,7 +2132,7 @@ static void *builder_hint(FParser *p) {
 // builder_args:
 //     | simple_args
 //     | '(' [typed_arg_list] ')'
-static void *builder_args(FParser *p) {
+static void *builder_args(parser_t *p) {
     frame_t f = {112, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2143,7 +2143,7 @@ static void *builder_args(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *builder_args_2(FParser *p) {
+static void *builder_args_2(parser_t *p) {
     frame_t f = {113, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2158,7 +2158,7 @@ static void *builder_args_2(FParser *p) {
 // named_expr:
 //     | NAME ':=' expr
 //     | expr
-static void *named_expr(FParser *p) {
+static void *named_expr(parser_t *p) {
     frame_t f = {114, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2169,7 +2169,7 @@ static void *named_expr(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *named_expr_1(FParser *p) {
+static void *named_expr_1(parser_t *p) {
     frame_t f = {115, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2184,7 +2184,7 @@ static void *named_expr_1(FParser *p) {
 
 // conditional:
 //     | 'if' disjunction '?' disjunction ':' expr
-static void *conditional(FParser *p) {
+static void *conditional(parser_t *p) {
     frame_t f = {116, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2204,7 +2204,7 @@ static void *conditional(FParser *p) {
 // expr:
 //     | conditional
 //     | disjunction
-static void *expr(FParser *p) {
+static void *expr(parser_t *p) {
     frame_t f = {117, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2218,7 +2218,7 @@ static void *expr(FParser *p) {
 // disjunction (left_recursive):
 //     | disjunction 'or' conjunction
 //     | conjunction
-static void *disjunction(FParser *p) {
+static void *disjunction(parser_t *p) {
     frame_t f = {118, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2235,7 +2235,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *disjunction_1(FParser *p) {
+static void *disjunction_1(parser_t *p) {
     frame_t f = {119, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2251,7 +2251,7 @@ static void *disjunction_1(FParser *p) {
 // conjunction (left_recursive):
 //     | conjunction 'and' inversion
 //     | inversion
-static void *conjunction(FParser *p) {
+static void *conjunction(parser_t *p) {
     frame_t f = {120, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2268,7 +2268,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *conjunction_1(FParser *p) {
+static void *conjunction_1(parser_t *p) {
     frame_t f = {121, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2284,7 +2284,7 @@ static void *conjunction_1(FParser *p) {
 // inversion:
 //     | 'not' inversion
 //     | comparison
-static void *inversion(FParser *p) {
+static void *inversion(parser_t *p) {
     frame_t f = {122, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2295,7 +2295,7 @@ static void *inversion(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *inversion_1(FParser *p) {
+static void *inversion_1(parser_t *p) {
     frame_t f = {123, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2309,7 +2309,7 @@ static void *inversion_1(FParser *p) {
 // comparison:
 //     | bitwise_or (comp_op bitwise_or)+
 //     | bitwise_or
-static void *comparison(FParser *p) {
+static void *comparison(parser_t *p) {
     frame_t f = {124, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2320,7 +2320,7 @@ static void *comparison(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *comparison_1(FParser *p) {
+static void *comparison_1(parser_t *p) {
     frame_t f = {125, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2332,7 +2332,7 @@ static void *comparison_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *comparison_1_2_loop(FParser *p) {
+static ast_list *comparison_1_2_loop(parser_t *p) {
     ast_list *s;
     void *a = comparison_1_2(p);
     if (!a) return 0;
@@ -2343,7 +2343,7 @@ static ast_list *comparison_1_2_loop(FParser *p) {
     return s;
 }
 
-static void *comparison_1_2(FParser *p) {
+static void *comparison_1_2(parser_t *p) {
     frame_t f = {126, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2366,7 +2366,7 @@ static void *comparison_1_2(FParser *p) {
 //     | 'not' 'in'
 //     | 'is'
 //     | 'is' 'not'
-static void *comp_op(FParser *p) {
+static void *comp_op(parser_t *p) {
     frame_t f = {127, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2385,7 +2385,7 @@ static void *comp_op(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *comp_op_8(FParser *p) {
+static void *comp_op_8(parser_t *p) {
     frame_t f = {128, p->pos, FUNC, 0, 0};
     void *r;
     r = enter_frame(p, &f) && (
@@ -2395,7 +2395,7 @@ static void *comp_op_8(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *comp_op_10(FParser *p) {
+static void *comp_op_10(parser_t *p) {
     frame_t f = {129, p->pos, FUNC, 0, 0};
     void *r;
     r = enter_frame(p, &f) && (
@@ -2408,7 +2408,7 @@ static void *comp_op_10(FParser *p) {
 // bitwise_or (left_recursive):
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
-static void *bitwise_or(FParser *p) {
+static void *bitwise_or(parser_t *p) {
     frame_t f = {130, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2425,7 +2425,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *bitwise_or_1(FParser *p) {
+static void *bitwise_or_1(parser_t *p) {
     frame_t f = {131, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2441,7 +2441,7 @@ static void *bitwise_or_1(FParser *p) {
 // bitwise_xor (left_recursive):
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
-static void *bitwise_xor(FParser *p) {
+static void *bitwise_xor(parser_t *p) {
     frame_t f = {132, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2458,7 +2458,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *bitwise_xor_1(FParser *p) {
+static void *bitwise_xor_1(parser_t *p) {
     frame_t f = {133, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2474,7 +2474,7 @@ static void *bitwise_xor_1(FParser *p) {
 // bitwise_and (left_recursive):
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
-static void *bitwise_and(FParser *p) {
+static void *bitwise_and(parser_t *p) {
     frame_t f = {134, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2491,7 +2491,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *bitwise_and_1(FParser *p) {
+static void *bitwise_and_1(parser_t *p) {
     frame_t f = {135, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2508,7 +2508,7 @@ static void *bitwise_and_1(FParser *p) {
 //     | shift_expr '<<' sum
 //     | shift_expr '>>' sum
 //     | sum
-static void *shift_expr(FParser *p) {
+static void *shift_expr(parser_t *p) {
     frame_t f = {136, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2526,7 +2526,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *shift_expr_1(FParser *p) {
+static void *shift_expr_1(parser_t *p) {
     frame_t f = {137, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2539,7 +2539,7 @@ static void *shift_expr_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *shift_expr_2(FParser *p) {
+static void *shift_expr_2(parser_t *p) {
     frame_t f = {138, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2556,7 +2556,7 @@ static void *shift_expr_2(FParser *p) {
 //     | sum '+' term
 //     | sum '-' term
 //     | term
-static void *sum(FParser *p) {
+static void *sum(parser_t *p) {
     frame_t f = {139, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2574,7 +2574,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *sum_1(FParser *p) {
+static void *sum_1(parser_t *p) {
     frame_t f = {140, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2587,7 +2587,7 @@ static void *sum_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *sum_2(FParser *p) {
+static void *sum_2(parser_t *p) {
     frame_t f = {141, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2607,7 +2607,7 @@ static void *sum_2(FParser *p) {
 //     | term '//' pipe_expr
 //     | term '@' pipe_expr
 //     | pipe_expr
-static void *term(FParser *p) {
+static void *term(parser_t *p) {
     frame_t f = {142, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2628,7 +2628,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *term_1(FParser *p) {
+static void *term_1(parser_t *p) {
     frame_t f = {143, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2641,7 +2641,7 @@ static void *term_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *term_2(FParser *p) {
+static void *term_2(parser_t *p) {
     frame_t f = {144, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2654,7 +2654,7 @@ static void *term_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *term_3(FParser *p) {
+static void *term_3(parser_t *p) {
     frame_t f = {145, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2667,7 +2667,7 @@ static void *term_3(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *term_4(FParser *p) {
+static void *term_4(parser_t *p) {
     frame_t f = {146, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2680,7 +2680,7 @@ static void *term_4(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *term_5(FParser *p) {
+static void *term_5(parser_t *p) {
     frame_t f = {147, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2696,7 +2696,7 @@ static void *term_5(FParser *p) {
 // pipe_expr (left_recursive):
 //     | pipe_expr '->' factor
 //     | factor
-static void *pipe_expr(FParser *p) {
+static void *pipe_expr(parser_t *p) {
     frame_t f = {148, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2713,7 +2713,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *pipe_expr_1(FParser *p) {
+static void *pipe_expr_1(parser_t *p) {
     frame_t f = {149, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2731,7 +2731,7 @@ static void *pipe_expr_1(FParser *p) {
 //     | '-' factor
 //     | '~' factor
 //     | power
-static void *factor(FParser *p) {
+static void *factor(parser_t *p) {
     frame_t f = {150, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2744,7 +2744,7 @@ static void *factor(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *factor_1(FParser *p) {
+static void *factor_1(parser_t *p) {
     frame_t f = {151, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2755,7 +2755,7 @@ static void *factor_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *factor_2(FParser *p) {
+static void *factor_2(parser_t *p) {
     frame_t f = {152, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2766,7 +2766,7 @@ static void *factor_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *factor_3(FParser *p) {
+static void *factor_3(parser_t *p) {
     frame_t f = {153, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2780,7 +2780,7 @@ static void *factor_3(FParser *p) {
 // power:
 //     | primary '**' factor
 //     | primary
-static void *power(FParser *p) {
+static void *power(parser_t *p) {
     frame_t f = {154, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2791,7 +2791,7 @@ static void *power(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *power_1(FParser *p) {
+static void *power_1(parser_t *p) {
     frame_t f = {155, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2809,7 +2809,7 @@ static void *power_1(FParser *p) {
 //     | primary invocation
 //     | primary subscript
 //     | atom
-static void *primary(FParser *p) {
+static void *primary(parser_t *p) {
     frame_t f = {156, p->pos, FUNC, 0, 1};
     void *a = 0, *r = 0, *max = 0;
     size_t maxpos;
@@ -2828,7 +2828,7 @@ exit:
     return exit_frame(p, &f, r);
 }
 
-static void *primary_1(FParser *p) {
+static void *primary_1(parser_t *p) {
     frame_t f = {157, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2841,7 +2841,7 @@ static void *primary_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *primary_2(FParser *p) {
+static void *primary_2(parser_t *p) {
     frame_t f = {158, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2853,7 +2853,7 @@ static void *primary_2(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *primary_3(FParser *p) {
+static void *primary_3(parser_t *p) {
     frame_t f = {159, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2867,7 +2867,7 @@ static void *primary_3(FParser *p) {
 
 // tuple_atom:
 //     | '(' [list_items] ')'
-static void *tuple_atom(FParser *p) {
+static void *tuple_atom(parser_t *p) {
     frame_t f = {160, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2881,7 +2881,7 @@ static void *tuple_atom(FParser *p) {
 
 // list_iterable:
 //     | '[' list_iterator ']'
-static void *list_iterable(FParser *p) {
+static void *list_iterable(parser_t *p) {
     frame_t f = {161, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2895,7 +2895,7 @@ static void *list_iterable(FParser *p) {
 
 // list_atom:
 //     | '[' [list_items] ']'
-static void *list_atom(FParser *p) {
+static void *list_atom(parser_t *p) {
     frame_t f = {162, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2909,7 +2909,7 @@ static void *list_atom(FParser *p) {
 
 // set_atom:
 //     | '{' [set_items] '}'
-static void *set_atom(FParser *p) {
+static void *set_atom(parser_t *p) {
     frame_t f = {163, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2923,7 +2923,7 @@ static void *set_atom(FParser *p) {
 
 // dict_iterable:
 //     | '{' dict_iterator '}'
-static void *dict_iterable(FParser *p) {
+static void *dict_iterable(parser_t *p) {
     frame_t f = {164, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2937,7 +2937,7 @@ static void *dict_iterable(FParser *p) {
 
 // dict_atom:
 //     | '{' [dict_items] '}'
-static void *dict_atom(FParser *p) {
+static void *dict_atom(parser_t *p) {
     frame_t f = {165, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2952,7 +2952,7 @@ static void *dict_atom(FParser *p) {
 // builder:
 //     | NAME simple_args ':' expr
 //     | NAME [builder_hint] [builder_args] block_suite
-static void *builder(FParser *p) {
+static void *builder(parser_t *p) {
     frame_t f = {166, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -2963,7 +2963,7 @@ static void *builder(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *builder_1(FParser *p) {
+static void *builder_1(parser_t *p) {
     frame_t f = {167, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -2978,7 +2978,7 @@ static void *builder_1(FParser *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *builder_2(FParser *p) {
+static void *builder_2(parser_t *p) {
     frame_t f = {168, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -3008,7 +3008,7 @@ static void *builder_2(FParser *p) {
 //     | 'None'
 //     | 'True'
 //     | 'False'
-static void *atom(FParser *p) {
+static void *atom(parser_t *p) {
     frame_t f = {169, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
