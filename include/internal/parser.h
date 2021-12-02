@@ -78,8 +78,14 @@ static inline int test_and_reset(FParser *p, frame_t *f, void *node) {
 }
 
 
-static inline FAstNode *consume(FParser *p, size_t type, const char *literal) {
+static inline token_t *consume(FParser *p, size_t type, const char *literal) {
+
+#ifdef PEG_DEBUG
     return FPeg_consume_token_and_debug(p, type, literal);
+#else
+    return FPeg_consume_token(p, type);
+#endif
+
 }
 
 #endif //CPEG_PARSER_H

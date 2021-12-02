@@ -33,34 +33,34 @@ typedef struct ast_list {
 } ast_list_t;
 
 
-FAstNode *FPeg_consume_token(FParser *p, size_t type);
+FToken *FPeg_consume_token(FParser *p, size_t type);
 
-FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
+FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
 
-FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
+void *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
 ast_list_t *ast_list_new(FParser *p);
 
 void ast_list_append(FParser *p, ast_list_t *seq, void *item);
 
 
-static inline FAstNode *node_0(FParser *p, void *f) {
+static inline void *node_0(FParser *p, void *f) {
     return FAst_new_node(p, 0, 0);
 }
 
-static inline FAstNode *node_1(FParser *p, void *f, FAstNode *a) {
+static inline void *node_1(FParser *p, void *f, void *a) {
     return FAst_new_node(p, 0, 1, a);
 }
 
-static inline FAstNode *node_2(FParser *p, void *f, FAstNode *a , FAstNode *b) {
+static inline void *node_2(FParser *p, void *f, void *a , void *b) {
     return FAst_new_node(p, 0, 2, a, b);
 }
 
-static inline FAstNode *node_3(FParser *p, void *f, FAstNode *a, FAstNode *b, FAstNode *c) {
+static inline void *node_3(FParser *p, void *f, void *a, void *b, void *c) {
     return FAst_new_node(p, 0, 3, a, b, c);
 }
 
-static inline FAstNode *node_4(FParser *p, void *f, FAstNode *a, FAstNode *b, FAstNode *c, FAstNode *d) {
+static inline void *node_4(FParser *p, void *f, void *a, void *b, void *c, void *d) {
     return FAst_new_node(p, 0, 4, a, b, c, d);
 }
 

@@ -3,22 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-
-FAstNode *ast_node_from_token(FParser *p, size_t type, FToken *curr_token) {
-    FAstNode *node = PARSER_ALLOC(p, sizeof(FAstNode));
-    if (!node) {
-        return NULL;
-    }
-
-    // not sequence -> | 1u
-    // is token -> | 2u
-    node->ast_t = type << 2u | 1u | 2u;
-    node->ast_v.token = curr_token;
-    return node;
-}
-
-
-FAstNode *FPeg_consume_token(FParser *p, size_t type) {
+FToken *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = get_next_token_to_consume(p, &pos);
@@ -29,13 +14,13 @@ FAstNode *FPeg_consume_token(FParser *p, size_t type) {
     // now check for correct type
     if (curr_token->type == type) {
         p->pos = pos + 1;
-        return ast_node_from_token(p, type, curr_token);
+        return curr_token;
     } else {
         return NULL;
     }
 }
 
-FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal) {
+FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal) {
     size_t pos = p->pos;
 
     print_indent_level(p->level);
@@ -51,7 +36,7 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
         p->pos = pos + 1;
         printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
                 literal, p->level, p->pos);
-        return ast_node_from_token(p, type, curr_token);
+        return curr_token;
     } else {
         char *token_buf;
 
@@ -101,7 +86,7 @@ void ast_list_append(FParser *p, ast_list_t *seq, void *item) {
     seq->items[seq->len++] = item;
 }
 
-FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
+void *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
     va_list valist;
     if (nargs > AST_NODE_MAX_FIELD) {
         return NULL;
