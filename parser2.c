@@ -18,7 +18,7 @@ static void *catom(parser_t *);
 static void *catom_1(parser_t *);
 static void *catom_2(parser_t *);
 static void *cparameters(parser_t *);
-static ast_list *csum_delimited(parser_t *);
+static ast_list_t *csum_delimited(parser_t *);
 
 
 
@@ -274,8 +274,8 @@ static void *cparameters(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *csum_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *csum_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = csum(p);
     if (!a) return 0;
     s = ast_list_new(p);

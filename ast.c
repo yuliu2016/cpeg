@@ -69,8 +69,8 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
 
 
 
-ast_list *ast_list_new(FParser *p) {
-    ast_list *seq = PARSER_ALLOC(p, sizeof(ast_list));
+ast_list_t *ast_list_new(FParser *p) {
+    ast_list_t *seq = PARSER_ALLOC(p, sizeof(ast_list_t));
     if (!seq) {
         return NULL;
     }
@@ -81,7 +81,7 @@ ast_list *ast_list_new(FParser *p) {
 }
 
 
-void ast_list_append(FParser *p, ast_list *seq, void *item) {
+void ast_list_append(FParser *p, ast_list_t *seq, void *item) {
     if (seq->len >= seq->capacity) {
         if (!seq->capacity) {
             seq->capacity = 1;

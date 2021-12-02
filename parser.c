@@ -5,13 +5,13 @@ static void *single_input(parser_t *);
 static void *single_input_4(parser_t *);
 static void *file_input(parser_t *);
 static void *eval_input(parser_t *);
-static ast_list *eval_input_loop(parser_t *);
+static ast_list_t *eval_input_loop(parser_t *);
 static void *stmt_list(parser_t *);
-static ast_list *stmt_loop(parser_t *);
+static ast_list_t *stmt_loop(parser_t *);
 static void *stmt(parser_t *);
 static void *stmt_1(parser_t *);
 static void *simple_stmt(parser_t *);
-static ast_list *small_stmt_delimited(parser_t *);
+static ast_list_t *small_stmt_delimited(parser_t *);
 static void *small_stmt(parser_t *);
 static void *del_stmt(parser_t *);
 static void *return_stmt(parser_t *);
@@ -21,10 +21,10 @@ static void *nonlocal_stmt(parser_t *);
 static void *assert_stmt(parser_t *);
 static void *assert_stmt_3(parser_t *);
 static void *name_list(parser_t *);
-static ast_list *name_list_delimited(parser_t *);
+static ast_list_t *name_list_delimited(parser_t *);
 static void *star_expr(parser_t *);
 static void *exprlist(parser_t *);
-static ast_list *expr_delimited(parser_t *);
+static ast_list_t *expr_delimited(parser_t *);
 static void *target(parser_t *);
 static void *target_1(parser_t *);
 static void *target_2(parser_t *);
@@ -37,13 +37,13 @@ static void *t_primary_3(parser_t *);
 static void *t_primary_4(parser_t *);
 static void *t_lookahead(parser_t *);
 static void *targetlist(parser_t *);
-static ast_list *target_delimited(parser_t *);
+static ast_list_t *target_delimited(parser_t *);
 static void *expr_or_star(parser_t *);
 static void *exprlist_star(parser_t *);
-static ast_list *expr_or_star_delimited(parser_t *);
+static ast_list_t *expr_or_star_delimited(parser_t *);
 static void *subscript(parser_t *);
 static void *slicelist(parser_t *);
-static ast_list *slice_delimited(parser_t *);
+static ast_list_t *slice_delimited(parser_t *);
 static void *slice(parser_t *);
 static void *slice_1(parser_t *);
 static void *slice_expr(parser_t *);
@@ -51,16 +51,16 @@ static void *dict_item(parser_t *);
 static void *dict_item_1(parser_t *);
 static void *dict_item_2(parser_t *);
 static void *dict_items(parser_t *);
-static ast_list *dict_item_delimited(parser_t *);
+static ast_list_t *dict_item_delimited(parser_t *);
 static void *list_item(parser_t *);
 static void *list_items(parser_t *);
-static ast_list *list_item_delimited(parser_t *);
+static ast_list_t *list_item_delimited(parser_t *);
 static void *set_items(parser_t *);
 static void *as_name(parser_t *);
 static void *iter_for(parser_t *);
 static void *iter_if(parser_t *);
 static void *iterator(parser_t *);
-static ast_list *iter_for_loop(parser_t *);
+static ast_list_t *iter_for_loop(parser_t *);
 static void *list_iterator(parser_t *);
 static void *dict_iterator(parser_t *);
 static void *assignment(parser_t *);
@@ -69,34 +69,34 @@ static void *annassign(parser_t *);
 static void *annassign_4(parser_t *);
 static void *augassign(parser_t *);
 static void *simple_assign(parser_t *);
-static ast_list *simple_assign_1_loop(parser_t *);
+static ast_list_t *simple_assign_1_loop(parser_t *);
 static void *simple_assign_1(parser_t *);
 static void *augassign_op(parser_t *);
 static void *import_name(parser_t *);
 static void *import_from(parser_t *);
 static void *import_from_names(parser_t *);
 static void *import_from_names_2(parser_t *);
-static ast_list *import_from_names_2_loop(parser_t *);
+static ast_list_t *import_from_names_2_loop(parser_t *);
 static void *import_from_items(parser_t *);
 static void *import_as_names_sp(parser_t *);
 static void *import_as_name(parser_t *);
 static void *dotted_as_name(parser_t *);
 static void *import_as_names(parser_t *);
-static ast_list *import_as_name_delimited(parser_t *);
+static ast_list_t *import_as_name_delimited(parser_t *);
 static void *dotted_as_names(parser_t *);
-static ast_list *dotted_as_name_delimited(parser_t *);
+static ast_list_t *dotted_as_name_delimited(parser_t *);
 static void *dotted_name(parser_t *);
-static ast_list *dotted_name_delimited(parser_t *);
+static ast_list_t *dotted_name_delimited(parser_t *);
 static void *compound_stmt(parser_t *);
 static void *if_stmt(parser_t *);
-static ast_list *elif_stmt_loop(parser_t *);
+static ast_list_t *elif_stmt_loop(parser_t *);
 static void *elif_stmt(parser_t *);
 static void *while_stmt(parser_t *);
 static void *for_stmt(parser_t *);
 static void *try_stmt(parser_t *);
 static void *try_stmt_3(parser_t *);
 static void *with_stmt(parser_t *);
-static ast_list *expr_as_name_delimited(parser_t *);
+static ast_list_t *expr_as_name_delimited(parser_t *);
 static void *expr_as_name(parser_t *);
 static void *block_suite(parser_t *);
 static void *block_suite_1(parser_t *);
@@ -107,10 +107,10 @@ static void *else_suite(parser_t *);
 static void *finally_suite(parser_t *);
 static void *except_clause(parser_t *);
 static void *except_suite(parser_t *);
-static ast_list *except_clause_loop(parser_t *);
+static ast_list_t *except_clause_loop(parser_t *);
 static void *invocation(parser_t *);
 static void *call_arg_list(parser_t *);
-static ast_list *call_arg_delimited(parser_t *);
+static ast_list_t *call_arg_delimited(parser_t *);
 static void *call_arg(parser_t *);
 static void *call_arg_1(parser_t *);
 static void *call_arg_2(parser_t *);
@@ -118,11 +118,11 @@ static void *call_arg_3(parser_t *);
 static void *call_arg_4(parser_t *);
 static void *typed_arg_list(parser_t *);
 static void *full_arg_list(parser_t *);
-static ast_list *default_arg_delimited(parser_t *);
+static ast_list_t *default_arg_delimited(parser_t *);
 static void *full_arg_list_2(parser_t *);
 static void *full_arg_list_2_2(parser_t *);
 static void *args_kwargs(parser_t *);
-static ast_list *args_kwargs_3_loop(parser_t *);
+static ast_list_t *args_kwargs_3_loop(parser_t *);
 static void *args_kwargs_3(parser_t *);
 static void *args_kwargs_4(parser_t *);
 static void *kwargs(parser_t *);
@@ -133,7 +133,7 @@ static void *typed_arg_2(parser_t *);
 static void *simple_arg(parser_t *);
 static void *simple_arg_2(parser_t *);
 static void *simple_args(parser_t *);
-static ast_list *simple_arg_delimited(parser_t *);
+static ast_list_t *simple_arg_delimited(parser_t *);
 static void *builder_hint(parser_t *);
 static void *builder_args(parser_t *);
 static void *builder_args_2(parser_t *);
@@ -149,7 +149,7 @@ static void *inversion(parser_t *);
 static void *inversion_1(parser_t *);
 static void *comparison(parser_t *);
 static void *comparison_1(parser_t *);
-static ast_list *comparison_1_2_loop(parser_t *);
+static ast_list_t *comparison_1_2_loop(parser_t *);
 static void *comparison_1_2(parser_t *);
 static void *comp_op(parser_t *);
 static void *comp_op_8(parser_t *);
@@ -271,8 +271,8 @@ static void *eval_input(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *eval_input_loop(parser_t *p) {
-    ast_list *s = ast_list_new(p);
+static ast_list_t *eval_input_loop(parser_t *p) {
+    ast_list_t *s = ast_list_new(p);
     void *a;
     while ((a = consume(p, 2, "NEWLINE"))) {
         ast_list_append(p, s, a);
@@ -292,8 +292,8 @@ static void *stmt_list(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *stmt_loop(parser_t *p) {
-    ast_list *s;
+static ast_list_t *stmt_loop(parser_t *p) {
+    ast_list_t *s;
     void *a = stmt(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -342,8 +342,8 @@ static void *simple_stmt(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *small_stmt_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *small_stmt_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = small_stmt(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -492,8 +492,8 @@ static void *name_list(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *name_list_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *name_list_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = consume(p, 3, "NAME");
     if (!a) return 0;
     s = ast_list_new(p);
@@ -534,8 +534,8 @@ static void *exprlist(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *expr_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = expr(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -726,8 +726,8 @@ static void *targetlist(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *target_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *target_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = target(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -769,8 +769,8 @@ static void *exprlist_star(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_or_star_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *expr_or_star_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = expr_or_star(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -812,8 +812,8 @@ static void *slicelist(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *slice_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *slice_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = slice(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -923,8 +923,8 @@ static void *dict_items(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dict_item_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *dict_item_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = dict_item(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -969,8 +969,8 @@ static void *list_items(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *list_item_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *list_item_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = list_item(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1060,8 +1060,8 @@ static void *iterator(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *iter_for_loop(parser_t *p) {
-    ast_list *s = ast_list_new(p);
+static ast_list_t *iter_for_loop(parser_t *p) {
+    ast_list_t *s = ast_list_new(p);
     void *a;
     while ((a = iter_for(p))) {
         ast_list_append(p, s, a);
@@ -1195,8 +1195,8 @@ static void *simple_assign(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *simple_assign_1_loop(parser_t *p) {
-    ast_list *s = ast_list_new(p);
+static ast_list_t *simple_assign_1_loop(parser_t *p) {
+    ast_list_t *s = ast_list_new(p);
     void *a;
     while ((a = simple_assign_1(p))) {
         ast_list_append(p, s, a);
@@ -1305,8 +1305,8 @@ static void *import_from_names_2(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *import_from_names_2_loop(parser_t *p) {
-    ast_list *s;
+static ast_list_t *import_from_names_2_loop(parser_t *p) {
+    ast_list_t *s;
     void *a = consume(p, 6, ".");
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1391,8 +1391,8 @@ static void *import_as_names(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *import_as_name_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *import_as_name_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = import_as_name(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1418,8 +1418,8 @@ static void *dotted_as_names(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dotted_as_name_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *dotted_as_name_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = dotted_as_name(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1445,8 +1445,8 @@ static void *dotted_name(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *dotted_name_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *dotted_name_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = consume(p, 3, "NAME");
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1499,8 +1499,8 @@ static void *if_stmt(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *elif_stmt_loop(parser_t *p) {
-    ast_list *s = ast_list_new(p);
+static ast_list_t *elif_stmt_loop(parser_t *p) {
+    ast_list_t *s = ast_list_new(p);
     void *a;
     while ((a = elif_stmt(p))) {
         ast_list_append(p, s, a);
@@ -1601,8 +1601,8 @@ static void *with_stmt(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *expr_as_name_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *expr_as_name_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = expr_as_name(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1755,8 +1755,8 @@ static void *except_suite(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *except_clause_loop(parser_t *p) {
-    ast_list *s;
+static ast_list_t *except_clause_loop(parser_t *p) {
+    ast_list_t *s;
     void *a = except_clause(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1797,8 +1797,8 @@ static void *call_arg_list(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *call_arg_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *call_arg_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = call_arg(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1913,8 +1913,8 @@ static void *full_arg_list(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *default_arg_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *default_arg_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = default_arg(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -1967,8 +1967,8 @@ static void *args_kwargs(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *args_kwargs_3_loop(parser_t *p) {
-    ast_list *s = ast_list_new(p);
+static ast_list_t *args_kwargs_3_loop(parser_t *p) {
+    ast_list_t *s = ast_list_new(p);
     void *a;
     while ((a = args_kwargs_3(p))) {
         ast_list_append(p, s, a);
@@ -2100,8 +2100,8 @@ static void *simple_args(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *simple_arg_delimited(parser_t *p) {
-    ast_list *s;
+static ast_list_t *simple_arg_delimited(parser_t *p) {
+    ast_list_t *s;
     void *a = simple_arg(p);
     if (!a) return 0;
     s = ast_list_new(p);
@@ -2332,8 +2332,8 @@ static void *comparison_1(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static ast_list *comparison_1_2_loop(parser_t *p) {
-    ast_list *s;
+static ast_list_t *comparison_1_2_loop(parser_t *p) {
+    ast_list_t *s;
     void *a = comparison_1_2(p);
     if (!a) return 0;
     s = ast_list_new(p);

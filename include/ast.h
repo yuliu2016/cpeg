@@ -26,11 +26,11 @@ struct ast_node_t {
 #define T_CHECK(node, t) ((node)->ast_t & 2u && (node)->ast_t >> 2u == (t))
 #define S_CHECK(node) !((node)->ast_t & 1u)
 
-typedef struct ast_list_t {
+typedef struct ast_list {
     size_t len;
     size_t capacity;
     void **items;
-} ast_list;
+} ast_list_t;
 
 
 FAstNode *FPeg_consume_token(FParser *p, size_t type);
@@ -39,9 +39,9 @@ FAstNode *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *lite
 
 FAstNode *FAst_new_node(FParser *p, size_t t, int nargs, ...);
 
-ast_list *ast_list_new(FParser *p);
+ast_list_t *ast_list_new(FParser *p);
 
-void ast_list_append(FParser *p, ast_list *seq, void *item);
+void ast_list_append(FParser *p, ast_list_t *seq, void *item);
 
 
 static inline FAstNode *node_0(FParser *p, void *f) {
