@@ -248,7 +248,7 @@ static void *catom_1(parser_t *p) {
 
 static void *catom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
-    void *a;
+    token_t *a;
     void *b;
     void *r;
     r = enter_frame(p, &f) && (
@@ -265,7 +265,7 @@ static void *catom_2(parser_t *p) {
 static void *cparameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     void *a;
-    void *b;
+    token_t *b;
     void *r;
     r = enter_frame(p, &f) && (
         (a = csum_delimited(p)) &&

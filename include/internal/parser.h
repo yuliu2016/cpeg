@@ -27,6 +27,7 @@ typedef struct frame {
 } frame_t;
 
 typedef FParser parser_t;
+typedef FToken token_t;
 
 static inline int enter_frame(FParser *p, frame_t *f) {
 
