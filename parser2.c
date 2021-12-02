@@ -34,7 +34,7 @@ void *parse_calc(FParser *p) {
 static void *csum(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
-        exit_frame(p, &f, 0);
+        return exit_frame(p, &f, 0);
     }
     void *a = 0;
     void *r = 0;
@@ -48,7 +48,7 @@ static void *csum(parser_t *p) {
         (a = cterm(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    if (max) r = max;
+    r = max ? node_1(p, &f, max) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -86,7 +86,7 @@ static void *csum_2(parser_t *p) {
 static void *cterm(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
-        exit_frame(p, &f, 0);
+        return exit_frame(p, &f, 0);
     }
     void *a = 0;
     void *r = 0;
@@ -101,7 +101,7 @@ static void *cterm(parser_t *p) {
         (a = cfactor(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    if (max) r = max;
+    r = max ? node_1(p, &f, max) : 0;
     return exit_frame(p, &f, r);
 }
 
