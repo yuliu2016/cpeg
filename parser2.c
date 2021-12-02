@@ -264,7 +264,7 @@ static void *catom_2(parser_t *p) {
 //     | ','.csum+ [',']
 static void *cparameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
-    void *a;
+    ast_list_t *a;
     token_t *b;
     void *r;
     r = enter_frame(p, &f) && (
