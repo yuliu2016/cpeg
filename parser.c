@@ -273,7 +273,7 @@ static void *eval_input(parser_t *p) {
 
 static ast_list_t *eval_input_loop(parser_t *p) {
     ast_list_t *list = ast_list_new(p);
-    void *_newline;
+    token_t *_newline;
     while ((_newline = consume(p, 2, "NEWLINE"))) {
         ast_list_append(p, list, _newline);
     }
@@ -495,7 +495,7 @@ static void *name_list(parser_t *p) {
 }
 
 static ast_list_t *name_list_delimited(parser_t *p) {
-    void *_name = consume(p, 3, "NAME");
+    token_t *_name = consume(p, 3, "NAME");
     if (!_name) {
         return 0;
     }
@@ -1209,9 +1209,9 @@ static void *simple_assign(parser_t *p) {
 
 static ast_list_t *simple_assign_1_loop(parser_t *p) {
     ast_list_t *list = ast_list_new(p);
-    void *_targetlist_op_assign;
-    while ((_targetlist_op_assign = simple_assign_1(p))) {
-        ast_list_append(p, list, _targetlist_op_assign);
+    void *_targetlist_assign;
+    while ((_targetlist_assign = simple_assign_1(p))) {
+        ast_list_append(p, list, _targetlist_assign);
     }
     return list;
 }
@@ -1318,14 +1318,14 @@ static void *import_from_names_2(parser_t *p) {
 }
 
 static ast_list_t *import_from_names_2_loop(parser_t *p) {
-    void *_is_op_dot = consume(p, 6, ".");
-    if (!_is_op_dot) {
+    token_t *_is_dot = consume(p, 6, ".");
+    if (!_is_dot) {
         return 0;
     }
     ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, list, _is_op_dot);
-    } while ((_is_op_dot = consume(p, 6, ".")));
+        ast_list_append(p, list, _is_dot);
+    } while ((_is_dot = consume(p, 6, ".")));
     return list;
 }
 
@@ -1461,7 +1461,7 @@ static void *dotted_name(parser_t *p) {
 }
 
 static ast_list_t *dotted_name_delimited(parser_t *p) {
-    void *_name = consume(p, 3, "NAME");
+    token_t *_name = consume(p, 3, "NAME");
     if (!_name) {
         return 0;
     }
@@ -1989,9 +1989,9 @@ static void *args_kwargs(parser_t *p) {
 
 static ast_list_t *args_kwargs_3_loop(parser_t *p) {
     ast_list_t *list = ast_list_new(p);
-    void *_op_comma_default_arg;
-    while ((_op_comma_default_arg = args_kwargs_3(p))) {
-        ast_list_append(p, list, _op_comma_default_arg);
+    void *_comma_default_arg;
+    while ((_comma_default_arg = args_kwargs_3(p))) {
+        ast_list_append(p, list, _comma_default_arg);
     }
     return list;
 }
