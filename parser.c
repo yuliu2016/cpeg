@@ -272,12 +272,12 @@ static void *eval_input(parser_t *p) {
 }
 
 static ast_list_t *eval_input_loop(parser_t *p) {
-    ast_list_t *s = ast_list_new(p);
-    void *a;
-    while ((a = consume(p, 2, "NEWLINE"))) {
-        ast_list_append(p, s, a);
+    ast_list_t *list = ast_list_new(p);
+    void *_newline;
+    while ((_newline = consume(p, 2, "NEWLINE"))) {
+        ast_list_append(p, list, _newline);
     }
-    return s;
+    return list;
 }
 
 // stmt_list:
@@ -293,14 +293,15 @@ static void *stmt_list(parser_t *p) {
 }
 
 static ast_list_t *stmt_loop(parser_t *p) {
-    ast_list_t *s;
-    void *a = stmt(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_stmt = stmt(p);
+    if (!_stmt) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, s, a);
-    } while ((a = stmt(p)));
-    return s;
+        ast_list_append(p, list, _stmt);
+    } while ((_stmt = stmt(p)));
+    return list;
 }
 
 // stmt:
@@ -343,18 +344,19 @@ static void *simple_stmt(parser_t *p) {
 }
 
 static ast_list_t *small_stmt_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = small_stmt(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_small_stmt = small_stmt(p);
+    if (!_small_stmt) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _small_stmt);
         pos = p->pos;
     } while (consume(p, 12, ";") &&
-            (a = small_stmt(p)));
+            (_small_stmt = small_stmt(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // small_stmt:
@@ -493,18 +495,19 @@ static void *name_list(parser_t *p) {
 }
 
 static ast_list_t *name_list_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = consume(p, 3, "NAME");
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_name = consume(p, 3, "NAME");
+    if (!_name) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _name);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = consume(p, 3, "NAME")));
+            (_name = consume(p, 3, "NAME")));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // star_expr:
@@ -535,18 +538,19 @@ static void *exprlist(parser_t *p) {
 }
 
 static ast_list_t *expr_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = expr(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_expr = expr(p);
+    if (!_expr) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _expr);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = expr(p)));
+            (_expr = expr(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // target:
@@ -730,18 +734,19 @@ static void *targetlist(parser_t *p) {
 }
 
 static ast_list_t *target_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = target(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_target = target(p);
+    if (!_target) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _target);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = target(p)));
+            (_target = target(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // expr_or_star:
@@ -773,18 +778,19 @@ static void *exprlist_star(parser_t *p) {
 }
 
 static ast_list_t *expr_or_star_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = expr_or_star(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_expr_or_star = expr_or_star(p);
+    if (!_expr_or_star) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _expr_or_star);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = expr_or_star(p)));
+            (_expr_or_star = expr_or_star(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // subscript:
@@ -816,18 +822,19 @@ static void *slicelist(parser_t *p) {
 }
 
 static ast_list_t *slice_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = slice(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_slice = slice(p);
+    if (!_slice) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _slice);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = slice(p)));
+            (_slice = slice(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // slice:
@@ -927,18 +934,19 @@ static void *dict_items(parser_t *p) {
 }
 
 static ast_list_t *dict_item_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = dict_item(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_dict_item = dict_item(p);
+    if (!_dict_item) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _dict_item);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = dict_item(p)));
+            (_dict_item = dict_item(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // list_item:
@@ -973,18 +981,19 @@ static void *list_items(parser_t *p) {
 }
 
 static ast_list_t *list_item_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = list_item(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_list_item = list_item(p);
+    if (!_list_item) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _list_item);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = list_item(p)));
+            (_list_item = list_item(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // set_items (allow_whitespace=true):
@@ -1064,12 +1073,12 @@ static void *iterator(parser_t *p) {
 }
 
 static ast_list_t *iter_for_loop(parser_t *p) {
-    ast_list_t *s = ast_list_new(p);
-    void *a;
-    while ((a = iter_for(p))) {
-        ast_list_append(p, s, a);
+    ast_list_t *list = ast_list_new(p);
+    void *_iter_for;
+    while ((_iter_for = iter_for(p))) {
+        ast_list_append(p, list, _iter_for);
     }
-    return s;
+    return list;
 }
 
 // list_iterator (allow_whitespace=true):
@@ -1199,12 +1208,12 @@ static void *simple_assign(parser_t *p) {
 }
 
 static ast_list_t *simple_assign_1_loop(parser_t *p) {
-    ast_list_t *s = ast_list_new(p);
-    void *a;
-    while ((a = simple_assign_1(p))) {
-        ast_list_append(p, s, a);
+    ast_list_t *list = ast_list_new(p);
+    void *_targetlist_op_assign;
+    while ((_targetlist_op_assign = simple_assign_1(p))) {
+        ast_list_append(p, list, _targetlist_op_assign);
     }
-    return s;
+    return list;
 }
 
 static void *simple_assign_1(parser_t *p) {
@@ -1309,14 +1318,15 @@ static void *import_from_names_2(parser_t *p) {
 }
 
 static ast_list_t *import_from_names_2_loop(parser_t *p) {
-    ast_list_t *s;
-    void *a = consume(p, 6, ".");
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_is_op_dot = consume(p, 6, ".");
+    if (!_is_op_dot) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, s, a);
-    } while ((a = consume(p, 6, ".")));
-    return s;
+        ast_list_append(p, list, _is_op_dot);
+    } while ((_is_op_dot = consume(p, 6, ".")));
+    return list;
 }
 
 // import_from_items:
@@ -1395,18 +1405,19 @@ static void *import_as_names(parser_t *p) {
 }
 
 static ast_list_t *import_as_name_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = import_as_name(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_import_as_name = import_as_name(p);
+    if (!_import_as_name) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _import_as_name);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = import_as_name(p)));
+            (_import_as_name = import_as_name(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // dotted_as_names:
@@ -1422,18 +1433,19 @@ static void *dotted_as_names(parser_t *p) {
 }
 
 static ast_list_t *dotted_as_name_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = dotted_as_name(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_dotted_as_name = dotted_as_name(p);
+    if (!_dotted_as_name) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _dotted_as_name);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = dotted_as_name(p)));
+            (_dotted_as_name = dotted_as_name(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // dotted_name:
@@ -1449,18 +1461,19 @@ static void *dotted_name(parser_t *p) {
 }
 
 static ast_list_t *dotted_name_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = consume(p, 3, "NAME");
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_name = consume(p, 3, "NAME");
+    if (!_name) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _name);
         pos = p->pos;
     } while (consume(p, 6, ".") &&
-            (a = consume(p, 3, "NAME")));
+            (_name = consume(p, 3, "NAME")));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // compound_stmt:
@@ -1503,12 +1516,12 @@ static void *if_stmt(parser_t *p) {
 }
 
 static ast_list_t *elif_stmt_loop(parser_t *p) {
-    ast_list_t *s = ast_list_new(p);
-    void *a;
-    while ((a = elif_stmt(p))) {
-        ast_list_append(p, s, a);
+    ast_list_t *list = ast_list_new(p);
+    void *_elif_stmt;
+    while ((_elif_stmt = elif_stmt(p))) {
+        ast_list_append(p, list, _elif_stmt);
     }
-    return s;
+    return list;
 }
 
 // elif_stmt:
@@ -1605,18 +1618,19 @@ static void *with_stmt(parser_t *p) {
 }
 
 static ast_list_t *expr_as_name_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = expr_as_name(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_expr_as_name = expr_as_name(p);
+    if (!_expr_as_name) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _expr_as_name);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = expr_as_name(p)));
+            (_expr_as_name = expr_as_name(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // expr_as_name:
@@ -1759,14 +1773,15 @@ static void *except_suite(parser_t *p) {
 }
 
 static ast_list_t *except_clause_loop(parser_t *p) {
-    ast_list_t *s;
-    void *a = except_clause(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_except_clause = except_clause(p);
+    if (!_except_clause) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, s, a);
-    } while ((a = except_clause(p)));
-    return s;
+        ast_list_append(p, list, _except_clause);
+    } while ((_except_clause = except_clause(p)));
+    return list;
 }
 
 // invocation:
@@ -1801,18 +1816,19 @@ static void *call_arg_list(parser_t *p) {
 }
 
 static ast_list_t *call_arg_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = call_arg(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_call_arg = call_arg(p);
+    if (!_call_arg) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _call_arg);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = call_arg(p)));
+            (_call_arg = call_arg(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // call_arg:
@@ -1917,18 +1933,19 @@ static void *full_arg_list(parser_t *p) {
 }
 
 static ast_list_t *default_arg_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = default_arg(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_default_arg = default_arg(p);
+    if (!_default_arg) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _default_arg);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = default_arg(p)));
+            (_default_arg = default_arg(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 static void *full_arg_list_2(parser_t *p) {
@@ -1971,12 +1988,12 @@ static void *args_kwargs(parser_t *p) {
 }
 
 static ast_list_t *args_kwargs_3_loop(parser_t *p) {
-    ast_list_t *s = ast_list_new(p);
-    void *a;
-    while ((a = args_kwargs_3(p))) {
-        ast_list_append(p, s, a);
+    ast_list_t *list = ast_list_new(p);
+    void *_op_comma_default_arg;
+    while ((_op_comma_default_arg = args_kwargs_3(p))) {
+        ast_list_append(p, list, _op_comma_default_arg);
     }
-    return s;
+    return list;
 }
 
 static void *args_kwargs_3(parser_t *p) {
@@ -2104,18 +2121,19 @@ static void *simple_args(parser_t *p) {
 }
 
 static ast_list_t *simple_arg_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = simple_arg(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_simple_arg = simple_arg(p);
+    if (!_simple_arg) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _simple_arg);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = simple_arg(p)));
+            (_simple_arg = simple_arg(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
 
 // builder_hint:
@@ -2342,14 +2360,15 @@ static void *comparison_1(parser_t *p) {
 }
 
 static ast_list_t *comparison_1_2_loop(parser_t *p) {
-    ast_list_t *s;
-    void *a = comparison_1_2(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_comp_op_bitwise_or = comparison_1_2(p);
+    if (!_comp_op_bitwise_or) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, s, a);
-    } while ((a = comparison_1_2(p)));
-    return s;
+        ast_list_append(p, list, _comp_op_bitwise_or);
+    } while ((_comp_op_bitwise_or = comparison_1_2(p)));
+    return list;
 }
 
 static void *comparison_1_2(parser_t *p) {

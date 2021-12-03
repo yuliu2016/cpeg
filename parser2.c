@@ -281,16 +281,17 @@ static void *cparameters(parser_t *p) {
 }
 
 static ast_list_t *csum_delimited(parser_t *p) {
-    ast_list_t *s;
-    void *a = csum(p);
-    if (!a) return 0;
-    s = ast_list_new(p);
+    void *_csum = csum(p);
+    if (!_csum) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, s, a);
+        ast_list_append(p, list, _csum);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (a = csum(p)));
+            (_csum = csum(p)));
     p->pos = pos;
-    return s;
+    return list;
 }
