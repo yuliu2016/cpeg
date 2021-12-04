@@ -12,7 +12,7 @@
 #define T_ASSIGN 8  // =
 #define T_COLON 9  // :
 #define T_TERNERY 10  // ?
-#define T_NOT 11  // !
+#define T_EXCLAIM 11  // !
 #define T_SEMICOLON 12  // ;
 #define T_LPAR 13  // (
 #define T_RPAR 14  // )
