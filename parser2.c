@@ -1,23 +1,23 @@
 #include "include/internal/parser.h"
 
 
-static void *csum(parser_t *);
-static void *csum_1(parser_t *);
-static void *csum_2(parser_t *);
-static void *cterm(parser_t *);
-static void *cterm_1(parser_t *);
-static void *cterm_2(parser_t *);
-static void *cterm_3(parser_t *);
-static void *cfactor(parser_t *);
-static void *cfactor_1(parser_t *);
-static void *cfactor_2(parser_t *);
-static void *cfactor_3(parser_t *);
-static void *cpower(parser_t *);
-static void *cpower_1(parser_t *);
-static void *catom(parser_t *);
-static void *catom_1(parser_t *);
-static void *catom_2(parser_t *);
-static void *cparameters(parser_t *);
+static double *csum(parser_t *);
+static double *csum_1(parser_t *);
+static double *csum_2(parser_t *);
+static double *cterm(parser_t *);
+static double *cterm_1(parser_t *);
+static double *cterm_2(parser_t *);
+static double *cterm_3(parser_t *);
+static double *cfactor(parser_t *);
+static double *cfactor_1(parser_t *);
+static double *cfactor_2(parser_t *);
+static double *cfactor_3(parser_t *);
+static double *cpower(parser_t *);
+static double *cpower_1(parser_t *);
+static double *catom(parser_t *);
+static double *catom_1(parser_t *);
+static double *catom_2(parser_t *);
+static ast_list_t *cparameters(parser_t *);
 static ast_list_t *csum_delimited(parser_t *);
 
 
@@ -31,7 +31,7 @@ void *parse_calc(FParser *p) {
 //     | csum '+' cterm
 //     | csum '-' cterm
 //     | cterm
-static void *csum(parser_t *p) {
+static double *csum(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
@@ -52,7 +52,7 @@ static void *csum(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *csum_1(parser_t *p) {
+static double *csum_1(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -65,7 +65,7 @@ static void *csum_1(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *csum_2(parser_t *p) {
+static double *csum_2(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -83,7 +83,7 @@ static void *csum_2(parser_t *p) {
 //     | cterm '/' cfactor
 //     | cterm '%' cfactor
 //     | cfactor
-static void *cterm(parser_t *p) {
+static double *cterm(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
@@ -105,7 +105,7 @@ static void *cterm(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cterm_1(parser_t *p) {
+static double *cterm_1(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -118,7 +118,7 @@ static void *cterm_1(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cterm_2(parser_t *p) {
+static double *cterm_2(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -131,7 +131,7 @@ static void *cterm_2(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cterm_3(parser_t *p) {
+static double *cterm_3(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -149,7 +149,7 @@ static void *cterm_3(parser_t *p) {
 //     | '-' cfactor
 //     | '~' cfactor
 //     | cpower
-static void *cfactor(parser_t *p) {
+static double *cfactor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -162,7 +162,7 @@ static void *cfactor(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cfactor_1(parser_t *p) {
+static double *cfactor_1(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -173,7 +173,7 @@ static void *cfactor_1(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cfactor_2(parser_t *p) {
+static double *cfactor_2(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -184,7 +184,7 @@ static void *cfactor_2(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cfactor_3(parser_t *p) {
+static double *cfactor_3(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -198,7 +198,7 @@ static void *cfactor_3(parser_t *p) {
 // cpower:
 //     | catom '**' cfactor
 //     | catom
-static void *cpower(parser_t *p) {
+static double *cpower(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -209,7 +209,7 @@ static void *cpower(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *cpower_1(parser_t *p) {
+static double *cpower_1(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
     void *a;
     void *b;
@@ -227,7 +227,7 @@ static void *cpower_1(parser_t *p) {
 //     | NAME '(' [cparameters] ')'
 //     | NAME
 //     | NUMBER
-static void *catom(parser_t *p) {
+static double *catom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -240,7 +240,7 @@ static void *catom(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *catom_1(parser_t *p) {
+static double *catom_1(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
     void *a;
     void *r;
@@ -252,7 +252,7 @@ static void *catom_1(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-static void *catom_2(parser_t *p) {
+static double *catom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     token_t *a;
     void *b;
@@ -268,7 +268,7 @@ static void *catom_2(parser_t *p) {
 
 // cparameters:
 //     | ','.csum+ [',']
-static void *cparameters(parser_t *p) {
+static ast_list_t *cparameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     ast_list_t *a;
     token_t *b;
