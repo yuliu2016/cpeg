@@ -36,9 +36,9 @@ static double *csum(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
-    void *r = 0;
-    void *max = 0;
+    double *a = 0;
+    double *r = 0;
+    double *max = 0;
     size_t maxpos;
     do {
         memoize(p, &f, max = a, maxpos = p->pos);
@@ -54,9 +54,9 @@ static double *csum(parser_t *p) {
 
 static double *csum_1(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = csum(p)) &&
         (consume(p, 21, "+")) &&
@@ -67,9 +67,9 @@ static double *csum_1(parser_t *p) {
 
 static double *csum_2(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = csum(p)) &&
         (consume(p, 22, "-")) &&
@@ -88,9 +88,9 @@ static double *cterm(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
-    void *r = 0;
-    void *max = 0;
+    double *a = 0;
+    double *r = 0;
+    double *max = 0;
     size_t maxpos;
     do {
         memoize(p, &f, max = a, maxpos = p->pos);
@@ -107,9 +107,9 @@ static double *cterm(parser_t *p) {
 
 static double *cterm_1(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 23, "*")) &&
@@ -120,9 +120,9 @@ static double *cterm_1(parser_t *p) {
 
 static double *cterm_2(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 24, "/")) &&
@@ -133,9 +133,9 @@ static double *cterm_2(parser_t *p) {
 
 static double *cterm_3(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = cterm(p)) &&
         (consume(p, 25, "%")) &&
@@ -151,8 +151,8 @@ static double *cterm_3(parser_t *p) {
 //     | cpower
 static double *cfactor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = cfactor_1(p)) ||
         (a = cfactor_2(p)) ||
@@ -164,8 +164,8 @@ static double *cfactor(parser_t *p) {
 
 static double *cfactor_1(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (a = cfactor(p))
@@ -175,8 +175,8 @@ static double *cfactor_1(parser_t *p) {
 
 static double *cfactor_2(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (a = cfactor(p))
@@ -186,8 +186,8 @@ static double *cfactor_2(parser_t *p) {
 
 static double *cfactor_3(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (a = cfactor(p))
@@ -200,8 +200,8 @@ static double *cfactor_3(parser_t *p) {
 //     | catom
 static double *cpower(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = cpower_1(p)) ||
         (a = catom(p))
@@ -211,9 +211,9 @@ static double *cpower(parser_t *p) {
 
 static double *cpower_1(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
-    void *a;
-    void *b;
-    void *r;
+    double *a;
+    double *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = catom(p)) &&
         (consume(p, 38, "**")) &&
@@ -229,8 +229,8 @@ static double *cpower_1(parser_t *p) {
 //     | NUMBER
 static double *catom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = catom_1(p)) ||
         (a = catom_2(p)) ||
@@ -242,8 +242,8 @@ static double *catom(parser_t *p) {
 
 static double *catom_1(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
-    void *a;
-    void *r;
+    double *a;
+    double *r;
     r = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (a = csum(p)) &&
@@ -255,8 +255,8 @@ static double *catom_1(parser_t *p) {
 static double *catom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     token_t *a;
-    void *b;
-    void *r;
+    ast_list_t *b;
+    double *r;
     r = enter_frame(p, &f) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
@@ -272,7 +272,7 @@ static ast_list_t *cparameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     ast_list_t *a;
     token_t *b;
-    void *r;
+    ast_list_t *r;
     r = enter_frame(p, &f) && (
         (a = csum_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
@@ -281,7 +281,7 @@ static ast_list_t *cparameters(parser_t *p) {
 }
 
 static ast_list_t *csum_delimited(parser_t *p) {
-    void *_csum = csum(p);
+    double *_csum = csum(p);
     if (!_csum) {
         return 0;
     }
