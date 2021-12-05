@@ -2,6 +2,7 @@
 #include "include/ast.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <math.h>
 
 FToken *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
@@ -136,4 +137,66 @@ double *binop_add(FParser *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a + *b;
     return r;
+}
+
+double *binop_sub(FParser *p, double *a, double *b) {
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = *a - *b;
+    return r;
+}
+
+
+double *binop_mul(FParser *p, double *a, double *b) {
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = *a * *b;
+    return r;
+}
+
+
+double *binop_div(FParser *p, double *a, double *b) {
+    if (*b == 0) {
+        return 0;
+    }
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = *a + *b;
+    return r;
+}
+
+double *binop_mod(FParser *p, double *a, double *b) {
+    if (*b == 0) {
+        return 0;
+    }
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = fmod(*a, *b);
+    return r;
+}
+
+
+double *binop_pow(FParser *p, double *a, double *b) {
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = *a + *b;
+    return r;
+}
+
+double *unary_plus(FParser *p, double *a) {
+    return a;
+}
+
+double *unary_minus(FParser *p, double *a) {
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = -*a;
+    return r;
+}
+
+double *unary_not(FParser *p, double *a) {
+    return 0;
+}
+
+double *load_const(FParser *p, FToken *token) {
+    return 0;
+}
+
+
+double *call_func(FParser *p, FToken *name, ast_list_t *token) {
+    return 0;
 }
