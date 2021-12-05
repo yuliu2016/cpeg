@@ -27,7 +27,7 @@ void *parse_calc(FParser *p) {
     return csum(p);
 }
 
-// csum:
+// csum (left_recursive):
 //     | csum '+' cterm
 //     | csum '-' cterm
 //     | cterm
@@ -78,7 +78,7 @@ static double *csum_2(parser_t *p) {
     return exit_frame(p, &f, r);
 }
 
-// cterm:
+// cterm (left_recursive):
 //     | cterm '*' cfactor
 //     | cterm '/' cfactor
 //     | cterm '%' cfactor
