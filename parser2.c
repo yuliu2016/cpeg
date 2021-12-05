@@ -61,7 +61,7 @@ static double *csum_1(parser_t *p) {
         (a = csum(p)) &&
         (consume(p, 21, "+")) &&
         (b = cterm(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_add(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -74,7 +74,7 @@ static double *csum_2(parser_t *p) {
         (a = csum(p)) &&
         (consume(p, 22, "-")) &&
         (b = cterm(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_sub(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -114,7 +114,7 @@ static double *cterm_1(parser_t *p) {
         (a = cterm(p)) &&
         (consume(p, 23, "*")) &&
         (b = cfactor(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_mul(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -127,7 +127,7 @@ static double *cterm_2(parser_t *p) {
         (a = cterm(p)) &&
         (consume(p, 24, "/")) &&
         (b = cfactor(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_div(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -140,7 +140,7 @@ static double *cterm_3(parser_t *p) {
         (a = cterm(p)) &&
         (consume(p, 25, "%")) &&
         (b = cfactor(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_mod(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -169,7 +169,7 @@ static double *cfactor_1(parser_t *p) {
     r = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (a = cfactor(p))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? unary_plus(p, a) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -180,7 +180,7 @@ static double *cfactor_2(parser_t *p) {
     r = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (a = cfactor(p))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? unary_minus(p, a) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -191,7 +191,7 @@ static double *cfactor_3(parser_t *p) {
     r = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (a = cfactor(p))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? unary_not(p, a) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -218,7 +218,7 @@ static double *cpower_1(parser_t *p) {
         (a = catom(p)) &&
         (consume(p, 38, "**")) &&
         (b = cfactor(p))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? binop_pow(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -248,7 +248,7 @@ static double *catom_1(parser_t *p) {
         (consume(p, 13, "(")) &&
         (a = csum(p)) &&
         (consume(p, 14, ")"))
-    ) ? node_1(p, &f, a) : 0;
+    ) ? a : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -262,7 +262,7 @@ static double *catom_2(parser_t *p) {
         (consume(p, 13, "(")) &&
         (b = cparameters(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? call_func(p, a, b) : 0;
     return exit_frame(p, &f, r);
 }
 
@@ -276,7 +276,7 @@ static ast_list_t *cparameters(parser_t *p) {
     r = enter_frame(p, &f) && (
         (a = csum_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
-    ) ? node_2(p, &f, a, b) : 0;
+    ) ? a : 0;
     return exit_frame(p, &f, r);
 }
 

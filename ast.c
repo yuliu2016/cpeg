@@ -103,3 +103,37 @@ void *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
     va_end(valist);
     return res;
 }
+
+
+/*
+csum[double] (left_recursive):
+    | csum '+' cterm { "binop_add(p, %a, %b)" }
+    | csum '-' cterm { "binop_sub(p, %a, %b)" }
+    | cterm { a }
+cterm[double] (left_recursive):
+    | cterm '*' cfactor { "binop_mul(p, %a, %b)" }
+    | cterm '/' cfactor { "binop_div(p, %a, %b)" }
+    | cterm '%' cfactor { "binop_mod(p, %a, %b)" }
+    | cfactor { a }
+cfactor[double]:
+    | '+' cfactor { "unary_plus(p, %a)" }
+    | '-' cfactor { "unary_minus(p, %a)" }
+    | '~' cfactor { "unary_not(p, %a)" }
+    | cpower { a }
+cpower[double]:
+    | catom '**' cfactor { "binop_pow(p, %a, %b)" }
+    | catom { a }
+catom[double]:
+    | '(' csum ')' { a }
+    | NAME '(' [cparameters] ')' { "call_func(p, %a)" }
+    | NAME { "load_const(p, %a)" }
+    | NUMBER { "to_double(p, %a)" }
+cparameters[ast_list_t]:
+    | ','.csum+ [','] { a }
+    */
+
+double *binop_add(FParser *p, double *a, double *b) {
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = *a + *b;
+    return r;
+}
