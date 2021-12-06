@@ -234,8 +234,8 @@ static double *catom(parser_t *p) {
     r = enter_frame(p, &f) && (
         (a = catom_1(p)) ||
         (a = catom_2(p)) ||
-        (a = consume(p, 3, "NAME")) ||
-        (a = consume(p, 4, "NUMBER"))
+        (a = load_const(p, consume(p, 3, "NAME"))) ||
+        (a = to_double(p, consume(p, 4, "NUMBER")))
     ) ? a : 0;
     return exit_frame(p, &f, r);
 }

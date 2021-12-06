@@ -200,3 +200,7 @@ double *load_const(FParser *p, FToken *token) {
 double *call_func(FParser *p, FToken *name, ast_list_t *token) {
     return 0;
 }
+
+double *to_double(FParser *p, FToken *tok) {
+    return 0;
+}

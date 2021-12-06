@@ -50,7 +50,7 @@ static inline int enter_frame(FParser *p, frame_t *f) {
 }
 
 
-static inline void *exit_frame(FParser *p, frame_t *f, FAstNode *result) {
+static inline void *exit_frame(FParser *p, frame_t *f, void *result) {
 
     IF_DEBUG(FPeg_debug_exit(p, result, f->f_type, f->f_rule);)
 

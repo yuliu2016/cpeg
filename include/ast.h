@@ -64,4 +64,17 @@ static inline void *node_4(FParser *p, void *f, void *a, void *b, void *c, void 
     return FAst_new_node(p, 0, 4, a, b, c, d);
 }
 
+double *binop_add(FParser *p, double *a, double *b);
+double *binop_sub(FParser *p, double *a, double *b);
+double *binop_mul(FParser *p, double *a, double *b);
+double *binop_div(FParser *p, double *a, double *b);
+double *binop_mod(FParser *p, double *a, double *b);
+double *binop_pow(FParser *p, double *a, double *b);
+double *unary_plus(FParser *p, double *a);
+double *unary_minus(FParser *p, double *a);
+double *unary_not(FParser *p, double *a);
+double *load_const(FParser *p, FToken *token);
+double *call_func(FParser *p, FToken *name, ast_list_t *token);
+double *to_double(FParser *p, FToken *tok);
+
 #endif //CPEG_AST_H
