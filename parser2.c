@@ -41,7 +41,9 @@ static double *csum(parser_t *p) {
     double *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        maxpos = p->pos;
+        max = a;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = csum_1(p)) ||
         (a = csum_2(p)) ||
@@ -93,7 +95,9 @@ static double *cterm(parser_t *p) {
     double *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        maxpos = p->pos;
+        max = a;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = cterm_1(p)) ||
         (a = cterm_2(p)) ||

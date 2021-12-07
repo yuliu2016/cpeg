@@ -640,7 +640,9 @@ static void *t_primary(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = t_primary_1(p)) ||
         (a = t_primary_2(p)) ||
@@ -2249,7 +2251,9 @@ static void *disjunction(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = disjunction_1(p)) ||
         (a = conjunction(p));
@@ -2285,7 +2289,9 @@ static void *conjunction(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = conjunction_1(p)) ||
         (a = inversion(p));
@@ -2446,7 +2452,9 @@ static void *bitwise_or(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = bitwise_or_1(p)) ||
         (a = bitwise_xor(p));
@@ -2482,7 +2490,9 @@ static void *bitwise_xor(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = bitwise_xor_1(p)) ||
         (a = bitwise_and(p));
@@ -2518,7 +2528,9 @@ static void *bitwise_and(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = bitwise_and_1(p)) ||
         (a = shift_expr(p));
@@ -2555,7 +2567,9 @@ static void *shift_expr(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = shift_expr_1(p)) ||
         (a = shift_expr_2(p)) ||
@@ -2606,7 +2620,9 @@ static void *sum(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = sum_1(p)) ||
         (a = sum_2(p)) ||
@@ -2660,7 +2676,9 @@ static void *term(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = term_1(p)) ||
         (a = term_2(p)) ||
@@ -2752,7 +2770,9 @@ static void *pipe_expr(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = pipe_expr_1(p)) ||
         (a = factor(p));
@@ -2868,7 +2888,9 @@ static void *primary(parser_t *p) {
     void *max = 0;
     size_t maxpos;
     do {
-        memoize(p, &f, max = a, maxpos = p->pos);
+        max = a;
+        maxpos = p->pos;
+        memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
         (a = primary_1(p)) ||
         (a = primary_2(p)) ||
