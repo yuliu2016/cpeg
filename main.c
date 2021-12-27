@@ -12,7 +12,7 @@
 
 
 char *tokparse(char *in) {
-    FParser *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
+    parser_t *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
     double *n = parse_calc(p);
     FLexerState *ls = &p->lexer_state;
     if (p->error) {

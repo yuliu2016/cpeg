@@ -81,7 +81,7 @@ void FLexer_free_state(FLexerState *ls);
 typedef FToken *(*FLexerFunc)(FLexerState *);
 
 
-typedef struct parser_state_t {
+typedef struct parser_state {
     // Use to get lazily scan the next token
     FLexerState lexer_state;
 
@@ -103,6 +103,9 @@ typedef struct parser_state_t {
     size_t level;
 
 } FParser;
+
+typedef FParser parser_t;
+typedef FToken token_t;
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 

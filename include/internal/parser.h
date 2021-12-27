@@ -26,9 +26,6 @@ typedef struct frame {
     int memoize;
 } frame_t;
 
-typedef FParser parser_t;
-typedef FToken token_t;
-
 static inline int enter_frame(FParser *p, frame_t *f) {
 
     IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
