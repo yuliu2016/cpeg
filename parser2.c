@@ -23,7 +23,7 @@ static ast_list_t *csum_delimited(parser_t *);
 
 
 // Parser Entry Point
-void *parse_calc(FParser *p) {
+double *parse_calc(parser_t *p) {
     return csum(p);
 }
 

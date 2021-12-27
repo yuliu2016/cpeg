@@ -134,6 +134,6 @@ FToken *get_next_token_to_consume(FParser *p, size_t *ppos); // todo remove priv
 
 void *parse_grammar(FParser *p, int entry_point); // todo where should this go?
 
-void *parse_calc(FParser *p);
+double *parse_calc(FParser *p);
 
 #endif //CPEG_PEG_H
