@@ -189,18 +189,26 @@ double *unary_minus(FParser *p, double *a) {
 }
 
 double *unary_not(FParser *p, double *a) {
-    return 0;
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = 0;
+    return r;
 }
 
 double *load_const(FParser *p, FToken *token) {
-    return 0;
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = 0;
+    return r;
 }
 
 
 double *call_func(FParser *p, FToken *name, ast_list_t *token) {
-    return 0;
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = 0;
+    return r;
 }
 
 double *to_double(FParser *p, FToken *tok) {
-    return 0;
+    double *r = PARSER_ALLOC(p, sizeof(double));
+    *r = 0;
+    return r;
 }
