@@ -1,5 +1,5 @@
-#include "include/tokenizer.h"
-#include "include/tokenmap.h"
+#include "include/peg.h"
+#include "include/internal/tokenmap.h"
 #include "stdbool.h"
 #include "stdio.h"
 #include "string.h"

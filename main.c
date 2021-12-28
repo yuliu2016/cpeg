@@ -1,6 +1,5 @@
 #include "include/internal/mem_debug.h"
 #include "include/internal/debugcli.h"
-#include "include/tokenizer.h"
 #include "include/ast.h"
 
 #ifdef WIN32
@@ -14,6 +13,8 @@
 void *parse_grammar(parser_t *p, int entry_point);
 
 double *parse_calc(parser_t *p);
+
+FToken *FLexer_get_next_token(FLexerState *ls);
 
 
 char *tokparse(char *in) {

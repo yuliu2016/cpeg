@@ -4,7 +4,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "inttypes.h"
-#include "include/tokenizer.h"
+#include "include/peg.h"
 
 
 void input_loop(char *prompt, char *(*func)(char *)) {
@@ -172,6 +172,8 @@ static TokenKind token_kinds[] = {
     {"OPERATOR", "\033[33m", 6, 54}, // yellow
     {"KEYWORD", "\033[34;1m", 55, 84}, // bright blue
 };
+
+FLexerState *FLexer_analyze_all(char *src);
 
 char *tokenizer_repl(char *in) {
     FLexerState *ls = FLexer_analyze_all(in);
