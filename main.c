@@ -32,6 +32,7 @@ char *tokparse(char *in) {
         printf("Not all tokens parsed\n\033[0m");
         printf("=====================");
     }
+    printf("Result: %lf\n", *n);
     FPeg_free_parser(p);
     return "\n";
 }

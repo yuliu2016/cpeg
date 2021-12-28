@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 FToken *FPeg_consume_token(FParser *p, size_t type) {
     size_t pos = p->pos;
@@ -87,24 +88,6 @@ void ast_list_append(FParser *p, ast_list_t *seq, void *item) {
     seq->items[seq->len++] = item;
 }
 
-void *FAst_new_node(FParser *p, size_t t, int nargs, ...) {
-    va_list valist;
-    if (nargs > AST_NODE_MAX_FIELD) {
-        return NULL;
-    }
-    va_start(valist, nargs);
-
-    FAstNode *res = PARSER_ALLOC(p, sizeof(FAstNode));
-    // a field-node, shift by 2 and mark as non-sequence
-    res->ast_t = t << 2u | 1u;
-    for (int i = 0; i < nargs; ++i) {
-        res->ast_v.fields[i] = va_arg(valist, FAstNode *);
-    }
-    
-    va_end(valist);
-    return res;
-}
-
 
 /*
 csum[double] (left_recursive):
@@ -136,6 +119,7 @@ cparameters[ast_list_t]:
 double *binop_add(FParser *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a + *b;
+    printf("Adding %lf and %lf\n", *a, *b);
     return r;
 }
 
@@ -195,6 +179,7 @@ double *unary_not(FParser *p, double *a) {
 }
 
 double *load_const(FParser *p, FToken *token) {
+    if (!token) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
     return r;
@@ -208,7 +193,8 @@ double *call_func(FParser *p, FToken *name, ast_list_t *token) {
 }
 
 double *to_double(FParser *p, FToken *tok) {
+    if (!tok) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = 0;
+    *r = strtod(tok->start, NULL);
     return r;
 }
