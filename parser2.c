@@ -1,43 +1,43 @@
 #include "include/internal/parser.h"
 
 
-static double *csum(parser_t *);
-static double *csum_1(parser_t *);
-static double *csum_2(parser_t *);
-static double *cterm(parser_t *);
-static double *cterm_1(parser_t *);
-static double *cterm_2(parser_t *);
-static double *cterm_3(parser_t *);
-static double *cfactor(parser_t *);
-static double *cfactor_1(parser_t *);
-static double *cfactor_2(parser_t *);
-static double *cfactor_3(parser_t *);
-static double *cpower(parser_t *);
-static double *cpower_1(parser_t *);
-static double *catom(parser_t *);
-static double *catom_1(parser_t *);
-static double *catom_2(parser_t *);
-static ast_list_t *cparameters(parser_t *);
-static ast_list_t *csum_delimited(parser_t *);
+static double *sum(parser_t *);
+static double *sum_1(parser_t *);
+static double *sum_2(parser_t *);
+static double *term(parser_t *);
+static double *term_1(parser_t *);
+static double *term_2(parser_t *);
+static double *term_3(parser_t *);
+static double *factor(parser_t *);
+static double *factor_1(parser_t *);
+static double *factor_2(parser_t *);
+static double *factor_3(parser_t *);
+static double *power(parser_t *);
+static double *power_1(parser_t *);
+static double *atom(parser_t *);
+static double *atom_1(parser_t *);
+static double *atom_2(parser_t *);
+static ast_list_t *parameters(parser_t *);
+static ast_list_t *sum_delimited(parser_t *);
 
 
 
 // Parser Entry Point
 double *parse_calc(parser_t *p) {
-    return csum(p);
+    return sum(p);
 }
 
-// csum (left_recursive):
-//     | csum '+' cterm
-//     | csum '-' cterm
-//     | cterm
-static double *csum(parser_t *p) {
+// sum (left_recursive):
+//     | sum '+' term
+//     | sum '-' term
+//     | term
+static double *sum(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
     double *a = 0;
-    double *_csum = 0;
+    double *_sum = 0;
     double *max = 0;
     size_t maxpos;
     do {
@@ -45,53 +45,53 @@ static double *csum(parser_t *p) {
         max = a;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = csum_1(p)) ||
-        (a = csum_2(p)) ||
-        (a = cterm(p));
+        (a = sum_1(p)) ||
+        (a = sum_2(p)) ||
+        (a = term(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _csum = max;
-    return exit_frame(p, &f, _csum);
+    _sum = max;
+    return exit_frame(p, &f, _sum);
 }
 
-static double *csum_1(parser_t *p) {
+static double *sum_1(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_csum_1;
-    _csum_1 = enter_frame(p, &f) && (
-        (a = csum(p)) &&
+    double *_sum_1;
+    _sum_1 = enter_frame(p, &f) && (
+        (a = sum(p)) &&
         (consume(p, 21, "+")) &&
-        (b = cterm(p))
+        (b = term(p))
     ) ? binop_add(p, a, b) : 0;
-    return exit_frame(p, &f, _csum_1);
+    return exit_frame(p, &f, _sum_1);
 }
 
-static double *csum_2(parser_t *p) {
+static double *sum_2(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_csum_2;
-    _csum_2 = enter_frame(p, &f) && (
-        (a = csum(p)) &&
+    double *_sum_2;
+    _sum_2 = enter_frame(p, &f) && (
+        (a = sum(p)) &&
         (consume(p, 22, "-")) &&
-        (b = cterm(p))
+        (b = term(p))
     ) ? binop_sub(p, a, b) : 0;
-    return exit_frame(p, &f, _csum_2);
+    return exit_frame(p, &f, _sum_2);
 }
 
-// cterm (left_recursive):
-//     | cterm '*' cfactor
-//     | cterm '/' cfactor
-//     | cterm '%' cfactor
-//     | cfactor
-static double *cterm(parser_t *p) {
+// term (left_recursive):
+//     | term '*' factor
+//     | term '/' factor
+//     | term '%' factor
+//     | factor
+static double *term(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
     double *a = 0;
-    double *_cterm = 0;
+    double *_term = 0;
     double *max = 0;
     size_t maxpos;
     do {
@@ -99,203 +99,203 @@ static double *cterm(parser_t *p) {
         max = a;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = cterm_1(p)) ||
-        (a = cterm_2(p)) ||
-        (a = cterm_3(p)) ||
-        (a = cfactor(p));
+        (a = term_1(p)) ||
+        (a = term_2(p)) ||
+        (a = term_3(p)) ||
+        (a = factor(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _cterm = max;
-    return exit_frame(p, &f, _cterm);
+    _term = max;
+    return exit_frame(p, &f, _term);
 }
 
-static double *cterm_1(parser_t *p) {
+static double *term_1(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_cterm_1;
-    _cterm_1 = enter_frame(p, &f) && (
-        (a = cterm(p)) &&
+    double *_term_1;
+    _term_1 = enter_frame(p, &f) && (
+        (a = term(p)) &&
         (consume(p, 23, "*")) &&
-        (b = cfactor(p))
+        (b = factor(p))
     ) ? binop_mul(p, a, b) : 0;
-    return exit_frame(p, &f, _cterm_1);
+    return exit_frame(p, &f, _term_1);
 }
 
-static double *cterm_2(parser_t *p) {
+static double *term_2(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_cterm_2;
-    _cterm_2 = enter_frame(p, &f) && (
-        (a = cterm(p)) &&
+    double *_term_2;
+    _term_2 = enter_frame(p, &f) && (
+        (a = term(p)) &&
         (consume(p, 24, "/")) &&
-        (b = cfactor(p))
+        (b = factor(p))
     ) ? binop_div(p, a, b) : 0;
-    return exit_frame(p, &f, _cterm_2);
+    return exit_frame(p, &f, _term_2);
 }
 
-static double *cterm_3(parser_t *p) {
+static double *term_3(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_cterm_3;
-    _cterm_3 = enter_frame(p, &f) && (
-        (a = cterm(p)) &&
+    double *_term_3;
+    _term_3 = enter_frame(p, &f) && (
+        (a = term(p)) &&
         (consume(p, 25, "%")) &&
-        (b = cfactor(p))
+        (b = factor(p))
     ) ? binop_mod(p, a, b) : 0;
-    return exit_frame(p, &f, _cterm_3);
+    return exit_frame(p, &f, _term_3);
 }
 
-// cfactor:
-//     | '+' cfactor
-//     | '-' cfactor
-//     | '~' cfactor
-//     | cpower
-static double *cfactor(parser_t *p) {
+// factor:
+//     | '+' factor
+//     | '-' factor
+//     | '~' factor
+//     | power
+static double *factor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
     double *a;
-    double *_cfactor;
-    _cfactor = enter_frame(p, &f) && (
-        (a = cfactor_1(p)) ||
-        (a = cfactor_2(p)) ||
-        (a = cfactor_3(p)) ||
-        (a = cpower(p))
+    double *_factor;
+    _factor = enter_frame(p, &f) && (
+        (a = factor_1(p)) ||
+        (a = factor_2(p)) ||
+        (a = factor_3(p)) ||
+        (a = power(p))
     ) ? a : 0;
-    return exit_frame(p, &f, _cfactor);
+    return exit_frame(p, &f, _factor);
 }
 
-static double *cfactor_1(parser_t *p) {
+static double *factor_1(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
     double *a;
-    double *_cfactor_1;
-    _cfactor_1 = enter_frame(p, &f) && (
+    double *_factor_1;
+    _factor_1 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
-        (a = cfactor(p))
+        (a = factor(p))
     ) ? unary_plus(p, a) : 0;
-    return exit_frame(p, &f, _cfactor_1);
+    return exit_frame(p, &f, _factor_1);
 }
 
-static double *cfactor_2(parser_t *p) {
+static double *factor_2(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
     double *a;
-    double *_cfactor_2;
-    _cfactor_2 = enter_frame(p, &f) && (
+    double *_factor_2;
+    _factor_2 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
-        (a = cfactor(p))
+        (a = factor(p))
     ) ? unary_minus(p, a) : 0;
-    return exit_frame(p, &f, _cfactor_2);
+    return exit_frame(p, &f, _factor_2);
 }
 
-static double *cfactor_3(parser_t *p) {
+static double *factor_3(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
     double *a;
-    double *_cfactor_3;
-    _cfactor_3 = enter_frame(p, &f) && (
+    double *_factor_3;
+    _factor_3 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
-        (a = cfactor(p))
+        (a = factor(p))
     ) ? unary_not(p, a) : 0;
-    return exit_frame(p, &f, _cfactor_3);
+    return exit_frame(p, &f, _factor_3);
 }
 
-// cpower:
-//     | catom '**' cfactor
-//     | catom
-static double *cpower(parser_t *p) {
+// power:
+//     | atom '**' factor
+//     | atom
+static double *power(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     double *a;
-    double *_cpower;
-    _cpower = enter_frame(p, &f) && (
-        (a = cpower_1(p)) ||
-        (a = catom(p))
+    double *_power;
+    _power = enter_frame(p, &f) && (
+        (a = power_1(p)) ||
+        (a = atom(p))
     ) ? a : 0;
-    return exit_frame(p, &f, _cpower);
+    return exit_frame(p, &f, _power);
 }
 
-static double *cpower_1(parser_t *p) {
+static double *power_1(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
     double *a;
     double *b;
-    double *_cpower_1;
-    _cpower_1 = enter_frame(p, &f) && (
-        (a = catom(p)) &&
+    double *_power_1;
+    _power_1 = enter_frame(p, &f) && (
+        (a = atom(p)) &&
         (consume(p, 38, "**")) &&
-        (b = cfactor(p))
+        (b = factor(p))
     ) ? binop_pow(p, a, b) : 0;
-    return exit_frame(p, &f, _cpower_1);
+    return exit_frame(p, &f, _power_1);
 }
 
-// catom:
-//     | '(' csum ')'
-//     | NAME '(' [cparameters] ')'
+// atom:
+//     | '(' sum ')'
+//     | NAME '(' [parameters] ')'
 //     | NAME
 //     | NUMBER
-static double *catom(parser_t *p) {
+static double *atom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
     double *a;
-    double *_catom;
-    _catom = enter_frame(p, &f) && (
-        (a = catom_1(p)) ||
-        (a = catom_2(p)) ||
+    double *_atom;
+    _atom = enter_frame(p, &f) && (
+        (a = atom_1(p)) ||
+        (a = atom_2(p)) ||
         (a = load_const(p, consume(p, 3, "NAME"))) ||
         (a = to_double(p, consume(p, 4, "NUMBER")))
     ) ? a : 0;
-    return exit_frame(p, &f, _catom);
+    return exit_frame(p, &f, _atom);
 }
 
-static double *catom_1(parser_t *p) {
+static double *atom_1(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
     double *a;
-    double *_catom_1;
-    _catom_1 = enter_frame(p, &f) && (
+    double *_atom_1;
+    _atom_1 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
-        (a = csum(p)) &&
+        (a = sum(p)) &&
         (consume(p, 14, ")"))
     ) ? a : 0;
-    return exit_frame(p, &f, _catom_1);
+    return exit_frame(p, &f, _atom_1);
 }
 
-static double *catom_2(parser_t *p) {
+static double *atom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
     token_t *a;
     ast_list_t *b;
-    double *_catom_2;
-    _catom_2 = enter_frame(p, &f) && (
+    double *_atom_2;
+    _atom_2 = enter_frame(p, &f) && (
         (a = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
-        (b = cparameters(p), 1) &&
+        (b = parameters(p), 1) &&
         (consume(p, 14, ")"))
     ) ? call_func(p, a, b) : 0;
-    return exit_frame(p, &f, _catom_2);
+    return exit_frame(p, &f, _atom_2);
 }
 
-// cparameters:
-//     | ','.csum+ [',']
-static ast_list_t *cparameters(parser_t *p) {
+// parameters:
+//     | ','.sum+ [',']
+static ast_list_t *parameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     ast_list_t *a;
     token_t *b;
-    ast_list_t *_cparameters;
-    _cparameters = enter_frame(p, &f) && (
-        (a = csum_delimited(p)) &&
+    ast_list_t *_parameters;
+    _parameters = enter_frame(p, &f) && (
+        (a = sum_delimited(p)) &&
         (b = consume(p, 7, ","), 1)
     ) ? a : 0;
-    return exit_frame(p, &f, _cparameters);
+    return exit_frame(p, &f, _parameters);
 }
 
-static ast_list_t *csum_delimited(parser_t *p) {
-    double *_csum = csum(p);
-    if (!_csum) {
+static ast_list_t *sum_delimited(parser_t *p) {
+    double *_sum = sum(p);
+    if (!_sum) {
         return 0;
     }
     ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, list, _csum);
+        ast_list_append(p, list, _sum);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (_csum = csum(p)));
+            (_sum = sum(p)));
     p->pos = pos;
     return list;
 }
