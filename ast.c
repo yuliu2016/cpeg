@@ -142,7 +142,7 @@ double *binop_div(FParser *p, double *a, double *b) {
         return 0;
     }
     double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = *a + *b;
+    *r = *a / *b;
     return r;
 }
 

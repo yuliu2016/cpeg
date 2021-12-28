@@ -50,7 +50,7 @@ static double *csum(parser_t *p) {
         (a = cterm(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _csum = max ? node_1(p, &f, max) : 0;
+    _csum = max;
     return exit_frame(p, &f, _csum);
 }
 
@@ -105,7 +105,7 @@ static double *cterm(parser_t *p) {
         (a = cfactor(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _cterm = max ? node_1(p, &f, max) : 0;
+    _cterm = max;
     return exit_frame(p, &f, _cterm);
 }
 

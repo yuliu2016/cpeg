@@ -650,7 +650,7 @@ static void *t_primary(parser_t *p) {
         (a = t_primary_4(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _t_primary = max ? node_1(p, &f, max) : 0;
+    _t_primary = max;
     return exit_frame(p, &f, _t_primary);
 }
 
@@ -2259,7 +2259,7 @@ static void *disjunction(parser_t *p) {
         (a = conjunction(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _disjunction = max ? node_1(p, &f, max) : 0;
+    _disjunction = max;
     return exit_frame(p, &f, _disjunction);
 }
 
@@ -2297,7 +2297,7 @@ static void *conjunction(parser_t *p) {
         (a = inversion(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _conjunction = max ? node_1(p, &f, max) : 0;
+    _conjunction = max;
     return exit_frame(p, &f, _conjunction);
 }
 
@@ -2460,7 +2460,7 @@ static void *bitwise_or(parser_t *p) {
         (a = bitwise_xor(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _bitwise_or = max ? node_1(p, &f, max) : 0;
+    _bitwise_or = max;
     return exit_frame(p, &f, _bitwise_or);
 }
 
@@ -2498,7 +2498,7 @@ static void *bitwise_xor(parser_t *p) {
         (a = bitwise_and(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _bitwise_xor = max ? node_1(p, &f, max) : 0;
+    _bitwise_xor = max;
     return exit_frame(p, &f, _bitwise_xor);
 }
 
@@ -2536,7 +2536,7 @@ static void *bitwise_and(parser_t *p) {
         (a = shift_expr(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _bitwise_and = max ? node_1(p, &f, max) : 0;
+    _bitwise_and = max;
     return exit_frame(p, &f, _bitwise_and);
 }
 
@@ -2576,7 +2576,7 @@ static void *shift_expr(parser_t *p) {
         (a = sum(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _shift_expr = max ? node_1(p, &f, max) : 0;
+    _shift_expr = max;
     return exit_frame(p, &f, _shift_expr);
 }
 
@@ -2629,7 +2629,7 @@ static void *sum(parser_t *p) {
         (a = term(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _sum = max ? node_1(p, &f, max) : 0;
+    _sum = max;
     return exit_frame(p, &f, _sum);
 }
 
@@ -2688,7 +2688,7 @@ static void *term(parser_t *p) {
         (a = pipe_expr(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _term = max ? node_1(p, &f, max) : 0;
+    _term = max;
     return exit_frame(p, &f, _term);
 }
 
@@ -2778,7 +2778,7 @@ static void *pipe_expr(parser_t *p) {
         (a = factor(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _pipe_expr = max ? node_1(p, &f, max) : 0;
+    _pipe_expr = max;
     return exit_frame(p, &f, _pipe_expr);
 }
 
@@ -2898,7 +2898,7 @@ static void *primary(parser_t *p) {
         (a = atom(p));
     } while (p->pos > maxpos);
     p->pos = maxpos;
-    _primary = max ? node_1(p, &f, max) : 0;
+    _primary = max;
     return exit_frame(p, &f, _primary);
 }
 
