@@ -10,11 +10,6 @@ typedef struct ast_list {
     void **items;
 } ast_list_t;
 
-
-FToken *FPeg_consume_token(FParser *p, size_t type);
-
-FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
-
 ast_list_t *ast_list_new(FParser *p);
 
 void ast_list_append(FParser *p, ast_list_t *seq, void *item);

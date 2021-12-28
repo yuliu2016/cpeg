@@ -344,6 +344,56 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
+FToken *FPeg_consume_token(FParser *p, size_t type) {
+    size_t pos = p->pos;
+
+    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    if (!curr_token) {
+        return NULL;
+    }
+
+    // now check for correct type
+    if (curr_token->type == type) {
+        p->pos = pos + 1;
+        return curr_token;
+    } else {
+        return NULL;
+    }
+}
+
+FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal) {
+    size_t pos = p->pos;
+
+    print_indent_level(p->level);
+    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    if (!curr_token) {
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
+                literal, p->level, p->pos);
+        return NULL;
+    }
+
+    // now check for correct type
+    if (curr_token->type == type) {
+        p->pos = pos + 1;
+        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
+                literal, p->level, p->pos);
+        return curr_token;
+    } else {
+        char *token_buf;
+
+        token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
+        for (size_t i = 0; i < curr_token->len; ++i) {
+            token_buf[i] = curr_token->start[i];
+        }
+
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
+                literal, p->level, p->pos, token_buf);
+        FMem_free(token_buf);
+        return NULL;
+    }
+}
+
+
 void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
     print_indent_level(p->level);
 

@@ -120,6 +120,10 @@ void FPeg_free_parser(FParser *p);
 
 int FPeg_is_done(FParser *p);
 
+FToken *FPeg_consume_token(FParser *p, size_t type);
+
+FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
+
 void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos);
 
 FTokenMemo *FPeg_get_memo(FParser *p, size_t type);
@@ -131,9 +135,6 @@ void FPeg_debug_exit(FParser *p, void *res, size_t rule_index, const char *rule_
 void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
 
 
-typedef void *(*FRuleFunc)(FParser *);
-
-FToken *get_next_token_to_consume(FParser *p, size_t *ppos); // todo remove private function
 
 void *parse_grammar(FParser *p, int entry_point); // todo where should this go?
 
