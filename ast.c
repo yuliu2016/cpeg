@@ -68,7 +68,6 @@ cparameters[ast_list_t]:
 double *binop_add(FParser *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a + *b;
-    printf("Adding %lf and %lf\n", *a, *b);
     return r;
 }
 
