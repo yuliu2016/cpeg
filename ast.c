@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 
-ast_list_t *ast_list_new(FParser *p) {
+ast_list_t *ast_list_new(parser_t *p) {
     ast_list_t *seq = PARSER_ALLOC(p, sizeof(ast_list_t));
     if (!seq) {
         return NULL;
@@ -17,7 +17,7 @@ ast_list_t *ast_list_new(FParser *p) {
 }
 
 
-void ast_list_append(FParser *p, ast_list_t *seq, void *item) {
+void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
     if (seq->len >= seq->capacity) {
         if (!seq->capacity) {
             seq->capacity = 1;
@@ -65,27 +65,27 @@ cparameters[ast_list_t]:
     | ','.csum+ [','] { a }
     */
 
-double *binop_add(FParser *p, double *a, double *b) {
+double *binop_add(parser_t *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a + *b;
     return r;
 }
 
-double *binop_sub(FParser *p, double *a, double *b) {
+double *binop_sub(parser_t *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a - *b;
     return r;
 }
 
 
-double *binop_mul(FParser *p, double *a, double *b) {
+double *binop_mul(parser_t *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a * *b;
     return r;
 }
 
 
-double *binop_div(FParser *p, double *a, double *b) {
+double *binop_div(parser_t *p, double *a, double *b) {
     if (*b == 0) {
         return 0;
     }
@@ -94,7 +94,7 @@ double *binop_div(FParser *p, double *a, double *b) {
     return r;
 }
 
-double *binop_mod(FParser *p, double *a, double *b) {
+double *binop_mod(parser_t *p, double *a, double *b) {
     if (*b == 0) {
         return 0;
     }
@@ -104,29 +104,29 @@ double *binop_mod(FParser *p, double *a, double *b) {
 }
 
 
-double *binop_pow(FParser *p, double *a, double *b) {
+double *binop_pow(parser_t *p, double *a, double *b) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = *a + *b;
     return r;
 }
 
-double *unary_plus(FParser *p, double *a) {
+double *unary_plus(parser_t *p, double *a) {
     return a;
 }
 
-double *unary_minus(FParser *p, double *a) {
+double *unary_minus(parser_t *p, double *a) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = -*a;
     return r;
 }
 
-double *unary_not(FParser *p, double *a) {
+double *unary_not(parser_t *p, double *a) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
     return r;
 }
 
-double *load_const(FParser *p, FToken *token) {
+double *load_const(parser_t *p, FToken *token) {
     if (!token) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
@@ -134,13 +134,13 @@ double *load_const(FParser *p, FToken *token) {
 }
 
 
-double *call_func(FParser *p, FToken *name, ast_list_t *token) {
+double *call_func(parser_t *p, FToken *name, ast_list_t *token) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
     return r;
 }
 
-double *to_double(FParser *p, FToken *tok) {
+double *to_double(parser_t *p, FToken *tok) {
     if (!tok) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = strtod(tok->start, NULL);

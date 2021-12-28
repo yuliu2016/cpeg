@@ -102,42 +102,32 @@ typedef struct parser_state {
     // Debugging
     size_t level;
 
-} FParser;
+} parser_t;
 
-typedef FParser parser_t;
 typedef FToken token_t;
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
 
-FParser *FPeg_init_new_parser(
-        char *src,
-        size_t len,
-        FLexerFunc lexer_func
-);
+parser_t *FPeg_init_new_parser(char *src, size_t len, FLexerFunc lexer_func);
 
-void FPeg_free_parser(FParser *p);
+void FPeg_free_parser(parser_t *p);
 
-int FPeg_is_done(FParser *p);
+int FPeg_is_done(parser_t *p);
 
-FToken *FPeg_consume_token(FParser *p, size_t type);
+FToken *FPeg_consume_token(parser_t *p, size_t type);
 
-FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal);
+FToken *FPeg_consume_token_and_debug(parser_t *p, size_t type, const char *literal);
 
-void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos);
+void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_t endpos);
 
-FTokenMemo *FPeg_get_memo(FParser *p, size_t type);
+FTokenMemo *FPeg_get_memo(parser_t *p, size_t type);
 
-void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name);
+void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name);
 
-void FPeg_debug_exit(FParser *p, void *res, size_t rule_index, const char *rule_name);
+void FPeg_debug_exit(parser_t *p, void *res, size_t rule_index, const char *rule_name);
 
-void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
+void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
 
-
-
-void *parse_grammar(FParser *p, int entry_point); // todo where should this go?
-
-double *parse_calc(FParser *p);
 
 #endif //CPEG_PEG_H

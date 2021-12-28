@@ -26,7 +26,7 @@ typedef struct frame {
     int memoize;
 } frame_t;
 
-static inline int enter_frame(FParser *p, frame_t *f) {
+static inline int enter_frame(parser_t *p, frame_t *f) {
 
     IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
 
@@ -47,7 +47,7 @@ static inline int enter_frame(FParser *p, frame_t *f) {
 }
 
 
-static inline void *exit_frame(FParser *p, frame_t *f, void *result) {
+static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
 
     IF_DEBUG(FPeg_debug_exit(p, result, f->f_type, f->f_rule);)
 
@@ -66,16 +66,16 @@ static inline void *exit_frame(FParser *p, frame_t *f, void *result) {
     return result;
 }
 
-static inline void memoize(FParser *p, frame_t *f, void *node, size_t endpos) {
+static inline void memoize(parser_t *p, frame_t *f, void *node, size_t endpos) {
     FPeg_put_memo(p, f->f_pos, f->f_type, node, endpos);
 }
 
-static inline int test_and_reset(FParser *p, frame_t *f, void *node) {
+static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
     return node && (p->pos = f->f_pos, 1);
 }
 
 
-static inline token_t *consume(FParser *p, size_t type, const char *literal) {
+static inline token_t *consume(parser_t *p, size_t type, const char *literal) {
 
 #ifdef PEG_DEBUG
     return FPeg_consume_token_and_debug(p, type, literal);

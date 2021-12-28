@@ -11,6 +11,11 @@
 #include "string.h"
 
 
+void *parse_grammar(parser_t *p, int entry_point);
+
+double *parse_calc(parser_t *p);
+
+
 char *tokparse(char *in) {
     parser_t *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
     double *n = parse_calc(p);

@@ -51,7 +51,7 @@ void FLexer_add_token(FLexerState *ls, FToken *token) {
     ls->token_len += 1;
 }
 
-void lexer_compute_next_token(FParser *p) {
+void lexer_compute_next_token(parser_t *p) {
     FLexerState *ls = &p->lexer_state;
     if (ls->curr_index < ls->src_len) {
         FLexerFunc lexer_func = p->lexer_func;
@@ -61,7 +61,7 @@ void lexer_compute_next_token(FParser *p) {
     }
 }
 
-FToken *lexer_fetch_token(FParser *p, size_t pos) {
+FToken *lexer_fetch_token(parser_t *p, size_t pos) {
     FLexerState *ls = &p->lexer_state;
 
     if (pos > ls->token_len) {
@@ -169,7 +169,7 @@ void FLexer_free_state(FLexerState *ls) {
     }
 }
 
-FParser *FPeg_init_new_parser(
+parser_t *FPeg_init_new_parser(
         char *src,
         size_t len,
         FLexerFunc lexer_func) {
@@ -183,7 +183,7 @@ FParser *FPeg_init_new_parser(
         return NULL;
     }
 
-    FParser *p = FMem_malloc(sizeof(FParser));
+    parser_t *p = FMem_malloc(sizeof(parser_t));
     if (!p) {
         return NULL;
     }
@@ -205,13 +205,13 @@ FParser *FPeg_init_new_parser(
     return p;
 }
 
-void FPeg_free_parser(FParser *p) {
+void FPeg_free_parser(parser_t *p) {
     FLexer_free_state(&p->lexer_state);
     FMemRegion_free(p->region);
     FMem_free(p);
 }
 
-int FPeg_is_done(FParser *p) {
+int FPeg_is_done(parser_t *p) {
     if (p->error || p->lexer_state.error) {
         // Early exit the function when there is already an error
         return 1;
@@ -233,7 +233,7 @@ int FPeg_is_done(FParser *p) {
     return 0;
 }
 
-FToken *get_next_token_to_consume(FParser *p, size_t *ppos) {
+FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
     size_t pos = p->pos;
     FToken *curr_token = lexer_fetch_token(p, pos);
     if (!curr_token) {
@@ -262,7 +262,7 @@ FToken *get_next_token_to_consume(FParser *p, size_t *ppos) {
     return curr_token;
 }
 
-FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
+FTokenMemo *new_memo(parser_t *p, size_t type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
     if (!new_memo) {
         return NULL;
@@ -274,7 +274,7 @@ FTokenMemo *new_memo(FParser *p, size_t type, void *node, size_t end) {
     return new_memo;
 }
 
-void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t endpos) {
+void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_t endpos) {
     FToken *curr_token = lexer_fetch_token(p, token_pos);
     if (!curr_token) {
         return;
@@ -301,7 +301,7 @@ void FPeg_put_memo(FParser *p, size_t token_pos, size_t type, void *node, size_t
     }
 }
 
-FTokenMemo *FPeg_get_memo(FParser *p, size_t type) {
+FTokenMemo *FPeg_get_memo(parser_t *p, size_t type) {
     FToken *curr_token = lexer_fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
@@ -344,7 +344,7 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
-FToken *FPeg_consume_token(FParser *p, size_t type) {
+FToken *FPeg_consume_token(parser_t *p, size_t type) {
     size_t pos = p->pos;
 
     FToken *curr_token = get_next_token_to_consume(p, &pos);
@@ -361,7 +361,7 @@ FToken *FPeg_consume_token(FParser *p, size_t type) {
     }
 }
 
-FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *literal) {
+FToken *FPeg_consume_token_and_debug(parser_t *p, size_t type, const char *literal) {
     size_t pos = p->pos;
 
     print_indent_level(p->level);
@@ -394,7 +394,7 @@ FToken *FPeg_consume_token_and_debug(FParser *p, size_t type, const char *litera
 }
 
 
-void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
+void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
@@ -420,7 +420,7 @@ void FPeg_debug_enter(FParser *p, size_t rule_index, const char *rule_name) {
     p->level++;
 }
 
-void FPeg_debug_exit(FParser *p, void *res, size_t rule_index, const char *rule_name) {
+void FPeg_debug_exit(parser_t *p, void *res, size_t rule_index, const char *rule_name) {
     if (p->level == 0) {
         p->error = "Negative recursion depth; aborted";
         return;
@@ -434,7 +434,7 @@ void FPeg_debug_exit(FParser *p, void *res, size_t rule_index, const char *rule_
     }
 }
 
-void FPeg_debug_memo(FParser *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
+void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
     if (!memo) {
         return;
     };
