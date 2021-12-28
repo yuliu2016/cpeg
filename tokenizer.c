@@ -15,12 +15,12 @@
 #define SET_ERROR(ls, msg, char_offset) FLexer_set_error(ls, msg, char_offset)
 #define CREATE_TOKEN(ls, type, is_whitespace) FLexer_create_token(ls, type, is_whitespace)
 
-int char_is_whitespace(char ch) {
+static int char_is_whitespace(char ch) {
     return ch == ' ' || ch == '\t';
 }
 
 // skip spaces and comments
-void skip_whitespace(FLexerState *ls) {
+static void skip_whitespace(FLexerState *ls) {
     if (ls->error) {
         return;
     }
@@ -42,7 +42,7 @@ void skip_whitespace(FLexerState *ls) {
 #define T_INDENT 300
 #define T_DEDENT 301
 
-bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -102,7 +102,7 @@ bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
     return true;
 }
 
-bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, FToken **ptoken) {
+static bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, FToken **ptoken) {
     size_t j = ls->curr_index + 2;
 
     while (j < ls->src_len) {
@@ -133,25 +133,25 @@ bool tokenize_non_decimal(FLexerState *ls, bool (*test_char)(char), char *name, 
     return true;
 }
 
-bool test_hex(char ch) {
+static bool test_hex(char ch) {
     return (ch >= 'A' && ch <= 'F') ||
             (ch >= 'a' && ch <= 'f') ||
             ch >= '0' && ch <= '9';
 }
 
-bool test_oct(char ch) {
+static bool test_oct(char ch) {
     return ch >= '0' && ch <= '7';
 }
 
-bool test_bin(char ch) {
+static bool test_bin(char ch) {
     return ch == '0' || ch == '1';
 }
 
-bool test_dec(char ch) {
+static bool test_dec(char ch) {
     return ch >= '0' && ch <= '9';
 }
 
-size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
+static size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
     size_t j = i;
     while (j < ls->src_len) {
         char ch = ls->src[j];
@@ -170,7 +170,7 @@ size_t advance_decimal_sequence(FLexerState *ls, size_t i) {
     return j;
 }
 
-bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
 
     size_t j = ls->curr_index;
 
@@ -240,7 +240,7 @@ bool tokenize_decimal(FLexerState *ls, FToken **ptoken) {
     return true;
 }
 
-bool tokenize_number(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_number(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -265,7 +265,7 @@ bool tokenize_number(FLexerState *ls, FToken **ptoken) {
     return tokenize_decimal(ls, ptoken);
 }
 
-bool tokenize_string(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -345,7 +345,7 @@ bool tokenize_string(FLexerState *ls, FToken **ptoken) {
     return true;
 }
 
-bool test_name(char ch) {
+static bool test_name(char ch) {
     return (ch >= 'A' && ch <= 'Z') ||
             (ch >= 'a' && ch <= 'z') ||
             (ch >= '0' && ch <= '9') ||
@@ -390,7 +390,7 @@ static struct token_literal keywords[] = {
         {"False",    T_FALSE}
 };
 
-bool tokenize_name_or_keyword(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_name_or_keyword(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -502,7 +502,7 @@ static struct token_literal operators[] = {
         {">>=", T_RSHIFT_ASSIGN}
 };
 
-bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
+static bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
     if (ls->error) {
         return false;
     }
