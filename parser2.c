@@ -56,27 +56,27 @@ static double *sum(parser_t *p) {
 
 static double *sum_1(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_sum;
+    double *_term;
     double *_sum_1;
     _sum_1 = enter_frame(p, &f) && (
-        (a = sum(p)) &&
+        (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
-        (b = term(p))
-    ) ? binop_add(p, a, b) : 0;
+        (_term = term(p))
+    ) ? binop_add(p, _sum, _term) : 0;
     return exit_frame(p, &f, _sum_1);
 }
 
 static double *sum_2(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_sum;
+    double *_term;
     double *_sum_2;
     _sum_2 = enter_frame(p, &f) && (
-        (a = sum(p)) &&
+        (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
-        (b = term(p))
-    ) ? binop_sub(p, a, b) : 0;
+        (_term = term(p))
+    ) ? binop_sub(p, _sum, _term) : 0;
     return exit_frame(p, &f, _sum_2);
 }
 
@@ -111,40 +111,40 @@ static double *term(parser_t *p) {
 
 static double *term_1(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_term;
+    double *_factor;
     double *_term_1;
     _term_1 = enter_frame(p, &f) && (
-        (a = term(p)) &&
+        (_term = term(p)) &&
         (consume(p, 23, "*")) &&
-        (b = factor(p))
-    ) ? binop_mul(p, a, b) : 0;
+        (_factor = factor(p))
+    ) ? binop_mul(p, _term, _factor) : 0;
     return exit_frame(p, &f, _term_1);
 }
 
 static double *term_2(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_term;
+    double *_factor;
     double *_term_2;
     _term_2 = enter_frame(p, &f) && (
-        (a = term(p)) &&
+        (_term = term(p)) &&
         (consume(p, 24, "/")) &&
-        (b = factor(p))
-    ) ? binop_div(p, a, b) : 0;
+        (_factor = factor(p))
+    ) ? binop_div(p, _term, _factor) : 0;
     return exit_frame(p, &f, _term_2);
 }
 
 static double *term_3(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_term;
+    double *_factor;
     double *_term_3;
     _term_3 = enter_frame(p, &f) && (
-        (a = term(p)) &&
+        (_term = term(p)) &&
         (consume(p, 25, "%")) &&
-        (b = factor(p))
-    ) ? binop_mod(p, a, b) : 0;
+        (_factor = factor(p))
+    ) ? binop_mod(p, _term, _factor) : 0;
     return exit_frame(p, &f, _term_3);
 }
 
@@ -168,34 +168,34 @@ static double *factor(parser_t *p) {
 
 static double *factor_1(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
-    double *a;
+    double *_factor;
     double *_factor_1;
     _factor_1 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
-        (a = factor(p))
-    ) ? unary_plus(p, a) : 0;
+        (_factor = factor(p))
+    ) ? unary_plus(p, _factor) : 0;
     return exit_frame(p, &f, _factor_1);
 }
 
 static double *factor_2(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
-    double *a;
+    double *_factor;
     double *_factor_2;
     _factor_2 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
-        (a = factor(p))
-    ) ? unary_minus(p, a) : 0;
+        (_factor = factor(p))
+    ) ? unary_minus(p, _factor) : 0;
     return exit_frame(p, &f, _factor_2);
 }
 
 static double *factor_3(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
-    double *a;
+    double *_factor;
     double *_factor_3;
     _factor_3 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
-        (a = factor(p))
-    ) ? unary_not(p, a) : 0;
+        (_factor = factor(p))
+    ) ? unary_not(p, _factor) : 0;
     return exit_frame(p, &f, _factor_3);
 }
 
@@ -215,14 +215,14 @@ static double *power(parser_t *p) {
 
 static double *power_1(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
-    double *a;
-    double *b;
+    double *_atom;
+    double *_factor;
     double *_power_1;
     _power_1 = enter_frame(p, &f) && (
-        (a = atom(p)) &&
+        (_atom = atom(p)) &&
         (consume(p, 38, "**")) &&
-        (b = factor(p))
-    ) ? binop_pow(p, a, b) : 0;
+        (_factor = factor(p))
+    ) ? binop_pow(p, _atom, _factor) : 0;
     return exit_frame(p, &f, _power_1);
 }
 
@@ -246,27 +246,27 @@ static double *atom(parser_t *p) {
 
 static double *atom_1(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
-    double *a;
+    double *_sum;
     double *_atom_1;
     _atom_1 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
-        (a = sum(p)) &&
+        (_sum = sum(p)) &&
         (consume(p, 14, ")"))
-    ) ? a : 0;
+    ) ? _sum : 0;
     return exit_frame(p, &f, _atom_1);
 }
 
 static double *atom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
-    token_t *a;
-    ast_list_t *b;
+    token_t *_name;
+    ast_list_t *_parameters;
     double *_atom_2;
     _atom_2 = enter_frame(p, &f) && (
-        (a = consume(p, 3, "NAME")) &&
+        (_name = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
-        (b = parameters(p), 1) &&
+        (_parameters = parameters(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? call_func(p, a, b) : 0;
+    ) ? call_func(p, _name, _parameters) : 0;
     return exit_frame(p, &f, _atom_2);
 }
 
@@ -274,13 +274,13 @@ static double *atom_2(parser_t *p) {
 //     | ','.sum+ [',']
 static ast_list_t *parameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
-    ast_list_t *a;
-    token_t *b;
+    ast_list_t *_sums;
+    token_t *_is_comma;
     ast_list_t *_parameters;
     _parameters = enter_frame(p, &f) && (
-        (a = sum_delimited(p)) &&
-        (b = consume(p, 7, ","), 1)
-    ) ? a : 0;
+        (_sums = sum_delimited(p)) &&
+        (_is_comma = consume(p, 7, ","), 1)
+    ) ? _sums : 0;
     return exit_frame(p, &f, _parameters);
 }
 
