@@ -15,23 +15,7 @@ ast_list_t *ast_list_new(parser_t *p);
 void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 
-static inline void *node_0(parser_t *p, void *f) {
-    return PARSER_ALLOC(p, sizeof(char));
-}
-
-static inline void *node_1(parser_t *p, void *f, void *a) {
-    return PARSER_ALLOC(p, sizeof(char));
-}
-
-static inline void *node_2(parser_t *p, void *f, void *a , void *b) {
-    return PARSER_ALLOC(p, sizeof(char));
-}
-
-static inline void *node_3(parser_t *p, void *f, void *a, void *b, void *c) {
-    return PARSER_ALLOC(p, sizeof(char));
-}
-
-static inline void *node_4(parser_t *p, void *f, void *a, void *b, void *c, void *d) {
+static inline void *node(parser_t *p, void *f) {
     return PARSER_ALLOC(p, sizeof(char));
 }
 
