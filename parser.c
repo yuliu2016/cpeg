@@ -225,10 +225,14 @@ static void *single_input(parser_t *p) {
     void *alt_1;
     void *res_1;
     res_1 = enter_frame(p, &f) && (
-        (alt_1 = consume(p, 2, "NEWLINE")) ||
-        (alt_1 = consume(p, 1, "ENDMARKER")) ||
-        (alt_1 = simple_stmt(p)) ||
-        (alt_1 = single_input_4(p))
+        (_newline = consume(p, 2, "NEWLINE")) &&
+            (alt_1 = _newline) ||
+        (_endmarker = consume(p, 1, "ENDMARKER")) &&
+            (alt_1 = _endmarker) ||
+        (_simple_stmt = simple_stmt(p)) &&
+            (alt_1 = _simple_stmt) ||
+        (_compound_stmt_newline = single_input_4(p)) &&
+            (alt_1 = _compound_stmt_newline)
     ) ? alt_1 : 0;
     return exit_frame(p, &f, res_1);
 }
@@ -329,8 +333,10 @@ static void *stmt_1(parser_t *p) {
     void *alt_7;
     void *res_7;
     res_7 = enter_frame(p, &f) && (
-        (alt_7 = simple_stmt(p)) ||
-        (alt_7 = compound_stmt(p))
+        (_simple_stmt = simple_stmt(p)) &&
+            (alt_7 = _simple_stmt) ||
+        (_compound_stmt = compound_stmt(p)) &&
+            (alt_7 = _compound_stmt)
     ) ? alt_7 : 0;
     return exit_frame(p, &f, res_7);
 }
@@ -393,17 +399,28 @@ static void *small_stmt(parser_t *p) {
     void *alt_9;
     void *res_9;
     res_9 = enter_frame(p, &f) && (
-        (alt_9 = consume(p, 64, "pass")) ||
-        (alt_9 = consume(p, 74, "break")) ||
-        (alt_9 = consume(p, 73, "continue")) ||
-        (alt_9 = return_stmt(p)) ||
-        (alt_9 = raise_stmt(p)) ||
-        (alt_9 = del_stmt(p)) ||
-        (alt_9 = nonlocal_stmt(p)) ||
-        (alt_9 = assert_stmt(p)) ||
-        (alt_9 = import_name(p)) ||
-        (alt_9 = import_from(p)) ||
-        (alt_9 = assignment(p))
+        (_is_pass = consume(p, 64, "pass")) &&
+            (alt_9 = _is_pass) ||
+        (_is_break = consume(p, 74, "break")) &&
+            (alt_9 = _is_break) ||
+        (_is_continue = consume(p, 73, "continue")) &&
+            (alt_9 = _is_continue) ||
+        (_return_stmt = return_stmt(p)) &&
+            (alt_9 = _return_stmt) ||
+        (_raise_stmt = raise_stmt(p)) &&
+            (alt_9 = _raise_stmt) ||
+        (_del_stmt = del_stmt(p)) &&
+            (alt_9 = _del_stmt) ||
+        (_nonlocal_stmt = nonlocal_stmt(p)) &&
+            (alt_9 = _nonlocal_stmt) ||
+        (_assert_stmt = assert_stmt(p)) &&
+            (alt_9 = _assert_stmt) ||
+        (_import_name = import_name(p)) &&
+            (alt_9 = _import_name) ||
+        (_import_from = import_from(p)) &&
+            (alt_9 = _import_from) ||
+        (_assignment = assignment(p)) &&
+            (alt_9 = _assignment)
     ) ? alt_9 : 0;
     return exit_frame(p, &f, res_9);
 }
@@ -584,10 +601,14 @@ static void *target(parser_t *p) {
     void *alt_20;
     void *res_20;
     res_20 = enter_frame(p, &f) && (
-        (alt_20 = target_1(p)) ||
-        (alt_20 = target_2(p)) ||
-        (alt_20 = consume(p, 3, "NAME")) ||
-        (alt_20 = target_4(p))
+        (_target_1 = target_1(p)) &&
+            (alt_20 = _target_1) ||
+        (_target_2 = target_2(p)) &&
+            (alt_20 = _target_2) ||
+        (_name = consume(p, 3, "NAME")) &&
+            (alt_20 = _name) ||
+        (_lpar_targetlist_sp_rpar = target_4(p)) &&
+            (alt_20 = _lpar_targetlist_sp_rpar)
     ) ? alt_20 : 0;
     return exit_frame(p, &f, res_20);
 }
@@ -738,9 +759,12 @@ static void *t_lookahead(parser_t *p) {
     void *alt_30;
     void *res_30;
     res_30 = enter_frame(p, &f) && (
-        (alt_30 = consume(p, 6, ".")) ||
-        (alt_30 = consume(p, 13, "(")) ||
-        (alt_30 = consume(p, 17, "["))
+        (_is_dot = consume(p, 6, ".")) &&
+            (alt_30 = _is_dot) ||
+        (_is_lpar = consume(p, 13, "(")) &&
+            (alt_30 = _is_lpar) ||
+        (_is_lsqb = consume(p, 17, "[")) &&
+            (alt_30 = _is_lsqb)
     ) ? alt_30 : 0;
     return exit_frame(p, &f, res_30);
 }
@@ -785,8 +809,10 @@ static void *expr_or_star(parser_t *p) {
     void *alt_32;
     void *res_32;
     res_32 = enter_frame(p, &f) && (
-        (alt_32 = star_expr(p)) ||
-        (alt_32 = expr(p))
+        (_star_expr = star_expr(p)) &&
+            (alt_32 = _star_expr) ||
+        (_expr = expr(p)) &&
+            (alt_32 = _expr)
     ) ? alt_32 : 0;
     return exit_frame(p, &f, res_32);
 }
@@ -875,8 +901,10 @@ static void *slice(parser_t *p) {
     void *alt_36;
     void *res_36;
     res_36 = enter_frame(p, &f) && (
-        (alt_36 = slice_1(p)) ||
-        (alt_36 = expr(p))
+        (_slice_1 = slice_1(p)) &&
+            (alt_36 = _slice_1) ||
+        (_expr = expr(p)) &&
+            (alt_36 = _expr)
     ) ? alt_36 : 0;
     return exit_frame(p, &f, res_36);
 }
@@ -918,8 +946,10 @@ static void *dict_item(parser_t *p) {
     void *alt_39;
     void *res_39;
     res_39 = enter_frame(p, &f) && (
-        (alt_39 = dict_item_1(p)) ||
-        (alt_39 = dict_item_2(p))
+        (_expr_colon_expr = dict_item_1(p)) &&
+            (alt_39 = _expr_colon_expr) ||
+        (_power_bitwise_or = dict_item_2(p)) &&
+            (alt_39 = _power_bitwise_or)
     ) ? alt_39 : 0;
     return exit_frame(p, &f, res_39);
 }
@@ -991,8 +1021,10 @@ static void *list_item(parser_t *p) {
     void *alt_43;
     void *res_43;
     res_43 = enter_frame(p, &f) && (
-        (alt_43 = star_expr(p)) ||
-        (alt_43 = named_expr(p))
+        (_star_expr = star_expr(p)) &&
+            (alt_43 = _star_expr) ||
+        (_named_expr = named_expr(p)) &&
+            (alt_43 = _named_expr)
     ) ? alt_43 : 0;
     return exit_frame(p, &f, res_43);
 }
@@ -1163,10 +1195,14 @@ static void *assignment(parser_t *p) {
     void *alt_52;
     void *res_52;
     res_52 = enter_frame(p, &f) && (
-        (alt_52 = pubassign(p)) ||
-        (alt_52 = annassign(p)) ||
-        (alt_52 = augassign(p)) ||
-        (alt_52 = simple_assign(p))
+        (_pubassign = pubassign(p)) &&
+            (alt_52 = _pubassign) ||
+        (_annassign = annassign(p)) &&
+            (alt_52 = _annassign) ||
+        (_augassign = augassign(p)) &&
+            (alt_52 = _augassign) ||
+        (_simple_assign = simple_assign(p)) &&
+            (alt_52 = _simple_assign)
     ) ? alt_52 : 0;
     return exit_frame(p, &f, res_52);
 }
@@ -1297,19 +1333,32 @@ static void *augassign_op(parser_t *p) {
     void *alt_59;
     void *res_59;
     res_59 = enter_frame(p, &f) && (
-        (alt_59 = consume(p, 39, "+=")) ||
-        (alt_59 = consume(p, 40, "-=")) ||
-        (alt_59 = consume(p, 41, "*=")) ||
-        (alt_59 = consume(p, 44, "@=")) ||
-        (alt_59 = consume(p, 42, "/=")) ||
-        (alt_59 = consume(p, 43, "%=")) ||
-        (alt_59 = consume(p, 46, "&=")) ||
-        (alt_59 = consume(p, 45, "|=")) ||
-        (alt_59 = consume(p, 47, "^=")) ||
-        (alt_59 = consume(p, 52, "<<=")) ||
-        (alt_59 = consume(p, 53, ">>=")) ||
-        (alt_59 = consume(p, 51, "**=")) ||
-        (alt_59 = consume(p, 50, "//="))
+        (_is_plus_assign = consume(p, 39, "+=")) &&
+            (alt_59 = _is_plus_assign) ||
+        (_is_minus_assign = consume(p, 40, "-=")) &&
+            (alt_59 = _is_minus_assign) ||
+        (_is_times_assign = consume(p, 41, "*=")) &&
+            (alt_59 = _is_times_assign) ||
+        (_is_matrix_times_assign = consume(p, 44, "@=")) &&
+            (alt_59 = _is_matrix_times_assign) ||
+        (_is_div_assign = consume(p, 42, "/=")) &&
+            (alt_59 = _is_div_assign) ||
+        (_is_modulus_assign = consume(p, 43, "%=")) &&
+            (alt_59 = _is_modulus_assign) ||
+        (_is_bit_and_assign = consume(p, 46, "&=")) &&
+            (alt_59 = _is_bit_and_assign) ||
+        (_is_bit_or_assign = consume(p, 45, "|=")) &&
+            (alt_59 = _is_bit_or_assign) ||
+        (_is_bit_xor_assign = consume(p, 47, "^=")) &&
+            (alt_59 = _is_bit_xor_assign) ||
+        (_is_lshift_assign = consume(p, 52, "<<=")) &&
+            (alt_59 = _is_lshift_assign) ||
+        (_is_rshift_assign = consume(p, 53, ">>=")) &&
+            (alt_59 = _is_rshift_assign) ||
+        (_is_power_assign = consume(p, 51, "**=")) &&
+            (alt_59 = _is_power_assign) ||
+        (_is_floor_div_assign = consume(p, 50, "//=")) &&
+            (alt_59 = _is_floor_div_assign)
     ) ? alt_59 : 0;
     return exit_frame(p, &f, res_59);
 }
@@ -1353,8 +1402,10 @@ static void *import_from_names(parser_t *p) {
     void *alt_62;
     void *res_62;
     res_62 = enter_frame(p, &f) && (
-        (alt_62 = dotted_name(p)) ||
-        (alt_62 = import_from_names_2(p))
+        (_dotted_name = dotted_name(p)) &&
+            (alt_62 = _dotted_name) ||
+        (_import_from_names_2 = import_from_names_2(p)) &&
+            (alt_62 = _import_from_names_2)
     ) ? alt_62 : 0;
     return exit_frame(p, &f, res_62);
 }
@@ -1394,9 +1445,12 @@ static void *import_from_items(parser_t *p) {
     void *alt_64;
     void *res_64;
     res_64 = enter_frame(p, &f) && (
-        (alt_64 = consume(p, 23, "*")) ||
-        (alt_64 = import_as_names_sp(p)) ||
-        (alt_64 = import_as_names(p))
+        (_is_times = consume(p, 23, "*")) &&
+            (alt_64 = _is_times) ||
+        (_import_as_names_sp = import_as_names_sp(p)) &&
+            (alt_64 = _import_as_names_sp) ||
+        (_import_as_names = import_as_names(p)) &&
+            (alt_64 = _import_as_names)
     ) ? alt_64 : 0;
     return exit_frame(p, &f, res_64);
 }
@@ -1548,11 +1602,16 @@ static void *compound_stmt(parser_t *p) {
     void *alt_71;
     void *res_71;
     res_71 = enter_frame(p, &f) && (
-        (alt_71 = if_stmt(p)) ||
-        (alt_71 = while_stmt(p)) ||
-        (alt_71 = for_stmt(p)) ||
-        (alt_71 = try_stmt(p)) ||
-        (alt_71 = with_stmt(p))
+        (_if_stmt = if_stmt(p)) &&
+            (alt_71 = _if_stmt) ||
+        (_while_stmt = while_stmt(p)) &&
+            (alt_71 = _while_stmt) ||
+        (_for_stmt = for_stmt(p)) &&
+            (alt_71 = _for_stmt) ||
+        (_try_stmt = try_stmt(p)) &&
+            (alt_71 = _try_stmt) ||
+        (_with_stmt = with_stmt(p)) &&
+            (alt_71 = _with_stmt)
     ) ? alt_71 : 0;
     return exit_frame(p, &f, res_71);
 }
@@ -1659,8 +1718,10 @@ static void *try_stmt_3(parser_t *p) {
     void *alt_77;
     void *res_77;
     res_77 = enter_frame(p, &f) && (
-        (alt_77 = except_suite(p)) ||
-        (alt_77 = finally_suite(p))
+        (_except_suite = except_suite(p)) &&
+            (alt_77 = _except_suite) ||
+        (_finally_suite = finally_suite(p)) &&
+            (alt_77 = _finally_suite)
     ) ? alt_77 : 0;
     return exit_frame(p, &f, res_77);
 }
@@ -1722,8 +1783,10 @@ static void *block_suite(parser_t *p) {
     void *alt_80;
     void *res_80;
     res_80 = enter_frame(p, &f) && (
-        (alt_80 = block_suite_1(p)) ||
-        (alt_80 = block_suite_2(p))
+        (_block_suite_1 = block_suite_1(p)) &&
+            (alt_80 = _block_suite_1) ||
+        (_block_suite_2 = block_suite_2(p)) &&
+            (alt_80 = _block_suite_2)
     ) ? alt_80 : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_80);
@@ -1765,8 +1828,10 @@ static void *suite(parser_t *p) {
     void *alt_83;
     void *res_83;
     res_83 = enter_frame(p, &f) && (
-        (alt_83 = suite_1(p)) ||
-        (alt_83 = block_suite(p))
+        (_colon_simple_stmt = suite_1(p)) &&
+            (alt_83 = _colon_simple_stmt) ||
+        (_block_suite = block_suite(p)) &&
+            (alt_83 = _block_suite)
     ) ? alt_83 : 0;
     return exit_frame(p, &f, res_83);
 }
@@ -1914,11 +1979,16 @@ static void *call_arg(parser_t *p) {
     void *alt_91;
     void *res_91;
     res_91 = enter_frame(p, &f) && (
-        (alt_91 = call_arg_1(p)) ||
-        (alt_91 = call_arg_2(p)) ||
-        (alt_91 = call_arg_3(p)) ||
-        (alt_91 = call_arg_4(p)) ||
-        (alt_91 = expr(p))
+        (_name_asgn_expr_expr = call_arg_1(p)) &&
+            (alt_91 = _name_asgn_expr_expr) ||
+        (_name_assign_expr = call_arg_2(p)) &&
+            (alt_91 = _name_assign_expr) ||
+        (_power_expr = call_arg_3(p)) &&
+            (alt_91 = _power_expr) ||
+        (_times_expr = call_arg_4(p)) &&
+            (alt_91 = _times_expr) ||
+        (_expr = expr(p)) &&
+            (alt_91 = _expr)
     ) ? alt_91 : 0;
     return exit_frame(p, &f, res_91);
 }
@@ -1985,9 +2055,12 @@ static void *typed_arg_list(parser_t *p) {
     void *alt_96;
     void *res_96;
     res_96 = enter_frame(p, &f) && (
-        (alt_96 = kwargs(p)) ||
-        (alt_96 = args_kwargs(p)) ||
-        (alt_96 = full_arg_list(p))
+        (_kwargs = kwargs(p)) &&
+            (alt_96 = _kwargs) ||
+        (_args_kwargs = args_kwargs(p)) &&
+            (alt_96 = _args_kwargs) ||
+        (_full_arg_list = full_arg_list(p)) &&
+            (alt_96 = _full_arg_list)
     ) ? alt_96 : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_96);
@@ -2041,8 +2114,10 @@ static void *full_arg_list_2_2(parser_t *p) {
     void *alt_99;
     void *res_99;
     res_99 = enter_frame(p, &f) && (
-        (alt_99 = kwargs(p)) ||
-        (alt_99 = args_kwargs(p))
+        (_kwargs = kwargs(p)) &&
+            (alt_99 = _kwargs) ||
+        (_args_kwargs = args_kwargs(p)) &&
+            (alt_99 = _args_kwargs)
     ) ? alt_99 : 0;
     return exit_frame(p, &f, res_99);
 }
@@ -2237,8 +2312,10 @@ static void *builder_args(parser_t *p) {
     void *alt_112;
     void *res_112;
     res_112 = enter_frame(p, &f) && (
-        (alt_112 = simple_args(p)) ||
-        (alt_112 = builder_args_2(p))
+        (_simple_args = simple_args(p)) &&
+            (alt_112 = _simple_args) ||
+        (_builder_args_2 = builder_args_2(p)) &&
+            (alt_112 = _builder_args_2)
     ) ? alt_112 : 0;
     return exit_frame(p, &f, res_112);
 }
@@ -2265,8 +2342,10 @@ static void *named_expr(parser_t *p) {
     void *alt_114;
     void *res_114;
     res_114 = enter_frame(p, &f) && (
-        (alt_114 = named_expr_1(p)) ||
-        (alt_114 = expr(p))
+        (_name_asgn_expr_expr = named_expr_1(p)) &&
+            (alt_114 = _name_asgn_expr_expr) ||
+        (_expr = expr(p)) &&
+            (alt_114 = _expr)
     ) ? alt_114 : 0;
     return exit_frame(p, &f, res_114);
 }
@@ -2313,8 +2392,10 @@ static void *expr(parser_t *p) {
     void *alt_117;
     void *res_117;
     res_117 = enter_frame(p, &f) && (
-        (alt_117 = conditional(p)) ||
-        (alt_117 = disjunction(p))
+        (_conditional = conditional(p)) &&
+            (alt_117 = _conditional) ||
+        (_disjunction = disjunction(p)) &&
+            (alt_117 = _disjunction)
     ) ? alt_117 : 0;
     return exit_frame(p, &f, res_117);
 }
@@ -2405,8 +2486,10 @@ static void *inversion(parser_t *p) {
     void *alt_122;
     void *res_122;
     res_122 = enter_frame(p, &f) && (
-        (alt_122 = inversion_1(p)) ||
-        (alt_122 = comparison(p))
+        (_not_inversion = inversion_1(p)) &&
+            (alt_122 = _not_inversion) ||
+        (_comparison = comparison(p)) &&
+            (alt_122 = _comparison)
     ) ? alt_122 : 0;
     return exit_frame(p, &f, res_122);
 }
@@ -2432,8 +2515,10 @@ static void *comparison(parser_t *p) {
     void *alt_124;
     void *res_124;
     res_124 = enter_frame(p, &f) && (
-        (alt_124 = comparison_1(p)) ||
-        (alt_124 = bitwise_or(p))
+        (_comparison_1 = comparison_1(p)) &&
+            (alt_124 = _comparison_1) ||
+        (_bitwise_or = bitwise_or(p)) &&
+            (alt_124 = _bitwise_or)
     ) ? alt_124 : 0;
     return exit_frame(p, &f, res_124);
 }
@@ -2500,16 +2585,26 @@ static void *comp_op(parser_t *p) {
     void *alt_127;
     void *res_127;
     res_127 = enter_frame(p, &f) && (
-        (alt_127 = consume(p, 19, "<")) ||
-        (alt_127 = consume(p, 20, ">")) ||
-        (alt_127 = consume(p, 31, "==")) ||
-        (alt_127 = consume(p, 34, ">=")) ||
-        (alt_127 = consume(p, 33, "<=")) ||
-        (alt_127 = consume(p, 32, "!=")) ||
-        (alt_127 = consume(p, 63, "in")) ||
-        (alt_127 = comp_op_8(p)) ||
-        (alt_127 = consume(p, 62, "is")) ||
-        (alt_127 = comp_op_10(p))
+        (_is_less = consume(p, 19, "<")) &&
+            (alt_127 = _is_less) ||
+        (_is_greater = consume(p, 20, ">")) &&
+            (alt_127 = _is_greater) ||
+        (_is_equal = consume(p, 31, "==")) &&
+            (alt_127 = _is_equal) ||
+        (_is_more_equal = consume(p, 34, ">=")) &&
+            (alt_127 = _is_more_equal) ||
+        (_is_less_equal = consume(p, 33, "<=")) &&
+            (alt_127 = _is_less_equal) ||
+        (_is_nequal = consume(p, 32, "!=")) &&
+            (alt_127 = _is_nequal) ||
+        (_is_in = consume(p, 63, "in")) &&
+            (alt_127 = _is_in) ||
+        (_not_in = comp_op_8(p)) &&
+            (alt_127 = _not_in) ||
+        (_is_is = consume(p, 62, "is")) &&
+            (alt_127 = _is_is) ||
+        (_is_not = comp_op_10(p)) &&
+            (alt_127 = _is_not)
     ) ? alt_127 : 0;
     return exit_frame(p, &f, res_127);
 }
@@ -2904,10 +2999,14 @@ static void *factor(parser_t *p) {
     void *alt_150;
     void *res_150;
     res_150 = enter_frame(p, &f) && (
-        (alt_150 = factor_1(p)) ||
-        (alt_150 = factor_2(p)) ||
-        (alt_150 = factor_3(p)) ||
-        (alt_150 = power(p))
+        (_plus_factor = factor_1(p)) &&
+            (alt_150 = _plus_factor) ||
+        (_minus_factor = factor_2(p)) &&
+            (alt_150 = _minus_factor) ||
+        (_bit_not_factor = factor_3(p)) &&
+            (alt_150 = _bit_not_factor) ||
+        (_power = power(p)) &&
+            (alt_150 = _power)
     ) ? alt_150 : 0;
     return exit_frame(p, &f, res_150);
 }
@@ -2955,8 +3054,10 @@ static void *power(parser_t *p) {
     void *alt_154;
     void *res_154;
     res_154 = enter_frame(p, &f) && (
-        (alt_154 = power_1(p)) ||
-        (alt_154 = primary(p))
+        (_primary_power_factor = power_1(p)) &&
+            (alt_154 = _primary_power_factor) ||
+        (_primary = primary(p)) &&
+            (alt_154 = _primary)
     ) ? alt_154 : 0;
     return exit_frame(p, &f, res_154);
 }
@@ -3134,8 +3235,10 @@ static void *builder(parser_t *p) {
     void *alt_166;
     void *res_166;
     res_166 = enter_frame(p, &f) && (
-        (alt_166 = builder_1(p)) ||
-        (alt_166 = builder_2(p))
+        (_builder_1 = builder_1(p)) &&
+            (alt_166 = _builder_1) ||
+        (_builder_2 = builder_2(p)) &&
+            (alt_166 = _builder_2)
     ) ? alt_166 : 0;
     return exit_frame(p, &f, res_166);
 }
@@ -3203,19 +3306,32 @@ static void *atom(parser_t *p) {
     void *alt_169;
     void *res_169;
     res_169 = enter_frame(p, &f) && (
-        (alt_169 = tuple_atom(p)) ||
-        (alt_169 = list_iterable(p)) ||
-        (alt_169 = list_atom(p)) ||
-        (alt_169 = set_atom(p)) ||
-        (alt_169 = dict_iterable(p)) ||
-        (alt_169 = dict_atom(p)) ||
-        (alt_169 = builder(p)) ||
-        (alt_169 = consume(p, 3, "NAME")) ||
-        (alt_169 = consume(p, 4, "NUMBER")) ||
-        (alt_169 = consume(p, 5, "STRING")) ||
-        (alt_169 = consume(p, 81, "None")) ||
-        (alt_169 = consume(p, 82, "True")) ||
-        (alt_169 = consume(p, 83, "False"))
+        (_tuple_atom = tuple_atom(p)) &&
+            (alt_169 = _tuple_atom) ||
+        (_list_iterable = list_iterable(p)) &&
+            (alt_169 = _list_iterable) ||
+        (_list_atom = list_atom(p)) &&
+            (alt_169 = _list_atom) ||
+        (_set_atom = set_atom(p)) &&
+            (alt_169 = _set_atom) ||
+        (_dict_iterable = dict_iterable(p)) &&
+            (alt_169 = _dict_iterable) ||
+        (_dict_atom = dict_atom(p)) &&
+            (alt_169 = _dict_atom) ||
+        (_builder = builder(p)) &&
+            (alt_169 = _builder) ||
+        (_name = consume(p, 3, "NAME")) &&
+            (alt_169 = _name) ||
+        (_number = consume(p, 4, "NUMBER")) &&
+            (alt_169 = _number) ||
+        (_string = consume(p, 5, "STRING")) &&
+            (alt_169 = _string) ||
+        (_is_none = consume(p, 81, "None")) &&
+            (alt_169 = _is_none) ||
+        (_is_true = consume(p, 82, "True")) &&
+            (alt_169 = _is_true) ||
+        (_is_false = consume(p, 83, "False")) &&
+            (alt_169 = _is_false)
     ) ? alt_169 : 0;
     return exit_frame(p, &f, res_169);
 }
