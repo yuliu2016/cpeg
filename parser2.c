@@ -256,10 +256,10 @@ static double *atom(parser_t *p) {
             (alt_14 = _lpar_sum_rpar) ||
         (_atom_2 = atom_2(p)) &&
             (alt_14 = _atom_2) ||
-        (_name = load_const(p, consume(p, 3, "NAME"))) &&
-            (alt_14 = _name) ||
-        (_number = to_double(p, consume(p, 4, "NUMBER"))) &&
-            (alt_14 = _number)
+        (_name = consume(p, 3, "NAME")) &&
+            (alt_14 = load_const(p, _name)) ||
+        (_number = consume(p, 4, "NUMBER")) &&
+            (alt_14 = to_double(p, _number))
     ) ? alt_14 : 0;
     return exit_frame(p, &f, res_14);
 }
