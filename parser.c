@@ -218,6 +218,10 @@ void *parse_grammar(parser_t *p, int entry_point) {
 //     | compound_stmt NEWLINE
 static void *single_input(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 0};
+    token_t *_newline;
+    token_t *_endmarker;
+    void *_simple_stmt;
+    void *_compound_stmt_newline;
     void *a;
     void *res_1;
     res_1 = enter_frame(p, &f) && (
@@ -320,6 +324,8 @@ static void *stmt(parser_t *p) {
 
 static void *stmt_1(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
+    void *_simple_stmt;
+    void *_compound_stmt;
     void *a;
     void *res_7;
     res_7 = enter_frame(p, &f) && (
@@ -373,6 +379,17 @@ static ast_list_t *small_stmt_delimited(parser_t *p) {
 //     | assignment
 static void *small_stmt(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
+    token_t *_is_pass;
+    token_t *_is_break;
+    token_t *_is_continue;
+    void *_return_stmt;
+    void *_raise_stmt;
+    void *_del_stmt;
+    void *_nonlocal_stmt;
+    void *_assert_stmt;
+    void *_import_name;
+    void *_import_from;
+    void *_assignment;
     void *a;
     void *res_9;
     res_9 = enter_frame(p, &f) && (
@@ -560,6 +577,10 @@ static ast_list_t *expr_delimited(parser_t *p) {
 //     | '(' targetlist_sp ')'
 static void *target(parser_t *p) {
     frame_t f = {20, p->pos, FUNC, 0, 0};
+    void *_target_1;
+    void *_target_2;
+    token_t *_name;
+    void *_lpar_targetlist_sp_rpar;
     void *a;
     void *res_20;
     res_20 = enter_frame(p, &f) && (
@@ -711,6 +732,9 @@ static void *t_primary_4(parser_t *p) {
 //     | '['
 static void *t_lookahead(parser_t *p) {
     frame_t f = {30, p->pos, FUNC, 0, 0};
+    token_t *_is_dot;
+    token_t *_is_lpar;
+    token_t *_is_lsqb;
     void *a;
     void *res_30;
     res_30 = enter_frame(p, &f) && (
@@ -756,6 +780,8 @@ static ast_list_t *target_delimited(parser_t *p) {
 //     | expr
 static void *expr_or_star(parser_t *p) {
     frame_t f = {32, p->pos, FUNC, 0, 0};
+    void *_star_expr;
+    void *_expr;
     void *a;
     void *res_32;
     res_32 = enter_frame(p, &f) && (
@@ -844,6 +870,8 @@ static ast_list_t *slice_delimited(parser_t *p) {
 //     | expr
 static void *slice(parser_t *p) {
     frame_t f = {36, p->pos, FUNC, 0, 0};
+    void *_slice_1;
+    void *_expr;
     void *a;
     void *res_36;
     res_36 = enter_frame(p, &f) && (
@@ -885,6 +913,8 @@ static void *slice_expr(parser_t *p) {
 //     | '**' bitwise_or
 static void *dict_item(parser_t *p) {
     frame_t f = {39, p->pos, FUNC, 0, 0};
+    void *_expr_colon_expr;
+    void *_power_bitwise_or;
     void *a;
     void *res_39;
     res_39 = enter_frame(p, &f) && (
@@ -956,6 +986,8 @@ static ast_list_t *dict_item_delimited(parser_t *p) {
 //     | named_expr
 static void *list_item(parser_t *p) {
     frame_t f = {43, p->pos, FUNC, 0, 0};
+    void *_star_expr;
+    void *_named_expr;
     void *a;
     void *res_43;
     res_43 = enter_frame(p, &f) && (
@@ -1124,6 +1156,10 @@ static void *dict_iterator(parser_t *p) {
 //     | simple_assign
 static void *assignment(parser_t *p) {
     frame_t f = {52, p->pos, FUNC, 0, 0};
+    void *_pubassign;
+    void *_annassign;
+    void *_augassign;
+    void *_simple_assign;
     void *a;
     void *res_52;
     res_52 = enter_frame(p, &f) && (
@@ -1245,6 +1281,19 @@ static void *simple_assign_1(parser_t *p) {
 //     | '//='
 static void *augassign_op(parser_t *p) {
     frame_t f = {59, p->pos, FUNC, 0, 0};
+    token_t *_is_plus_assign;
+    token_t *_is_minus_assign;
+    token_t *_is_times_assign;
+    token_t *_is_matrix_times_assign;
+    token_t *_is_div_assign;
+    token_t *_is_modulus_assign;
+    token_t *_is_bit_and_assign;
+    token_t *_is_bit_or_assign;
+    token_t *_is_bit_xor_assign;
+    token_t *_is_lshift_assign;
+    token_t *_is_rshift_assign;
+    token_t *_is_power_assign;
+    token_t *_is_floor_div_assign;
     void *a;
     void *res_59;
     res_59 = enter_frame(p, &f) && (
@@ -1299,6 +1348,8 @@ static void *import_from(parser_t *p) {
 //     | '.'+ [dotted_name]
 static void *import_from_names(parser_t *p) {
     frame_t f = {62, p->pos, FUNC, 0, 0};
+    void *_dotted_name;
+    void *_import_from_names_2;
     void *a;
     void *res_62;
     res_62 = enter_frame(p, &f) && (
@@ -1337,6 +1388,9 @@ static ast_list_t *import_from_names_2_loop(parser_t *p) {
 //     | import_as_names
 static void *import_from_items(parser_t *p) {
     frame_t f = {64, p->pos, FUNC, 0, 0};
+    token_t *_is_times;
+    void *_import_as_names_sp;
+    void *_import_as_names;
     void *a;
     void *res_64;
     res_64 = enter_frame(p, &f) && (
@@ -1486,6 +1540,11 @@ static ast_list_t *dotted_name_delimited(parser_t *p) {
 //     | with_stmt
 static void *compound_stmt(parser_t *p) {
     frame_t f = {71, p->pos, FUNC, 0, 0};
+    void *_if_stmt;
+    void *_while_stmt;
+    void *_for_stmt;
+    void *_try_stmt;
+    void *_with_stmt;
     void *a;
     void *res_71;
     res_71 = enter_frame(p, &f) && (
@@ -1595,6 +1654,8 @@ static void *try_stmt(parser_t *p) {
 
 static void *try_stmt_3(parser_t *p) {
     frame_t f = {77, p->pos, FUNC, 0, 0};
+    void *_except_suite;
+    void *_finally_suite;
     void *a;
     void *res_77;
     res_77 = enter_frame(p, &f) && (
@@ -1656,6 +1717,8 @@ static void *block_suite(parser_t *p) {
     frame_t f = {80, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace=0;
+    void *_block_suite_1;
+    void *_block_suite_2;
     void *a;
     void *res_80;
     res_80 = enter_frame(p, &f) && (
@@ -1697,6 +1760,8 @@ static void *block_suite_2(parser_t *p) {
 //     | block_suite
 static void *suite(parser_t *p) {
     frame_t f = {83, p->pos, FUNC, 0, 0};
+    void *_colon_simple_stmt;
+    void *_block_suite;
     void *a;
     void *res_83;
     res_83 = enter_frame(p, &f) && (
@@ -1841,6 +1906,11 @@ static ast_list_t *call_arg_delimited(parser_t *p) {
 //     | expr
 static void *call_arg(parser_t *p) {
     frame_t f = {91, p->pos, FUNC, 0, 0};
+    void *_name_asgn_expr_expr;
+    void *_name_assign_expr;
+    void *_power_expr;
+    void *_times_expr;
+    void *_expr;
     void *a;
     void *res_91;
     res_91 = enter_frame(p, &f) && (
@@ -1909,6 +1979,9 @@ static void *typed_arg_list(parser_t *p) {
     frame_t f = {96, p->pos, FUNC, 0, 0};
     int ws = p->ignore_whitespace;
     p->ignore_whitespace = 1;
+    void *_kwargs;
+    void *_args_kwargs;
+    void *_full_arg_list;
     void *a;
     void *res_96;
     res_96 = enter_frame(p, &f) && (
@@ -1963,6 +2036,8 @@ static void *full_arg_list_2(parser_t *p) {
 
 static void *full_arg_list_2_2(parser_t *p) {
     frame_t f = {99, p->pos, FUNC, 0, 0};
+    void *_kwargs;
+    void *_args_kwargs;
     void *a;
     void *res_99;
     res_99 = enter_frame(p, &f) && (
@@ -2157,6 +2232,8 @@ static void *builder_hint(parser_t *p) {
 //     | '(' [typed_arg_list] ')'
 static void *builder_args(parser_t *p) {
     frame_t f = {112, p->pos, FUNC, 0, 0};
+    void *_simple_args;
+    void *_builder_args_2;
     void *a;
     void *res_112;
     res_112 = enter_frame(p, &f) && (
@@ -2183,6 +2260,8 @@ static void *builder_args_2(parser_t *p) {
 //     | expr
 static void *named_expr(parser_t *p) {
     frame_t f = {114, p->pos, FUNC, 0, 0};
+    void *_name_asgn_expr_expr;
+    void *_expr;
     void *a;
     void *res_114;
     res_114 = enter_frame(p, &f) && (
@@ -2229,6 +2308,8 @@ static void *conditional(parser_t *p) {
 //     | disjunction
 static void *expr(parser_t *p) {
     frame_t f = {117, p->pos, FUNC, 0, 0};
+    void *_conditional;
+    void *_disjunction;
     void *a;
     void *res_117;
     res_117 = enter_frame(p, &f) && (
@@ -2319,6 +2400,8 @@ static void *conjunction_1(parser_t *p) {
 //     | comparison
 static void *inversion(parser_t *p) {
     frame_t f = {122, p->pos, FUNC, 0, 0};
+    void *_not_inversion;
+    void *_comparison;
     void *a;
     void *res_122;
     res_122 = enter_frame(p, &f) && (
@@ -2344,6 +2427,8 @@ static void *inversion_1(parser_t *p) {
 //     | bitwise_or
 static void *comparison(parser_t *p) {
     frame_t f = {124, p->pos, FUNC, 0, 0};
+    void *_comparison_1;
+    void *_bitwise_or;
     void *a;
     void *res_124;
     res_124 = enter_frame(p, &f) && (
@@ -2402,6 +2487,16 @@ static void *comparison_1_2(parser_t *p) {
 //     | 'is' 'not'
 static void *comp_op(parser_t *p) {
     frame_t f = {127, p->pos, FUNC, 0, 0};
+    token_t *_is_less;
+    token_t *_is_greater;
+    token_t *_is_equal;
+    token_t *_is_more_equal;
+    token_t *_is_less_equal;
+    token_t *_is_nequal;
+    token_t *_is_in;
+    void *_not_in;
+    token_t *_is_is;
+    void *_is_not;
     void *a;
     void *res_127;
     res_127 = enter_frame(p, &f) && (
@@ -2802,6 +2897,10 @@ static void *pipe_expr_1(parser_t *p) {
 //     | power
 static void *factor(parser_t *p) {
     frame_t f = {150, p->pos, FUNC, 0, 0};
+    void *_plus_factor;
+    void *_minus_factor;
+    void *_bit_not_factor;
+    void *_power;
     void *a;
     void *res_150;
     res_150 = enter_frame(p, &f) && (
@@ -2851,6 +2950,8 @@ static void *factor_3(parser_t *p) {
 //     | primary
 static void *power(parser_t *p) {
     frame_t f = {154, p->pos, FUNC, 0, 0};
+    void *_primary_power_factor;
+    void *_primary;
     void *a;
     void *res_154;
     res_154 = enter_frame(p, &f) && (
@@ -3028,6 +3129,8 @@ static void *dict_atom(parser_t *p) {
 //     | NAME [builder_hint] [builder_args] block_suite
 static void *builder(parser_t *p) {
     frame_t f = {166, p->pos, FUNC, 0, 0};
+    void *_builder_1;
+    void *_builder_2;
     void *a;
     void *res_166;
     res_166 = enter_frame(p, &f) && (
@@ -3084,6 +3187,19 @@ static void *builder_2(parser_t *p) {
 //     | 'False'
 static void *atom(parser_t *p) {
     frame_t f = {169, p->pos, FUNC, 0, 0};
+    void *_tuple_atom;
+    void *_list_iterable;
+    void *_list_atom;
+    void *_set_atom;
+    void *_dict_iterable;
+    void *_dict_atom;
+    void *_builder;
+    token_t *_name;
+    token_t *_number;
+    token_t *_string;
+    token_t *_is_none;
+    token_t *_is_true;
+    token_t *_is_false;
     void *a;
     void *res_169;
     res_169 = enter_frame(p, &f) && (

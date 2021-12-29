@@ -155,6 +155,10 @@ static double *term_3(parser_t *p) {
 //     | power
 static double *factor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
+    double *_plus_factor;
+    double *_minus_factor;
+    double *_bit_not_factor;
+    double *_power;
     double *a;
     double *res_8;
     res_8 = enter_frame(p, &f) && (
@@ -204,6 +208,8 @@ static double *factor_3(parser_t *p) {
 //     | atom
 static double *power(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
+    double *_atom_power_factor;
+    double *_atom;
     double *a;
     double *res_12;
     res_12 = enter_frame(p, &f) && (
@@ -233,6 +239,10 @@ static double *power_1(parser_t *p) {
 //     | NUMBER
 static double *atom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
+    double *_lpar_sum_rpar;
+    double *_atom_2;
+    token_t *_name;
+    token_t *_number;
     double *a;
     double *res_14;
     res_14 = enter_frame(p, &f) && (
