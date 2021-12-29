@@ -159,14 +159,14 @@ static double *factor(parser_t *p) {
     double *_minus_factor;
     double *_bit_not_factor;
     double *_power;
-    double *a;
+    double *alt_8;
     double *res_8;
     res_8 = enter_frame(p, &f) && (
-        (a = factor_1(p)) ||
-        (a = factor_2(p)) ||
-        (a = factor_3(p)) ||
-        (a = power(p))
-    ) ? a : 0;
+        (alt_8 = factor_1(p)) ||
+        (alt_8 = factor_2(p)) ||
+        (alt_8 = factor_3(p)) ||
+        (alt_8 = power(p))
+    ) ? alt_8 : 0;
     return exit_frame(p, &f, res_8);
 }
 
@@ -210,12 +210,12 @@ static double *power(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
     double *_atom_power_factor;
     double *_atom;
-    double *a;
+    double *alt_12;
     double *res_12;
     res_12 = enter_frame(p, &f) && (
-        (a = power_1(p)) ||
-        (a = atom(p))
-    ) ? a : 0;
+        (alt_12 = power_1(p)) ||
+        (alt_12 = atom(p))
+    ) ? alt_12 : 0;
     return exit_frame(p, &f, res_12);
 }
 
@@ -243,14 +243,14 @@ static double *atom(parser_t *p) {
     double *_atom_2;
     token_t *_name;
     token_t *_number;
-    double *a;
+    double *alt_14;
     double *res_14;
     res_14 = enter_frame(p, &f) && (
-        (a = atom_1(p)) ||
-        (a = atom_2(p)) ||
-        (a = load_const(p, consume(p, 3, "NAME"))) ||
-        (a = to_double(p, consume(p, 4, "NUMBER")))
-    ) ? a : 0;
+        (alt_14 = atom_1(p)) ||
+        (alt_14 = atom_2(p)) ||
+        (alt_14 = load_const(p, consume(p, 3, "NAME"))) ||
+        (alt_14 = to_double(p, consume(p, 4, "NUMBER")))
+    ) ? alt_14 : 0;
     return exit_frame(p, &f, res_14);
 }
 

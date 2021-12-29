@@ -222,14 +222,14 @@ static void *single_input(parser_t *p) {
     token_t *_endmarker;
     void *_simple_stmt;
     void *_compound_stmt_newline;
-    void *a;
+    void *alt_1;
     void *res_1;
     res_1 = enter_frame(p, &f) && (
-        (a = consume(p, 2, "NEWLINE")) ||
-        (a = consume(p, 1, "ENDMARKER")) ||
-        (a = simple_stmt(p)) ||
-        (a = single_input_4(p))
-    ) ? a : 0;
+        (alt_1 = consume(p, 2, "NEWLINE")) ||
+        (alt_1 = consume(p, 1, "ENDMARKER")) ||
+        (alt_1 = simple_stmt(p)) ||
+        (alt_1 = single_input_4(p))
+    ) ? alt_1 : 0;
     return exit_frame(p, &f, res_1);
 }
 
@@ -326,12 +326,12 @@ static void *stmt_1(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
     void *_simple_stmt;
     void *_compound_stmt;
-    void *a;
+    void *alt_7;
     void *res_7;
     res_7 = enter_frame(p, &f) && (
-        (a = simple_stmt(p)) ||
-        (a = compound_stmt(p))
-    ) ? a : 0;
+        (alt_7 = simple_stmt(p)) ||
+        (alt_7 = compound_stmt(p))
+    ) ? alt_7 : 0;
     return exit_frame(p, &f, res_7);
 }
 
@@ -390,21 +390,21 @@ static void *small_stmt(parser_t *p) {
     void *_import_name;
     void *_import_from;
     void *_assignment;
-    void *a;
+    void *alt_9;
     void *res_9;
     res_9 = enter_frame(p, &f) && (
-        (a = consume(p, 64, "pass")) ||
-        (a = consume(p, 74, "break")) ||
-        (a = consume(p, 73, "continue")) ||
-        (a = return_stmt(p)) ||
-        (a = raise_stmt(p)) ||
-        (a = del_stmt(p)) ||
-        (a = nonlocal_stmt(p)) ||
-        (a = assert_stmt(p)) ||
-        (a = import_name(p)) ||
-        (a = import_from(p)) ||
-        (a = assignment(p))
-    ) ? a : 0;
+        (alt_9 = consume(p, 64, "pass")) ||
+        (alt_9 = consume(p, 74, "break")) ||
+        (alt_9 = consume(p, 73, "continue")) ||
+        (alt_9 = return_stmt(p)) ||
+        (alt_9 = raise_stmt(p)) ||
+        (alt_9 = del_stmt(p)) ||
+        (alt_9 = nonlocal_stmt(p)) ||
+        (alt_9 = assert_stmt(p)) ||
+        (alt_9 = import_name(p)) ||
+        (alt_9 = import_from(p)) ||
+        (alt_9 = assignment(p))
+    ) ? alt_9 : 0;
     return exit_frame(p, &f, res_9);
 }
 
@@ -581,14 +581,14 @@ static void *target(parser_t *p) {
     void *_target_2;
     token_t *_name;
     void *_lpar_targetlist_sp_rpar;
-    void *a;
+    void *alt_20;
     void *res_20;
     res_20 = enter_frame(p, &f) && (
-        (a = target_1(p)) ||
-        (a = target_2(p)) ||
-        (a = consume(p, 3, "NAME")) ||
-        (a = target_4(p))
-    ) ? a : 0;
+        (alt_20 = target_1(p)) ||
+        (alt_20 = target_2(p)) ||
+        (alt_20 = consume(p, 3, "NAME")) ||
+        (alt_20 = target_4(p))
+    ) ? alt_20 : 0;
     return exit_frame(p, &f, res_20);
 }
 
@@ -735,13 +735,13 @@ static void *t_lookahead(parser_t *p) {
     token_t *_is_dot;
     token_t *_is_lpar;
     token_t *_is_lsqb;
-    void *a;
+    void *alt_30;
     void *res_30;
     res_30 = enter_frame(p, &f) && (
-        (a = consume(p, 6, ".")) ||
-        (a = consume(p, 13, "(")) ||
-        (a = consume(p, 17, "["))
-    ) ? a : 0;
+        (alt_30 = consume(p, 6, ".")) ||
+        (alt_30 = consume(p, 13, "(")) ||
+        (alt_30 = consume(p, 17, "["))
+    ) ? alt_30 : 0;
     return exit_frame(p, &f, res_30);
 }
 
@@ -782,12 +782,12 @@ static void *expr_or_star(parser_t *p) {
     frame_t f = {32, p->pos, FUNC, 0, 0};
     void *_star_expr;
     void *_expr;
-    void *a;
+    void *alt_32;
     void *res_32;
     res_32 = enter_frame(p, &f) && (
-        (a = star_expr(p)) ||
-        (a = expr(p))
-    ) ? a : 0;
+        (alt_32 = star_expr(p)) ||
+        (alt_32 = expr(p))
+    ) ? alt_32 : 0;
     return exit_frame(p, &f, res_32);
 }
 
@@ -872,12 +872,12 @@ static void *slice(parser_t *p) {
     frame_t f = {36, p->pos, FUNC, 0, 0};
     void *_slice_1;
     void *_expr;
-    void *a;
+    void *alt_36;
     void *res_36;
     res_36 = enter_frame(p, &f) && (
-        (a = slice_1(p)) ||
-        (a = expr(p))
-    ) ? a : 0;
+        (alt_36 = slice_1(p)) ||
+        (alt_36 = expr(p))
+    ) ? alt_36 : 0;
     return exit_frame(p, &f, res_36);
 }
 
@@ -915,12 +915,12 @@ static void *dict_item(parser_t *p) {
     frame_t f = {39, p->pos, FUNC, 0, 0};
     void *_expr_colon_expr;
     void *_power_bitwise_or;
-    void *a;
+    void *alt_39;
     void *res_39;
     res_39 = enter_frame(p, &f) && (
-        (a = dict_item_1(p)) ||
-        (a = dict_item_2(p))
-    ) ? a : 0;
+        (alt_39 = dict_item_1(p)) ||
+        (alt_39 = dict_item_2(p))
+    ) ? alt_39 : 0;
     return exit_frame(p, &f, res_39);
 }
 
@@ -988,12 +988,12 @@ static void *list_item(parser_t *p) {
     frame_t f = {43, p->pos, FUNC, 0, 0};
     void *_star_expr;
     void *_named_expr;
-    void *a;
+    void *alt_43;
     void *res_43;
     res_43 = enter_frame(p, &f) && (
-        (a = star_expr(p)) ||
-        (a = named_expr(p))
-    ) ? a : 0;
+        (alt_43 = star_expr(p)) ||
+        (alt_43 = named_expr(p))
+    ) ? alt_43 : 0;
     return exit_frame(p, &f, res_43);
 }
 
@@ -1160,14 +1160,14 @@ static void *assignment(parser_t *p) {
     void *_annassign;
     void *_augassign;
     void *_simple_assign;
-    void *a;
+    void *alt_52;
     void *res_52;
     res_52 = enter_frame(p, &f) && (
-        (a = pubassign(p)) ||
-        (a = annassign(p)) ||
-        (a = augassign(p)) ||
-        (a = simple_assign(p))
-    ) ? a : 0;
+        (alt_52 = pubassign(p)) ||
+        (alt_52 = annassign(p)) ||
+        (alt_52 = augassign(p)) ||
+        (alt_52 = simple_assign(p))
+    ) ? alt_52 : 0;
     return exit_frame(p, &f, res_52);
 }
 
@@ -1294,23 +1294,23 @@ static void *augassign_op(parser_t *p) {
     token_t *_is_rshift_assign;
     token_t *_is_power_assign;
     token_t *_is_floor_div_assign;
-    void *a;
+    void *alt_59;
     void *res_59;
     res_59 = enter_frame(p, &f) && (
-        (a = consume(p, 39, "+=")) ||
-        (a = consume(p, 40, "-=")) ||
-        (a = consume(p, 41, "*=")) ||
-        (a = consume(p, 44, "@=")) ||
-        (a = consume(p, 42, "/=")) ||
-        (a = consume(p, 43, "%=")) ||
-        (a = consume(p, 46, "&=")) ||
-        (a = consume(p, 45, "|=")) ||
-        (a = consume(p, 47, "^=")) ||
-        (a = consume(p, 52, "<<=")) ||
-        (a = consume(p, 53, ">>=")) ||
-        (a = consume(p, 51, "**=")) ||
-        (a = consume(p, 50, "//="))
-    ) ? a : 0;
+        (alt_59 = consume(p, 39, "+=")) ||
+        (alt_59 = consume(p, 40, "-=")) ||
+        (alt_59 = consume(p, 41, "*=")) ||
+        (alt_59 = consume(p, 44, "@=")) ||
+        (alt_59 = consume(p, 42, "/=")) ||
+        (alt_59 = consume(p, 43, "%=")) ||
+        (alt_59 = consume(p, 46, "&=")) ||
+        (alt_59 = consume(p, 45, "|=")) ||
+        (alt_59 = consume(p, 47, "^=")) ||
+        (alt_59 = consume(p, 52, "<<=")) ||
+        (alt_59 = consume(p, 53, ">>=")) ||
+        (alt_59 = consume(p, 51, "**=")) ||
+        (alt_59 = consume(p, 50, "//="))
+    ) ? alt_59 : 0;
     return exit_frame(p, &f, res_59);
 }
 
@@ -1350,12 +1350,12 @@ static void *import_from_names(parser_t *p) {
     frame_t f = {62, p->pos, FUNC, 0, 0};
     void *_dotted_name;
     void *_import_from_names_2;
-    void *a;
+    void *alt_62;
     void *res_62;
     res_62 = enter_frame(p, &f) && (
-        (a = dotted_name(p)) ||
-        (a = import_from_names_2(p))
-    ) ? a : 0;
+        (alt_62 = dotted_name(p)) ||
+        (alt_62 = import_from_names_2(p))
+    ) ? alt_62 : 0;
     return exit_frame(p, &f, res_62);
 }
 
@@ -1391,13 +1391,13 @@ static void *import_from_items(parser_t *p) {
     token_t *_is_times;
     void *_import_as_names_sp;
     void *_import_as_names;
-    void *a;
+    void *alt_64;
     void *res_64;
     res_64 = enter_frame(p, &f) && (
-        (a = consume(p, 23, "*")) ||
-        (a = import_as_names_sp(p)) ||
-        (a = import_as_names(p))
-    ) ? a : 0;
+        (alt_64 = consume(p, 23, "*")) ||
+        (alt_64 = import_as_names_sp(p)) ||
+        (alt_64 = import_as_names(p))
+    ) ? alt_64 : 0;
     return exit_frame(p, &f, res_64);
 }
 
@@ -1545,15 +1545,15 @@ static void *compound_stmt(parser_t *p) {
     void *_for_stmt;
     void *_try_stmt;
     void *_with_stmt;
-    void *a;
+    void *alt_71;
     void *res_71;
     res_71 = enter_frame(p, &f) && (
-        (a = if_stmt(p)) ||
-        (a = while_stmt(p)) ||
-        (a = for_stmt(p)) ||
-        (a = try_stmt(p)) ||
-        (a = with_stmt(p))
-    ) ? a : 0;
+        (alt_71 = if_stmt(p)) ||
+        (alt_71 = while_stmt(p)) ||
+        (alt_71 = for_stmt(p)) ||
+        (alt_71 = try_stmt(p)) ||
+        (alt_71 = with_stmt(p))
+    ) ? alt_71 : 0;
     return exit_frame(p, &f, res_71);
 }
 
@@ -1656,12 +1656,12 @@ static void *try_stmt_3(parser_t *p) {
     frame_t f = {77, p->pos, FUNC, 0, 0};
     void *_except_suite;
     void *_finally_suite;
-    void *a;
+    void *alt_77;
     void *res_77;
     res_77 = enter_frame(p, &f) && (
-        (a = except_suite(p)) ||
-        (a = finally_suite(p))
-    ) ? a : 0;
+        (alt_77 = except_suite(p)) ||
+        (alt_77 = finally_suite(p))
+    ) ? alt_77 : 0;
     return exit_frame(p, &f, res_77);
 }
 
@@ -1719,12 +1719,12 @@ static void *block_suite(parser_t *p) {
     p->ignore_whitespace=0;
     void *_block_suite_1;
     void *_block_suite_2;
-    void *a;
+    void *alt_80;
     void *res_80;
     res_80 = enter_frame(p, &f) && (
-        (a = block_suite_1(p)) ||
-        (a = block_suite_2(p))
-    ) ? a : 0;
+        (alt_80 = block_suite_1(p)) ||
+        (alt_80 = block_suite_2(p))
+    ) ? alt_80 : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_80);
 }
@@ -1762,12 +1762,12 @@ static void *suite(parser_t *p) {
     frame_t f = {83, p->pos, FUNC, 0, 0};
     void *_colon_simple_stmt;
     void *_block_suite;
-    void *a;
+    void *alt_83;
     void *res_83;
     res_83 = enter_frame(p, &f) && (
-        (a = suite_1(p)) ||
-        (a = block_suite(p))
-    ) ? a : 0;
+        (alt_83 = suite_1(p)) ||
+        (alt_83 = block_suite(p))
+    ) ? alt_83 : 0;
     return exit_frame(p, &f, res_83);
 }
 
@@ -1911,15 +1911,15 @@ static void *call_arg(parser_t *p) {
     void *_power_expr;
     void *_times_expr;
     void *_expr;
-    void *a;
+    void *alt_91;
     void *res_91;
     res_91 = enter_frame(p, &f) && (
-        (a = call_arg_1(p)) ||
-        (a = call_arg_2(p)) ||
-        (a = call_arg_3(p)) ||
-        (a = call_arg_4(p)) ||
-        (a = expr(p))
-    ) ? a : 0;
+        (alt_91 = call_arg_1(p)) ||
+        (alt_91 = call_arg_2(p)) ||
+        (alt_91 = call_arg_3(p)) ||
+        (alt_91 = call_arg_4(p)) ||
+        (alt_91 = expr(p))
+    ) ? alt_91 : 0;
     return exit_frame(p, &f, res_91);
 }
 
@@ -1982,13 +1982,13 @@ static void *typed_arg_list(parser_t *p) {
     void *_kwargs;
     void *_args_kwargs;
     void *_full_arg_list;
-    void *a;
+    void *alt_96;
     void *res_96;
     res_96 = enter_frame(p, &f) && (
-        (a = kwargs(p)) ||
-        (a = args_kwargs(p)) ||
-        (a = full_arg_list(p))
-    ) ? a : 0;
+        (alt_96 = kwargs(p)) ||
+        (alt_96 = args_kwargs(p)) ||
+        (alt_96 = full_arg_list(p))
+    ) ? alt_96 : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_96);
 }
@@ -2038,12 +2038,12 @@ static void *full_arg_list_2_2(parser_t *p) {
     frame_t f = {99, p->pos, FUNC, 0, 0};
     void *_kwargs;
     void *_args_kwargs;
-    void *a;
+    void *alt_99;
     void *res_99;
     res_99 = enter_frame(p, &f) && (
-        (a = kwargs(p)) ||
-        (a = args_kwargs(p))
-    ) ? a : 0;
+        (alt_99 = kwargs(p)) ||
+        (alt_99 = args_kwargs(p))
+    ) ? alt_99 : 0;
     return exit_frame(p, &f, res_99);
 }
 
@@ -2234,12 +2234,12 @@ static void *builder_args(parser_t *p) {
     frame_t f = {112, p->pos, FUNC, 0, 0};
     void *_simple_args;
     void *_builder_args_2;
-    void *a;
+    void *alt_112;
     void *res_112;
     res_112 = enter_frame(p, &f) && (
-        (a = simple_args(p)) ||
-        (a = builder_args_2(p))
-    ) ? a : 0;
+        (alt_112 = simple_args(p)) ||
+        (alt_112 = builder_args_2(p))
+    ) ? alt_112 : 0;
     return exit_frame(p, &f, res_112);
 }
 
@@ -2262,12 +2262,12 @@ static void *named_expr(parser_t *p) {
     frame_t f = {114, p->pos, FUNC, 0, 0};
     void *_name_asgn_expr_expr;
     void *_expr;
-    void *a;
+    void *alt_114;
     void *res_114;
     res_114 = enter_frame(p, &f) && (
-        (a = named_expr_1(p)) ||
-        (a = expr(p))
-    ) ? a : 0;
+        (alt_114 = named_expr_1(p)) ||
+        (alt_114 = expr(p))
+    ) ? alt_114 : 0;
     return exit_frame(p, &f, res_114);
 }
 
@@ -2310,12 +2310,12 @@ static void *expr(parser_t *p) {
     frame_t f = {117, p->pos, FUNC, 0, 0};
     void *_conditional;
     void *_disjunction;
-    void *a;
+    void *alt_117;
     void *res_117;
     res_117 = enter_frame(p, &f) && (
-        (a = conditional(p)) ||
-        (a = disjunction(p))
-    ) ? a : 0;
+        (alt_117 = conditional(p)) ||
+        (alt_117 = disjunction(p))
+    ) ? alt_117 : 0;
     return exit_frame(p, &f, res_117);
 }
 
@@ -2402,12 +2402,12 @@ static void *inversion(parser_t *p) {
     frame_t f = {122, p->pos, FUNC, 0, 0};
     void *_not_inversion;
     void *_comparison;
-    void *a;
+    void *alt_122;
     void *res_122;
     res_122 = enter_frame(p, &f) && (
-        (a = inversion_1(p)) ||
-        (a = comparison(p))
-    ) ? a : 0;
+        (alt_122 = inversion_1(p)) ||
+        (alt_122 = comparison(p))
+    ) ? alt_122 : 0;
     return exit_frame(p, &f, res_122);
 }
 
@@ -2429,12 +2429,12 @@ static void *comparison(parser_t *p) {
     frame_t f = {124, p->pos, FUNC, 0, 0};
     void *_comparison_1;
     void *_bitwise_or;
-    void *a;
+    void *alt_124;
     void *res_124;
     res_124 = enter_frame(p, &f) && (
-        (a = comparison_1(p)) ||
-        (a = bitwise_or(p))
-    ) ? a : 0;
+        (alt_124 = comparison_1(p)) ||
+        (alt_124 = bitwise_or(p))
+    ) ? alt_124 : 0;
     return exit_frame(p, &f, res_124);
 }
 
@@ -2497,20 +2497,20 @@ static void *comp_op(parser_t *p) {
     void *_not_in;
     token_t *_is_is;
     void *_is_not;
-    void *a;
+    void *alt_127;
     void *res_127;
     res_127 = enter_frame(p, &f) && (
-        (a = consume(p, 19, "<")) ||
-        (a = consume(p, 20, ">")) ||
-        (a = consume(p, 31, "==")) ||
-        (a = consume(p, 34, ">=")) ||
-        (a = consume(p, 33, "<=")) ||
-        (a = consume(p, 32, "!=")) ||
-        (a = consume(p, 63, "in")) ||
-        (a = comp_op_8(p)) ||
-        (a = consume(p, 62, "is")) ||
-        (a = comp_op_10(p))
-    ) ? a : 0;
+        (alt_127 = consume(p, 19, "<")) ||
+        (alt_127 = consume(p, 20, ">")) ||
+        (alt_127 = consume(p, 31, "==")) ||
+        (alt_127 = consume(p, 34, ">=")) ||
+        (alt_127 = consume(p, 33, "<=")) ||
+        (alt_127 = consume(p, 32, "!=")) ||
+        (alt_127 = consume(p, 63, "in")) ||
+        (alt_127 = comp_op_8(p)) ||
+        (alt_127 = consume(p, 62, "is")) ||
+        (alt_127 = comp_op_10(p))
+    ) ? alt_127 : 0;
     return exit_frame(p, &f, res_127);
 }
 
@@ -2901,14 +2901,14 @@ static void *factor(parser_t *p) {
     void *_minus_factor;
     void *_bit_not_factor;
     void *_power;
-    void *a;
+    void *alt_150;
     void *res_150;
     res_150 = enter_frame(p, &f) && (
-        (a = factor_1(p)) ||
-        (a = factor_2(p)) ||
-        (a = factor_3(p)) ||
-        (a = power(p))
-    ) ? a : 0;
+        (alt_150 = factor_1(p)) ||
+        (alt_150 = factor_2(p)) ||
+        (alt_150 = factor_3(p)) ||
+        (alt_150 = power(p))
+    ) ? alt_150 : 0;
     return exit_frame(p, &f, res_150);
 }
 
@@ -2952,12 +2952,12 @@ static void *power(parser_t *p) {
     frame_t f = {154, p->pos, FUNC, 0, 0};
     void *_primary_power_factor;
     void *_primary;
-    void *a;
+    void *alt_154;
     void *res_154;
     res_154 = enter_frame(p, &f) && (
-        (a = power_1(p)) ||
-        (a = primary(p))
-    ) ? a : 0;
+        (alt_154 = power_1(p)) ||
+        (alt_154 = primary(p))
+    ) ? alt_154 : 0;
     return exit_frame(p, &f, res_154);
 }
 
@@ -3131,12 +3131,12 @@ static void *builder(parser_t *p) {
     frame_t f = {166, p->pos, FUNC, 0, 0};
     void *_builder_1;
     void *_builder_2;
-    void *a;
+    void *alt_166;
     void *res_166;
     res_166 = enter_frame(p, &f) && (
-        (a = builder_1(p)) ||
-        (a = builder_2(p))
-    ) ? a : 0;
+        (alt_166 = builder_1(p)) ||
+        (alt_166 = builder_2(p))
+    ) ? alt_166 : 0;
     return exit_frame(p, &f, res_166);
 }
 
@@ -3200,22 +3200,22 @@ static void *atom(parser_t *p) {
     token_t *_is_none;
     token_t *_is_true;
     token_t *_is_false;
-    void *a;
+    void *alt_169;
     void *res_169;
     res_169 = enter_frame(p, &f) && (
-        (a = tuple_atom(p)) ||
-        (a = list_iterable(p)) ||
-        (a = list_atom(p)) ||
-        (a = set_atom(p)) ||
-        (a = dict_iterable(p)) ||
-        (a = dict_atom(p)) ||
-        (a = builder(p)) ||
-        (a = consume(p, 3, "NAME")) ||
-        (a = consume(p, 4, "NUMBER")) ||
-        (a = consume(p, 5, "STRING")) ||
-        (a = consume(p, 81, "None")) ||
-        (a = consume(p, 82, "True")) ||
-        (a = consume(p, 83, "False"))
-    ) ? a : 0;
+        (alt_169 = tuple_atom(p)) ||
+        (alt_169 = list_iterable(p)) ||
+        (alt_169 = list_atom(p)) ||
+        (alt_169 = set_atom(p)) ||
+        (alt_169 = dict_iterable(p)) ||
+        (alt_169 = dict_atom(p)) ||
+        (alt_169 = builder(p)) ||
+        (alt_169 = consume(p, 3, "NAME")) ||
+        (alt_169 = consume(p, 4, "NUMBER")) ||
+        (alt_169 = consume(p, 5, "STRING")) ||
+        (alt_169 = consume(p, 81, "None")) ||
+        (alt_169 = consume(p, 82, "True")) ||
+        (alt_169 = consume(p, 83, "False"))
+    ) ? alt_169 : 0;
     return exit_frame(p, &f, res_169);
 }
