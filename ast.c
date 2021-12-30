@@ -86,6 +86,7 @@ double *binop_mul(parser_t *p, double *a, double *b) {
 
 double *binop_div(parser_t *p, double *a, double *b) {
     if (*b == 0) {
+        p->error = "Division by zero";
         return 0;
     }
     double *r = PARSER_ALLOC(p, sizeof(double));

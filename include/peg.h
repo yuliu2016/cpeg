@@ -15,12 +15,12 @@
 
 // Memo stored in a linked list, assuming not storing
 // too many types at the same position
-typedef struct token_memo_t {
+typedef struct token_memo {
     int f_type;
     void *node;
     size_t end_pos;
-    struct token_memo_t *next;
-} FTokenMemo;
+    struct token_memo *next;
+} token_memo_t;
 
 typedef struct token {
     int tk_type;
@@ -29,7 +29,7 @@ typedef struct token {
     int lineno;
     int column;
     int is_whitespace;
-    FTokenMemo *memo;
+    token_memo_t *memo;
 } token_t;
 
 typedef token_t FToken;
@@ -130,13 +130,13 @@ FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *liter
 
 void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos);
 
-FTokenMemo *FPeg_get_memo(parser_t *p, int f_type);
+token_memo_t *FPeg_get_memo(parser_t *p, int f_type);
 
 void FPeg_debug_enter(parser_t *p, frame_t *f);
 
 void FPeg_debug_exit(parser_t *p, void *res, frame_t *f);
 
-void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, frame_t *f);
+void FPeg_debug_memo(parser_t *p, token_memo_t *memo, frame_t *f);
 
 
 #endif //CPEG_PEG_H

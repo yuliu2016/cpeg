@@ -262,8 +262,8 @@ FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
     return curr_token;
 }
 
-FTokenMemo *new_memo(parser_t *p, int f_type, void *node, size_t end) {
-    FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
+token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
+    token_memo_t *new_memo = PARSER_ALLOC(p, sizeof(token_memo_t));
     if (!new_memo) {
         return NULL;
     }
@@ -279,7 +279,7 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t
     if (!curr_token) {
         return;
     }
-    FTokenMemo *memo = curr_token->memo;
+    token_memo_t *memo = curr_token->memo;
     if (!memo) {
         // create a "head" memo
         curr_token->memo = new_memo(p, f_type, node, endpos);
@@ -301,14 +301,14 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t
     }
 }
 
-FTokenMemo *FPeg_get_memo(parser_t *p, int f_type) {
+token_memo_t *FPeg_get_memo(parser_t *p, int f_type) {
     FToken *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
         p->error = "Attempting to get memo without any more tokens";
         return NULL;
     }
-    FTokenMemo *memo = curr_token->memo;
+    token_memo_t *memo = curr_token->memo;
     while (memo) {
         if (memo->f_type == f_type) {
             if (memo->node) {
@@ -434,7 +434,7 @@ void FPeg_debug_exit(parser_t *p, void *res, frame_t *f) {
     }
 }
 
-void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, frame_t *f) {
+void FPeg_debug_memo(parser_t *p, token_memo_t *memo, frame_t *f) {
     if (!memo) {
         return;
     };

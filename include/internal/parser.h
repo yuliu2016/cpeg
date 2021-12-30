@@ -28,7 +28,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
     }
 
     if (f->memoize) {
-        FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
+        token_memo_t *memo = FPeg_get_memo(p, f->f_type);
         IF_DEBUG(FPeg_debug_memo(p, memo, f);)
         if (memo) { 
             f->memo = memo->node;
