@@ -32,7 +32,6 @@ typedef struct token {
     token_memo_t *memo;
 } token_t;
 
-typedef token_t FToken;
 
 // Lazily-evaluated tokenizer
 typedef struct lexer_state {
@@ -124,9 +123,9 @@ void FPeg_free_parser(parser_t *p);
 
 int FPeg_is_done(parser_t *p);
 
-FToken *FPeg_consume_token(parser_t *p, int tk_type);
+token_t *FPeg_consume_token(parser_t *p, int tk_type);
 
-FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal);
+token_t *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal);
 
 void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos);
 

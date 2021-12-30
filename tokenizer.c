@@ -58,7 +58,7 @@ static void skip_whitespace(lexer_t *ls) {
 #define T_INDENT 300
 #define T_DEDENT 301
 
-static bool tokenize_newline_or_indent(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_newline_or_indent(lexer_t *ls, token_t **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -118,7 +118,7 @@ static bool tokenize_newline_or_indent(lexer_t *ls, FToken **ptoken) {
     return true;
 }
 
-static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *name, FToken **ptoken) {
+static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *name, token_t **ptoken) {
     size_t j = ls->curr_index + 2;
 
     while (j < ls->src_len) {
@@ -186,7 +186,7 @@ static size_t advance_decimal_sequence(lexer_t *ls, size_t i) {
     return j;
 }
 
-static bool tokenize_decimal(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_decimal(lexer_t *ls, token_t **ptoken) {
 
     size_t j = ls->curr_index;
 
@@ -256,7 +256,7 @@ static bool tokenize_decimal(lexer_t *ls, FToken **ptoken) {
     return true;
 }
 
-static bool tokenize_number(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_number(lexer_t *ls, token_t **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -281,7 +281,7 @@ static bool tokenize_number(lexer_t *ls, FToken **ptoken) {
     return tokenize_decimal(ls, ptoken);
 }
 
-static bool tokenize_string(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_string(lexer_t *ls, token_t **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -406,7 +406,7 @@ static struct token_literal keywords[] = {
         {"False",    T_FALSE}
 };
 
-static bool tokenize_name_or_keyword(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_name_or_keyword(lexer_t *ls, token_t **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -518,7 +518,7 @@ static struct token_literal operators[] = {
         {">>=", T_RSHIFT_ASSIGN}
 };
 
-static bool tokenize_operator_or_symbol(lexer_t *ls, FToken **ptoken) {
+static bool tokenize_operator_or_symbol(lexer_t *ls, token_t **ptoken) {
     if (ls->error) {
         return false;
     }
@@ -595,7 +595,7 @@ lexer_t *FLexer_analyze_all(char *src) {
     lexer_init_state(ls, src, len, false);
 
     for (;;) {
-        FToken *token = FLexer_get_next_token(ls);
+        token_t *token = FLexer_get_next_token(ls);
         if (!token) {
             break;
         }

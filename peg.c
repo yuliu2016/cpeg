@@ -36,15 +36,15 @@ void lexer_add_line_index(lexer_t *ls, size_t i) {
     ls->lines_size += 1;
 }
 
-void lexer_append_token(lexer_t *ls, FToken *token) {
+void lexer_append_token(lexer_t *ls, token_t *token) {
     if (ls->token_len >= ls->token_capacity) {
         if (!ls->token_capacity) {
             ls->token_capacity = 1;
             ls->token_len = 0;
-            ls->tokens = FMem_malloc(sizeof(FToken *));
+            ls->tokens = FMem_malloc(sizeof(token_t *));
         } else {
             ls->token_capacity = ls->token_capacity << 1u;
-            ls->tokens = FMem_realloc(ls->tokens, ls->token_capacity * sizeof(FToken *));
+            ls->tokens = FMem_realloc(ls->tokens, ls->token_capacity * sizeof(token_t *));
         }
     }
     ls->tokens[ls->token_len] = token;
@@ -61,7 +61,7 @@ static void _compute_next_token(parser_t *p) {
     }
 }
 
-static FToken *_fetch_token(parser_t *p, size_t pos) {
+static token_t *_fetch_token(parser_t *p, size_t pos) {
     lexer_t *ls = &p->lexer_state;
 
     if (pos > ls->token_len) {
@@ -71,7 +71,7 @@ static FToken *_fetch_token(parser_t *p, size_t pos) {
 
     // scan the next unknown token
     if (pos == ls->token_len) {
-        FToken *this_token = ls->next_token;
+        token_t *this_token = ls->next_token;
 
         if (this_token) {
             lexer_append_token(ls, this_token);
@@ -138,8 +138,8 @@ void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset) {
     FMem_free(caret_buf);
 }
 
-FToken *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace) {
-    FToken *token = FMem_malloc(sizeof(FToken));
+token_t *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace) {
+    token_t *token = FMem_malloc(sizeof(token_t));
     if (!token) {
         return NULL;
     }
@@ -218,7 +218,7 @@ int FPeg_is_done(parser_t *p) {
     }
     size_t pos = p->pos;
 
-    FToken *curr_token = _fetch_token(p, pos);
+    token_t *curr_token = _fetch_token(p, pos);
     if (!curr_token) {
         // there is no more tokens; no need to test anymore
         // this avoids the infinite recursion problem caused by
@@ -233,9 +233,9 @@ int FPeg_is_done(parser_t *p) {
     return 0;
 }
 
-FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
+token_t *get_next_token_to_consume(parser_t *p, size_t *ppos) {
     size_t pos = p->pos;
-    FToken *curr_token = _fetch_token(p, pos);
+    token_t *curr_token = _fetch_token(p, pos);
     if (!curr_token) {
         return NULL;
     }
@@ -275,7 +275,7 @@ token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
 }
 
 void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos) {
-    FToken *curr_token = _fetch_token(p, token_pos);
+    token_t *curr_token = _fetch_token(p, token_pos);
     if (!curr_token) {
         return;
     }
@@ -302,7 +302,7 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t
 }
 
 token_memo_t *FPeg_get_memo(parser_t *p, int f_type) {
-    FToken *curr_token = _fetch_token(p, p->pos);
+    token_t *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
         p->error = "Attempting to get memo without any more tokens";
@@ -344,10 +344,10 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
-FToken *FPeg_consume_token(parser_t *p, int tk_type) {
+token_t *FPeg_consume_token(parser_t *p, int tk_type) {
     size_t pos = p->pos;
 
-    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    token_t *curr_token = get_next_token_to_consume(p, &pos);
     if (!curr_token) {
         return NULL;
     }
@@ -361,11 +361,11 @@ FToken *FPeg_consume_token(parser_t *p, int tk_type) {
     }
 }
 
-FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal) {
+token_t *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal) {
     size_t pos = p->pos;
 
     print_indent_level(p->level);
-    FToken *curr_token = get_next_token_to_consume(p, &pos);
+    token_t *curr_token = get_next_token_to_consume(p, &pos);
     if (!curr_token) {
         printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
                 literal, p->level, p->pos);
@@ -398,7 +398,7 @@ void FPeg_debug_enter(parser_t *p, frame_t *f) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
-    FToken *curr_token = _fetch_token(p, p->pos);
+    token_t *curr_token = _fetch_token(p, p->pos);
 
     char *token_buf;
     if (!curr_token) {

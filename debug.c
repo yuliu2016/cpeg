@@ -194,7 +194,7 @@ char *tokenizer_repl(char *in) {
     char *literal = FMem_malloc(literal_len);
 
     for (int i = 0; i < ls->token_len; ++i) {
-        FToken *token = ls->tokens[i];
+        token_t *token = ls->tokens[i];
 
         if (token->len > literal_len) {
             literal_len = token->len;

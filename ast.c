@@ -126,7 +126,7 @@ double *unary_not(parser_t *p, double *a) {
     return r;
 }
 
-double *load_const(parser_t *p, FToken *token) {
+double *load_const(parser_t *p, token_t *token) {
     if (!token) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
@@ -134,13 +134,13 @@ double *load_const(parser_t *p, FToken *token) {
 }
 
 
-double *call_func(parser_t *p, FToken *name, ast_list_t *token) {
+double *call_func(parser_t *p, token_t *name, ast_list_t *token) {
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = 0;
     return r;
 }
 
-double *to_double(parser_t *p, FToken *tok) {
+double *to_double(parser_t *p, token_t *tok) {
     if (!tok) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
     *r = strtod(tok->start, NULL);
