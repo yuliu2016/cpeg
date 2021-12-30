@@ -1,5 +1,35 @@
 #include "include/peg.h"
 #include "stdio.h"
+#include "string.h"
+
+
+
+static char *_ntv_src;
+static size_t _ntv_index;
+static char _ntv_char;
+
+char *token_nullterm_view(token_t *token) {
+    _ntv_src = token->start;
+    _ntv_index = token->len;
+    _ntv_char = _ntv_src[_ntv_index];
+    _ntv_src[_ntv_index] = 0;
+    return _ntv_src;
+}
+
+void token_nullterm_restore() {
+    _ntv_src[_ntv_index] = _ntv_char;
+}
+
+char *token_heap_copy(token_t *token) {
+    char *view = token_nullterm_view(token);
+    size_t len = strlen(view);
+    char *dest = FMem_malloc(len * sizeof(char));
+    strncpy(dest, view, len);
+    token_nullterm_restore();
+    return dest;
+}
+
+
 
 void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
     ls->src = src;

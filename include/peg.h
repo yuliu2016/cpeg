@@ -32,6 +32,14 @@ typedef struct token {
     token_memo_t *memo;
 } token_t;
 
+// Token helpers
+
+char *token_nullterm_view(token_t *token);
+
+void token_nullterm_restore();
+
+char *token_heap_copy(token_t *token);
+
 
 // Lazily-evaluated tokenizer
 typedef struct lexer_state {
