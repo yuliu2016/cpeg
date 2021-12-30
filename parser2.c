@@ -33,26 +33,25 @@ double *parse_calc(parser_t *p) {
 //     | term
 static double *sum(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
-    if (!enter_frame(p, &f)) {
-        return exit_frame(p, &f, 0);
-    }
     double *res_1 = 0;
     double *alt_1;
     size_t maxpos;
     double *max;
-    do {
-        maxpos = p->pos;
-        max = res_1;
-        memoize(p, &f, max, maxpos);
-        p->pos = f.f_pos;
-        res_1 = (
-            (alt_1 = sum_1(p)) ||
-            (alt_1 = sum_2(p)) ||
-            (alt_1 = term(p))
-        ) ? alt_1 : 0;
-    } while (p->pos > maxpos);
-    p->pos = maxpos;
-    res_1 = max;
+    if (enter_frame(p, &f)) {
+        do {
+            maxpos = p->pos;
+            max = res_1;
+            memoize(p, &f, max, maxpos);
+            p->pos = f.f_pos;
+            res_1 = (
+                (alt_1 = sum_1(p)) ||
+                (alt_1 = sum_2(p)) ||
+                (alt_1 = term(p))
+            ) ? alt_1 : 0;
+        } while (p->pos > maxpos);
+        p->pos = maxpos;
+        res_1 = max;
+    }
     return exit_frame(p, &f, res_1);
 }
 
@@ -89,27 +88,26 @@ static double *sum_2(parser_t *p) {
 //     | factor
 static double *term(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
-    if (!enter_frame(p, &f)) {
-        return exit_frame(p, &f, 0);
-    }
     double *res_4 = 0;
     double *alt_4;
     size_t maxpos;
     double *max;
-    do {
-        maxpos = p->pos;
-        max = res_4;
-        memoize(p, &f, max, maxpos);
-        p->pos = f.f_pos;
-        res_4 = (
-            (alt_4 = term_1(p)) ||
-            (alt_4 = term_2(p)) ||
-            (alt_4 = term_3(p)) ||
-            (alt_4 = factor(p))
-        ) ? alt_4 : 0;
-    } while (p->pos > maxpos);
-    p->pos = maxpos;
-    res_4 = max;
+    if (enter_frame(p, &f)) {
+        do {
+            maxpos = p->pos;
+            max = res_4;
+            memoize(p, &f, max, maxpos);
+            p->pos = f.f_pos;
+            res_4 = (
+                (alt_4 = term_1(p)) ||
+                (alt_4 = term_2(p)) ||
+                (alt_4 = term_3(p)) ||
+                (alt_4 = factor(p))
+            ) ? alt_4 : 0;
+        } while (p->pos > maxpos);
+        p->pos = maxpos;
+        res_4 = max;
+    }
     return exit_frame(p, &f, res_4);
 }
 
