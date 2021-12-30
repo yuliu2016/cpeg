@@ -18,17 +18,10 @@
 
 #define FUNC __func__
 
-typedef struct frame {
-    int f_type;
-    size_t f_pos;
-    const char *f_rule;
-    void *memo;
-    int memoize;
-} frame_t;
 
 static inline int enter_frame(parser_t *p, frame_t *f) {
 
-    IF_DEBUG(FPeg_debug_enter(p, f->f_type, f->f_rule);)
+    IF_DEBUG(FPeg_debug_enter(p, f);)
 
     if (FPeg_is_done(p)) {
         return 0;
@@ -36,7 +29,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 
     if (f->memoize) {
         FTokenMemo *memo = FPeg_get_memo(p, f->f_type);
-        IF_DEBUG(FPeg_debug_memo(p, memo, f->f_type, f->f_rule);)
+        IF_DEBUG(FPeg_debug_memo(p, memo, f);)
         if (memo) { 
             f->memo = memo->node;
             return 0;
@@ -49,7 +42,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 
 static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
 
-    IF_DEBUG(FPeg_debug_exit(p, result, f->f_type, f->f_rule);)
+    IF_DEBUG(FPeg_debug_exit(p, result, f);)
 
     if (f->memo) {
         return f->memo;

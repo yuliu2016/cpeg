@@ -109,6 +109,14 @@ typedef struct parser_state {
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
+typedef struct frame {
+    int f_type;
+    size_t f_pos;
+    const char *f_rule;
+    void *memo;
+    int memoize;
+} frame_t;
+
 
 parser_t *FPeg_init_new_parser(char *src, size_t len, lexer_func_t lexer_func);
 
@@ -124,11 +132,11 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t
 
 FTokenMemo *FPeg_get_memo(parser_t *p, int f_type);
 
-void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name);
+void FPeg_debug_enter(parser_t *p, frame_t *f);
 
-void FPeg_debug_exit(parser_t *p, void *res, size_t rule_index, const char *rule_name);
+void FPeg_debug_exit(parser_t *p, void *res, frame_t *f);
 
-void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, size_t rule_index, const char *rule_name);
+void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, frame_t *f);
 
 
 #endif //CPEG_PEG_H

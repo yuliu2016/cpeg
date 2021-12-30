@@ -394,7 +394,7 @@ FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *liter
 }
 
 
-void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name) {
+void FPeg_debug_enter(parser_t *p, frame_t *f) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
@@ -411,7 +411,7 @@ void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name) {
     }
 
     printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
-            rule_name, p->level, p->pos, token_buf);
+            f->f_rule, p->level, p->pos, token_buf);
 
     if (curr_token) {
         FMem_free(token_buf);
@@ -420,7 +420,7 @@ void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name) {
     p->level++;
 }
 
-void FPeg_debug_exit(parser_t *p, void *res, size_t rule_index, const char *rule_name) {
+void FPeg_debug_exit(parser_t *p, void *res, frame_t *f) {
     if (p->level == 0) {
         p->error = "Negative recursion depth; aborted";
         return;
@@ -428,13 +428,13 @@ void FPeg_debug_exit(parser_t *p, void *res, size_t rule_index, const char *rule
     p->level--;
     print_indent_level(p->level);
     if (res) {
-        printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
+        printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
     } else {
-        printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", rule_name, p->level, p->pos);
+        printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
     }
 }
 
-void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, size_t rule_index, const char *rule_name) {
+void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, frame_t *f) {
     if (!memo) {
         return;
     };
@@ -446,5 +446,5 @@ void FPeg_debug_memo(parser_t *p, FTokenMemo *memo, size_t rule_index, const cha
         succ = "was a \033[31mFailure\033[0m";
     }
     printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
-            rule_name, p->level, p->pos, succ);
+            f->f_rule, p->level, p->pos, succ);
 }
