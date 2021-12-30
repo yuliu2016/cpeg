@@ -368,43 +368,6 @@ static bool test_name(char ch) {
             (ch == '_');
 }
 
-struct token_literal {
-    const char *literal;
-    size_t tkl_type;
-};
-
-static struct token_literal keywords[] = {
-        {"return",   T_RETURN},
-        {"nonlocal", T_NONLOCAL},
-        {"if",       T_IF},
-        {"elif",     T_ELIF},
-        {"else",     T_ELSE},
-        {"and",      T_AND},
-        {"or",       T_OR},
-        {"not",      T_NOT},
-        {"is",       T_IS},
-        {"in",       T_IN},
-        {"pass",     T_PASS},
-        {"as",       T_AS},
-        {"from",     T_FROM},
-        {"import",   T_IMPORT},
-        {"with",     T_WITH},
-        {"async",    T_ASYNC},
-        {"await",    T_AWAIT},
-        {"while",    T_WHILE},
-        {"for",      T_FOR},
-        {"continue", T_CONTINUE},
-        {"break",    T_BREAK},
-        {"try",      T_TRY},
-        {"except",   T_EXCEPT},
-        {"finally",  T_FINALLY},
-        {"raise",    T_RAISE},
-        {"del",      T_DEL},
-        {"assert",   T_ASSERT},
-        {"None",     T_NONE},
-        {"True",     T_TRUE},
-        {"False",    T_FALSE}
-};
 
 static bool tokenize_name_or_keyword(lexer_t *ls) {
     if (ls->error || ls->next_token) {
@@ -455,68 +418,6 @@ static bool tokenize_name_or_keyword(lexer_t *ls) {
     return true;
 }
 
-static struct token_literal operators[] = {
-
-// ====== Single-char operators ======
-        {".",   T_DOT},
-        {",",   T_COMMA},
-        {"=",   T_ASSIGN},
-        {":",   T_COLON},
-        {"?",   T_TERNERY},
-        {"!",   T_NOT},
-        {";",   T_SEMICOLON},
-
-// second most common - brackets
-        {"(",   T_LPAR},
-        {")",   T_RPAR},
-        {"{",   T_LBRACE},
-        {"}",   T_RBRACE},
-        {"[",   T_LSQB},
-        {"]",   T_RSQB},
-        {"<",   T_LESS},
-        {">",   T_GREATER},
-
-// arithmetic
-        {"+",   T_PLUS},
-        {"-",   T_MINUS},
-        {"*",   T_TIMES},
-        {"/",   T_DIV},
-        {"%",   T_MODULUS},
-        {"@",   T_MATRIX_TIMES},
-
-// bitwise operators
-        {"|",   T_BIT_OR},
-        {"&",   T_BIT_AND},
-        {"~",   T_BIT_NOT},
-        {"^",   T_BIT_XOR},
-
-// ====== Double-Char Operators ======
-        {"==",  T_EQUAL},
-        {"!=",  T_NEQUAL},
-        {"<=",  T_LESS_EQUAL},
-        {">=",  T_MORE_EQUAL},
-        {"->",  T_PIPE},
-        {":=",  T_ASGN_EXPR},
-        {"//",  T_FLOOR_DIV},
-        {"**",  T_POWER},
-        {"+=",  T_PLUS_ASSIGN},
-        {"-=",  T_MINUS_ASSIGN},
-        {"*=",  T_TIMES_ASSIGN},
-        {"/=",  T_DIV_ASSIGN},
-        {"%=",  T_MODULUS_ASSIGN},
-        {"@=",  T_MATRIX_TIMES_ASSIGN},
-        {"|=",  T_BIT_OR_ASSIGN},
-        {"&=",  T_BIT_AND_ASSIGN},
-        {"^=",  T_BIT_XOR_ASSIGN},
-        {"<<",  T_LSHIFT},
-        {">>",  T_RSHIFT},
-
-// ====== Triple-char operators ======
-        {"//=", T_FLOOR_DIV_ASSIGN},
-        {"**=", T_POWER_ASSIGN},
-        {"<<=", T_LSHIFT_ASSIGN},
-        {">>=", T_RSHIFT_ASSIGN}
-};
 
 static bool tokenize_operator_or_symbol(lexer_t *ls) {
     if (ls->error || ls->next_token) {
