@@ -155,21 +155,13 @@ static double *term_3(parser_t *p) {
 //     | power
 static double *factor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
-    double *_plus_factor;
-    double *_minus_factor;
-    double *_bit_not_factor;
-    double *_power;
     double *alt_8;
     double *res_8;
     res_8 = enter_frame(p, &f) && (
-        (_plus_factor = factor_1(p)) &&
-            (alt_8 = _plus_factor) ||
-        (_minus_factor = factor_2(p)) &&
-            (alt_8 = _minus_factor) ||
-        (_bit_not_factor = factor_3(p)) &&
-            (alt_8 = _bit_not_factor) ||
-        (_power = power(p)) &&
-            (alt_8 = _power)
+        (alt_8 = factor_1(p)) ||
+        (alt_8 = factor_2(p)) ||
+        (alt_8 = factor_3(p)) ||
+        (alt_8 = power(p))
     ) ? alt_8 : 0;
     return exit_frame(p, &f, res_8);
 }
@@ -212,15 +204,11 @@ static double *factor_3(parser_t *p) {
 //     | atom
 static double *power(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
-    double *_atom_power_factor;
-    double *_atom;
     double *alt_12;
     double *res_12;
     res_12 = enter_frame(p, &f) && (
-        (_atom_power_factor = power_1(p)) &&
-            (alt_12 = _atom_power_factor) ||
-        (_atom = atom(p)) &&
-            (alt_12 = _atom)
+        (alt_12 = power_1(p)) ||
+        (alt_12 = atom(p))
     ) ? alt_12 : 0;
     return exit_frame(p, &f, res_12);
 }
@@ -245,17 +233,13 @@ static double *power_1(parser_t *p) {
 //     | NUMBER
 static double *atom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
-    double *_lpar_sum_rpar;
-    double *_atom_2;
     token_t *_name;
     token_t *_number;
     double *alt_14;
     double *res_14;
     res_14 = enter_frame(p, &f) && (
-        (_lpar_sum_rpar = atom_1(p)) &&
-            (alt_14 = _lpar_sum_rpar) ||
-        (_atom_2 = atom_2(p)) &&
-            (alt_14 = _atom_2) ||
+        (alt_14 = atom_1(p)) ||
+        (alt_14 = atom_2(p)) ||
         (_name = consume(p, 3, "NAME")) &&
             (alt_14 = load_const(p, _name)) ||
         (_number = consume(p, 4, "NUMBER")) &&
