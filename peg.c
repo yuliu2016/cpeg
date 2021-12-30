@@ -262,19 +262,19 @@ FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
     return curr_token;
 }
 
-FTokenMemo *new_memo(parser_t *p, size_t type, void *node, size_t end) {
+FTokenMemo *new_memo(parser_t *p, int f_type, void *node, size_t end) {
     FTokenMemo *new_memo = PARSER_ALLOC(p, sizeof(FTokenMemo));
     if (!new_memo) {
         return NULL;
     }
-    new_memo->type = type;
+    new_memo->f_type = f_type;
     new_memo->node = node;
     new_memo->end_pos = end;
     new_memo->next = NULL;
     return new_memo;
 }
 
-void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_t endpos) {
+void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos) {
     FToken *curr_token = _fetch_token(p, token_pos);
     if (!curr_token) {
         return;
@@ -282,11 +282,11 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_
     FTokenMemo *memo = curr_token->memo;
     if (!memo) {
         // create a "head" memo
-        curr_token->memo = new_memo(p, type, node, endpos);
+        curr_token->memo = new_memo(p, f_type, node, endpos);
         return;
     }
     for(;;) {
-        if (memo->type == type) {
+        if (memo->f_type == f_type) {
             // Update an existing memo of a certain type
             memo->node = node;
             memo->end_pos = endpos;
@@ -294,14 +294,14 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_
         }
         if (!memo->next) {
             // Add a new memo to the end of the chain
-            memo->next = new_memo(p, type, node, endpos);
+            memo->next = new_memo(p, f_type, node, endpos);
             return;
         }
         memo = memo->next;
     }
 }
 
-FTokenMemo *FPeg_get_memo(parser_t *p, size_t type) {
+FTokenMemo *FPeg_get_memo(parser_t *p, int f_type) {
     FToken *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
@@ -310,7 +310,7 @@ FTokenMemo *FPeg_get_memo(parser_t *p, size_t type) {
     }
     FTokenMemo *memo = curr_token->memo;
     while (memo) {
-        if (memo->type == type) {
+        if (memo->f_type == f_type) {
             if (memo->node) {
                 // reset the parser's position to the memo
                 // if it was previously successful
