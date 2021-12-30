@@ -54,7 +54,7 @@ void lexer_append_token(lexer_t *ls, FToken *token) {
 static void _compute_next_token(parser_t *p) {
     lexer_t *ls = &p->lexer_state;
     if (ls->curr_index < ls->src_len) {
-        FLexerFunc lexer_func = p->lexer_func;
+        lexer_func_t lexer_func = p->lexer_func;
         ls->next_token = lexer_func(ls);
     } else {
         ls->next_token = NULL;
@@ -172,7 +172,7 @@ void lexer_free_state(lexer_t *ls) {
 parser_t *FPeg_init_new_parser(
         char *src,
         size_t len,
-        FLexerFunc lexer_func) {
+        lexer_func_t lexer_func) {
 
     if (!src || !lexer_func) {
         return NULL;

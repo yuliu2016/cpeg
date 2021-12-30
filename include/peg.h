@@ -68,7 +68,6 @@ typedef struct lexer_state {
     int endmarker;
 } lexer_t;
 
-typedef lexer_t FLexerState;
 
 void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker);
 
@@ -82,7 +81,7 @@ token_t *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace);
 
 void lexer_free_state(lexer_t *ls);
 
-typedef token_t *(*FLexerFunc)(lexer_t *);
+typedef token_t *(*lexer_func_t)(lexer_t *);
 
 
 typedef struct parser_state {
@@ -90,7 +89,7 @@ typedef struct parser_state {
     lexer_t lexer_state;
 
     // Use to get the next token
-    FLexerFunc lexer_func;
+    lexer_func_t lexer_func;
 
     // Allocate nodes in the same region so it can be freed all at once
     FMemRegion *region;
@@ -111,7 +110,7 @@ typedef struct parser_state {
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
 
-parser_t *FPeg_init_new_parser(char *src, size_t len, FLexerFunc lexer_func);
+parser_t *FPeg_init_new_parser(char *src, size_t len, lexer_func_t lexer_func);
 
 void FPeg_free_parser(parser_t *p);
 
