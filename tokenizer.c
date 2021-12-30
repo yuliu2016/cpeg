@@ -12,8 +12,8 @@
 
 #define ADVANCE(ls) ++(ls)->curr_index;
 
-#define SET_ERROR(ls, msg, char_offset) FLexer_set_error(ls, msg, char_offset)
-#define CREATE_TOKEN(ls, type, is_whitespace) FLexer_create_token(ls, type, is_whitespace)
+#define SET_ERROR(ls, msg, char_offset) lexer_set_error(ls, msg, char_offset)
+#define CREATE_TOKEN(ls, type, is_whitespace) lexer_create_token(ls, type, is_whitespace)
 
 static int char_is_whitespace(char ch) {
     return ch == ' ' || ch == '\t';
@@ -69,7 +69,7 @@ static bool tokenize_newline_or_indent(FLexerState *ls, FToken **ptoken) {
 
         if (newline) {
             indent = 0;
-            FLexer_add_index_for_line(ls, ls->curr_index);
+            lexer_add_line_index(ls, ls->curr_index);
             in_comment = false;
         } else {
             if (ch == '#') {
@@ -308,12 +308,12 @@ static bool tokenize_string(FLexerState *ls, FToken **ptoken) {
                 break;
             }
             if (ch == '\n') {
-                FLexer_add_index_for_line(ls, i);
+                lexer_add_line_index(ls, i);
             } else if (ch == '\r') {
                 if (PEEK_SAFE(ls, i + 1) == '\n') {
                     i++;
                 }
-                FLexer_add_index_for_line(ls, i);
+                lexer_add_line_index(ls, i);
             }
             i++;
         }
@@ -536,7 +536,7 @@ static bool tokenize_operator_or_symbol(FLexerState *ls, FToken **ptoken) {
     return false;
 }
 
-FToken *FLexer_get_next_token(FLexerState *ls) {
+token_t *FLexer_get_next_token(lexer_t *ls) {
 
     skip_whitespace(ls);
 
@@ -551,7 +551,7 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
 
     ls->start_index = ls->curr_index;
 
-    FToken *token = NULL;
+    token_t *token = NULL;
     (tokenize_newline_or_indent(ls, &token)) ||
     (tokenize_number(ls, &token)) ||
     (tokenize_string(ls, &token)) ||
@@ -570,20 +570,20 @@ FToken *FLexer_get_next_token(FLexerState *ls) {
     return token;
 }
 
-FLexerState *FLexer_analyze_all(char *src) {
-    FLexerState *ls = FMem_malloc(sizeof(FLexerState));
+lexer_t *FLexer_analyze_all(char *src) {
+    lexer_t *ls = FMem_malloc(sizeof(lexer_t));
 
     // find length of string
     size_t len = strlen(src);
 
-    FLexer_init_state(ls, src, len, false);
+    lexer_init_state(ls, src, len, false);
 
     for (;;) {
         FToken *token = FLexer_get_next_token(ls);
         if (!token) {
             break;
         }
-        FLexer_add_token(ls, token);
+        lexer_append_token(ls, token);
     }
 
     return ls;

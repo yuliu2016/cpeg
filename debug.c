@@ -173,19 +173,19 @@ static TokenKind token_kinds[] = {
     {"KEYWORD", "\033[34;1m", 55, 84}, // bright blue
 };
 
-FLexerState *FLexer_analyze_all(char *src);
+lexer_t *FLexer_analyze_all(char *src);
 
 char *tokenizer_repl(char *in) {
-    FLexerState *ls = FLexer_analyze_all(in);
+    lexer_t *ls = FLexer_analyze_all(in);
     if (ls->error) {
         printf("\033[31mFile <repl>, %s\033[0m", ls->error);
-        FLexer_free_state(ls);
+        lexer_free_state(ls);
         return "\n";
     }
 
     if (ls->token_len == 0) {
         printf("[Empty Token List]\n");
-        FLexer_free_state(ls);
+        lexer_free_state(ls);
         return "";
     }
 
@@ -231,7 +231,7 @@ char *tokenizer_repl(char *in) {
     }
 
     FMem_free(literal);
-    FLexer_free_state(ls);
+    lexer_free_state(ls);
     return "";
 }
 

@@ -6,7 +6,7 @@
 
 
 #ifndef PEG_NODEBUG
-#define PEG_DEBUG
+// #define PEG_DEBUG
 #endif
 
 #ifdef PEG_DEBUG

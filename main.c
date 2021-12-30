@@ -14,13 +14,13 @@ void *parse_grammar(parser_t *p, int entry_point);
 
 double *parse_calc(parser_t *p);
 
-FToken *FLexer_get_next_token(FLexerState *ls);
+token_t *FLexer_get_next_token(lexer_t *ls);
 
 
 char *tokparse(char *in) {
     parser_t *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
     double *n = parse_calc(p);
-    FLexerState *ls = &p->lexer_state;
+    lexer_t *ls = &p->lexer_state;
     if (p->error) {
         printf("======================\n\033[31;1m");
         printf("parser error: %s\n\033[0m", p->error);
@@ -70,6 +70,11 @@ int main() {
 
     FMem_set_allocator(default_allocator());
 
+#define MAIN_LOOP
+#ifdef MAIN_LOOP
+    input_loop(">>>", tokparse);
+#else
+
     printf(">>>");
     char line[1024];
 
@@ -87,6 +92,7 @@ int main() {
         return 1;
     }
     print(s);
+#endif
 
     return 0;
 }

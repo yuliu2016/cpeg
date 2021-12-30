@@ -1,7 +1,7 @@
 #include "include/peg.h"
 #include "stdio.h"
 
-void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker) {
+void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
     ls->src = src;
     ls->src_len = len;
 
@@ -26,7 +26,7 @@ void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker) {
     ls->endmarker = endmarker;
 }
 
-void FLexer_add_index_for_line(FLexerState *ls, size_t i) {
+void lexer_add_line_index(lexer_t *ls, size_t i) {
     if (ls->lines_size >= ls->lines_capacity) {
         ls->lines_capacity = ls->lines_capacity << 1u;
         ls->line_to_index = FMem_realloc(
@@ -36,7 +36,7 @@ void FLexer_add_index_for_line(FLexerState *ls, size_t i) {
     ls->lines_size += 1;
 }
 
-void FLexer_add_token(FLexerState *ls, FToken *token) {
+void lexer_append_token(lexer_t *ls, FToken *token) {
     if (ls->token_len >= ls->token_capacity) {
         if (!ls->token_capacity) {
             ls->token_capacity = 1;
@@ -51,8 +51,8 @@ void FLexer_add_token(FLexerState *ls, FToken *token) {
     ls->token_len += 1;
 }
 
-void lexer_compute_next_token(parser_t *p) {
-    FLexerState *ls = &p->lexer_state;
+static void _compute_next_token(parser_t *p) {
+    lexer_t *ls = &p->lexer_state;
     if (ls->curr_index < ls->src_len) {
         FLexerFunc lexer_func = p->lexer_func;
         ls->next_token = lexer_func(ls);
@@ -61,8 +61,8 @@ void lexer_compute_next_token(parser_t *p) {
     }
 }
 
-FToken *lexer_fetch_token(parser_t *p, size_t pos) {
-    FLexerState *ls = &p->lexer_state;
+static FToken *_fetch_token(parser_t *p, size_t pos) {
+    lexer_t *ls = &p->lexer_state;
 
     if (pos > ls->token_len) {
         p->error = "Token index too big";
@@ -74,8 +74,8 @@ FToken *lexer_fetch_token(parser_t *p, size_t pos) {
         FToken *this_token = ls->next_token;
 
         if (this_token) {
-            FLexer_add_token(ls, this_token);
-            lexer_compute_next_token(p);
+            lexer_append_token(ls, this_token);
+            _compute_next_token(p);
 
             return this_token;
         } else {
@@ -87,8 +87,8 @@ FToken *lexer_fetch_token(parser_t *p, size_t pos) {
     return ls->tokens[pos];
 }
 
-// * returns the line end (exclusive) given line number
-size_t lexer_get_line_end(FLexerState *ls, size_t lineno) {
+
+static size_t _find_eol_index(lexer_t *ls, size_t lineno) {
     if (lineno < ls->lines_size - 1) {
         return ls->line_to_index[lineno + 1];
     } else if (lineno == ls->lines_size - 1) {
@@ -107,10 +107,10 @@ size_t lexer_get_line_end(FLexerState *ls, size_t lineno) {
     }
 }
 
-void FLexer_set_error(FLexerState *ls, char *error_msg, size_t char_offset) {
+void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset) {
     size_t lineno = ls->lines_size - 1;
     size_t line_start = ls->line_to_index[lineno];
-    size_t line_end = lexer_get_line_end(ls, lineno);
+    size_t line_end = _find_eol_index(ls, lineno);
     size_t col = ls->curr_index - line_start + char_offset;
 
     // include an extra char for \0
@@ -138,7 +138,7 @@ void FLexer_set_error(FLexerState *ls, char *error_msg, size_t char_offset) {
     FMem_free(caret_buf);
 }
 
-FToken *FLexer_create_token(FLexerState *ls, unsigned int type, int is_whitespace) {
+FToken *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace) {
     FToken *token = FMem_malloc(sizeof(FToken));
     if (!token) {
         return NULL;
@@ -158,7 +158,7 @@ FToken *FLexer_create_token(FLexerState *ls, unsigned int type, int is_whitespac
     return token;
 }
 
-void FLexer_free_state(FLexerState *ls) {
+void lexer_free_state(lexer_t *ls) {
     for (int i = 0; i < ls->token_len; ++i) {
         FMem_free(ls->tokens[i]);
     }
@@ -188,7 +188,7 @@ parser_t *FPeg_init_new_parser(
         return NULL;
     }
 
-    FLexer_init_state(&p->lexer_state, src, len, 1);
+    lexer_init_state(&p->lexer_state, src, len, 1);
 
     p->lexer_func = lexer_func;
     p->region = region;
@@ -200,13 +200,13 @@ parser_t *FPeg_init_new_parser(
 
     // Need to scan at least one token to see
     // if there is anything to parse
-    lexer_compute_next_token(p);
+    _compute_next_token(p);
 
     return p;
 }
 
 void FPeg_free_parser(parser_t *p) {
-    FLexer_free_state(&p->lexer_state);
+    lexer_free_state(&p->lexer_state);
     FMemRegion_free(p->region);
     FMem_free(p);
 }
@@ -218,7 +218,7 @@ int FPeg_is_done(parser_t *p) {
     }
     size_t pos = p->pos;
 
-    FToken *curr_token = lexer_fetch_token(p, pos);
+    FToken *curr_token = _fetch_token(p, pos);
     if (!curr_token) {
         // there is no more tokens; no need to test anymore
         // this avoids the infinite recursion problem caused by
@@ -235,14 +235,14 @@ int FPeg_is_done(parser_t *p) {
 
 FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
     size_t pos = p->pos;
-    FToken *curr_token = lexer_fetch_token(p, pos);
+    FToken *curr_token = _fetch_token(p, pos);
     if (!curr_token) {
         return NULL;
     }
 
     // the first token that doesn't ignore whitespace
     if (p->ignore_whitespace) {
-        FLexerState *ls = &p->lexer_state;
+        lexer_t *ls = &p->lexer_state;
         for(;;) {
             if (!curr_token->is_whitespace) {
                 break;
@@ -251,7 +251,7 @@ FToken *get_next_token_to_consume(parser_t *p, size_t *ppos) {
                 break;
             }
             pos += 1;
-            curr_token = lexer_fetch_token(p, pos);
+            curr_token = _fetch_token(p, pos);
             if (!curr_token) {
                 return NULL;
             }
@@ -275,7 +275,7 @@ FTokenMemo *new_memo(parser_t *p, size_t type, void *node, size_t end) {
 }
 
 void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_t endpos) {
-    FToken *curr_token = lexer_fetch_token(p, token_pos);
+    FToken *curr_token = _fetch_token(p, token_pos);
     if (!curr_token) {
         return;
     }
@@ -302,7 +302,7 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_
 }
 
 FTokenMemo *FPeg_get_memo(parser_t *p, size_t type) {
-    FToken *curr_token = lexer_fetch_token(p, p->pos);
+    FToken *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
         p->error = "Attempting to get memo without any more tokens";
@@ -398,7 +398,7 @@ void FPeg_debug_enter(parser_t *p, size_t rule_index, const char *rule_name) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
-    FToken *curr_token = lexer_fetch_token(p, p->pos);
+    FToken *curr_token = _fetch_token(p, p->pos);
 
     char *token_buf;
     if (!curr_token) {

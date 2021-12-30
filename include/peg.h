@@ -22,7 +22,7 @@ typedef struct token_memo_t {
     struct token_memo_t *next;
 } FTokenMemo;
 
-typedef struct {
+typedef struct token {
     size_t type;
     char *start;
     size_t len;
@@ -30,10 +30,12 @@ typedef struct {
     size_t column;
     int is_whitespace;
     FTokenMemo *memo;
-} FToken;
+} token_t;
+
+typedef token_t FToken;
 
 // Lazily-evaluated tokenizer
-typedef struct lexer_state_t {
+typedef struct lexer_state {
     // Test source
     char *src;
     size_t src_len;
@@ -48,12 +50,12 @@ typedef struct lexer_state_t {
     size_t indent;
 
     // Dynamically-growing list of tokens
-    FToken **tokens;
+    token_t **tokens;
     size_t token_len;
     size_t token_capacity;
 
     // Stores next token to determine if stream is done
-    FToken *next_token;
+    token_t *next_token;
 
     // Dynamically-growing list of line indices
     // N.W. it's always non-empty because there is always
@@ -64,26 +66,28 @@ typedef struct lexer_state_t {
 
     char *error;
     int endmarker;
-} FLexerState;
+} lexer_t;
 
-void FLexer_init_state(FLexerState *ls, char *src, size_t len, int endmarker);
+typedef lexer_t FLexerState;
 
-void FLexer_add_index_for_line(FLexerState *ls, size_t i);
+void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker);
 
-void FLexer_add_token(FLexerState *ls, FToken *token);
+void lexer_add_line_index(lexer_t *ls, size_t i);
 
-void FLexer_set_error(FLexerState *ls, char *error_msg, size_t char_offset);
+void lexer_append_token(lexer_t *ls, token_t *token);
 
-FToken *FLexer_create_token(FLexerState *ls, unsigned int type, int is_whitespace);
+void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset);
 
-void FLexer_free_state(FLexerState *ls);
+token_t *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace);
 
-typedef FToken *(*FLexerFunc)(FLexerState *);
+void lexer_free_state(lexer_t *ls);
+
+typedef token_t *(*FLexerFunc)(lexer_t *);
 
 
 typedef struct parser_state {
     // Use to get lazily scan the next token
-    FLexerState lexer_state;
+    lexer_t lexer_state;
 
     // Use to get the next token
     FLexerFunc lexer_func;
@@ -103,8 +107,6 @@ typedef struct parser_state {
     size_t level;
 
 } parser_t;
-
-typedef FToken token_t;
 
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
