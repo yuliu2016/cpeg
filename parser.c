@@ -635,19 +635,21 @@ static void *t_primary(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_25 = 0;
-    void *max = 0;
+    void *alt_25;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_25;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = t_primary_1(p)) ||
-        (a = t_primary_2(p)) ||
-        (a = t_primary_3(p)) ||
-        (a = t_primary_4(p));
+        res_25 = (
+            (alt_25 = t_primary_1(p)) ||
+            (alt_25 = t_primary_2(p)) ||
+            (alt_25 = t_primary_3(p)) ||
+            (alt_25 = t_primary_4(p))
+        ) ? alt_25 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_25 = max;
@@ -2246,17 +2248,19 @@ static void *disjunction(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_118 = 0;
-    void *max = 0;
+    void *alt_118;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_118;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = disjunction_1(p)) ||
-        (a = conjunction(p));
+        res_118 = (
+            (alt_118 = disjunction_1(p)) ||
+            (alt_118 = conjunction(p))
+        ) ? alt_118 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_118 = max;
@@ -2284,17 +2288,19 @@ static void *conjunction(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_120 = 0;
-    void *max = 0;
+    void *alt_120;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_120;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = conjunction_1(p)) ||
-        (a = inversion(p));
+        res_120 = (
+            (alt_120 = conjunction_1(p)) ||
+            (alt_120 = inversion(p))
+        ) ? alt_120 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_120 = max;
@@ -2447,17 +2453,19 @@ static void *bitwise_or(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_130 = 0;
-    void *max = 0;
+    void *alt_130;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_130;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = bitwise_or_1(p)) ||
-        (a = bitwise_xor(p));
+        res_130 = (
+            (alt_130 = bitwise_or_1(p)) ||
+            (alt_130 = bitwise_xor(p))
+        ) ? alt_130 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_130 = max;
@@ -2485,17 +2493,19 @@ static void *bitwise_xor(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_132 = 0;
-    void *max = 0;
+    void *alt_132;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_132;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = bitwise_xor_1(p)) ||
-        (a = bitwise_and(p));
+        res_132 = (
+            (alt_132 = bitwise_xor_1(p)) ||
+            (alt_132 = bitwise_and(p))
+        ) ? alt_132 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_132 = max;
@@ -2523,17 +2533,19 @@ static void *bitwise_and(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_134 = 0;
-    void *max = 0;
+    void *alt_134;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_134;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = bitwise_and_1(p)) ||
-        (a = shift_expr(p));
+        res_134 = (
+            (alt_134 = bitwise_and_1(p)) ||
+            (alt_134 = shift_expr(p))
+        ) ? alt_134 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_134 = max;
@@ -2562,18 +2574,20 @@ static void *shift_expr(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_136 = 0;
-    void *max = 0;
+    void *alt_136;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_136;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = shift_expr_1(p)) ||
-        (a = shift_expr_2(p)) ||
-        (a = sum(p));
+        res_136 = (
+            (alt_136 = shift_expr_1(p)) ||
+            (alt_136 = shift_expr_2(p)) ||
+            (alt_136 = sum(p))
+        ) ? alt_136 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_136 = max;
@@ -2615,18 +2629,20 @@ static void *sum(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_139 = 0;
-    void *max = 0;
+    void *alt_139;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_139;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = sum_1(p)) ||
-        (a = sum_2(p)) ||
-        (a = term(p));
+        res_139 = (
+            (alt_139 = sum_1(p)) ||
+            (alt_139 = sum_2(p)) ||
+            (alt_139 = term(p))
+        ) ? alt_139 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_139 = max;
@@ -2671,21 +2687,23 @@ static void *term(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_142 = 0;
-    void *max = 0;
+    void *alt_142;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_142;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = term_1(p)) ||
-        (a = term_2(p)) ||
-        (a = term_3(p)) ||
-        (a = term_4(p)) ||
-        (a = term_5(p)) ||
-        (a = pipe_expr(p));
+        res_142 = (
+            (alt_142 = term_1(p)) ||
+            (alt_142 = term_2(p)) ||
+            (alt_142 = term_3(p)) ||
+            (alt_142 = term_4(p)) ||
+            (alt_142 = term_5(p)) ||
+            (alt_142 = pipe_expr(p))
+        ) ? alt_142 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_142 = max;
@@ -2765,17 +2783,19 @@ static void *pipe_expr(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_148 = 0;
-    void *max = 0;
+    void *alt_148;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_148;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = pipe_expr_1(p)) ||
-        (a = factor(p));
+        res_148 = (
+            (alt_148 = pipe_expr_1(p)) ||
+            (alt_148 = factor(p))
+        ) ? alt_148 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_148 = max;
@@ -2883,19 +2903,21 @@ static void *primary(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    void *a = 0;
     void *res_156 = 0;
-    void *max = 0;
+    void *alt_156;
     size_t maxpos;
+    void *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_156;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = primary_1(p)) ||
-        (a = primary_2(p)) ||
-        (a = primary_3(p)) ||
-        (a = atom(p));
+        res_156 = (
+            (alt_156 = primary_1(p)) ||
+            (alt_156 = primary_2(p)) ||
+            (alt_156 = primary_3(p)) ||
+            (alt_156 = atom(p))
+        ) ? alt_156 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_156 = max;

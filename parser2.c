@@ -36,18 +36,20 @@ static double *sum(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    double *a = 0;
     double *res_1 = 0;
-    double *max = 0;
+    double *alt_1;
     size_t maxpos;
+    double *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_1;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = sum_1(p)) ||
-        (a = sum_2(p)) ||
-        (a = term(p));
+        res_1 = (
+            (alt_1 = sum_1(p)) ||
+            (alt_1 = sum_2(p)) ||
+            (alt_1 = term(p))
+        ) ? alt_1 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_1 = max;
@@ -90,19 +92,21 @@ static double *term(parser_t *p) {
     if (!enter_frame(p, &f)) {
         return exit_frame(p, &f, 0);
     }
-    double *a = 0;
     double *res_4 = 0;
-    double *max = 0;
+    double *alt_4;
     size_t maxpos;
+    double *max;
     do {
         maxpos = p->pos;
-        max = a;
+        max = res_4;
         memoize(p, &f, max, maxpos);
         p->pos = f.f_pos;
-        (a = term_1(p)) ||
-        (a = term_2(p)) ||
-        (a = term_3(p)) ||
-        (a = factor(p));
+        res_4 = (
+            (alt_4 = term_1(p)) ||
+            (alt_4 = term_2(p)) ||
+            (alt_4 = term_3(p)) ||
+            (alt_4 = factor(p))
+        ) ? alt_4 : 0;
     } while (p->pos > maxpos);
     p->pos = maxpos;
     res_4 = max;
