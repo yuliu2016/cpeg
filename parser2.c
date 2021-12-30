@@ -239,11 +239,12 @@ static double *atom(parser_t *p) {
     double *res_14;
     res_14 = enter_frame(p, &f) && (
         (alt_14 = atom_1(p)) ||
-        (alt_14 = atom_2(p)) ||
-        (_name = consume(p, 3, "NAME")) &&
-            (alt_14 = load_const(p, _name)) ||
-        (_number = consume(p, 4, "NUMBER")) &&
-            (alt_14 = to_double(p, _number))
+        (alt_14 = atom_2(p)) || (
+            (_name = consume(p, 3, "NAME")) &&
+            (alt_14 = load_const(p, _name))
+        ) || (
+            (_number = consume(p, 4, "NUMBER")) &&
+            (alt_14 = to_double(p, _number)))
     ) ? alt_14 : 0;
     return exit_frame(p, &f, res_14);
 }
