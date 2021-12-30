@@ -58,8 +58,8 @@ static void skip_whitespace(lexer_t *ls) {
 #define T_INDENT 300
 #define T_DEDENT 301
 
-static bool tokenize_newline_or_indent(lexer_t *ls, token_t **ptoken) {
-    if (ls->error) {
+static bool tokenize_newline_or_indent(lexer_t *ls) {
+    if (ls->error || ls->next_token) {
         return false;
     }
 
@@ -103,11 +103,11 @@ static bool tokenize_newline_or_indent(lexer_t *ls, token_t **ptoken) {
     }
 
     if (indent == ls->indent) {
-        *ptoken = lexer_create_token(ls, T_NEWLINE, true);
+        ls->next_token = lexer_create_token(ls, T_NEWLINE, true);
     } else if (indent == (ls->indent + 4)) {
-        *ptoken = lexer_create_token(ls, T_INDENT, true);
+        ls->next_token = lexer_create_token(ls, T_INDENT, true);
     } else if (indent == (ls->indent - 4)) {
-        *ptoken = lexer_create_token(ls, T_DEDENT, true);
+        ls->next_token = lexer_create_token(ls, T_DEDENT, true);
     } else {
         lexer_set_error(ls, "Incorrect indentation", 0);
         return false;
@@ -118,7 +118,7 @@ static bool tokenize_newline_or_indent(lexer_t *ls, token_t **ptoken) {
     return true;
 }
 
-static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *name, token_t **ptoken) {
+static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *name) {
     size_t j = ls->curr_index + 2;
 
     while (j < ls->src_len) {
@@ -145,7 +145,7 @@ static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *nam
     }
 
     ls->curr_index = j;
-    *ptoken = lexer_create_token(ls, T_NUMBER, false);
+    ls->next_token = lexer_create_token(ls, T_NUMBER, false);
     return true;
 }
 
@@ -186,7 +186,7 @@ static size_t advance_decimal_sequence(lexer_t *ls, size_t i) {
     return j;
 }
 
-static bool tokenize_decimal(lexer_t *ls, token_t **ptoken) {
+static bool tokenize_decimal(lexer_t *ls) {
 
     size_t j = ls->curr_index;
 
@@ -251,13 +251,13 @@ static bool tokenize_decimal(lexer_t *ls, token_t **ptoken) {
     }
 
     ls->curr_index = j;
-    *ptoken = lexer_create_token(ls, T_NUMBER, false);
+    ls->next_token = lexer_create_token(ls, T_NUMBER, false);
 
     return true;
 }
 
-static bool tokenize_number(lexer_t *ls, token_t **ptoken) {
-    if (ls->error) {
+static bool tokenize_number(lexer_t *ls) {
+    if (ls->error || ls->next_token) {
         return false;
     }
 
@@ -267,22 +267,22 @@ static bool tokenize_number(lexer_t *ls, token_t **ptoken) {
         switch (ch2) {
             case 'x':
             case 'X':
-                return tokenize_non_decimal(ls, test_hex, "hexadecimal", ptoken);
+                return tokenize_non_decimal(ls, test_hex, "hexadecimal");
             case 'b':
             case 'B':
-                return tokenize_non_decimal(ls, test_bin, "binary", ptoken);
+                return tokenize_non_decimal(ls, test_bin, "binary");
             case 'o':
             case 'O':
-                return tokenize_non_decimal(ls, test_oct, "octal", ptoken);
+                return tokenize_non_decimal(ls, test_oct, "octal");
             default:;
         }
     }
 
-    return tokenize_decimal(ls, ptoken);
+    return tokenize_decimal(ls);
 }
 
-static bool tokenize_string(lexer_t *ls, token_t **ptoken) {
-    if (ls->error) {
+static bool tokenize_string(lexer_t *ls) {
+    if (ls->error || ls->next_token) {
         return false;
     }
 
@@ -356,7 +356,7 @@ static bool tokenize_string(lexer_t *ls, token_t **ptoken) {
     }
 
     ++ls->curr_index;
-    *ptoken = lexer_create_token(ls, T_STRING, false);
+    ls->next_token = lexer_create_token(ls, T_STRING, false);
 
     return true;
 }
@@ -406,8 +406,8 @@ static struct token_literal keywords[] = {
         {"False",    T_FALSE}
 };
 
-static bool tokenize_name_or_keyword(lexer_t *ls, token_t **ptoken) {
-    if (ls->error) {
+static bool tokenize_name_or_keyword(lexer_t *ls) {
+    if (ls->error || ls->next_token) {
         return false;
     }
 
@@ -445,13 +445,13 @@ static bool tokenize_name_or_keyword(lexer_t *ls, token_t **ptoken) {
         }
 
         if (matching && j == ls->curr_index) {
-            *ptoken = lexer_create_token(ls, pair.tkl_type, false);
+            ls->next_token = lexer_create_token(ls, pair.tkl_type, false);
             return true;
         }
     }
 
     // not any of the keywords
-    *ptoken = lexer_create_token(ls, T_NAME, false);
+    ls->next_token = lexer_create_token(ls, T_NAME, false);
     return true;
 }
 
@@ -518,8 +518,8 @@ static struct token_literal operators[] = {
         {">>=", T_RSHIFT_ASSIGN}
 };
 
-static bool tokenize_operator_or_symbol(lexer_t *ls, token_t **ptoken) {
-    if (ls->error) {
+static bool tokenize_operator_or_symbol(lexer_t *ls) {
+    if (ls->error || ls->next_token) {
         return false;
     }
 
@@ -545,14 +545,14 @@ static bool tokenize_operator_or_symbol(lexer_t *ls, token_t **ptoken) {
 
         if (matching) {
             ls->curr_index = j;
-            *ptoken = lexer_create_token(ls, pair.tkl_type, false);
+            ls->next_token = lexer_create_token(ls, pair.tkl_type, false);
             return true;
         }
     }
     return false;
 }
 
-token_t *FLexer_get_next_token(lexer_t *ls) {
+token_t *lexer_get_next_token(lexer_t *ls) {
 
     skip_whitespace(ls);
 
@@ -566,27 +566,27 @@ token_t *FLexer_get_next_token(lexer_t *ls) {
     }
 
     ls->start_index = ls->curr_index;
+    ls->next_token = NULL;
 
-    token_t *token = NULL;
-    (tokenize_newline_or_indent(ls, &token)) ||
-    (tokenize_number(ls, &token)) ||
-    (tokenize_string(ls, &token)) ||
-    (tokenize_name_or_keyword(ls, &token)) ||
-    (tokenize_operator_or_symbol(ls, &token));
+    tokenize_newline_or_indent(ls);
+    tokenize_number(ls);
+    tokenize_string(ls);
+    tokenize_name_or_keyword(ls);
+    tokenize_operator_or_symbol(ls);
 
     if (ls->error) {
         return NULL;
     }
 
-    if (!token) {
+    if (!ls->next_token) {
         lexer_set_error(ls, "Unknown Syntax", 0);
         return NULL;
     }
 
-    return token;
+    return ls->next_token;
 }
 
-lexer_t *FLexer_analyze_all(char *src) {
+lexer_t *lexer_analyze_all(char *src) {
     lexer_t *ls = FMem_malloc(sizeof(lexer_t));
 
     // find length of string
@@ -595,7 +595,7 @@ lexer_t *FLexer_analyze_all(char *src) {
     lexer_init_state(ls, src, len, false);
 
     for (;;) {
-        token_t *token = FLexer_get_next_token(ls);
+        token_t *token = lexer_get_next_token(ls);
         if (!token) {
             break;
         }

@@ -105,6 +105,8 @@ static token_t *_fetch_token(parser_t *p, size_t pos) {
 
         if (this_token) {
             lexer_append_token(ls, this_token);
+
+            ls->next_token = NULL;
             _compute_next_token(p);
 
             return this_token;

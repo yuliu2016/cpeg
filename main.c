@@ -14,11 +14,11 @@ void *parse_grammar(parser_t *p, int entry_point);
 
 double *parse_calc(parser_t *p);
 
-token_t *FLexer_get_next_token(lexer_t *ls);
+token_t *lexer_get_next_token(lexer_t *ls);
 
 
 char *tokparse(char *in) {
-    parser_t *p = FPeg_init_new_parser(in, strlen(in), FLexer_get_next_token);
+    parser_t *p = FPeg_init_new_parser(in, strlen(in), lexer_get_next_token);
     double *n = parse_calc(p);
     lexer_t *ls = &p->lexer_state;
     if (p->error) {

@@ -173,10 +173,10 @@ static TokenKind token_kinds[] = {
     {"KEYWORD", "\033[34;1m", 55, 84}, // bright blue
 };
 
-lexer_t *FLexer_analyze_all(char *src);
+lexer_t *lexer_analyze_all(char *src);
 
 char *tokenizer_repl(char *in) {
-    lexer_t *ls = FLexer_analyze_all(in);
+    lexer_t *ls = lexer_analyze_all(in);
     if (ls->error) {
         printf("\033[31mFile <repl>, %s\033[0m", ls->error);
         lexer_free_state(ls);
