@@ -214,19 +214,19 @@ char *tokenizer_repl(char *in) {
             }
         }
 
-        size_t line = token->lineno;
+        int line = token->lineno;
         previous_line = line;
 
-        size_t type = token->type;
+        int tk_type = token->tk_type;
         TokenKind kind;
         for (int i = 0; i < 7; ++i) {
             kind = token_kinds[i];
-            if (type >= kind.min && type < kind.max) {
+            if (tk_type >= kind.min && tk_type < kind.max) {
                 break;
             }
         }
 
-        printf("L%zu:%zu\t%-10s%s%s\033[0m\n", line + 1, token->column,
+        printf("L%d:%d\t%-10s%s%s\033[0m\n", line + 1, token->column,
                 kind.name, kind.style, literal);
     }
 

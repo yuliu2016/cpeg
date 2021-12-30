@@ -23,11 +23,11 @@ typedef struct token_memo_t {
 } FTokenMemo;
 
 typedef struct token {
-    size_t type;
+    int tk_type;
     char *start;
     size_t len;
-    size_t lineno;
-    size_t column;
+    int lineno;
+    int column;
     int is_whitespace;
     FTokenMemo *memo;
 } token_t;
@@ -77,7 +77,7 @@ void lexer_append_token(lexer_t *ls, token_t *token);
 
 void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset);
 
-token_t *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace);
+token_t *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace);
 
 void lexer_free_state(lexer_t *ls);
 
@@ -116,9 +116,9 @@ void FPeg_free_parser(parser_t *p);
 
 int FPeg_is_done(parser_t *p);
 
-FToken *FPeg_consume_token(parser_t *p, size_t type);
+FToken *FPeg_consume_token(parser_t *p, int tk_type);
 
-FToken *FPeg_consume_token_and_debug(parser_t *p, size_t type, const char *literal);
+FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal);
 
 void FPeg_put_memo(parser_t *p, size_t token_pos, size_t type, void *node, size_t endpos);
 

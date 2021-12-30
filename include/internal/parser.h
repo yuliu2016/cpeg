@@ -19,7 +19,7 @@
 #define FUNC __func__
 
 typedef struct frame {
-    size_t f_type;
+    int f_type;
     size_t f_pos;
     const char *f_rule;
     void *memo;
@@ -75,12 +75,12 @@ static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
 }
 
 
-static inline token_t *consume(parser_t *p, size_t type, const char *literal) {
+static inline token_t *consume(parser_t *p, int tk_type, const char *literal) {
 
 #ifdef PEG_DEBUG
-    return FPeg_consume_token_and_debug(p, type, literal);
+    return FPeg_consume_token_and_debug(p, tk_type, literal);
 #else
-    return FPeg_consume_token(p, type);
+    return FPeg_consume_token(p, tk_type);
 #endif
 
 }

@@ -138,7 +138,7 @@ void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset) {
     FMem_free(caret_buf);
 }
 
-FToken *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace) {
+FToken *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace) {
     FToken *token = FMem_malloc(sizeof(FToken));
     if (!token) {
         return NULL;
@@ -151,7 +151,7 @@ FToken *lexer_create_token(lexer_t *ls, unsigned int type, int is_whitespace) {
     token->column = col_start;
     token->len = ls->curr_index - ls->start_index;
     token->start = ls->src + ls->start_index;
-    token->type = type;
+    token->tk_type = tk_type;
     token->is_whitespace = (int) is_whitespace;
     token->memo = NULL;
 
@@ -344,7 +344,7 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
-FToken *FPeg_consume_token(parser_t *p, size_t type) {
+FToken *FPeg_consume_token(parser_t *p, int tk_type) {
     size_t pos = p->pos;
 
     FToken *curr_token = get_next_token_to_consume(p, &pos);
@@ -353,7 +353,7 @@ FToken *FPeg_consume_token(parser_t *p, size_t type) {
     }
 
     // now check for correct type
-    if (curr_token->type == type) {
+    if (curr_token->tk_type == tk_type) {
         p->pos = pos + 1;
         return curr_token;
     } else {
@@ -361,7 +361,7 @@ FToken *FPeg_consume_token(parser_t *p, size_t type) {
     }
 }
 
-FToken *FPeg_consume_token_and_debug(parser_t *p, size_t type, const char *literal) {
+FToken *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal) {
     size_t pos = p->pos;
 
     print_indent_level(p->level);
@@ -373,7 +373,7 @@ FToken *FPeg_consume_token_and_debug(parser_t *p, size_t type, const char *liter
     }
 
     // now check for correct type
-    if (curr_token->type == type) {
+    if (curr_token->tk_type == tk_type) {
         p->pos = pos + 1;
         printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
                 literal, p->level, p->pos);

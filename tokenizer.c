@@ -370,7 +370,7 @@ static bool test_name(char ch) {
 
 struct token_literal {
     const char *literal;
-    size_t type;
+    size_t tkl_type;
 };
 
 static struct token_literal keywords[] = {
@@ -445,7 +445,7 @@ static bool tokenize_name_or_keyword(lexer_t *ls, FToken **ptoken) {
         }
 
         if (matching && j == ls->curr_index) {
-            *ptoken = lexer_create_token(ls, pair.type, false);
+            *ptoken = lexer_create_token(ls, pair.tkl_type, false);
             return true;
         }
     }
@@ -545,7 +545,7 @@ static bool tokenize_operator_or_symbol(lexer_t *ls, FToken **ptoken) {
 
         if (matching) {
             ls->curr_index = j;
-            *ptoken = lexer_create_token(ls, pair.type, false);
+            *ptoken = lexer_create_token(ls, pair.tkl_type, false);
             return true;
         }
     }
