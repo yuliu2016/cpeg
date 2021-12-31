@@ -243,7 +243,7 @@ void parser_free_state(parser_t *p) {
     FMem_free(p);
 }
 
-int FPeg_is_done(parser_t *p) {
+int parser_check_exit(parser_t *p) {
     if (p->error || p->lexer_state.error) {
         // Early exit the function when there is already an error
         return 1;
@@ -479,4 +479,36 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, frame_t *f) {
     }
     printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
             f->f_rule, p->level, p->pos, succ);
+}
+
+ast_list_t *ast_list_new(parser_t *p) {
+    ast_list_t *seq = PARSER_ALLOC(p, sizeof(ast_list_t));
+    if (!seq) {
+        return NULL;
+    }
+    seq->capacity = 0;
+    seq->len = 0;
+    seq->items = NULL;
+    return seq;
+}
+
+
+void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
+    if (seq->len >= seq->capacity) {
+        if (!seq->capacity) {
+            seq->capacity = 1;
+            seq->len = 0;
+            seq->items = PARSER_ALLOC(p, sizeof(void *));
+        } else {
+            seq->capacity = seq->capacity << 1u;
+            // Since realloc isn't available with memory regions,
+            // the nodes needs to be copied in a loop
+            void **old_items = seq->items;
+            seq->items = PARSER_ALLOC(p, seq->capacity * sizeof(void *));
+            for (int i = 0; i < seq->len; ++i) {
+                seq->items[i] = old_items[i];
+            }
+        }
+    }
+    seq->items[seq->len++] = item;
 }

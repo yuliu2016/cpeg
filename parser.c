@@ -1,4 +1,4 @@
-#include "include/internal/parser.h"
+#include "include/ast.h"
 
 
 static void *single_input(parser_t *);
