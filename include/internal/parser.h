@@ -21,15 +21,15 @@
 
 static inline int enter_frame(parser_t *p, frame_t *f) {
 
-    IF_DEBUG(FPeg_debug_enter(p, f);)
+    IF_DEBUG(parser_enter_debug(p, f);)
 
-    if (FPeg_is_done(p)) {
+    if (parser_check_exit(p)) {
         return 0;
     }
 
     if (f->memoize) {
-        token_memo_t *memo = FPeg_get_memo(p, f->f_type);
-        IF_DEBUG(FPeg_debug_memo(p, memo, f);)
+        token_memo_t *memo = parser_get_memo(p, f->f_type);
+        IF_DEBUG(parser_memo_debug(p, memo, f);)
         if (memo) { 
             f->memo = memo->node;
             return 0;
@@ -42,14 +42,14 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 
 static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
 
-    IF_DEBUG(FPeg_debug_exit(p, result, f);)
+    IF_DEBUG(parser_exit_debug(p, result, f);)
 
     if (f->memo) {
         return f->memo;
     }
 
     if (f->memoize) {
-        FPeg_put_memo(p, f->f_pos, f->f_type, result, p->pos);
+        parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
     }
 
     if (!result) { 
@@ -60,7 +60,7 @@ static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
 }
 
 static inline void memoize(parser_t *p, frame_t *f, void *node, size_t endpos) {
-    FPeg_put_memo(p, f->f_pos, f->f_type, node, endpos);
+    parser_memoize(p, f->f_pos, f->f_type, node, endpos);
 }
 
 static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
@@ -71,9 +71,9 @@ static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
 static inline token_t *consume(parser_t *p, int tk_type, const char *literal) {
 
 #ifdef PEG_DEBUG
-    return FPeg_consume_token_and_debug(p, tk_type, literal);
+    return parser_consume_debug(p, tk_type, literal);
 #else
-    return FPeg_consume_token(p, tk_type);
+    return parser_consume_token(p, tk_type);
 #endif
 
 }

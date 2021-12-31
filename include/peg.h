@@ -125,25 +125,25 @@ typedef struct frame {
 } frame_t;
 
 
-parser_t *FPeg_init_new_parser(char *src, size_t len, lexer_func_t lexer_func);
+parser_t *parser_init_state(char *src, size_t len, lexer_func_t lexer_func);
 
-void FPeg_free_parser(parser_t *p);
+void parser_free_state(parser_t *p);
 
-int FPeg_is_done(parser_t *p);
+int parser_check_exit(parser_t *p);
 
-token_t *FPeg_consume_token(parser_t *p, int tk_type);
+token_t *parser_consume_token(parser_t *p, int tk_type);
 
-token_t *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal);
+token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal);
 
-void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos);
+void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos);
 
-token_memo_t *FPeg_get_memo(parser_t *p, int f_type);
+token_memo_t *parser_get_memo(parser_t *p, int f_type);
 
-void FPeg_debug_enter(parser_t *p, frame_t *f);
+void parser_enter_debug(parser_t *p, frame_t *f);
 
-void FPeg_debug_exit(parser_t *p, void *res, frame_t *f);
+void parser_exit_debug(parser_t *p, void *res, frame_t *f);
 
-void FPeg_debug_memo(parser_t *p, token_memo_t *memo, frame_t *f);
+void parser_memo_debug(parser_t *p, token_memo_t *memo, frame_t *f);
 
 
 #endif //CPEG_PEG_H

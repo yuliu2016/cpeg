@@ -18,7 +18,7 @@ token_t *lexer_get_next_token(lexer_t *ls);
 
 
 char *tokparse(char *in) {
-    parser_t *p = FPeg_init_new_parser(in, strlen(in), lexer_get_next_token);
+    parser_t *p = parser_init_state(in, strlen(in), lexer_get_next_token);
     double *n = parse_calc(p);
     lexer_t *ls = &p->lexer_state;
     if (p->error) {
@@ -40,7 +40,7 @@ char *tokparse(char *in) {
     } else {
         printf("Result: %lf\n", *n);
     }
-    FPeg_free_parser(p);
+    parser_free_state(p);
     return "\n";
 }
 

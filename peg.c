@@ -201,7 +201,7 @@ void lexer_free_state(lexer_t *ls) {
     }
 }
 
-parser_t *FPeg_init_new_parser(
+parser_t *parser_init_state(
         char *src,
         size_t len,
         lexer_func_t lexer_func) {
@@ -237,7 +237,7 @@ parser_t *FPeg_init_new_parser(
     return p;
 }
 
-void FPeg_free_parser(parser_t *p) {
+void parser_free_state(parser_t *p) {
     lexer_free_state(&p->lexer_state);
     FMemRegion_free(p->region);
     FMem_free(p);
@@ -306,7 +306,7 @@ token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
     return new_memo;
 }
 
-void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos) {
+void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos) {
     token_t *curr_token = _fetch_token(p, token_pos);
     if (!curr_token) {
         return;
@@ -333,7 +333,7 @@ void FPeg_put_memo(parser_t *p, size_t token_pos, int f_type, void *node, size_t
     }
 }
 
-token_memo_t *FPeg_get_memo(parser_t *p, int f_type) {
+token_memo_t *parser_get_memo(parser_t *p, int f_type) {
     token_t *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         // should never reach here
@@ -376,7 +376,7 @@ void print_indent_level(size_t s) {
     FMem_free(b);
 }
 
-token_t *FPeg_consume_token(parser_t *p, int tk_type) {
+token_t *parser_consume_token(parser_t *p, int tk_type) {
     size_t pos = p->pos;
 
     token_t *curr_token = get_next_token_to_consume(p, &pos);
@@ -393,7 +393,7 @@ token_t *FPeg_consume_token(parser_t *p, int tk_type) {
     }
 }
 
-token_t *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *literal) {
+token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
     size_t pos = p->pos;
 
     print_indent_level(p->level);
@@ -426,7 +426,7 @@ token_t *FPeg_consume_token_and_debug(parser_t *p, int tk_type, const char *lite
 }
 
 
-void FPeg_debug_enter(parser_t *p, frame_t *f) {
+void parser_enter_debug(parser_t *p, frame_t *f) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
@@ -452,7 +452,7 @@ void FPeg_debug_enter(parser_t *p, frame_t *f) {
     p->level++;
 }
 
-void FPeg_debug_exit(parser_t *p, void *res, frame_t *f) {
+void parser_exit_debug(parser_t *p, void *res, frame_t *f) {
     if (p->level == 0) {
         p->error = "Negative recursion depth; aborted";
         return;
@@ -466,7 +466,7 @@ void FPeg_debug_exit(parser_t *p, void *res, frame_t *f) {
     }
 }
 
-void FPeg_debug_memo(parser_t *p, token_memo_t *memo, frame_t *f) {
+void parser_memo_debug(parser_t *p, token_memo_t *memo, frame_t *f) {
     if (!memo) {
         return;
     };
