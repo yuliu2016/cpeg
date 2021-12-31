@@ -154,32 +154,32 @@ static void *comparison_1_2(parser_t *);
 static int *comp_op(parser_t *);
 static int *comp_op_8(parser_t *);
 static int *comp_op_10(parser_t *);
-static void *bitwise_or(parser_t *);
-static void *bitwise_or_1(parser_t *);
-static void *bitwise_xor(parser_t *);
-static void *bitwise_xor_1(parser_t *);
-static void *bitwise_and(parser_t *);
-static void *bitwise_and_1(parser_t *);
-static void *shift_expr(parser_t *);
-static void *shift_expr_1(parser_t *);
-static void *shift_expr_2(parser_t *);
-static void *sum(parser_t *);
-static void *sum_1(parser_t *);
-static void *sum_2(parser_t *);
-static void *term(parser_t *);
-static void *term_1(parser_t *);
-static void *term_2(parser_t *);
-static void *term_3(parser_t *);
-static void *term_4(parser_t *);
-static void *term_5(parser_t *);
-static void *pipe_expr(parser_t *);
-static void *pipe_expr_1(parser_t *);
-static void *factor(parser_t *);
-static void *factor_1(parser_t *);
-static void *factor_2(parser_t *);
-static void *factor_3(parser_t *);
-static void *power(parser_t *);
-static void *power_1(parser_t *);
+static ast_expr_t *bitwise_or(parser_t *);
+static ast_expr_t *bitwise_or_1(parser_t *);
+static ast_expr_t *bitwise_xor(parser_t *);
+static ast_expr_t *bitwise_xor_1(parser_t *);
+static ast_expr_t *bitwise_and(parser_t *);
+static ast_expr_t *bitwise_and_1(parser_t *);
+static ast_expr_t *shift_expr(parser_t *);
+static ast_expr_t *shift_expr_1(parser_t *);
+static ast_expr_t *shift_expr_2(parser_t *);
+static ast_expr_t *sum(parser_t *);
+static ast_expr_t *sum_1(parser_t *);
+static ast_expr_t *sum_2(parser_t *);
+static ast_expr_t *term(parser_t *);
+static ast_expr_t *term_1(parser_t *);
+static ast_expr_t *term_2(parser_t *);
+static ast_expr_t *term_3(parser_t *);
+static ast_expr_t *term_4(parser_t *);
+static ast_expr_t *term_5(parser_t *);
+static ast_expr_t *pipe_expr(parser_t *);
+static ast_expr_t *pipe_expr_1(parser_t *);
+static ast_expr_t *factor(parser_t *);
+static ast_expr_t *factor_1(parser_t *);
+static ast_expr_t *factor_2(parser_t *);
+static ast_expr_t *factor_3(parser_t *);
+static ast_expr_t *power(parser_t *);
+static ast_expr_t *power_1(parser_t *);
 static void *primary(parser_t *);
 static void *primary_1(parser_t *);
 static void *primary_2(parser_t *);
@@ -514,7 +514,7 @@ static ast_list_t *name_list_delimited(parser_t *p) {
 //     | '*' bitwise_or
 static void *star_expr(parser_t *p) {
     frame_t f = {18, p->pos, FUNC, 0, 0};
-    void *_bitwise_or;
+    ast_expr_t *_bitwise_or;
     void *res_18;
     res_18 = enter_frame(p, &f) && (
         (consume(p, 23, "*")) &&
@@ -910,7 +910,7 @@ static void *dict_item_1(parser_t *p) {
 
 static void *dict_item_2(parser_t *p) {
     frame_t f = {41, p->pos, FUNC, 0, 0};
-    void *_bitwise_or;
+    ast_expr_t *_bitwise_or;
     void *res_41;
     res_41 = enter_frame(p, &f) && (
         (consume(p, 38, "**")) &&
@@ -2358,7 +2358,7 @@ static void *comparison(parser_t *p) {
 
 static void *comparison_1(parser_t *p) {
     frame_t f = {125, p->pos, FUNC, 0, 0};
-    void *_bitwise_or;
+    ast_expr_t *_bitwise_or;
     ast_list_t *_comp_op_bitwise_ors;
     void *res_125;
     res_125 = enter_frame(p, &f) && (
@@ -2383,7 +2383,7 @@ static ast_list_t *comparison_1_2_loop(parser_t *p) {
 static void *comparison_1_2(parser_t *p) {
     frame_t f = {126, p->pos, FUNC, 0, 0};
     int *_comp_op;
-    void *_bitwise_or;
+    ast_expr_t *_bitwise_or;
     void *res_126;
     res_126 = enter_frame(p, &f) && (
         (_comp_op = comp_op(p)) &&
@@ -2469,12 +2469,12 @@ static int *comp_op_10(parser_t *p) {
 // bitwise_or (left_recursive):
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
-static void *bitwise_or(parser_t *p) {
+static ast_expr_t *bitwise_or(parser_t *p) {
     frame_t f = {130, p->pos, FUNC, 0, 1};
-    void *res_130 = 0;
-    void *alt_130;
+    ast_expr_t *res_130 = 0;
+    ast_expr_t *alt_130;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2492,28 +2492,28 @@ static void *bitwise_or(parser_t *p) {
     return exit_frame(p, &f, res_130);
 }
 
-static void *bitwise_or_1(parser_t *p) {
+static ast_expr_t *bitwise_or_1(parser_t *p) {
     frame_t f = {131, p->pos, FUNC, 0, 0};
-    void *_bitwise_or;
-    void *_bitwise_xor;
-    void *res_131;
+    ast_expr_t *_bitwise_or;
+    ast_expr_t *_bitwise_xor;
+    ast_expr_t *res_131;
     res_131 = enter_frame(p, &f) && (
         (_bitwise_or = bitwise_or(p)) &&
         (consume(p, 27, "|")) &&
         (_bitwise_xor = bitwise_xor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _bitwise_or, _bitwise_xor, BINOP_IOR) : 0;
     return exit_frame(p, &f, res_131);
 }
 
 // bitwise_xor (left_recursive):
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
-static void *bitwise_xor(parser_t *p) {
+static ast_expr_t *bitwise_xor(parser_t *p) {
     frame_t f = {132, p->pos, FUNC, 0, 1};
-    void *res_132 = 0;
-    void *alt_132;
+    ast_expr_t *res_132 = 0;
+    ast_expr_t *alt_132;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2531,28 +2531,28 @@ static void *bitwise_xor(parser_t *p) {
     return exit_frame(p, &f, res_132);
 }
 
-static void *bitwise_xor_1(parser_t *p) {
+static ast_expr_t *bitwise_xor_1(parser_t *p) {
     frame_t f = {133, p->pos, FUNC, 0, 0};
-    void *_bitwise_xor;
-    void *_bitwise_and;
-    void *res_133;
+    ast_expr_t *_bitwise_xor;
+    ast_expr_t *_bitwise_and;
+    ast_expr_t *res_133;
     res_133 = enter_frame(p, &f) && (
         (_bitwise_xor = bitwise_xor(p)) &&
         (consume(p, 30, "^")) &&
         (_bitwise_and = bitwise_and(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _bitwise_xor, _bitwise_and, BINOP_XOR) : 0;
     return exit_frame(p, &f, res_133);
 }
 
 // bitwise_and (left_recursive):
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
-static void *bitwise_and(parser_t *p) {
+static ast_expr_t *bitwise_and(parser_t *p) {
     frame_t f = {134, p->pos, FUNC, 0, 1};
-    void *res_134 = 0;
-    void *alt_134;
+    ast_expr_t *res_134 = 0;
+    ast_expr_t *alt_134;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2570,16 +2570,16 @@ static void *bitwise_and(parser_t *p) {
     return exit_frame(p, &f, res_134);
 }
 
-static void *bitwise_and_1(parser_t *p) {
+static ast_expr_t *bitwise_and_1(parser_t *p) {
     frame_t f = {135, p->pos, FUNC, 0, 0};
-    void *_bitwise_and;
-    void *_shift_expr;
-    void *res_135;
+    ast_expr_t *_bitwise_and;
+    ast_expr_t *_shift_expr;
+    ast_expr_t *res_135;
     res_135 = enter_frame(p, &f) && (
         (_bitwise_and = bitwise_and(p)) &&
         (consume(p, 28, "&")) &&
         (_shift_expr = shift_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _bitwise_and, _shift_expr, BINOP_AND) : 0;
     return exit_frame(p, &f, res_135);
 }
 
@@ -2587,12 +2587,12 @@ static void *bitwise_and_1(parser_t *p) {
 //     | shift_expr '<<' sum
 //     | shift_expr '>>' sum
 //     | sum
-static void *shift_expr(parser_t *p) {
+static ast_expr_t *shift_expr(parser_t *p) {
     frame_t f = {136, p->pos, FUNC, 0, 1};
-    void *res_136 = 0;
-    void *alt_136;
+    ast_expr_t *res_136 = 0;
+    ast_expr_t *alt_136;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2611,29 +2611,29 @@ static void *shift_expr(parser_t *p) {
     return exit_frame(p, &f, res_136);
 }
 
-static void *shift_expr_1(parser_t *p) {
+static ast_expr_t *shift_expr_1(parser_t *p) {
     frame_t f = {137, p->pos, FUNC, 0, 0};
-    void *_shift_expr;
-    void *_sum;
-    void *res_137;
+    ast_expr_t *_shift_expr;
+    ast_expr_t *_sum;
+    ast_expr_t *res_137;
     res_137 = enter_frame(p, &f) && (
         (_shift_expr = shift_expr(p)) &&
         (consume(p, 48, "<<")) &&
         (_sum = sum(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _shift_expr, _sum, BINOP_SHL) : 0;
     return exit_frame(p, &f, res_137);
 }
 
-static void *shift_expr_2(parser_t *p) {
+static ast_expr_t *shift_expr_2(parser_t *p) {
     frame_t f = {138, p->pos, FUNC, 0, 0};
-    void *_shift_expr;
-    void *_sum;
-    void *res_138;
+    ast_expr_t *_shift_expr;
+    ast_expr_t *_sum;
+    ast_expr_t *res_138;
     res_138 = enter_frame(p, &f) && (
         (_shift_expr = shift_expr(p)) &&
         (consume(p, 49, ">>")) &&
         (_sum = sum(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _shift_expr, _sum, BINOP_SHR) : 0;
     return exit_frame(p, &f, res_138);
 }
 
@@ -2641,12 +2641,12 @@ static void *shift_expr_2(parser_t *p) {
 //     | sum '+' term
 //     | sum '-' term
 //     | term
-static void *sum(parser_t *p) {
+static ast_expr_t *sum(parser_t *p) {
     frame_t f = {139, p->pos, FUNC, 0, 1};
-    void *res_139 = 0;
-    void *alt_139;
+    ast_expr_t *res_139 = 0;
+    ast_expr_t *alt_139;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2665,29 +2665,29 @@ static void *sum(parser_t *p) {
     return exit_frame(p, &f, res_139);
 }
 
-static void *sum_1(parser_t *p) {
+static ast_expr_t *sum_1(parser_t *p) {
     frame_t f = {140, p->pos, FUNC, 0, 0};
-    void *_sum;
-    void *_term;
-    void *res_140;
+    ast_expr_t *_sum;
+    ast_expr_t *_term;
+    ast_expr_t *res_140;
     res_140 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
         (_term = term(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _sum, _term, BINOP_PLS) : 0;
     return exit_frame(p, &f, res_140);
 }
 
-static void *sum_2(parser_t *p) {
+static ast_expr_t *sum_2(parser_t *p) {
     frame_t f = {141, p->pos, FUNC, 0, 0};
-    void *_sum;
-    void *_term;
-    void *res_141;
+    ast_expr_t *_sum;
+    ast_expr_t *_term;
+    ast_expr_t *res_141;
     res_141 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
         (_term = term(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _sum, _term, BINOP_MIN) : 0;
     return exit_frame(p, &f, res_141);
 }
 
@@ -2698,12 +2698,12 @@ static void *sum_2(parser_t *p) {
 //     | term '//' pipe_expr
 //     | term '@' pipe_expr
 //     | pipe_expr
-static void *term(parser_t *p) {
+static ast_expr_t *term(parser_t *p) {
     frame_t f = {142, p->pos, FUNC, 0, 1};
-    void *res_142 = 0;
-    void *alt_142;
+    ast_expr_t *res_142 = 0;
+    ast_expr_t *alt_142;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2725,80 +2725,80 @@ static void *term(parser_t *p) {
     return exit_frame(p, &f, res_142);
 }
 
-static void *term_1(parser_t *p) {
+static ast_expr_t *term_1(parser_t *p) {
     frame_t f = {143, p->pos, FUNC, 0, 0};
-    void *_term;
-    void *_pipe_expr;
-    void *res_143;
+    ast_expr_t *_term;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *res_143;
     res_143 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
         (_pipe_expr = pipe_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _term, _pipe_expr, BINOP_MUL) : 0;
     return exit_frame(p, &f, res_143);
 }
 
-static void *term_2(parser_t *p) {
+static ast_expr_t *term_2(parser_t *p) {
     frame_t f = {144, p->pos, FUNC, 0, 0};
-    void *_term;
-    void *_pipe_expr;
-    void *res_144;
+    ast_expr_t *_term;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *res_144;
     res_144 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
         (_pipe_expr = pipe_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _term, _pipe_expr, BINOP_DIV) : 0;
     return exit_frame(p, &f, res_144);
 }
 
-static void *term_3(parser_t *p) {
+static ast_expr_t *term_3(parser_t *p) {
     frame_t f = {145, p->pos, FUNC, 0, 0};
-    void *_term;
-    void *_pipe_expr;
-    void *res_145;
+    ast_expr_t *_term;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *res_145;
     res_145 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
         (_pipe_expr = pipe_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _term, _pipe_expr, BINOP_MOD) : 0;
     return exit_frame(p, &f, res_145);
 }
 
-static void *term_4(parser_t *p) {
+static ast_expr_t *term_4(parser_t *p) {
     frame_t f = {146, p->pos, FUNC, 0, 0};
-    void *_term;
-    void *_pipe_expr;
-    void *res_146;
+    ast_expr_t *_term;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *res_146;
     res_146 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 37, "//")) &&
         (_pipe_expr = pipe_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _term, _pipe_expr, BINOP_FDV) : 0;
     return exit_frame(p, &f, res_146);
 }
 
-static void *term_5(parser_t *p) {
+static ast_expr_t *term_5(parser_t *p) {
     frame_t f = {147, p->pos, FUNC, 0, 0};
-    void *_term;
-    void *_pipe_expr;
-    void *res_147;
+    ast_expr_t *_term;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *res_147;
     res_147 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 26, "@")) &&
         (_pipe_expr = pipe_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _term, _pipe_expr, BINOP_MML) : 0;
     return exit_frame(p, &f, res_147);
 }
 
 // pipe_expr (left_recursive):
 //     | pipe_expr '->' factor
 //     | factor
-static void *pipe_expr(parser_t *p) {
+static ast_expr_t *pipe_expr(parser_t *p) {
     frame_t f = {148, p->pos, FUNC, 0, 1};
-    void *res_148 = 0;
-    void *alt_148;
+    ast_expr_t *res_148 = 0;
+    ast_expr_t *alt_148;
     size_t maxpos;
-    void *max;
+    ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
@@ -2816,16 +2816,16 @@ static void *pipe_expr(parser_t *p) {
     return exit_frame(p, &f, res_148);
 }
 
-static void *pipe_expr_1(parser_t *p) {
+static ast_expr_t *pipe_expr_1(parser_t *p) {
     frame_t f = {149, p->pos, FUNC, 0, 0};
-    void *_pipe_expr;
-    void *_factor;
-    void *res_149;
+    ast_expr_t *_pipe_expr;
+    ast_expr_t *_factor;
+    ast_expr_t *res_149;
     res_149 = enter_frame(p, &f) && (
         (_pipe_expr = pipe_expr(p)) &&
         (consume(p, 35, "->")) &&
         (_factor = factor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _pipe_expr, _factor, BINOP_PIP) : 0;
     return exit_frame(p, &f, res_149);
 }
 
@@ -2834,10 +2834,10 @@ static void *pipe_expr_1(parser_t *p) {
 //     | '-' factor
 //     | '~' factor
 //     | power
-static void *factor(parser_t *p) {
+static ast_expr_t *factor(parser_t *p) {
     frame_t f = {150, p->pos, FUNC, 0, 0};
-    void *alt_150;
-    void *res_150;
+    ast_expr_t *alt_150;
+    ast_expr_t *res_150;
     res_150 = enter_frame(p, &f) && (
         (alt_150 = factor_1(p)) ||
         (alt_150 = factor_2(p)) ||
@@ -2847,63 +2847,65 @@ static void *factor(parser_t *p) {
     return exit_frame(p, &f, res_150);
 }
 
-static void *factor_1(parser_t *p) {
+static ast_expr_t *factor_1(parser_t *p) {
     frame_t f = {151, p->pos, FUNC, 0, 0};
-    void *_factor;
-    void *res_151;
+    ast_expr_t *_factor;
+    ast_expr_t *res_151;
     res_151 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_unary(p, _factor, UNARY_PLS) : 0;
     return exit_frame(p, &f, res_151);
 }
 
-static void *factor_2(parser_t *p) {
+static ast_expr_t *factor_2(parser_t *p) {
     frame_t f = {152, p->pos, FUNC, 0, 0};
-    void *_factor;
-    void *res_152;
+    ast_expr_t *_factor;
+    ast_expr_t *res_152;
     res_152 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_unary(p, _factor, UNARY_MIN) : 0;
     return exit_frame(p, &f, res_152);
 }
 
-static void *factor_3(parser_t *p) {
+static ast_expr_t *factor_3(parser_t *p) {
     frame_t f = {153, p->pos, FUNC, 0, 0};
-    void *_factor;
-    void *res_153;
+    ast_expr_t *_factor;
+    ast_expr_t *res_153;
     res_153 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_unary(p, _factor, UNARY_INV) : 0;
     return exit_frame(p, &f, res_153);
 }
 
 // power:
 //     | primary '**' factor
 //     | primary
-static void *power(parser_t *p) {
+static ast_expr_t *power(parser_t *p) {
     frame_t f = {154, p->pos, FUNC, 0, 0};
-    void *alt_154;
-    void *res_154;
+    void *_primary;
+    ast_expr_t *alt_154;
+    ast_expr_t *res_154;
     res_154 = enter_frame(p, &f) && (
-        (alt_154 = power_1(p)) ||
-        (alt_154 = primary(p))
+        (alt_154 = power_1(p)) || (
+            (_primary = primary(p)) &&
+            (alt_154 = ast_primary_expr(p, _primary)))
     ) ? alt_154 : 0;
     return exit_frame(p, &f, res_154);
 }
 
-static void *power_1(parser_t *p) {
+static ast_expr_t *power_1(parser_t *p) {
     frame_t f = {155, p->pos, FUNC, 0, 0};
     void *_primary;
-    void *_factor;
-    void *res_155;
+    ast_expr_t *_factor;
+    ast_expr_t *res_155;
     res_155 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
-    ) ? node(p, &f) : 0;
+    ) ? ast_binary(p, _primary, _factor, BINOP_POW) : 0;
     return exit_frame(p, &f, res_155);
 }
 
