@@ -151,9 +151,9 @@ static void *comparison(parser_t *);
 static void *comparison_1(parser_t *);
 static ast_list_t *comparison_1_2_loop(parser_t *);
 static void *comparison_1_2(parser_t *);
-static void *comp_op(parser_t *);
-static void *comp_op_8(parser_t *);
-static void *comp_op_10(parser_t *);
+static int *comp_op(parser_t *);
+static int *comp_op_8(parser_t *);
+static int *comp_op_10(parser_t *);
 static void *bitwise_or(parser_t *);
 static void *bitwise_or_1(parser_t *);
 static void *bitwise_xor(parser_t *);
@@ -2382,7 +2382,7 @@ static ast_list_t *comparison_1_2_loop(parser_t *p) {
 
 static void *comparison_1_2(parser_t *p) {
     frame_t f = {126, p->pos, FUNC, 0, 0};
-    void *_comp_op;
+    int *_comp_op;
     void *_bitwise_or;
     void *res_126;
     res_126 = enter_frame(p, &f) && (
@@ -2403,42 +2403,66 @@ static void *comparison_1_2(parser_t *p) {
 //     | 'not' 'in'
 //     | 'is'
 //     | 'is' 'not'
-static void *comp_op(parser_t *p) {
+static int *comp_op(parser_t *p) {
     frame_t f = {127, p->pos, FUNC, 0, 0};
-    void *alt_127;
-    void *res_127;
-    res_127 = enter_frame(p, &f) && (
-        (alt_127 = consume(p, 19, "<")) ||
-        (alt_127 = consume(p, 20, ">")) ||
-        (alt_127 = consume(p, 31, "==")) ||
-        (alt_127 = consume(p, 34, ">=")) ||
-        (alt_127 = consume(p, 33, "<=")) ||
-        (alt_127 = consume(p, 32, "!=")) ||
-        (alt_127 = consume(p, 63, "in")) ||
-        (alt_127 = comp_op_8(p)) ||
-        (alt_127 = consume(p, 62, "is")) ||
+    token_t *_is_less;
+    token_t *_is_greater;
+    token_t *_is_equal;
+    token_t *_is_more_equal;
+    token_t *_is_less_equal;
+    token_t *_is_nequal;
+    token_t *_is_in;
+    token_t *_is_is;
+    int *alt_127;
+    int *res_127;
+    res_127 = enter_frame(p, &f) && ( (
+            (_is_less = consume(p, 19, "<")) &&
+            (alt_127 = &CMP_LT)
+        ) || (
+            (_is_greater = consume(p, 20, ">")) &&
+            (alt_127 = &CMP_GT)
+        ) || (
+            (_is_equal = consume(p, 31, "==")) &&
+            (alt_127 = &CMP_EQ)
+        ) || (
+            (_is_more_equal = consume(p, 34, ">=")) &&
+            (alt_127 = &CMP_GE)
+        ) || (
+            (_is_less_equal = consume(p, 33, "<=")) &&
+            (alt_127 = &CMP_LE)
+        ) || (
+            (_is_nequal = consume(p, 32, "!=")) &&
+            (alt_127 = &CMP_NE)
+        ) || (
+            (_is_in = consume(p, 63, "in")) &&
+            (alt_127 = &CMP_IN)
+        ) ||
+        (alt_127 = comp_op_8(p)) || (
+            (_is_is = consume(p, 62, "is")) &&
+            (alt_127 = &CMP_IS)
+        ) ||
         (alt_127 = comp_op_10(p))
     ) ? alt_127 : 0;
     return exit_frame(p, &f, res_127);
 }
 
-static void *comp_op_8(parser_t *p) {
+static int *comp_op_8(parser_t *p) {
     frame_t f = {128, p->pos, FUNC, 0, 0};
-    void *res_128;
+    int *res_128;
     res_128 = enter_frame(p, &f) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
-    ) ? node(p, &f) : 0;
+    ) ? &CMP_NI : 0;
     return exit_frame(p, &f, res_128);
 }
 
-static void *comp_op_10(parser_t *p) {
+static int *comp_op_10(parser_t *p) {
     frame_t f = {129, p->pos, FUNC, 0, 0};
-    void *res_129;
+    int *res_129;
     res_129 = enter_frame(p, &f) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
-    ) ? node(p, &f) : 0;
+    ) ? &CMP_NS : 0;
     return exit_frame(p, &f, res_129);
 }
 
