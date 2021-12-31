@@ -10,19 +10,18 @@ static inline void *node(parser_t *p, void *f) {
 }
 
 
-static int CMP_LT = 0;
-static int CMP_GT = 1;
-static int CMP_EQ = 2;
-static int CMP_GE = 3;
-static int CMP_LE = 4;
-static int CMP_NE = 5;
-static int CMP_IN = 6;
-static int CMP_NI = 7;
-static int CMP_IS = 8;
-static int CMP_NS = 9;
-
-
 enum expr_opcode {
+    CMP_LT,
+    CMP_GT,
+    CMP_EQ,
+    CMP_GE,
+    CMP_LE,
+    CMP_NE,
+    CMP_IN,
+    CMP_NI,
+    CMP_IS,
+    CMP_NS,
+
     BINOP_PRIMARY,
     BINOP_IOR,
     BINOP_XOR,
@@ -62,5 +61,7 @@ ast_expr_t *ast_unary(parser_t *p, ast_expr_t *expr, enum expr_opcode unary_opco
 
 
 ast_expr_t *ast_primary_expr(parser_t *p, void *primary);
+
+int *ast_integer(parser_t *p, int i);
 
 #endif //CPEG_AST_H

@@ -20,3 +20,9 @@ ast_expr_t *ast_primary_expr(parser_t *p, void *primary) {
     r->right = NULL;
     return r;
 }
+
+int *ast_integer(parser_t *p, int i) {
+    int *r = PARSER_ALLOC(p, sizeof(int));
+    *r = i;
+    return r;
+}

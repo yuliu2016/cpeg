@@ -71,7 +71,7 @@ static void *augassign(parser_t *);
 static void *simple_assign(parser_t *);
 static ast_list_t *simple_assign_1_loop(parser_t *);
 static void *simple_assign_1(parser_t *);
-static void *augassign_op(parser_t *);
+static int *augassign_op(parser_t *);
 static void *import_name(parser_t *);
 static void *import_from(parser_t *);
 static void *import_from_names(parser_t *);
@@ -1185,7 +1185,7 @@ static void *annassign_4(parser_t *p) {
 static void *augassign(parser_t *p) {
     frame_t f = {56, p->pos, FUNC, 0, 0};
     void *_target;
-    void *_augassign_op;
+    int *_augassign_op;
     void *_exprlist;
     void *res_56;
     res_56 = enter_frame(p, &f) && (
@@ -1244,24 +1244,62 @@ static void *simple_assign_1(parser_t *p) {
 //     | '>>='
 //     | '**='
 //     | '//='
-static void *augassign_op(parser_t *p) {
+static int *augassign_op(parser_t *p) {
     frame_t f = {59, p->pos, FUNC, 0, 0};
-    void *alt_59;
-    void *res_59;
-    res_59 = enter_frame(p, &f) && (
-        (alt_59 = consume(p, 39, "+=")) ||
-        (alt_59 = consume(p, 40, "-=")) ||
-        (alt_59 = consume(p, 41, "*=")) ||
-        (alt_59 = consume(p, 44, "@=")) ||
-        (alt_59 = consume(p, 42, "/=")) ||
-        (alt_59 = consume(p, 43, "%=")) ||
-        (alt_59 = consume(p, 46, "&=")) ||
-        (alt_59 = consume(p, 45, "|=")) ||
-        (alt_59 = consume(p, 47, "^=")) ||
-        (alt_59 = consume(p, 52, "<<=")) ||
-        (alt_59 = consume(p, 53, ">>=")) ||
-        (alt_59 = consume(p, 51, "**=")) ||
-        (alt_59 = consume(p, 50, "//="))
+    token_t *_is_plus_assign;
+    token_t *_is_minus_assign;
+    token_t *_is_times_assign;
+    token_t *_is_matrix_times_assign;
+    token_t *_is_div_assign;
+    token_t *_is_modulus_assign;
+    token_t *_is_bit_and_assign;
+    token_t *_is_bit_or_assign;
+    token_t *_is_bit_xor_assign;
+    token_t *_is_lshift_assign;
+    token_t *_is_rshift_assign;
+    token_t *_is_power_assign;
+    token_t *_is_floor_div_assign;
+    int *alt_59;
+    int *res_59;
+    res_59 = enter_frame(p, &f) && ((
+            (_is_plus_assign = consume(p, 39, "+=")) &&
+            (alt_59 = ast_integer(p, BINOP_PLS))
+        ) || (
+            (_is_minus_assign = consume(p, 40, "-=")) &&
+            (alt_59 = ast_integer(p, BINOP_MIN))
+        ) || (
+            (_is_times_assign = consume(p, 41, "*=")) &&
+            (alt_59 = ast_integer(p, BINOP_MUL))
+        ) || (
+            (_is_matrix_times_assign = consume(p, 44, "@=")) &&
+            (alt_59 = ast_integer(p, BINOP_MML))
+        ) || (
+            (_is_div_assign = consume(p, 42, "/=")) &&
+            (alt_59 = ast_integer(p, BINOP_DIV))
+        ) || (
+            (_is_modulus_assign = consume(p, 43, "%=")) &&
+            (alt_59 = ast_integer(p, BINOP_MOD))
+        ) || (
+            (_is_bit_and_assign = consume(p, 46, "&=")) &&
+            (alt_59 = ast_integer(p, BINOP_AND))
+        ) || (
+            (_is_bit_or_assign = consume(p, 45, "|=")) &&
+            (alt_59 = ast_integer(p, BINOP_IOR))
+        ) || (
+            (_is_bit_xor_assign = consume(p, 47, "^=")) &&
+            (alt_59 = ast_integer(p, BINOP_XOR))
+        ) || (
+            (_is_lshift_assign = consume(p, 52, "<<=")) &&
+            (alt_59 = ast_integer(p, BINOP_SHL))
+        ) || (
+            (_is_rshift_assign = consume(p, 53, ">>=")) &&
+            (alt_59 = ast_integer(p, BINOP_SHR))
+        ) || (
+            (_is_power_assign = consume(p, 51, "**=")) &&
+            (alt_59 = ast_integer(p, BINOP_POW))
+        ) || (
+            (_is_floor_div_assign = consume(p, 50, "//=")) &&
+            (alt_59 = ast_integer(p, BINOP_FDV)))
     ) ? alt_59 : 0;
     return exit_frame(p, &f, res_59);
 }
@@ -2415,31 +2453,31 @@ static int *comp_op(parser_t *p) {
     token_t *_is_is;
     int *alt_127;
     int *res_127;
-    res_127 = enter_frame(p, &f) && ( (
+    res_127 = enter_frame(p, &f) && ((
             (_is_less = consume(p, 19, "<")) &&
-            (alt_127 = &CMP_LT)
+            (alt_127 = ast_integer(p, CMP_LT))
         ) || (
             (_is_greater = consume(p, 20, ">")) &&
-            (alt_127 = &CMP_GT)
+            (alt_127 = ast_integer(p, CMP_GT))
         ) || (
             (_is_equal = consume(p, 31, "==")) &&
-            (alt_127 = &CMP_EQ)
+            (alt_127 = ast_integer(p, CMP_EQ))
         ) || (
             (_is_more_equal = consume(p, 34, ">=")) &&
-            (alt_127 = &CMP_GE)
+            (alt_127 = ast_integer(p, CMP_GE))
         ) || (
             (_is_less_equal = consume(p, 33, "<=")) &&
-            (alt_127 = &CMP_LE)
+            (alt_127 = ast_integer(p, CMP_LE))
         ) || (
             (_is_nequal = consume(p, 32, "!=")) &&
-            (alt_127 = &CMP_NE)
+            (alt_127 = ast_integer(p, CMP_NE))
         ) || (
             (_is_in = consume(p, 63, "in")) &&
-            (alt_127 = &CMP_IN)
+            (alt_127 = ast_integer(p, CMP_IN))
         ) ||
         (alt_127 = comp_op_8(p)) || (
             (_is_is = consume(p, 62, "is")) &&
-            (alt_127 = &CMP_IS)
+            (alt_127 = ast_integer(p, CMP_IS))
         ) ||
         (alt_127 = comp_op_10(p))
     ) ? alt_127 : 0;
@@ -2452,7 +2490,7 @@ static int *comp_op_8(parser_t *p) {
     res_128 = enter_frame(p, &f) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
-    ) ? &CMP_NI : 0;
+    ) ? ast_integer(p, CMP_NI) : 0;
     return exit_frame(p, &f, res_128);
 }
 
@@ -2462,7 +2500,7 @@ static int *comp_op_10(parser_t *p) {
     res_129 = enter_frame(p, &f) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
-    ) ? &CMP_NS : 0;
+    ) ? ast_integer(p, CMP_NS) : 0;
     return exit_frame(p, &f, res_129);
 }
 
