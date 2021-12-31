@@ -1234,72 +1234,59 @@ static void *simple_assign_1(parser_t *p) {
 //     | '+='
 //     | '-='
 //     | '*='
-//     | '@='
 //     | '/='
 //     | '%='
-//     | '&='
+//     | '@='
 //     | '|='
+//     | '&='
 //     | '^='
+//     | '//='
+//     | '**='
 //     | '<<='
 //     | '>>='
-//     | '**='
-//     | '//='
 static int *augassign_op(parser_t *p) {
     frame_t f = {59, p->pos, FUNC, 0, 0};
-    token_t *_is_plus_assign;
-    token_t *_is_minus_assign;
-    token_t *_is_times_assign;
-    token_t *_is_matrix_times_assign;
-    token_t *_is_div_assign;
-    token_t *_is_modulus_assign;
-    token_t *_is_bit_and_assign;
-    token_t *_is_bit_or_assign;
-    token_t *_is_bit_xor_assign;
-    token_t *_is_lshift_assign;
-    token_t *_is_rshift_assign;
-    token_t *_is_power_assign;
-    token_t *_is_floor_div_assign;
     int *alt_59;
     int *res_59;
     res_59 = enter_frame(p, &f) && ((
-            (_is_plus_assign = consume(p, 39, "+=")) &&
+            (consume(p, 39, "+=")) &&
             (alt_59 = ast_integer(p, BINOP_PLS))
         ) || (
-            (_is_minus_assign = consume(p, 40, "-=")) &&
+            (consume(p, 40, "-=")) &&
             (alt_59 = ast_integer(p, BINOP_MIN))
         ) || (
-            (_is_times_assign = consume(p, 41, "*=")) &&
+            (consume(p, 41, "*=")) &&
             (alt_59 = ast_integer(p, BINOP_MUL))
         ) || (
-            (_is_matrix_times_assign = consume(p, 44, "@=")) &&
-            (alt_59 = ast_integer(p, BINOP_MML))
-        ) || (
-            (_is_div_assign = consume(p, 42, "/=")) &&
+            (consume(p, 42, "/=")) &&
             (alt_59 = ast_integer(p, BINOP_DIV))
         ) || (
-            (_is_modulus_assign = consume(p, 43, "%=")) &&
+            (consume(p, 43, "%=")) &&
             (alt_59 = ast_integer(p, BINOP_MOD))
         ) || (
-            (_is_bit_and_assign = consume(p, 46, "&=")) &&
-            (alt_59 = ast_integer(p, BINOP_AND))
+            (consume(p, 44, "@=")) &&
+            (alt_59 = ast_integer(p, BINOP_MML))
         ) || (
-            (_is_bit_or_assign = consume(p, 45, "|=")) &&
+            (consume(p, 45, "|=")) &&
             (alt_59 = ast_integer(p, BINOP_IOR))
         ) || (
-            (_is_bit_xor_assign = consume(p, 47, "^=")) &&
+            (consume(p, 46, "&=")) &&
+            (alt_59 = ast_integer(p, BINOP_AND))
+        ) || (
+            (consume(p, 47, "^=")) &&
             (alt_59 = ast_integer(p, BINOP_XOR))
         ) || (
-            (_is_lshift_assign = consume(p, 52, "<<=")) &&
-            (alt_59 = ast_integer(p, BINOP_SHL))
+            (consume(p, 50, "//=")) &&
+            (alt_59 = ast_integer(p, BINOP_FDV))
         ) || (
-            (_is_rshift_assign = consume(p, 53, ">>=")) &&
-            (alt_59 = ast_integer(p, BINOP_SHR))
-        ) || (
-            (_is_power_assign = consume(p, 51, "**=")) &&
+            (consume(p, 51, "**=")) &&
             (alt_59 = ast_integer(p, BINOP_POW))
         ) || (
-            (_is_floor_div_assign = consume(p, 50, "//=")) &&
-            (alt_59 = ast_integer(p, BINOP_FDV)))
+            (consume(p, 52, "<<=")) &&
+            (alt_59 = ast_integer(p, BINOP_SHL))
+        ) || (
+            (consume(p, 53, ">>=")) &&
+            (alt_59 = ast_integer(p, BINOP_SHR)))
     ) ? alt_59 : 0;
     return exit_frame(p, &f, res_59);
 }
@@ -2443,40 +2430,32 @@ static void *comparison_1_2(parser_t *p) {
 //     | 'is' 'not'
 static int *comp_op(parser_t *p) {
     frame_t f = {127, p->pos, FUNC, 0, 0};
-    token_t *_is_less;
-    token_t *_is_greater;
-    token_t *_is_equal;
-    token_t *_is_more_equal;
-    token_t *_is_less_equal;
-    token_t *_is_nequal;
-    token_t *_is_in;
-    token_t *_is_is;
     int *alt_127;
     int *res_127;
     res_127 = enter_frame(p, &f) && ((
-            (_is_less = consume(p, 19, "<")) &&
+            (consume(p, 19, "<")) &&
             (alt_127 = ast_integer(p, CMP_LT))
         ) || (
-            (_is_greater = consume(p, 20, ">")) &&
+            (consume(p, 20, ">")) &&
             (alt_127 = ast_integer(p, CMP_GT))
         ) || (
-            (_is_equal = consume(p, 31, "==")) &&
+            (consume(p, 31, "==")) &&
             (alt_127 = ast_integer(p, CMP_EQ))
         ) || (
-            (_is_more_equal = consume(p, 34, ">=")) &&
+            (consume(p, 34, ">=")) &&
             (alt_127 = ast_integer(p, CMP_GE))
         ) || (
-            (_is_less_equal = consume(p, 33, "<=")) &&
+            (consume(p, 33, "<=")) &&
             (alt_127 = ast_integer(p, CMP_LE))
         ) || (
-            (_is_nequal = consume(p, 32, "!=")) &&
+            (consume(p, 32, "!=")) &&
             (alt_127 = ast_integer(p, CMP_NE))
         ) || (
-            (_is_in = consume(p, 63, "in")) &&
+            (consume(p, 63, "in")) &&
             (alt_127 = ast_integer(p, CMP_IN))
         ) ||
         (alt_127 = comp_op_8(p)) || (
-            (_is_is = consume(p, 62, "is")) &&
+            (consume(p, 62, "is")) &&
             (alt_127 = ast_integer(p, CMP_IS))
         ) ||
         (alt_127 = comp_op_10(p))
