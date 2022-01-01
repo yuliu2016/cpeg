@@ -15,7 +15,7 @@ double *unary_plus(parser_t *p, double *a);
 double *unary_minus(parser_t *p, double *a);
 double *unary_not(parser_t *p, double *a);
 double *load_const(parser_t *p, token_t *token);
-double *call_func(parser_t *p, token_t *name, ast_list_t *token);
+double *call_func(parser_t *p, token_t *name, ast_list_t *params);
 double *to_double(parser_t *p, token_t *tok);
 
 #endif //CPEG_AST_H

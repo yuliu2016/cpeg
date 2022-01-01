@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
+#include <float.h>
 
 
 /*
@@ -88,28 +90,126 @@ double *unary_minus(parser_t *p, double *a) {
 }
 
 double *unary_not(parser_t *p, double *a) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = 0;
-    return r;
+    p->error = "~ operator not allowed";
+    return 0;
 }
+
 
 double *load_const(parser_t *p, token_t *token) {
-    if (!token) return NULL;
-    double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = 0;
+
+    char *v = token_nullterm_view(token);
+    double *r = 0;
+    if (strncmp("pi", v, 3) == 0) {
+        r = PARSER_ALLOC(p, sizeof(double));
+        *r = 3.141592653589793; 
+    } else if (strncmp("e", v, 2) == 0) {
+        r = PARSER_ALLOC(p, sizeof(double));
+        *r = 2.718281828459045; 
+    } else if (strncmp("rand", v, 5) == 0) {
+         r = PARSER_ALLOC(p, sizeof(double));
+         *r = rand() / (double) RAND_MAX;
+    }
+    token_nullterm_restore();
     return r;
 }
 
+static int first_param(ast_list_t *params, double *d) {
+    if (params->len != 1) {
+        return 0;
+    }
+    *d = *((double *) params->items[0]);
+    return 1;
+}
 
-double *call_func(parser_t *p, token_t *name, ast_list_t *token) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = 0;
-    return r;
+
+static int no_params(ast_list_t *params) {
+    return !params || params->len == 0;
+}
+
+
+double *call_func(parser_t *p, token_t *name, ast_list_t *params) {
+
+    double r = 0, first;
+    char *func_name = token_nullterm_view(name);
+
+    if (strcmp("sum", func_name) == 0) {
+
+    } else if (strcmp("sum", func_name) == 0) {
+
+    } else if (strcmp("max", func_name) == 0) {
+
+    } else if (strcmp("min", func_name) == 0) {
+
+    } else if (strcmp("hypot", func_name) == 0) {
+
+    } else if (strcmp("average", func_name) == 0) {
+
+    } else if (strcmp("mean", func_name) == 0) {
+
+    } else if (strcmp("var", func_name) == 0) {
+
+    } else if (strcmp("stddev", func_name) == 0) {
+
+    } else if (strcmp("fib", func_name) == 0) {
+
+    } else if (strcmp("sin", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = sin(first);
+    } else if (strcmp("cos", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = cos(first);
+    } else if (strcmp("tan", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = tan(first);
+    } else if (strcmp("sinh", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = sinh(first);
+    } else if (strcmp("cosh", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = cosh(first);
+    } else if (strcmp("tanh", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = tanh(first);
+    } else if (strcmp("asin", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = asin(first);
+    } else if (strcmp("acos", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = acos(first);
+    } else if (strcmp("atan", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = atan(first);
+    } else if (strcmp("abs", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = fabs(first);
+    } else if (strcmp("log", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = log10(first);
+    } else if (strcmp("sqrt", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = sqrt(first);
+    } else if (strcmp("degrees", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = first * 180 / 3.141592653589793;
+    } else if (strcmp("radians", func_name) == 0) {
+        if (!first_param(params, &first)) return 0;
+        r = first * 3.141592653589793 / 180;
+    } else if (strcmp("random", func_name) == 0) {
+        if (!no_params(params)) return 0;
+        r = rand() / (double) RAND_MAX;
+    } else {
+        return 0;
+    }
+
+    double *res = PARSER_ALLOC(p, sizeof(double));
+    *res = r;
+    return res;
 }
 
 double *to_double(parser_t *p, token_t *tok) {
-    if (!tok) return NULL;
     double *r = PARSER_ALLOC(p, sizeof(double));
-    *r = strtod(tok->start, NULL);
+    char *v = token_nullterm_view(tok);
+    *r = strtod(v, NULL);
+    token_nullterm_restore();
     return r;
 }

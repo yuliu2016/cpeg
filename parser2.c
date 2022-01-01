@@ -282,11 +282,10 @@ static double *atom_2(parser_t *p) {
 static ast_list_t *parameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
     ast_list_t *_sums;
-    token_t *_is_comma;
     ast_list_t *res_17;
     res_17 = enter_frame(p, &f) && (
         (_sums = sum_delimited(p)) &&
-        (_is_comma = consume(p, 7, ","), 1)
+        (consume(p, 7, ","), 1)
     ) ? _sums : 0;
     return exit_frame(p, &f, res_17);
 }

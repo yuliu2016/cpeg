@@ -8,6 +8,7 @@
 
 #include "stdio.h"
 #include "string.h"
+#include "time.h"
 
 
 void *parse_grammar(parser_t *p, int entry_point);
@@ -45,6 +46,8 @@ char *tokparse(char *in) {
 }
 
 int main() {
+    
+    srand(time(NULL));
 
 #ifdef WIN32
     // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
