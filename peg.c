@@ -243,26 +243,30 @@ void parser_free_state(parser_t *p) {
     FMem_free(p);
 }
 
-int parser_check_exit(parser_t *p) {
+int parser_advance_frame(parser_t *p) {
     if (p->error || p->lexer_state.error) {
         // Early exit the function when there is already an error
-        return 1;
+        return 0;
     }
-    size_t pos = p->pos;
 
-    token_t *curr_token = _fetch_token(p, pos);
-    if (!curr_token) {
+    if (p->level > PARSER_MAX_RECURSION) {
+        // Do not allow trees that are too deep.
+        p->error = "Max recursion depth reached";
+        return 0;
+    }
+
+    if (!_fetch_token(p, p->pos)) {
         // there is no more tokens; no need to test anymore
         // this avoids the infinite recursion problem caused by
         // nonexistent token
-        return 1;
+        return 0;
     }
 
-    if (pos > p->max_reached_pos) {
-        p->max_reached_pos = pos;
+    if (p->pos > p->max_reached_pos) {
+        p->max_reached_pos = p->pos;
     }
 
-    return 0;
+    return 1;
 }
 
 token_t *get_next_token_to_consume(parser_t *p, size_t *ppos) {
@@ -355,7 +359,7 @@ token_memo_t *parser_get_memo(parser_t *p, int f_type) {
     return NULL;
 }
 
-void print_indent_level(size_t s) {
+static void print_indent_level(size_t s) {
     if (s > 40) {
         s = s % 40u;
     }
@@ -448,16 +452,9 @@ void parser_enter_debug(parser_t *p, frame_t *f) {
     if (curr_token) {
         FMem_free(token_buf);
     }
-
-    p->level++;
 }
 
 void parser_exit_debug(parser_t *p, void *res, frame_t *f) {
-    if (p->level == 0) {
-        p->error = "Negative recursion depth; aborted";
-        return;
-    }
-    p->level--;
     print_indent_level(p->level);
     if (res) {
         printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);

@@ -129,7 +129,7 @@ parser_t *parser_init_state(char *src, size_t len, lexer_func_t lexer_func);
 
 void parser_free_state(parser_t *p);
 
-int parser_check_exit(parser_t *p);
+int parser_advance_frame(parser_t *p);
 
 token_t *parser_consume_token(parser_t *p, int tk_type);
 
@@ -158,9 +158,10 @@ ast_list_t *ast_list_new(parser_t *p);
 void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 
+#define PARSER_MAX_RECURSION 500
 
-#ifndef PEG_NODEBUG
-// #define PEG_DEBUG
+#ifndef PARSER_NODEBUG
+// #define PARSER_DEBUG
 #endif
 
 
@@ -168,36 +169,60 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 
 static inline int enter_frame(parser_t *p, frame_t *f) {
-#ifdef PEG_DEBUG
-    parser_enter_debug(p, f);
-#endif
-    if (parser_check_exit(p)) {
+
+    #ifdef PARSER_DEBUG
+        parser_enter_debug(p, f);
+    #endif
+
+    // increment recursion depth
+    p->level += 1;
+
+    if (parser_advance_frame(p)) {
+        if (f->memoize) {
+            token_memo_t *memo = parser_get_memo(p, f->f_type);
+
+            #ifdef PARSER_DEBUG
+                parser_memo_debug(p, memo, f);
+            #endif
+
+            if (memo) {
+                f->memo = memo->node;
+                // return zero because the frame can be skipped
+                return 0;
+            }
+        }
+        // continue with parsing the frame
+        return 1;
+    } else {
+        // the parser is finished or there is an error
         return 0;
     }
-    if (f->memoize) {
-        token_memo_t *memo = parser_get_memo(p, f->f_type);
-#ifdef PEG_DEBUG
-        parser_memo_debug(p, memo, f);
-#endif
-        if (memo) { 
-            f->memo = memo->node;
-            return 0;
-        }
-    }
-    return 1;
 }
 
 
 static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
-#ifdef PEG_DEBUG
-    parser_exit_debug(p, result, f);
-#endif
-    if (f->memo) {
-        return f->memo;
-    }
+
+    #ifdef PARSER_DEBUG
+        if (p->level == 0) {
+            p->error = "Negative recursion depth reached";
+            return 0;
+        }
+    #endif
+
+    p->level -= 1;
+
+    #ifdef PARSER_DEBUG
+        parser_exit_debug(p, result, f);
+    #endif
+
     if (f->memoize) {
-        parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
+        if (f->memo) {
+            return f->memo;
+        } else {
+            parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
+        }
     }
+
     if (!result) { 
         p->pos = f->f_pos;
     }
@@ -214,11 +239,11 @@ static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
 
 
 static inline token_t *consume(parser_t *p, int tk_type, const char *literal) {
-#ifdef PEG_DEBUG
-    return parser_consume_debug(p, tk_type, literal);
-#else
-    return parser_consume_token(p, tk_type);
-#endif
+    #ifdef PARSER_DEBUG
+        return parser_consume_debug(p, tk_type, literal);
+    #else
+        return parser_consume_token(p, tk_type);
+    #endif
 }
 
 #endif //CPEG_PEG_H
