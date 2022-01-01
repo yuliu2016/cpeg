@@ -117,11 +117,11 @@ typedef struct parser_state {
 #define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
 
 typedef struct frame {
-    int f_type;
-    size_t f_pos;
+    const int f_type;
+    const size_t f_pos;
     const char *f_rule;
-    void *memo;
-    int memoize;
+    token_memo_t *f_memo;
+    const int f_memoize;
 } frame_t;
 
 
@@ -178,7 +178,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
     p->level += 1;
 
     if (parser_advance_frame(p)) {
-        if (f->memoize) {
+        if (f->f_memoize) {
             token_memo_t *memo = parser_get_memo(p, f->f_type);
 
             #ifdef PARSER_DEBUG
@@ -186,7 +186,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
             #endif
 
             if (memo) {
-                f->memo = memo->node;
+                f->f_memo = memo;
                 // return zero because the frame can be skipped
                 return 0;
             }
@@ -215,15 +215,22 @@ static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
         parser_exit_debug(p, result, f);
     #endif
 
-    if (f->memoize) {
-        if (f->memo) {
-            return f->memo;
+    if (f->f_memoize) {
+        if (f->f_memo) {
+            // Return the previously memoized result
+            if (f->f_memo->node) {
+                // Reset the parser position to the memo result
+                p->pos = f->f_memo->end_pos;
+            }
+            return f->f_memo->node;
         } else {
+            // Memoize the current result
             parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
         }
     }
 
     if (!result) { 
+        // Frame did not parse successfully; reset position.
         p->pos = f->f_pos;
     }
     return result;
