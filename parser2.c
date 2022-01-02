@@ -57,9 +57,9 @@ static double *sum(parser_t *p) {
 
 static double *sum_1(parser_t *p) {
     frame_t f = {2, p->pos, FUNC, 0, 0};
+    double *res_2;
     double *_sum;
     double *_term;
-    double *res_2;
     res_2 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
@@ -70,9 +70,9 @@ static double *sum_1(parser_t *p) {
 
 static double *sum_2(parser_t *p) {
     frame_t f = {3, p->pos, FUNC, 0, 0};
+    double *res_3;
     double *_sum;
     double *_term;
-    double *res_3;
     res_3 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
@@ -113,9 +113,9 @@ static double *term(parser_t *p) {
 
 static double *term_1(parser_t *p) {
     frame_t f = {5, p->pos, FUNC, 0, 0};
+    double *res_5;
     double *_term;
     double *_factor;
-    double *res_5;
     res_5 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
@@ -126,9 +126,9 @@ static double *term_1(parser_t *p) {
 
 static double *term_2(parser_t *p) {
     frame_t f = {6, p->pos, FUNC, 0, 0};
+    double *res_6;
     double *_term;
     double *_factor;
-    double *res_6;
     res_6 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
@@ -139,9 +139,9 @@ static double *term_2(parser_t *p) {
 
 static double *term_3(parser_t *p) {
     frame_t f = {7, p->pos, FUNC, 0, 0};
+    double *res_7;
     double *_term;
     double *_factor;
-    double *res_7;
     res_7 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
@@ -157,8 +157,8 @@ static double *term_3(parser_t *p) {
 //     | power
 static double *factor(parser_t *p) {
     frame_t f = {8, p->pos, FUNC, 0, 0};
-    double *alt_8;
     double *res_8;
+    double *alt_8;
     res_8 = enter_frame(p, &f) && (
         (alt_8 = factor_1(p)) ||
         (alt_8 = factor_2(p)) ||
@@ -170,8 +170,8 @@ static double *factor(parser_t *p) {
 
 static double *factor_1(parser_t *p) {
     frame_t f = {9, p->pos, FUNC, 0, 0};
-    double *_factor;
     double *res_9;
+    double *_factor;
     res_9 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
@@ -181,8 +181,8 @@ static double *factor_1(parser_t *p) {
 
 static double *factor_2(parser_t *p) {
     frame_t f = {10, p->pos, FUNC, 0, 0};
-    double *_factor;
     double *res_10;
+    double *_factor;
     res_10 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
@@ -192,8 +192,8 @@ static double *factor_2(parser_t *p) {
 
 static double *factor_3(parser_t *p) {
     frame_t f = {11, p->pos, FUNC, 0, 0};
-    double *_factor;
     double *res_11;
+    double *_factor;
     res_11 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
@@ -206,8 +206,8 @@ static double *factor_3(parser_t *p) {
 //     | atom
 static double *power(parser_t *p) {
     frame_t f = {12, p->pos, FUNC, 0, 0};
-    double *alt_12;
     double *res_12;
+    double *alt_12;
     res_12 = enter_frame(p, &f) && (
         (alt_12 = power_1(p)) ||
         (alt_12 = atom(p))
@@ -217,9 +217,9 @@ static double *power(parser_t *p) {
 
 static double *power_1(parser_t *p) {
     frame_t f = {13, p->pos, FUNC, 0, 0};
+    double *res_13;
     double *_atom;
     double *_factor;
-    double *res_13;
     res_13 = enter_frame(p, &f) && (
         (_atom = atom(p)) &&
         (consume(p, 38, "**")) &&
@@ -235,10 +235,10 @@ static double *power_1(parser_t *p) {
 //     | NUMBER
 static double *atom(parser_t *p) {
     frame_t f = {14, p->pos, FUNC, 0, 0};
+    double *res_14;
     token_t *_name;
     token_t *_number;
     double *alt_14;
-    double *res_14;
     res_14 = enter_frame(p, &f) && (
         (alt_14 = atom_1(p)) ||
         (alt_14 = atom_2(p)) || (
@@ -253,8 +253,8 @@ static double *atom(parser_t *p) {
 
 static double *atom_1(parser_t *p) {
     frame_t f = {15, p->pos, FUNC, 0, 0};
-    double *_sum;
     double *res_15;
+    double *_sum;
     res_15 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (_sum = sum(p)) &&
@@ -265,9 +265,9 @@ static double *atom_1(parser_t *p) {
 
 static double *atom_2(parser_t *p) {
     frame_t f = {16, p->pos, FUNC, 0, 0};
+    double *res_16;
     token_t *_name;
     ast_list_t *_parameters;
-    double *res_16;
     res_16 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
@@ -281,8 +281,8 @@ static double *atom_2(parser_t *p) {
 //     | ','.sum+ [',']
 static ast_list_t *parameters(parser_t *p) {
     frame_t f = {17, p->pos, FUNC, 0, 0};
-    ast_list_t *_sums;
     ast_list_t *res_17;
+    ast_list_t *_sums;
     res_17 = enter_frame(p, &f) && (
         (_sums = sum_delimited(p)) &&
         (consume(p, 7, ","), 1)
