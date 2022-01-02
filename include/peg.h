@@ -104,9 +104,6 @@ typedef struct parser_state {
     size_t pos;
     size_t max_reached_pos;
 
-    // Use for space-insensitive blocks (like between brackets)
-    int ignore_whitespace;
-
     char *error;
 
     // Debugging

@@ -232,7 +232,6 @@ parser_t *parser_init_state(
     p->region = region;
     p->pos = 0;
     p->max_reached_pos = 0;
-    p->ignore_whitespace = 0;
     p->level = 0;
     p->error = 0;
 
@@ -278,34 +277,6 @@ int parser_advance_frame(parser_t *p) {
     return 1;
 }
 
-token_t *get_next_token_to_consume(parser_t *p, size_t *ppos) {
-    size_t pos = p->pos;
-    token_t *curr_token = _fetch_token(p, pos);
-    if (!curr_token) {
-        return NULL;
-    }
-
-    // the first token that doesn't ignore whitespace
-    if (p->ignore_whitespace) {
-        lexer_t *ls = &p->lexer_state;
-        for(;;) {
-            if (!curr_token->is_whitespace) {
-                break;
-            }
-            if (pos + 1 >= ls->token_len && !ls->next_token) {
-                break;
-            }
-            pos += 1;
-            curr_token = _fetch_token(p, pos);
-            if (!curr_token) {
-                return NULL;
-            }
-        }
-    }
-    
-    *ppos = pos;
-    return curr_token;
-}
 
 token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
     token_memo_t *new_memo = PARSER_ALLOC(p, sizeof(token_memo_t));
@@ -391,16 +362,15 @@ static void print_indent_level(size_t s) {
 }
 
 token_t *parser_consume_token(parser_t *p, int tk_type) {
-    size_t pos = p->pos;
 
-    token_t *curr_token = get_next_token_to_consume(p, &pos);
+    token_t *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         return NULL;
     }
 
     // now check for correct type
     if (curr_token->tk_type == tk_type) {
-        p->pos = pos + 1;
+        p->pos += 1;
         return curr_token;
     } else {
         return NULL;
@@ -408,10 +378,10 @@ token_t *parser_consume_token(parser_t *p, int tk_type) {
 }
 
 token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
-    size_t pos = p->pos;
 
     print_indent_level(p->level);
-    token_t *curr_token = get_next_token_to_consume(p, &pos);
+
+    token_t *curr_token = _fetch_token(p, p->pos);
     if (!curr_token) {
         printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
                 literal, p->level, p->pos);
@@ -420,7 +390,7 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
 
     // now check for correct type
     if (curr_token->tk_type == tk_type) {
-        p->pos = pos + 1;
+        p->pos += 1;
         printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
                 literal, p->level, p->pos);
         return curr_token;

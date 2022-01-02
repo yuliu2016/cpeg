@@ -610,18 +610,15 @@ static void *target_4(parser_t *p) {
     return exit_frame(p, &f, res_23);
 }
 
-// targetlist_sp (allow_whitespace=true):
+// targetlist_sp:
 //     | targetlist
 static void *targetlist_sp(parser_t *p) {
     const frame_t f = {24, p->pos, FUNC};
     void *res_24;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *_targetlist;
     res_24 = enter_frame(p, &f) && (
         (_targetlist = targetlist(p))
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_24);
 }
 
@@ -923,20 +920,17 @@ static void *dict_item_2(parser_t *p) {
     return exit_frame(p, &f, res_41);
 }
 
-// dict_items (allow_whitespace=true):
+// dict_items:
 //     | ','.dict_item+ [',']
 static void *dict_items(parser_t *p) {
     const frame_t f = {42, p->pos, FUNC};
     void *res_42;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     ast_list_t *_dict_items;
     token_t *_is_comma;
     res_42 = enter_frame(p, &f) && (
         (_dict_items = dict_item_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_42);
 }
 
@@ -970,20 +964,17 @@ static void *list_item(parser_t *p) {
     return exit_frame(p, &f, res_43);
 }
 
-// list_items (allow_whitespace=true):
+// list_items:
 //     | ','.list_item+ [',']
 static void *list_items(parser_t *p) {
     const frame_t f = {44, p->pos, FUNC};
     void *res_44;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     ast_list_t *_list_items;
     token_t *_is_comma;
     res_44 = enter_frame(p, &f) && (
         (_list_items = list_item_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_44);
 }
 
@@ -1003,18 +994,15 @@ static ast_list_t *list_item_delimited(parser_t *p) {
     return list;
 }
 
-// set_items (allow_whitespace=true):
+// set_items:
 //     | exprlist_star
 static void *set_items(parser_t *p) {
     const frame_t f = {45, p->pos, FUNC};
     void *res_45;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *_exprlist_star;
     res_45 = enter_frame(p, &f) && (
         (_exprlist_star = exprlist_star(p))
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_45);
 }
 
@@ -1088,37 +1076,31 @@ static ast_list_t *iter_for_loop(parser_t *p) {
     return list;
 }
 
-// list_iterator (allow_whitespace=true):
+// list_iterator:
 //     | expr_or_star iterator
 static void *list_iterator(parser_t *p) {
     const frame_t f = {50, p->pos, FUNC};
     void *res_50;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *_expr_or_star;
     void *_iterator;
     res_50 = enter_frame(p, &f) && (
         (_expr_or_star = expr_or_star(p)) &&
         (_iterator = iterator(p))
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_50);
 }
 
-// dict_iterator (allow_whitespace=true):
+// dict_iterator:
 //     | dict_item iterator
 static void *dict_iterator(parser_t *p) {
     const frame_t f = {51, p->pos, FUNC};
     void *res_51;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *_dict_item;
     void *_iterator;
     res_51 = enter_frame(p, &f) && (
         (_dict_item = dict_item(p)) &&
         (_iterator = iterator(p))
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_51);
 }
 
@@ -1377,13 +1359,11 @@ static void *import_from_items(parser_t *p) {
     return exit_frame(p, &f, res_64);
 }
 
-// import_as_names_sp (allow_whitespace=true):
+// import_as_names_sp:
 //     | '(' import_as_names [','] ')'
 static void *import_as_names_sp(parser_t *p) {
     const frame_t f = {65, p->pos, FUNC};
     void *res_65;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *_import_as_names;
     token_t *_is_comma;
     res_65 = enter_frame(p, &f) && (
@@ -1392,7 +1372,6 @@ static void *import_as_names_sp(parser_t *p) {
         (_is_comma = consume(p, 7, ","), 1) &&
         (consume(p, 14, ")"))
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_65);
 }
 
@@ -1679,20 +1658,17 @@ static void *expr_as_name(parser_t *p) {
     return exit_frame(p, &f, res_79);
 }
 
-// block_suite (allow_whitespace=false):
+// block_suite:
 //     | '{' NEWLINE stmt_list '}'
 //     | '{' [simple_stmt] '}'
 static void *block_suite(parser_t *p) {
     const frame_t f = {80, p->pos, FUNC};
     void *res_80;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace=0;
     void *alt_80;
     res_80 = enter_frame(p, &f) && (
         (alt_80 = block_suite_1(p)) ||
         (alt_80 = block_suite_2(p))
     ) ? alt_80 : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_80);
 }
 
@@ -1830,20 +1806,17 @@ static void *invocation(parser_t *p) {
     return exit_frame(p, &f, res_89);
 }
 
-// call_arg_list (allow_whitespace=true):
+// call_arg_list:
 //     | ','.call_arg+ [',']
 static void *call_arg_list(parser_t *p) {
     const frame_t f = {90, p->pos, FUNC};
     void *res_90;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     ast_list_t *_call_args;
     token_t *_is_comma;
     res_90 = enter_frame(p, &f) && (
         (_call_args = call_arg_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
     ) ? node(p) : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_90);
 }
 
@@ -1931,22 +1904,19 @@ static void *call_arg_4(parser_t *p) {
     return exit_frame(p, &f, res_95);
 }
 
-// typed_arg_list (allow_whitespace=true):
+// typed_arg_list:
 //     | kwargs
 //     | args_kwargs
 //     | full_arg_list
 static void *typed_arg_list(parser_t *p) {
     const frame_t f = {96, p->pos, FUNC};
     void *res_96;
-    int ws = p->ignore_whitespace;
-    p->ignore_whitespace = 1;
     void *alt_96;
     res_96 = enter_frame(p, &f) && (
         (alt_96 = kwargs(p)) ||
         (alt_96 = args_kwargs(p)) ||
         (alt_96 = full_arg_list(p))
     ) ? alt_96 : 0;
-    p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_96);
 }
 
