@@ -34,7 +34,7 @@ double *parse_calc(parser_t *p) {
 static double *sum(parser_t *p) {
     const frame_t f = {1, p->pos, FUNC};
     double *res_1 = 0;
-    if (is_memoized(p, &f, &res_1)) {
+    if (is_memoized(p, &f, (void **) &res_1)) {
         return res_1;
     }
     double *alt_1;
@@ -93,7 +93,7 @@ static double *sum_2(parser_t *p) {
 static double *term(parser_t *p) {
     const frame_t f = {4, p->pos, FUNC};
     double *res_4 = 0;
-    if (is_memoized(p, &f, &res_4)) {
+    if (is_memoized(p, &f, (void **) &res_4)) {
         return res_4;
     }
     double *alt_4;

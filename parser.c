@@ -633,7 +633,7 @@ static void *targetlist_sp(parser_t *p) {
 static void *t_primary(parser_t *p) {
     const frame_t f = {25, p->pos, FUNC};
     void *res_25 = 0;
-    if (is_memoized(p, &f, &res_25)) {
+    if (is_memoized(p, &f, (void **) &res_25)) {
         return res_25;
     }
     void *alt_25;
@@ -2274,7 +2274,7 @@ static void *expr(parser_t *p) {
 static void *disjunction(parser_t *p) {
     const frame_t f = {118, p->pos, FUNC};
     void *res_118 = 0;
-    if (is_memoized(p, &f, &res_118)) {
+    if (is_memoized(p, &f, (void **) &res_118)) {
         return res_118;
     }
     void *alt_118;
@@ -2317,7 +2317,7 @@ static void *disjunction_1(parser_t *p) {
 static void *conjunction(parser_t *p) {
     const frame_t f = {120, p->pos, FUNC};
     void *res_120 = 0;
-    if (is_memoized(p, &f, &res_120)) {
+    if (is_memoized(p, &f, (void **) &res_120)) {
         return res_120;
     }
     void *alt_120;
@@ -2501,7 +2501,7 @@ static int *comp_op_10(parser_t *p) {
 static ast_expr_t *bitwise_or(parser_t *p) {
     const frame_t f = {130, p->pos, FUNC};
     ast_expr_t *res_130 = 0;
-    if (is_memoized(p, &f, &res_130)) {
+    if (is_memoized(p, &f, (void **) &res_130)) {
         return res_130;
     }
     ast_expr_t *alt_130;
@@ -2544,7 +2544,7 @@ static ast_expr_t *bitwise_or_1(parser_t *p) {
 static ast_expr_t *bitwise_xor(parser_t *p) {
     const frame_t f = {132, p->pos, FUNC};
     ast_expr_t *res_132 = 0;
-    if (is_memoized(p, &f, &res_132)) {
+    if (is_memoized(p, &f, (void **) &res_132)) {
         return res_132;
     }
     ast_expr_t *alt_132;
@@ -2587,7 +2587,7 @@ static ast_expr_t *bitwise_xor_1(parser_t *p) {
 static ast_expr_t *bitwise_and(parser_t *p) {
     const frame_t f = {134, p->pos, FUNC};
     ast_expr_t *res_134 = 0;
-    if (is_memoized(p, &f, &res_134)) {
+    if (is_memoized(p, &f, (void **) &res_134)) {
         return res_134;
     }
     ast_expr_t *alt_134;
@@ -2631,7 +2631,7 @@ static ast_expr_t *bitwise_and_1(parser_t *p) {
 static ast_expr_t *shift_expr(parser_t *p) {
     const frame_t f = {136, p->pos, FUNC};
     ast_expr_t *res_136 = 0;
-    if (is_memoized(p, &f, &res_136)) {
+    if (is_memoized(p, &f, (void **) &res_136)) {
         return res_136;
     }
     ast_expr_t *alt_136;
@@ -2689,7 +2689,7 @@ static ast_expr_t *shift_expr_2(parser_t *p) {
 static ast_expr_t *sum(parser_t *p) {
     const frame_t f = {139, p->pos, FUNC};
     ast_expr_t *res_139 = 0;
-    if (is_memoized(p, &f, &res_139)) {
+    if (is_memoized(p, &f, (void **) &res_139)) {
         return res_139;
     }
     ast_expr_t *alt_139;
@@ -2750,7 +2750,7 @@ static ast_expr_t *sum_2(parser_t *p) {
 static ast_expr_t *term(parser_t *p) {
     const frame_t f = {142, p->pos, FUNC};
     ast_expr_t *res_142 = 0;
-    if (is_memoized(p, &f, &res_142)) {
+    if (is_memoized(p, &f, (void **) &res_142)) {
         return res_142;
     }
     ast_expr_t *alt_142;
@@ -2849,7 +2849,7 @@ static ast_expr_t *term_5(parser_t *p) {
 static ast_expr_t *pipe_expr(parser_t *p) {
     const frame_t f = {148, p->pos, FUNC};
     ast_expr_t *res_148 = 0;
-    if (is_memoized(p, &f, &res_148)) {
+    if (is_memoized(p, &f, (void **) &res_148)) {
         return res_148;
     }
     ast_expr_t *alt_148;
@@ -2974,7 +2974,7 @@ static ast_expr_t *power_1(parser_t *p) {
 static void *primary(parser_t *p) {
     const frame_t f = {156, p->pos, FUNC};
     void *res_156 = 0;
-    if (is_memoized(p, &f, &res_156)) {
+    if (is_memoized(p, &f, (void **) &res_156)) {
         return res_156;
     }
     void *alt_156;
