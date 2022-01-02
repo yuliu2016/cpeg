@@ -435,7 +435,7 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
 }
 
 
-void parser_enter_debug(parser_t *p, frame_t *f) {
+void parser_enter_debug(parser_t *p, const frame_t *f) {
     print_indent_level(p->level);
 
     // fetch_token needed over direct access
@@ -449,7 +449,7 @@ void parser_enter_debug(parser_t *p, frame_t *f) {
     FMem_free(token_buf);
 }
 
-void parser_exit_debug(parser_t *p, void *res, frame_t *f) {
+void parser_exit_debug(parser_t *p, void *res, const frame_t *f) {
     print_indent_level(p->level);
     if (res) {
         printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
@@ -458,7 +458,7 @@ void parser_exit_debug(parser_t *p, void *res, frame_t *f) {
     }
 }
 
-void parser_memo_debug(parser_t *p, token_memo_t *memo, frame_t *f) {
+void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
     if (!memo) {
         return;
     };

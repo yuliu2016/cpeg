@@ -32,7 +32,7 @@ double *parse_calc(parser_t *p) {
 //     | sum '-' term
 //     | term
 static double *sum(parser_t *p) {
-    frame_t f = {1, p->pos, FUNC, 0, 1};
+    const frame_t f = {1, p->pos, FUNC};
     double *res_1 = 0;
     if (is_memoized(p, &f, &res_1)) {
         return res_1;
@@ -60,7 +60,7 @@ static double *sum(parser_t *p) {
 }
 
 static double *sum_1(parser_t *p) {
-    frame_t f = {2, p->pos, FUNC, 0, 0};
+    const frame_t f = {2, p->pos, FUNC};
     double *res_2;
     double *_sum;
     double *_term;
@@ -73,7 +73,7 @@ static double *sum_1(parser_t *p) {
 }
 
 static double *sum_2(parser_t *p) {
-    frame_t f = {3, p->pos, FUNC, 0, 0};
+    const frame_t f = {3, p->pos, FUNC};
     double *res_3;
     double *_sum;
     double *_term;
@@ -91,7 +91,7 @@ static double *sum_2(parser_t *p) {
 //     | term '%' factor
 //     | factor
 static double *term(parser_t *p) {
-    frame_t f = {4, p->pos, FUNC, 0, 1};
+    const frame_t f = {4, p->pos, FUNC};
     double *res_4 = 0;
     if (is_memoized(p, &f, &res_4)) {
         return res_4;
@@ -120,7 +120,7 @@ static double *term(parser_t *p) {
 }
 
 static double *term_1(parser_t *p) {
-    frame_t f = {5, p->pos, FUNC, 0, 0};
+    const frame_t f = {5, p->pos, FUNC};
     double *res_5;
     double *_term;
     double *_factor;
@@ -133,7 +133,7 @@ static double *term_1(parser_t *p) {
 }
 
 static double *term_2(parser_t *p) {
-    frame_t f = {6, p->pos, FUNC, 0, 0};
+    const frame_t f = {6, p->pos, FUNC};
     double *res_6;
     double *_term;
     double *_factor;
@@ -146,7 +146,7 @@ static double *term_2(parser_t *p) {
 }
 
 static double *term_3(parser_t *p) {
-    frame_t f = {7, p->pos, FUNC, 0, 0};
+    const frame_t f = {7, p->pos, FUNC};
     double *res_7;
     double *_term;
     double *_factor;
@@ -164,7 +164,7 @@ static double *term_3(parser_t *p) {
 //     | '~' factor
 //     | power
 static double *factor(parser_t *p) {
-    frame_t f = {8, p->pos, FUNC, 0, 0};
+    const frame_t f = {8, p->pos, FUNC};
     double *res_8;
     double *alt_8;
     res_8 = enter_frame(p, &f) && (
@@ -177,7 +177,7 @@ static double *factor(parser_t *p) {
 }
 
 static double *factor_1(parser_t *p) {
-    frame_t f = {9, p->pos, FUNC, 0, 0};
+    const frame_t f = {9, p->pos, FUNC};
     double *res_9;
     double *_factor;
     res_9 = enter_frame(p, &f) && (
@@ -188,7 +188,7 @@ static double *factor_1(parser_t *p) {
 }
 
 static double *factor_2(parser_t *p) {
-    frame_t f = {10, p->pos, FUNC, 0, 0};
+    const frame_t f = {10, p->pos, FUNC};
     double *res_10;
     double *_factor;
     res_10 = enter_frame(p, &f) && (
@@ -199,7 +199,7 @@ static double *factor_2(parser_t *p) {
 }
 
 static double *factor_3(parser_t *p) {
-    frame_t f = {11, p->pos, FUNC, 0, 0};
+    const frame_t f = {11, p->pos, FUNC};
     double *res_11;
     double *_factor;
     res_11 = enter_frame(p, &f) && (
@@ -213,7 +213,7 @@ static double *factor_3(parser_t *p) {
 //     | atom '**' factor
 //     | atom
 static double *power(parser_t *p) {
-    frame_t f = {12, p->pos, FUNC, 0, 0};
+    const frame_t f = {12, p->pos, FUNC};
     double *res_12;
     double *alt_12;
     res_12 = enter_frame(p, &f) && (
@@ -224,7 +224,7 @@ static double *power(parser_t *p) {
 }
 
 static double *power_1(parser_t *p) {
-    frame_t f = {13, p->pos, FUNC, 0, 0};
+    const frame_t f = {13, p->pos, FUNC};
     double *res_13;
     double *_atom;
     double *_factor;
@@ -242,7 +242,7 @@ static double *power_1(parser_t *p) {
 //     | NAME
 //     | NUMBER
 static double *atom(parser_t *p) {
-    frame_t f = {14, p->pos, FUNC, 0, 0};
+    const frame_t f = {14, p->pos, FUNC};
     double *res_14;
     token_t *_name;
     token_t *_number;
@@ -260,7 +260,7 @@ static double *atom(parser_t *p) {
 }
 
 static double *atom_1(parser_t *p) {
-    frame_t f = {15, p->pos, FUNC, 0, 0};
+    const frame_t f = {15, p->pos, FUNC};
     double *res_15;
     double *_sum;
     res_15 = enter_frame(p, &f) && (
@@ -272,7 +272,7 @@ static double *atom_1(parser_t *p) {
 }
 
 static double *atom_2(parser_t *p) {
-    frame_t f = {16, p->pos, FUNC, 0, 0};
+    const frame_t f = {16, p->pos, FUNC};
     double *res_16;
     token_t *_name;
     ast_list_t *_parameters;
@@ -288,7 +288,7 @@ static double *atom_2(parser_t *p) {
 // parameters:
 //     | ','.sum+ [',']
 static ast_list_t *parameters(parser_t *p) {
-    frame_t f = {17, p->pos, FUNC, 0, 0};
+    const frame_t f = {17, p->pos, FUNC};
     ast_list_t *res_17;
     ast_list_t *_sums;
     res_17 = enter_frame(p, &f) && (

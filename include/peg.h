@@ -120,8 +120,6 @@ typedef struct frame {
     const int f_type;
     const size_t f_pos;
     const char *f_rule;
-    token_memo_t *f_memo;
-    const int f_memoize;
 } frame_t;
 
 
@@ -139,11 +137,11 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node);
 
 token_memo_t *parser_get_memo(parser_t *p, int f_type);
 
-void parser_enter_debug(parser_t *p, frame_t *f);
+void parser_enter_debug(parser_t *p, const frame_t *f);
 
-void parser_exit_debug(parser_t *p, void *res, frame_t *f);
+void parser_exit_debug(parser_t *p, void *res, const frame_t *f);
 
-void parser_memo_debug(parser_t *p, token_memo_t *memo, frame_t *f);
+void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
 
 
 
@@ -168,7 +166,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define FUNC __func__
 
 
-static inline int enter_frame(parser_t *p, frame_t *f) {
+static inline int enter_frame(parser_t *p, const frame_t *f) {
 
     #ifdef PARSER_DEBUG
         parser_enter_debug(p, f);
@@ -178,7 +176,7 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 }
 
 
-static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
+static inline void *exit_frame(parser_t *p, const frame_t *f, void *result) {
 
     p->level -= 1;
 
@@ -194,11 +192,11 @@ static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
     return result;
 }
 
-static inline void insert_memo(parser_t *p, frame_t *f, void *node) {
+static inline void insert_memo(parser_t *p, const frame_t *f, void *node) {
     parser_memoize(p, f->f_pos, f->f_type, node);
 }
 
-static inline int is_memoized(parser_t *p, frame_t *f, void **resptr) {
+static inline int is_memoized(parser_t *p, const frame_t *f, void **resptr) {
    token_memo_t *memo = parser_get_memo(p, f->f_type);
 
     #ifdef PARSER_DEBUG
@@ -212,7 +210,7 @@ static inline int is_memoized(parser_t *p, frame_t *f, void **resptr) {
     return 0;
 }
 
-static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {
+static inline int test_and_reset(parser_t *p, const frame_t *f, void *node) {
     return node && (p->pos = f->f_pos, 1);
 }
 
