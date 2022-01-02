@@ -255,6 +255,9 @@ int parser_advance_frame(parser_t *p) {
         return 0;
     }
 
+    // Increase recursion depth
+    p->level += 1;
+
     if (p->level > PARSER_MAX_RECURSION) {
         // Do not allow trees that are too deep.
         p->error = "Max recursion depth reached";
@@ -316,7 +319,8 @@ token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
     return new_memo;
 }
 
-void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node, size_t endpos) {
+void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
+    size_t endpos = p->pos;
     token_t *curr_token = _fetch_token(p, token_pos);
     if (!curr_token) {
         return;
