@@ -103,11 +103,11 @@ static bool tokenize_newline_or_indent(lexer_t *ls) {
     }
 
     if (indent == ls->indent) {
-        ls->next_token = lexer_create_token(ls, T_NEWLINE, true);
+        ls->next_token = lexer_create_token(ls, T_NEWLINE);
     } else if (indent == (ls->indent + 4)) {
-        ls->next_token = lexer_create_token(ls, T_INDENT, true);
+        ls->next_token = lexer_create_token(ls, T_INDENT);
     } else if (indent == (ls->indent - 4)) {
-        ls->next_token = lexer_create_token(ls, T_DEDENT, true);
+        ls->next_token = lexer_create_token(ls, T_DEDENT);
     } else {
         lexer_set_error(ls, "Incorrect indentation", 0);
         return false;
@@ -145,7 +145,7 @@ static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *nam
     }
 
     ls->curr_index = j;
-    ls->next_token = lexer_create_token(ls, T_NUMBER, false);
+    ls->next_token = lexer_create_token(ls, T_NUMBER);
     return true;
 }
 
@@ -251,7 +251,7 @@ static bool tokenize_decimal(lexer_t *ls) {
     }
 
     ls->curr_index = j;
-    ls->next_token = lexer_create_token(ls, T_NUMBER, false);
+    ls->next_token = lexer_create_token(ls, T_NUMBER);
 
     return true;
 }
@@ -356,7 +356,7 @@ static bool tokenize_string(lexer_t *ls) {
     }
 
     ++ls->curr_index;
-    ls->next_token = lexer_create_token(ls, T_STRING, false);
+    ls->next_token = lexer_create_token(ls, T_STRING);
 
     return true;
 }
@@ -408,13 +408,13 @@ static bool tokenize_name_or_keyword(lexer_t *ls) {
         }
 
         if (matching && j == ls->curr_index) {
-            ls->next_token = lexer_create_token(ls, pair.tkl_type, false);
+            ls->next_token = lexer_create_token(ls, pair.tkl_type);
             return true;
         }
     }
 
     // not any of the keywords
-    ls->next_token = lexer_create_token(ls, T_NAME, false);
+    ls->next_token = lexer_create_token(ls, T_NAME);
     return true;
 }
 
@@ -446,7 +446,7 @@ static bool tokenize_operator_or_symbol(lexer_t *ls) {
 
         if (matching) {
             ls->curr_index = j;
-            ls->next_token = lexer_create_token(ls, pair.tkl_type, false);
+            ls->next_token = lexer_create_token(ls, pair.tkl_type);
             return true;
         }
     }
@@ -461,7 +461,7 @@ token_t *lexer_get_next_token(lexer_t *ls) {
     if (!_has_remaining(ls)) {
         if (ls->endmarker) {
             ls->endmarker = 0;
-            return lexer_create_token(ls, T_ENDMARKER, 0);
+            return lexer_create_token(ls, T_ENDMARKER);
         }
         return NULL;
     }

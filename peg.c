@@ -176,7 +176,7 @@ void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset) {
     FMem_free(caret_buf);
 }
 
-token_t *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace) {
+token_t *lexer_create_token(lexer_t *ls, int tk_type) {
     token_t *token = FMem_malloc(sizeof(token_t));
     if (!token) {
         return NULL;
@@ -190,7 +190,6 @@ token_t *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace) {
     token->len = ls->curr_index - ls->start_index;
     token->start = ls->src + ls->start_index;
     token->tk_type = tk_type;
-    token->is_whitespace = (int) is_whitespace;
     token->memo = NULL;
 
     return token;

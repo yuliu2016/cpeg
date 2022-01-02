@@ -28,7 +28,6 @@ typedef struct token {
     size_t len;
     int lineno;
     int column;
-    int is_whitespace;
     token_memo_t *memo;
 } token_t;
 
@@ -84,7 +83,7 @@ void lexer_append_token(lexer_t *ls, token_t *token);
 
 void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset);
 
-token_t *lexer_create_token(lexer_t *ls, int tk_type, int is_whitespace);
+token_t *lexer_create_token(lexer_t *ls, int tk_type);
 
 void lexer_free_state(lexer_t *ls);
 
