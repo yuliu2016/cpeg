@@ -34,6 +34,9 @@ double *parse_calc(parser_t *p) {
 static double *sum(parser_t *p) {
     frame_t f = {1, p->pos, FUNC, 0, 1};
     double *res_1 = 0;
+    if (is_memoized(p, &f, &res_1)) {
+        return res_1;
+    }
     double *alt_1;
     size_t maxpos;
     double *max;
@@ -41,7 +44,7 @@ static double *sum(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_1;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_1 = (
                 (alt_1 = sum_1(p)) ||
@@ -52,6 +55,7 @@ static double *sum(parser_t *p) {
         p->pos = maxpos;
         res_1 = max;
     }
+    insert_memo(p, &f, res_1);
     return exit_frame(p, &f, res_1);
 }
 
@@ -89,6 +93,9 @@ static double *sum_2(parser_t *p) {
 static double *term(parser_t *p) {
     frame_t f = {4, p->pos, FUNC, 0, 1};
     double *res_4 = 0;
+    if (is_memoized(p, &f, &res_4)) {
+        return res_4;
+    }
     double *alt_4;
     size_t maxpos;
     double *max;
@@ -96,7 +103,7 @@ static double *term(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_4;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_4 = (
                 (alt_4 = term_1(p)) ||
@@ -108,6 +115,7 @@ static double *term(parser_t *p) {
         p->pos = maxpos;
         res_4 = max;
     }
+    insert_memo(p, &f, res_4);
     return exit_frame(p, &f, res_4);
 }
 

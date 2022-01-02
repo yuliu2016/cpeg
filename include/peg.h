@@ -170,20 +170,6 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 static inline int enter_frame(parser_t *p, frame_t *f) {
 
-    if (f->f_memoize) {
-        token_memo_t *memo = parser_get_memo(p, f->f_type);
-
-        #ifdef PARSER_DEBUG
-            parser_memo_debug(p, memo, f);
-        #endif
-
-        if (memo) {
-            f->f_memo = memo;
-            // return zero because the frame can be skipped
-            return 0;
-        }
-    }
-
     #ifdef PARSER_DEBUG
         parser_enter_debug(p, f);
     #endif
@@ -202,20 +188,6 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 
 
 static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
-
-    if (f->f_memoize) {
-        if (f->f_memo) {
-            // Return the previously memoized result
-            if (f->f_memo->node) {
-                // Reset the parser position to the memo result
-                p->pos = f->f_memo->end_pos;
-            }
-            return f->f_memo->node;
-        } else {
-            // Memoize the current result
-            parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
-        }
-    }
 
     #ifdef PARSER_DEBUG
         if (p->level == 0) {
@@ -238,8 +210,22 @@ static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
     return result;
 }
 
-static inline void memoize(parser_t *p, frame_t *f, void *node, size_t endpos) {
-    parser_memoize(p, f->f_pos, f->f_type, node, endpos);
+static inline void insert_memo(parser_t *p, frame_t *f, void *node) {
+    parser_memoize(p, f->f_pos, f->f_type, node, p->pos);
+}
+
+static inline int is_memoized(parser_t *p, frame_t *f, void **resptr) {
+   token_memo_t *memo = parser_get_memo(p, f->f_type);
+
+    #ifdef PARSER_DEBUG
+        parser_memo_debug(p, memo, f);
+    #endif
+
+    if (memo) {
+        *resptr = memo->node;
+        return 1;
+    }
+    return 0;
 }
 
 static inline int test_and_reset(parser_t *p, frame_t *f, void *node) {

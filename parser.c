@@ -633,6 +633,9 @@ static void *targetlist_sp(parser_t *p) {
 static void *t_primary(parser_t *p) {
     frame_t f = {25, p->pos, FUNC, 0, 1};
     void *res_25 = 0;
+    if (is_memoized(p, &f, &res_25)) {
+        return res_25;
+    }
     void *alt_25;
     size_t maxpos;
     void *max;
@@ -640,7 +643,7 @@ static void *t_primary(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_25;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_25 = (
                 (alt_25 = t_primary_1(p)) ||
@@ -652,6 +655,7 @@ static void *t_primary(parser_t *p) {
         p->pos = maxpos;
         res_25 = max;
     }
+    insert_memo(p, &f, res_25);
     return exit_frame(p, &f, res_25);
 }
 
@@ -2270,6 +2274,9 @@ static void *expr(parser_t *p) {
 static void *disjunction(parser_t *p) {
     frame_t f = {118, p->pos, FUNC, 0, 1};
     void *res_118 = 0;
+    if (is_memoized(p, &f, &res_118)) {
+        return res_118;
+    }
     void *alt_118;
     size_t maxpos;
     void *max;
@@ -2277,7 +2284,7 @@ static void *disjunction(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_118;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_118 = (
                 (alt_118 = disjunction_1(p)) ||
@@ -2287,6 +2294,7 @@ static void *disjunction(parser_t *p) {
         p->pos = maxpos;
         res_118 = max;
     }
+    insert_memo(p, &f, res_118);
     return exit_frame(p, &f, res_118);
 }
 
@@ -2309,6 +2317,9 @@ static void *disjunction_1(parser_t *p) {
 static void *conjunction(parser_t *p) {
     frame_t f = {120, p->pos, FUNC, 0, 1};
     void *res_120 = 0;
+    if (is_memoized(p, &f, &res_120)) {
+        return res_120;
+    }
     void *alt_120;
     size_t maxpos;
     void *max;
@@ -2316,7 +2327,7 @@ static void *conjunction(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_120;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_120 = (
                 (alt_120 = conjunction_1(p)) ||
@@ -2326,6 +2337,7 @@ static void *conjunction(parser_t *p) {
         p->pos = maxpos;
         res_120 = max;
     }
+    insert_memo(p, &f, res_120);
     return exit_frame(p, &f, res_120);
 }
 
@@ -2489,6 +2501,9 @@ static int *comp_op_10(parser_t *p) {
 static ast_expr_t *bitwise_or(parser_t *p) {
     frame_t f = {130, p->pos, FUNC, 0, 1};
     ast_expr_t *res_130 = 0;
+    if (is_memoized(p, &f, &res_130)) {
+        return res_130;
+    }
     ast_expr_t *alt_130;
     size_t maxpos;
     ast_expr_t *max;
@@ -2496,7 +2511,7 @@ static ast_expr_t *bitwise_or(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_130;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_130 = (
                 (alt_130 = bitwise_or_1(p)) ||
@@ -2506,6 +2521,7 @@ static ast_expr_t *bitwise_or(parser_t *p) {
         p->pos = maxpos;
         res_130 = max;
     }
+    insert_memo(p, &f, res_130);
     return exit_frame(p, &f, res_130);
 }
 
@@ -2528,6 +2544,9 @@ static ast_expr_t *bitwise_or_1(parser_t *p) {
 static ast_expr_t *bitwise_xor(parser_t *p) {
     frame_t f = {132, p->pos, FUNC, 0, 1};
     ast_expr_t *res_132 = 0;
+    if (is_memoized(p, &f, &res_132)) {
+        return res_132;
+    }
     ast_expr_t *alt_132;
     size_t maxpos;
     ast_expr_t *max;
@@ -2535,7 +2554,7 @@ static ast_expr_t *bitwise_xor(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_132;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_132 = (
                 (alt_132 = bitwise_xor_1(p)) ||
@@ -2545,6 +2564,7 @@ static ast_expr_t *bitwise_xor(parser_t *p) {
         p->pos = maxpos;
         res_132 = max;
     }
+    insert_memo(p, &f, res_132);
     return exit_frame(p, &f, res_132);
 }
 
@@ -2567,6 +2587,9 @@ static ast_expr_t *bitwise_xor_1(parser_t *p) {
 static ast_expr_t *bitwise_and(parser_t *p) {
     frame_t f = {134, p->pos, FUNC, 0, 1};
     ast_expr_t *res_134 = 0;
+    if (is_memoized(p, &f, &res_134)) {
+        return res_134;
+    }
     ast_expr_t *alt_134;
     size_t maxpos;
     ast_expr_t *max;
@@ -2574,7 +2597,7 @@ static ast_expr_t *bitwise_and(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_134;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_134 = (
                 (alt_134 = bitwise_and_1(p)) ||
@@ -2584,6 +2607,7 @@ static ast_expr_t *bitwise_and(parser_t *p) {
         p->pos = maxpos;
         res_134 = max;
     }
+    insert_memo(p, &f, res_134);
     return exit_frame(p, &f, res_134);
 }
 
@@ -2607,6 +2631,9 @@ static ast_expr_t *bitwise_and_1(parser_t *p) {
 static ast_expr_t *shift_expr(parser_t *p) {
     frame_t f = {136, p->pos, FUNC, 0, 1};
     ast_expr_t *res_136 = 0;
+    if (is_memoized(p, &f, &res_136)) {
+        return res_136;
+    }
     ast_expr_t *alt_136;
     size_t maxpos;
     ast_expr_t *max;
@@ -2614,7 +2641,7 @@ static ast_expr_t *shift_expr(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_136;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_136 = (
                 (alt_136 = shift_expr_1(p)) ||
@@ -2625,6 +2652,7 @@ static ast_expr_t *shift_expr(parser_t *p) {
         p->pos = maxpos;
         res_136 = max;
     }
+    insert_memo(p, &f, res_136);
     return exit_frame(p, &f, res_136);
 }
 
@@ -2661,6 +2689,9 @@ static ast_expr_t *shift_expr_2(parser_t *p) {
 static ast_expr_t *sum(parser_t *p) {
     frame_t f = {139, p->pos, FUNC, 0, 1};
     ast_expr_t *res_139 = 0;
+    if (is_memoized(p, &f, &res_139)) {
+        return res_139;
+    }
     ast_expr_t *alt_139;
     size_t maxpos;
     ast_expr_t *max;
@@ -2668,7 +2699,7 @@ static ast_expr_t *sum(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_139;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_139 = (
                 (alt_139 = sum_1(p)) ||
@@ -2679,6 +2710,7 @@ static ast_expr_t *sum(parser_t *p) {
         p->pos = maxpos;
         res_139 = max;
     }
+    insert_memo(p, &f, res_139);
     return exit_frame(p, &f, res_139);
 }
 
@@ -2718,6 +2750,9 @@ static ast_expr_t *sum_2(parser_t *p) {
 static ast_expr_t *term(parser_t *p) {
     frame_t f = {142, p->pos, FUNC, 0, 1};
     ast_expr_t *res_142 = 0;
+    if (is_memoized(p, &f, &res_142)) {
+        return res_142;
+    }
     ast_expr_t *alt_142;
     size_t maxpos;
     ast_expr_t *max;
@@ -2725,7 +2760,7 @@ static ast_expr_t *term(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_142;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_142 = (
                 (alt_142 = term_1(p)) ||
@@ -2739,6 +2774,7 @@ static ast_expr_t *term(parser_t *p) {
         p->pos = maxpos;
         res_142 = max;
     }
+    insert_memo(p, &f, res_142);
     return exit_frame(p, &f, res_142);
 }
 
@@ -2813,6 +2849,9 @@ static ast_expr_t *term_5(parser_t *p) {
 static ast_expr_t *pipe_expr(parser_t *p) {
     frame_t f = {148, p->pos, FUNC, 0, 1};
     ast_expr_t *res_148 = 0;
+    if (is_memoized(p, &f, &res_148)) {
+        return res_148;
+    }
     ast_expr_t *alt_148;
     size_t maxpos;
     ast_expr_t *max;
@@ -2820,7 +2859,7 @@ static ast_expr_t *pipe_expr(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_148;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_148 = (
                 (alt_148 = pipe_expr_1(p)) ||
@@ -2830,6 +2869,7 @@ static ast_expr_t *pipe_expr(parser_t *p) {
         p->pos = maxpos;
         res_148 = max;
     }
+    insert_memo(p, &f, res_148);
     return exit_frame(p, &f, res_148);
 }
 
@@ -2934,6 +2974,9 @@ static ast_expr_t *power_1(parser_t *p) {
 static void *primary(parser_t *p) {
     frame_t f = {156, p->pos, FUNC, 0, 1};
     void *res_156 = 0;
+    if (is_memoized(p, &f, &res_156)) {
+        return res_156;
+    }
     void *alt_156;
     size_t maxpos;
     void *max;
@@ -2941,7 +2984,7 @@ static void *primary(parser_t *p) {
         do {
             maxpos = p->pos;
             max = res_156;
-            memoize(p, &f, max, maxpos);
+            insert_memo(p, &f, max);
             p->pos = f.f_pos;
             res_156 = (
                 (alt_156 = primary_1(p)) ||
@@ -2953,6 +2996,7 @@ static void *primary(parser_t *p) {
         p->pos = maxpos;
         res_156 = max;
     }
+    insert_memo(p, &f, res_156);
     return exit_frame(p, &f, res_156);
 }
 
