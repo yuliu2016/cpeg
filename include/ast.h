@@ -5,7 +5,7 @@
 #include "peg.h"
 
 
-static inline void *node(parser_t *p, void *f) {
+static inline void *node(parser_t *p) {
     return PARSER_ALLOC(p, sizeof(char));
 }
 

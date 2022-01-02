@@ -237,7 +237,7 @@ static void *single_input_4(parser_t *p) {
     res_2 = enter_frame(p, &f) && (
         (_compound_stmt = compound_stmt(p)) &&
         (_newline = consume(p, 2, "NEWLINE"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_2);
 }
 
@@ -251,7 +251,7 @@ static void *file_input(parser_t *p) {
     res_3 = enter_frame(p, &f) && (
         (_stmt_list = stmt_list(p), 1) &&
         (_endmarker = consume(p, 1, "ENDMARKER"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_3);
 }
 
@@ -267,7 +267,7 @@ static void *eval_input(parser_t *p) {
         (_exprlist = exprlist(p)) &&
         (_newlines = eval_input_loop(p)) &&
         (_endmarker = consume(p, 1, "ENDMARKER"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_4);
 }
 
@@ -288,7 +288,7 @@ static void *stmt_list(parser_t *p) {
     ast_list_t *_stmts;
     res_5 = enter_frame(p, &f) && (
         (_stmts = stmt_loop(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_5);
 }
 
@@ -314,7 +314,7 @@ static void *stmt(parser_t *p) {
     res_6 = enter_frame(p, &f) && (
         (_simple_stmt_or_compound_stmt = stmt_1(p)) &&
         (_newline = consume(p, 2, "NEWLINE"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_6);
 }
 
@@ -339,7 +339,7 @@ static void *simple_stmt(parser_t *p) {
     res_8 = enter_frame(p, &f) && (
         (_small_stmts = small_stmt_delimited(p)) &&
         (_is_semicolon = consume(p, 12, ";"), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_8);
 }
 
@@ -400,7 +400,7 @@ static void *del_stmt(parser_t *p) {
     res_10 = enter_frame(p, &f) && (
         (consume(p, 79, "del")) &&
         (_targetlist = targetlist(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_10);
 }
 
@@ -413,7 +413,7 @@ static void *return_stmt(parser_t *p) {
     res_11 = enter_frame(p, &f) && (
         (consume(p, 54, "return")) &&
         (_exprlist_star = exprlist_star(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_11);
 }
 
@@ -428,7 +428,7 @@ static void *raise_stmt(parser_t *p) {
         (consume(p, 78, "raise")) &&
         (_expr = expr(p)) &&
         (_from_expr = raise_stmt_3(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_12);
 }
 
@@ -439,7 +439,7 @@ static void *raise_stmt_3(parser_t *p) {
     res_13 = enter_frame(p, &f) && (
         (consume(p, 66, "from")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_13);
 }
 
@@ -452,7 +452,7 @@ static void *nonlocal_stmt(parser_t *p) {
     res_14 = enter_frame(p, &f) && (
         (consume(p, 55, "nonlocal")) &&
         (_name_list = name_list(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_14);
 }
 
@@ -467,7 +467,7 @@ static void *assert_stmt(parser_t *p) {
         (consume(p, 80, "assert")) &&
         (_expr = expr(p)) &&
         (_comma_expr = assert_stmt_3(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_15);
 }
 
@@ -478,7 +478,7 @@ static void *assert_stmt_3(parser_t *p) {
     res_16 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_16);
 }
 
@@ -490,7 +490,7 @@ static void *name_list(parser_t *p) {
     ast_list_t *_names;
     res_17 = enter_frame(p, &f) && (
         (_names = name_list_delimited(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_17);
 }
 
@@ -519,7 +519,7 @@ static void *star_expr(parser_t *p) {
     res_18 = enter_frame(p, &f) && (
         (consume(p, 23, "*")) &&
         (_bitwise_or = bitwise_or(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_18);
 }
 
@@ -533,7 +533,7 @@ static void *exprlist(parser_t *p) {
     res_19 = enter_frame(p, &f) && (
         (_exprs = expr_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_19);
 }
 
@@ -581,7 +581,7 @@ static void *target_1(parser_t *p) {
         (consume(p, 6, ".")) &&
         (_name = consume(p, 3, "NAME")) &&
         (!test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_21);
 }
 
@@ -594,7 +594,7 @@ static void *target_2(parser_t *p) {
         (_t_primary = t_primary(p)) &&
         (_subscript = subscript(p)) &&
         (!test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_22);
 }
 
@@ -606,7 +606,7 @@ static void *target_4(parser_t *p) {
         (consume(p, 13, "(")) &&
         (_targetlist_sp = targetlist_sp(p)) &&
         (consume(p, 14, ")"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_23);
 }
 
@@ -620,7 +620,7 @@ static void *targetlist_sp(parser_t *p) {
     void *_targetlist;
     res_24 = enter_frame(p, &f) && (
         (_targetlist = targetlist(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_24);
 }
@@ -669,7 +669,7 @@ static void *t_primary_1(parser_t *p) {
         (consume(p, 6, ".")) &&
         (_name = consume(p, 3, "NAME")) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_26);
 }
 
@@ -682,7 +682,7 @@ static void *t_primary_2(parser_t *p) {
         (_t_primary = t_primary(p)) &&
         (_invocation = invocation(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_27);
 }
 
@@ -695,7 +695,7 @@ static void *t_primary_3(parser_t *p) {
         (_t_primary = t_primary(p)) &&
         (_subscript = subscript(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_28);
 }
 
@@ -706,7 +706,7 @@ static void *t_primary_4(parser_t *p) {
     res_29 = enter_frame(p, &f) && (
         (_atom = atom(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_29);
 }
 
@@ -736,7 +736,7 @@ static void *targetlist(parser_t *p) {
     res_31 = enter_frame(p, &f) && (
         (_targets = target_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_31);
 }
 
@@ -780,7 +780,7 @@ static void *exprlist_star(parser_t *p) {
     res_33 = enter_frame(p, &f) && (
         (_expr_or_stars = expr_or_star_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_33);
 }
 
@@ -810,7 +810,7 @@ static void *subscript(parser_t *p) {
         (consume(p, 17, "[")) &&
         (_slicelist = slicelist(p)) &&
         (consume(p, 18, "]"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_34);
 }
 
@@ -824,7 +824,7 @@ static void *slicelist(parser_t *p) {
     res_35 = enter_frame(p, &f) && (
         (_slices = slice_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_35);
 }
 
@@ -868,7 +868,7 @@ static void *slice_1(parser_t *p) {
         (_expr = expr(p), 1) &&
         (_slice_expr = slice_expr(p)) &&
         (_slice_expr_1 = slice_expr(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_37);
 }
 
@@ -881,7 +881,7 @@ static void *slice_expr(parser_t *p) {
     res_38 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_expr = expr(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_38);
 }
 
@@ -908,7 +908,7 @@ static void *dict_item_1(parser_t *p) {
         (_expr = expr(p)) &&
         (consume(p, 9, ":")) &&
         (_expr_1 = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_40);
 }
 
@@ -919,7 +919,7 @@ static void *dict_item_2(parser_t *p) {
     res_41 = enter_frame(p, &f) && (
         (consume(p, 38, "**")) &&
         (_bitwise_or = bitwise_or(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_41);
 }
 
@@ -935,7 +935,7 @@ static void *dict_items(parser_t *p) {
     res_42 = enter_frame(p, &f) && (
         (_dict_items = dict_item_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_42);
 }
@@ -982,7 +982,7 @@ static void *list_items(parser_t *p) {
     res_44 = enter_frame(p, &f) && (
         (_list_items = list_item_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_44);
 }
@@ -1013,7 +1013,7 @@ static void *set_items(parser_t *p) {
     void *_exprlist_star;
     res_45 = enter_frame(p, &f) && (
         (_exprlist_star = exprlist_star(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_45);
 }
@@ -1027,7 +1027,7 @@ static void *as_name(parser_t *p) {
     res_46 = enter_frame(p, &f) && (
         (consume(p, 65, "as")) &&
         (_name = consume(p, 3, "NAME"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_46);
 }
 
@@ -1045,7 +1045,7 @@ static void *iter_for(parser_t *p) {
         (consume(p, 63, "in")) &&
         (_disjunction = disjunction(p)) &&
         (_iter_if = iter_if(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_47);
 }
 
@@ -1058,7 +1058,7 @@ static void *iter_if(parser_t *p) {
     res_48 = enter_frame(p, &f) && (
         (consume(p, 56, "if")) &&
         (_named_expr = named_expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_48);
 }
 
@@ -1075,7 +1075,7 @@ static void *iterator(parser_t *p) {
         (consume(p, 72, "for")) &&
         (_targetlist = targetlist(p)) &&
         (_iter_if = iter_if(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_49);
 }
 
@@ -1100,7 +1100,7 @@ static void *list_iterator(parser_t *p) {
     res_50 = enter_frame(p, &f) && (
         (_expr_or_star = expr_or_star(p)) &&
         (_iterator = iterator(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_50);
 }
@@ -1117,7 +1117,7 @@ static void *dict_iterator(parser_t *p) {
     res_51 = enter_frame(p, &f) && (
         (_dict_item = dict_item(p)) &&
         (_iterator = iterator(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_51);
 }
@@ -1152,7 +1152,7 @@ static void *pubassign(parser_t *p) {
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (_exprlist = exprlist(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_53);
 }
 
@@ -1169,7 +1169,7 @@ static void *annassign(parser_t *p) {
         (consume(p, 9, ":")) &&
         (_expr = expr(p)) &&
         (_assign_exprlist = annassign_4(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_54);
 }
 
@@ -1180,7 +1180,7 @@ static void *annassign_4(parser_t *p) {
     res_55 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_exprlist = exprlist(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_55);
 }
 
@@ -1196,7 +1196,7 @@ static void *augassign(parser_t *p) {
         (_target = target(p)) &&
         (_augassign_op = augassign_op(p)) &&
         (_exprlist = exprlist(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_56);
 }
 
@@ -1210,7 +1210,7 @@ static void *simple_assign(parser_t *p) {
     res_57 = enter_frame(p, &f) && (
         (_targetlist_assigns = simple_assign_1_loop(p)) &&
         (_exprlist_star = exprlist_star(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_57);
 }
 
@@ -1230,7 +1230,7 @@ static void *simple_assign_1(parser_t *p) {
     res_58 = enter_frame(p, &f) && (
         (_targetlist = targetlist(p)) &&
         (consume(p, 8, "="))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_58);
 }
 
@@ -1304,7 +1304,7 @@ static void *import_name(parser_t *p) {
     res_60 = enter_frame(p, &f) && (
         (consume(p, 67, "import")) &&
         (_dotted_as_names = dotted_as_names(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_60);
 }
 
@@ -1320,7 +1320,7 @@ static void *import_from(parser_t *p) {
         (_import_from_names = import_from_names(p)) &&
         (consume(p, 67, "import")) &&
         (_import_from_items = import_from_items(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_61);
 }
 
@@ -1345,7 +1345,7 @@ static void *import_from_names_2(parser_t *p) {
     res_63 = enter_frame(p, &f) && (
         (import_from_names_2_loop(p)) &&
         (_dotted_name = dotted_name(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_63);
 }
 
@@ -1391,7 +1391,7 @@ static void *import_as_names_sp(parser_t *p) {
         (_import_as_names = import_as_names(p)) &&
         (_is_comma = consume(p, 7, ","), 1) &&
         (consume(p, 14, ")"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_65);
 }
@@ -1406,7 +1406,7 @@ static void *import_as_name(parser_t *p) {
     res_66 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_as_name = as_name(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_66);
 }
 
@@ -1420,7 +1420,7 @@ static void *dotted_as_name(parser_t *p) {
     res_67 = enter_frame(p, &f) && (
         (_dotted_name = dotted_name(p)) &&
         (_as_name = as_name(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_67);
 }
 
@@ -1432,7 +1432,7 @@ static void *import_as_names(parser_t *p) {
     ast_list_t *_import_as_names;
     res_68 = enter_frame(p, &f) && (
         (_import_as_names = import_as_name_delimited(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_68);
 }
 
@@ -1460,7 +1460,7 @@ static void *dotted_as_names(parser_t *p) {
     ast_list_t *_dotted_as_names;
     res_69 = enter_frame(p, &f) && (
         (_dotted_as_names = dotted_as_name_delimited(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_69);
 }
 
@@ -1488,7 +1488,7 @@ static void *dotted_name(parser_t *p) {
     ast_list_t *_names;
     res_70 = enter_frame(p, &f) && (
         (_names = dotted_name_delimited(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_70);
 }
 
@@ -1543,7 +1543,7 @@ static void *if_stmt(parser_t *p) {
         (_suite = suite(p)) &&
         (_elif_stmts = elif_stmt_loop(p)) &&
         (_else_suite = else_suite(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_72);
 }
 
@@ -1567,7 +1567,7 @@ static void *elif_stmt(parser_t *p) {
         (consume(p, 57, "elif")) &&
         (_named_expr = named_expr(p)) &&
         (_suite = suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_73);
 }
 
@@ -1584,7 +1584,7 @@ static void *while_stmt(parser_t *p) {
         (_named_expr = named_expr(p)) &&
         (_suite = suite(p)) &&
         (_else_suite = else_suite(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_74);
 }
 
@@ -1604,7 +1604,7 @@ static void *for_stmt(parser_t *p) {
         (_exprlist = exprlist(p)) &&
         (_suite = suite(p)) &&
         (_else_suite = else_suite(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_75);
 }
 
@@ -1619,7 +1619,7 @@ static void *try_stmt(parser_t *p) {
         (consume(p, 75, "try")) &&
         (_suite = suite(p)) &&
         (_except_suite_or_finally_suite = try_stmt_3(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_76);
 }
 
@@ -1645,7 +1645,7 @@ static void *with_stmt(parser_t *p) {
         (consume(p, 68, "with")) &&
         (_expr_as_names = expr_as_name_delimited(p)) &&
         (_suite = suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_78);
 }
 
@@ -1675,7 +1675,7 @@ static void *expr_as_name(parser_t *p) {
     res_79 = enter_frame(p, &f) && (
         (_expr = expr(p)) &&
         (_as_name = as_name(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_79);
 }
 
@@ -1706,7 +1706,7 @@ static void *block_suite_1(parser_t *p) {
         (_newline = consume(p, 2, "NEWLINE")) &&
         (_stmt_list = stmt_list(p)) &&
         (consume(p, 16, "}"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_81);
 }
 
@@ -1718,7 +1718,7 @@ static void *block_suite_2(parser_t *p) {
         (consume(p, 15, "{")) &&
         (_simple_stmt = simple_stmt(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_82);
 }
 
@@ -1743,7 +1743,7 @@ static void *suite_1(parser_t *p) {
     res_84 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_simple_stmt = simple_stmt(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_84);
 }
 
@@ -1756,7 +1756,7 @@ static void *else_suite(parser_t *p) {
     res_85 = enter_frame(p, &f) && (
         (consume(p, 58, "else")) &&
         (_suite = suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_85);
 }
 
@@ -1769,7 +1769,7 @@ static void *finally_suite(parser_t *p) {
     res_86 = enter_frame(p, &f) && (
         (consume(p, 77, "finally")) &&
         (_suite = suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_86);
 }
 
@@ -1784,7 +1784,7 @@ static void *except_clause(parser_t *p) {
         (consume(p, 76, "except")) &&
         (_expr_as_name = expr_as_name(p), 1) &&
         (_suite = suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_87);
 }
 
@@ -1800,7 +1800,7 @@ static void *except_suite(parser_t *p) {
         (_except_clauses = except_clause_loop(p)) &&
         (_else_suite = else_suite(p), 1) &&
         (_finally_suite = finally_suite(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_88);
 }
 
@@ -1826,7 +1826,7 @@ static void *invocation(parser_t *p) {
         (consume(p, 13, "(")) &&
         (_call_arg_list = call_arg_list(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_89);
 }
 
@@ -1842,7 +1842,7 @@ static void *call_arg_list(parser_t *p) {
     res_90 = enter_frame(p, &f) && (
         (_call_args = call_arg_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     p->ignore_whitespace = ws;
     return exit_frame(p, &f, res_90);
 }
@@ -1892,7 +1892,7 @@ static void *call_arg_1(parser_t *p) {
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_92);
 }
 
@@ -1905,7 +1905,7 @@ static void *call_arg_2(parser_t *p) {
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_93);
 }
 
@@ -1916,7 +1916,7 @@ static void *call_arg_3(parser_t *p) {
     res_94 = enter_frame(p, &f) && (
         (consume(p, 38, "**")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_94);
 }
 
@@ -1927,7 +1927,7 @@ static void *call_arg_4(parser_t *p) {
     res_95 = enter_frame(p, &f) && (
         (consume(p, 23, "*")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_95);
 }
 
@@ -1960,7 +1960,7 @@ static void *full_arg_list(parser_t *p) {
     res_97 = enter_frame(p, &f) && (
         (_default_args = default_arg_delimited(p)) &&
         (_full_arg_list_2 = full_arg_list_2(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_97);
 }
 
@@ -1987,7 +1987,7 @@ static void *full_arg_list_2(parser_t *p) {
     res_98 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_kwargs_or_args_kwargs = full_arg_list_2_2(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_98);
 }
 
@@ -2015,7 +2015,7 @@ static void *args_kwargs(parser_t *p) {
         (_typed_arg = typed_arg(p), 1) &&
         (_comma_default_args = args_kwargs_3_loop(p)) &&
         (_args_kwargs_4 = args_kwargs_4(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_100);
 }
 
@@ -2035,7 +2035,7 @@ static void *args_kwargs_3(parser_t *p) {
     res_101 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_default_arg = default_arg(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_101);
 }
 
@@ -2046,7 +2046,7 @@ static void *args_kwargs_4(parser_t *p) {
     res_102 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_kwargs = kwargs(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_102);
 }
 
@@ -2061,7 +2061,7 @@ static void *kwargs(parser_t *p) {
         (consume(p, 38, "**")) &&
         (_typed_arg = typed_arg(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_103);
 }
 
@@ -2075,7 +2075,7 @@ static void *default_arg(parser_t *p) {
     res_104 = enter_frame(p, &f) && (
         (_typed_arg = typed_arg(p)) &&
         (_assign_expr = default_arg_2(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_104);
 }
 
@@ -2086,7 +2086,7 @@ static void *default_arg_2(parser_t *p) {
     res_105 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_105);
 }
 
@@ -2100,7 +2100,7 @@ static void *typed_arg(parser_t *p) {
     res_106 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_colon_expr = typed_arg_2(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_106);
 }
 
@@ -2111,7 +2111,7 @@ static void *typed_arg_2(parser_t *p) {
     res_107 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_107);
 }
 
@@ -2125,7 +2125,7 @@ static void *simple_arg(parser_t *p) {
     res_108 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_assign_expr = simple_arg_2(p), 1)
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_108);
 }
 
@@ -2136,7 +2136,7 @@ static void *simple_arg_2(parser_t *p) {
     res_109 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_109);
 }
 
@@ -2148,7 +2148,7 @@ static void *simple_args(parser_t *p) {
     ast_list_t *_simple_args;
     res_110 = enter_frame(p, &f) && (
         (_simple_args = simple_arg_delimited(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_110);
 }
 
@@ -2178,7 +2178,7 @@ static void *builder_hint(parser_t *p) {
         (consume(p, 19, "<")) &&
         (_name_list = name_list(p)) &&
         (consume(p, 20, ">"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_111);
 }
 
@@ -2204,7 +2204,7 @@ static void *builder_args_2(parser_t *p) {
         (consume(p, 13, "(")) &&
         (_typed_arg_list = typed_arg_list(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_113);
 }
 
@@ -2231,7 +2231,7 @@ static void *named_expr_1(parser_t *p) {
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_115);
 }
 
@@ -2250,7 +2250,7 @@ static void *conditional(parser_t *p) {
         (_disjunction_1 = disjunction(p)) &&
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_116);
 }
 
@@ -2307,7 +2307,7 @@ static void *disjunction_1(parser_t *p) {
         (_disjunction = disjunction(p)) &&
         (consume(p, 60, "or")) &&
         (_conjunction = conjunction(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_119);
 }
 
@@ -2350,7 +2350,7 @@ static void *conjunction_1(parser_t *p) {
         (_conjunction = conjunction(p)) &&
         (consume(p, 59, "and")) &&
         (_inversion = inversion(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_121);
 }
 
@@ -2375,7 +2375,7 @@ static void *inversion_1(parser_t *p) {
     res_123 = enter_frame(p, &f) && (
         (consume(p, 61, "not")) &&
         (_inversion = inversion(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_123);
 }
 
@@ -2401,7 +2401,7 @@ static void *comparison_1(parser_t *p) {
     res_125 = enter_frame(p, &f) && (
         (_bitwise_or = bitwise_or(p)) &&
         (_comp_op_bitwise_ors = comparison_1_2_loop(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_125);
 }
 
@@ -2425,7 +2425,7 @@ static void *comparison_1_2(parser_t *p) {
     res_126 = enter_frame(p, &f) && (
         (_comp_op = comp_op(p)) &&
         (_bitwise_or = bitwise_or(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_126);
 }
 
@@ -3009,7 +3009,7 @@ static void *primary_1(parser_t *p) {
         (_primary = primary(p)) &&
         (consume(p, 6, ".")) &&
         (_name = consume(p, 3, "NAME"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_157);
 }
 
@@ -3021,7 +3021,7 @@ static void *primary_2(parser_t *p) {
     res_158 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (_invocation = invocation(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_158);
 }
 
@@ -3033,7 +3033,7 @@ static void *primary_3(parser_t *p) {
     res_159 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (_subscript = subscript(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_159);
 }
 
@@ -3047,7 +3047,7 @@ static void *tuple_atom(parser_t *p) {
         (consume(p, 13, "(")) &&
         (_list_items = list_items(p), 1) &&
         (consume(p, 14, ")"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_160);
 }
 
@@ -3061,7 +3061,7 @@ static void *list_iterable(parser_t *p) {
         (consume(p, 17, "[")) &&
         (_list_iterator = list_iterator(p)) &&
         (consume(p, 18, "]"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_161);
 }
 
@@ -3075,7 +3075,7 @@ static void *list_atom(parser_t *p) {
         (consume(p, 17, "[")) &&
         (_list_items = list_items(p), 1) &&
         (consume(p, 18, "]"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_162);
 }
 
@@ -3089,7 +3089,7 @@ static void *set_atom(parser_t *p) {
         (consume(p, 15, "{")) &&
         (_set_items = set_items(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_163);
 }
 
@@ -3103,7 +3103,7 @@ static void *dict_iterable(parser_t *p) {
         (consume(p, 15, "{")) &&
         (_dict_iterator = dict_iterator(p)) &&
         (consume(p, 16, "}"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_164);
 }
 
@@ -3117,7 +3117,7 @@ static void *dict_atom(parser_t *p) {
         (consume(p, 15, "{")) &&
         (_dict_items = dict_items(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_165);
 }
 
@@ -3146,7 +3146,7 @@ static void *builder_1(parser_t *p) {
         (_simple_args = simple_args(p)) &&
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_167);
 }
 
@@ -3162,7 +3162,7 @@ static void *builder_2(parser_t *p) {
         (_builder_hint = builder_hint(p), 1) &&
         (_builder_args = builder_args(p), 1) &&
         (_block_suite = block_suite(p))
-    ) ? node(p, &f) : 0;
+    ) ? node(p) : 0;
     return exit_frame(p, &f, res_168);
 }
 
