@@ -161,7 +161,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define PARSER_MAX_RECURSION 500
 
 #ifndef PARSER_NODEBUG
-// #define PARSER_DEBUG
+#define PARSER_DEBUG
 #endif
 
 
@@ -169,6 +169,20 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 
 static inline int enter_frame(parser_t *p, frame_t *f) {
+
+    if (f->f_memoize) {
+        token_memo_t *memo = parser_get_memo(p, f->f_type);
+
+        #ifdef PARSER_DEBUG
+            parser_memo_debug(p, memo, f);
+        #endif
+
+        if (memo) {
+            f->f_memo = memo;
+            // return zero because the frame can be skipped
+            return 0;
+        }
+    }
 
     #ifdef PARSER_DEBUG
         parser_enter_debug(p, f);
@@ -178,19 +192,6 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
     p->level += 1;
 
     if (parser_advance_frame(p)) {
-        if (f->f_memoize) {
-            token_memo_t *memo = parser_get_memo(p, f->f_type);
-
-            #ifdef PARSER_DEBUG
-                parser_memo_debug(p, memo, f);
-            #endif
-
-            if (memo) {
-                f->f_memo = memo;
-                // return zero because the frame can be skipped
-                return 0;
-            }
-        }
         // continue with parsing the frame
         return 1;
     } else {
@@ -201,19 +202,6 @@ static inline int enter_frame(parser_t *p, frame_t *f) {
 
 
 static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
-
-    #ifdef PARSER_DEBUG
-        if (p->level == 0) {
-            p->error = "Negative recursion depth reached";
-            return 0;
-        }
-    #endif
-
-    p->level -= 1;
-
-    #ifdef PARSER_DEBUG
-        parser_exit_debug(p, result, f);
-    #endif
 
     if (f->f_memoize) {
         if (f->f_memo) {
@@ -228,6 +216,20 @@ static inline void *exit_frame(parser_t *p, frame_t *f, void *result) {
             parser_memoize(p, f->f_pos, f->f_type, result, p->pos);
         }
     }
+
+    #ifdef PARSER_DEBUG
+        if (p->level == 0) {
+            p->error = "Negative recursion depth reached";
+            return 0;
+        }
+    #endif
+
+    p->level -= 1;
+
+    #ifdef PARSER_DEBUG
+        parser_exit_debug(p, result, f);
+    #endif
+
 
     if (!result) { 
         // Frame did not parse successfully; reset position.

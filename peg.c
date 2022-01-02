@@ -21,12 +21,18 @@ void token_nullterm_restore() {
 }
 
 char *token_heap_copy(token_t *token) {
-    char *view = token_nullterm_view(token);
-    size_t len = strlen(view);
-    char *dest = FMem_malloc(len * sizeof(char));
-    strncpy(dest, view, len);
-    token_nullterm_restore();
-    return dest;
+    char *dest;
+    if (!token) {
+        dest = FMem_malloc(7 * sizeof(char));
+        strcpy(dest, "(null)");
+        return dest;
+    } else {
+        char *view = token_nullterm_view(token);
+        dest = FMem_malloc((strlen(view) + 1) * sizeof(char));
+        strcpy(dest, view);
+        token_nullterm_restore();
+        return dest;
+    }
 }
 
 
@@ -368,7 +374,7 @@ static void print_indent_level(size_t s) {
         return;
     }
     for (size_t i = 0; i < s; ++i) {
-        if (i && i % 2 == 0) {
+        if (i % 2 == 0) {
             b[i * 2] = '|';
         } else {
             b[i * 2] = ' ';
@@ -415,12 +421,7 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
                 literal, p->level, p->pos);
         return curr_token;
     } else {
-        char *token_buf;
-
-        token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
-        for (size_t i = 0; i < curr_token->len; ++i) {
-            token_buf[i] = curr_token->start[i];
-        }
+        char *token_buf = token_heap_copy(curr_token);
 
         printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
@@ -436,22 +437,12 @@ void parser_enter_debug(parser_t *p, frame_t *f) {
     // fetch_token needed over direct access
     token_t *curr_token = _fetch_token(p, p->pos);
 
-    char *token_buf;
-    if (!curr_token) {
-        token_buf = "(null)";
-    } else {
-        token_buf = FMem_calloc(curr_token->len + 1, sizeof(char));
-        for (size_t i = 0; i < curr_token->len; ++i) {
-            token_buf[i] = curr_token->start[i];
-        }
-    }
+    char *token_buf = token_heap_copy(curr_token);
 
     printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             f->f_rule, p->level, p->pos, token_buf);
 
-    if (curr_token) {
-        FMem_free(token_buf);
-    }
+    FMem_free(token_buf);
 }
 
 void parser_exit_debug(parser_t *p, void *res, frame_t *f) {
