@@ -34,20 +34,20 @@ cparameters[ast_list_t]:
     */
 
 double *binop_add(parser_t *p, double *a, double *b) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = *a + *b;
     return r;
 }
 
 double *binop_sub(parser_t *p, double *a, double *b) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = *a - *b;
     return r;
 }
 
 
 double *binop_mul(parser_t *p, double *a, double *b) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = *a * *b;
     return r;
 }
@@ -58,7 +58,7 @@ double *binop_div(parser_t *p, double *a, double *b) {
         p->error = "Division by zero";
         return 0;
     }
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = *a / *b;
     return r;
 }
@@ -67,14 +67,14 @@ double *binop_mod(parser_t *p, double *a, double *b) {
     if (*b == 0) {
         return 0;
     }
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = fmod(*a, *b);
     return r;
 }
 
 
 double *binop_pow(parser_t *p, double *a, double *b) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = *a + *b;
     return r;
 }
@@ -84,7 +84,7 @@ double *unary_plus(parser_t *p, double *a) {
 }
 
 double *unary_minus(parser_t *p, double *a) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     *r = -*a;
     return r;
 }
@@ -100,13 +100,13 @@ double *load_const(parser_t *p, token_t *token) {
     char *v = token_nullterm_view(token);
     double *r = 0;
     if (strncmp("pi", v, 3) == 0) {
-        r = PARSER_ALLOC(p, sizeof(double));
+        r = parser_alloc(p, sizeof(double));
         *r = 3.141592653589793; 
     } else if (strncmp("e", v, 2) == 0) {
-        r = PARSER_ALLOC(p, sizeof(double));
+        r = parser_alloc(p, sizeof(double));
         *r = 2.718281828459045; 
     } else if (strncmp("rand", v, 5) == 0) {
-         r = PARSER_ALLOC(p, sizeof(double));
+         r = parser_alloc(p, sizeof(double));
          *r = rand() / (double) RAND_MAX;
     }
     token_nullterm_restore();
@@ -201,13 +201,13 @@ double *call_func(parser_t *p, token_t *name, ast_list_t *params) {
         return 0;
     }
 
-    double *res = PARSER_ALLOC(p, sizeof(double));
+    double *res = parser_alloc(p, sizeof(double));
     *res = r;
     return res;
 }
 
 double *to_double(parser_t *p, token_t *tok) {
-    double *r = PARSER_ALLOC(p, sizeof(double));
+    double *r = parser_alloc(p, sizeof(double));
     char *v = token_nullterm_view(tok);
     *r = strtod(v, NULL);
     token_nullterm_restore();

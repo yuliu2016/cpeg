@@ -6,7 +6,7 @@
 
 
 static inline void *node(parser_t *p) {
-    return PARSER_ALLOC(p, sizeof(char));
+    return parser_alloc(p, sizeof(char));
 }
 
 

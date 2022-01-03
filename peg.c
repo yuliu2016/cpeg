@@ -275,7 +275,7 @@ int parser_advance_frame(parser_t *p) {
 
 
 token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
-    token_memo_t *new_memo = PARSER_ALLOC(p, sizeof(token_memo_t));
+    token_memo_t *new_memo = parser_alloc(p, sizeof(token_memo_t));
     if (!new_memo) {
         return NULL;
     }
@@ -355,7 +355,7 @@ token_t *parser_consume_token(parser_t *p, int tk_type) {
 
 
 ast_list_t *ast_list_new(parser_t *p) {
-    ast_list_t *seq = PARSER_ALLOC(p, sizeof(ast_list_t));
+    ast_list_t *seq = parser_alloc(p, sizeof(ast_list_t));
     if (!seq) {
         return NULL;
     }
@@ -371,13 +371,13 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
         if (!seq->capacity) {
             seq->capacity = 1;
             seq->len = 0;
-            seq->items = PARSER_ALLOC(p, sizeof(void *));
+            seq->items = parser_alloc(p, sizeof(void *));
         } else {
             seq->capacity = seq->capacity << 1u;
             // Since realloc isn't available with memory regions,
             // the nodes needs to be copied in a loop
             void **old_items = seq->items;
-            seq->items = PARSER_ALLOC(p, seq->capacity * sizeof(void *));
+            seq->items = parser_alloc(p, seq->capacity * sizeof(void *));
             for (int i = 0; i < seq->len; ++i) {
                 seq->items[i] = old_items[i];
             }

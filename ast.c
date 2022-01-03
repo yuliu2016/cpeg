@@ -2,7 +2,7 @@
 
 ast_expr_t *ast_binary(parser_t *p, ast_expr_t *left, 
         ast_expr_t *right, enum expr_opcode binop_code) {
-    ast_expr_t *r = PARSER_ALLOC(p, sizeof(ast_expr_t));
+    ast_expr_t *r = parser_alloc(p, sizeof(ast_expr_t));
     r->opcode = binop_code;
     r->left = left;
     r->right.expr = right;
@@ -14,7 +14,7 @@ ast_expr_t *ast_unary(parser_t *p, ast_expr_t *expr, enum expr_opcode unary_opco
 }
 
 ast_expr_t *ast_primary_expr(parser_t *p, void *primary) {
-    ast_expr_t *r = PARSER_ALLOC(p, sizeof(ast_expr_t));
+    ast_expr_t *r = parser_alloc(p, sizeof(ast_expr_t));
     r->opcode = BINOP_PRIMARY;
     r->left = NULL;
     r->right.primary = primary;
@@ -22,7 +22,7 @@ ast_expr_t *ast_primary_expr(parser_t *p, void *primary) {
 }
 
 int *ast_integer(parser_t *p, int i) {
-    int *r = PARSER_ALLOC(p, sizeof(int));
+    int *r = parser_alloc(p, sizeof(int));
     *r = i;
     return r;
 }

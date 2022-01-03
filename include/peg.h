@@ -110,8 +110,6 @@ typedef struct parser_state {
 
 } parser_t;
 
-#define PARSER_ALLOC(p, size) mballoc((p)->region, size)
-
 typedef struct frame {
     const int f_type;
     const size_t f_pos;
@@ -141,6 +139,9 @@ void parser_exit_debug(parser_t *p, void *res, const frame_t *f);
 
 void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
 
+static inline void *parser_alloc(parser_t *p, size_t size) {
+    return mballoc(p->region, size);
+}
 
 
 typedef struct ast_list {
