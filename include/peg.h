@@ -121,6 +121,8 @@ typedef struct frame {
 
 parser_t *parser_init_state(char *src, size_t len, lexer_func_t lexer_func);
 
+token_t *parser_fetch_token(parser_t *p, size_t pos);
+
 void parser_free_state(parser_t *p);
 
 int parser_advance_frame(parser_t *p);

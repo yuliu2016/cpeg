@@ -238,3 +238,93 @@ char *tokenizer_repl(char *in) {
 char *idchptr(char *in) {
     return in;
 }
+
+static void print_indent_level(size_t s) {
+    if (s > 40) {
+        s = s % 40u;
+    }
+    char *b = FMem_malloc(sizeof(char) * (s * 2 + 1));
+    if (!b) {
+        return;
+    }
+    for (size_t i = 0; i < s; ++i) {
+        if (i % 2 == 0) {
+            b[i * 2] = '|';
+        } else {
+            b[i * 2] = ' ';
+        }
+        b[i * 2 + 1] = ' ';
+    }
+    b[s * 2] = '\0';
+    printf("%s", b);
+    FMem_free(b);
+}
+
+token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
+
+    print_indent_level(p->level);
+
+    token_t *curr_token = parser_fetch_token(p, p->pos);
+    if (!curr_token) {
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
+                literal, p->level, p->pos);
+        return NULL;
+    }
+
+    // now check for correct type
+    if (curr_token->tk_type == tk_type) {
+        if (p->pos > p->max_reached_pos) {
+            p->max_reached_pos = p->pos;
+        }
+        p->pos += 1;
+        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
+                literal, p->level, p->pos);
+        return curr_token;
+    } else {
+        char *token_buf = token_heap_copy(curr_token);
+
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
+                literal, p->level, p->pos, token_buf);
+        FMem_free(token_buf);
+        return NULL;
+    }
+}
+
+
+void parser_enter_debug(parser_t *p, const frame_t *f) {
+    print_indent_level(p->level);
+
+    // fetch_token needed over direct access
+    token_t *curr_token = parser_fetch_token(p, p->pos);
+
+    char *token_buf = token_heap_copy(curr_token);
+
+    printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
+            f->f_rule, p->level, p->pos, token_buf);
+
+    FMem_free(token_buf);
+}
+
+void parser_exit_debug(parser_t *p, void *res, const frame_t *f) {
+    print_indent_level(p->level);
+    if (res) {
+        printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
+    } else {
+        printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
+    }
+}
+
+void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
+    if (!memo) {
+        return;
+    };
+    print_indent_level(p->level);
+    char *succ;
+    if (memo->node) {
+        succ = "was a \033[32mSuccess\033[0m";
+    } else {
+        succ = "was a \033[31mFailure\033[0m";
+    }
+    printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
+            f->f_rule, p->level, p->pos, succ);
+}
