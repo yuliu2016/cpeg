@@ -58,21 +58,6 @@ static void *simple_assign(parser_t *);
 static ast_list_t *simple_assign_1_loop(parser_t *);
 static void *simple_assign_1(parser_t *);
 static int *augassign_op(parser_t *);
-static void *import_name(parser_t *);
-static void *import_from(parser_t *);
-static void *import_from_names(parser_t *);
-static void *import_from_names_2(parser_t *);
-static ast_list_t *import_from_names_2_loop(parser_t *);
-static void *import_from_items(parser_t *);
-static void *import_as_names_sp(parser_t *);
-static void *import_as_name(parser_t *);
-static void *dotted_as_name(parser_t *);
-static void *import_as_names(parser_t *);
-static ast_list_t *import_as_name_delimited(parser_t *);
-static void *dotted_as_names(parser_t *);
-static ast_list_t *dotted_as_name_delimited(parser_t *);
-static void *dotted_name(parser_t *);
-static ast_list_t *dotted_name_delimited(parser_t *);
 static void *compound_stmt(parser_t *);
 static void *if_stmt(parser_t *);
 static ast_list_t *elif_stmt_loop(parser_t *);
@@ -350,8 +335,6 @@ static ast_list_t *small_stmt_delimited(parser_t *p) {
 //     | del_stmt
 //     | nonlocal_stmt
 //     | assert_stmt
-//     | import_name
-//     | import_from
 //     | assignment
 static void *small_stmt(parser_t *p) {
     const frame_t f = {9, p->pos, FUNC};
@@ -366,8 +349,6 @@ static void *small_stmt(parser_t *p) {
         (alt_9 = del_stmt(p)) ||
         (alt_9 = nonlocal_stmt(p)) ||
         (alt_9 = assert_stmt(p)) ||
-        (alt_9 = import_name(p)) ||
-        (alt_9 = import_from(p)) ||
         (alt_9 = assignment(p))
     ) ? alt_9 : 0;
     return exit_frame(p, &f, res_9);
@@ -1064,216 +1045,6 @@ static int *augassign_op(parser_t *p) {
     return exit_frame(p, &f, res_47);
 }
 
-// import_name:
-//     | 'import' dotted_as_names
-static void *import_name(parser_t *p) {
-    const frame_t f = {48, p->pos, FUNC};
-    void *res_48;
-    void *_dotted_as_names;
-    res_48 = enter_frame(p, &f) && (
-        (consume(p, 67, "import")) &&
-        (_dotted_as_names = dotted_as_names(p))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_48);
-}
-
-// import_from:
-//     | 'from' import_from_names 'import' import_from_items
-static void *import_from(parser_t *p) {
-    const frame_t f = {49, p->pos, FUNC};
-    void *res_49;
-    void *_import_from_names;
-    void *_import_from_items;
-    res_49 = enter_frame(p, &f) && (
-        (consume(p, 66, "from")) &&
-        (_import_from_names = import_from_names(p)) &&
-        (consume(p, 67, "import")) &&
-        (_import_from_items = import_from_items(p))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_49);
-}
-
-// import_from_names:
-//     | dotted_name
-//     | '.'+ [dotted_name]
-static void *import_from_names(parser_t *p) {
-    const frame_t f = {50, p->pos, FUNC};
-    void *res_50;
-    void *alt_50;
-    res_50 = enter_frame(p, &f) && (
-        (alt_50 = dotted_name(p)) ||
-        (alt_50 = import_from_names_2(p))
-    ) ? alt_50 : 0;
-    return exit_frame(p, &f, res_50);
-}
-
-static void *import_from_names_2(parser_t *p) {
-    const frame_t f = {51, p->pos, FUNC};
-    void *res_51;
-    void *_dotted_name;
-    res_51 = enter_frame(p, &f) && (
-        (import_from_names_2_loop(p)) &&
-        (_dotted_name = dotted_name(p), 1)
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_51);
-}
-
-static ast_list_t *import_from_names_2_loop(parser_t *p) {
-    token_t *_is_dot = consume(p, 6, ".");
-    if (!_is_dot) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    do {
-        ast_list_append(p, list, _is_dot);
-    } while ((_is_dot = consume(p, 6, ".")));
-    return list;
-}
-
-// import_from_items:
-//     | '*'
-//     | import_as_names_sp
-//     | import_as_names
-static void *import_from_items(parser_t *p) {
-    const frame_t f = {52, p->pos, FUNC};
-    void *res_52;
-    void *alt_52;
-    res_52 = enter_frame(p, &f) && (
-        (alt_52 = consume(p, 23, "*")) ||
-        (alt_52 = import_as_names_sp(p)) ||
-        (alt_52 = import_as_names(p))
-    ) ? alt_52 : 0;
-    return exit_frame(p, &f, res_52);
-}
-
-// import_as_names_sp:
-//     | '(' import_as_names [','] ')'
-static void *import_as_names_sp(parser_t *p) {
-    const frame_t f = {53, p->pos, FUNC};
-    void *res_53;
-    void *_import_as_names;
-    token_t *_is_comma;
-    res_53 = enter_frame(p, &f) && (
-        (consume(p, 13, "(")) &&
-        (_import_as_names = import_as_names(p)) &&
-        (_is_comma = consume(p, 7, ","), 1) &&
-        (consume(p, 14, ")"))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_53);
-}
-
-// import_as_name:
-//     | NAME [as_name]
-static void *import_as_name(parser_t *p) {
-    const frame_t f = {54, p->pos, FUNC};
-    void *res_54;
-    token_t *_name;
-    void *_as_name;
-    res_54 = enter_frame(p, &f) && (
-        (_name = consume(p, 3, "NAME")) &&
-        (_as_name = as_name(p), 1)
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_54);
-}
-
-// dotted_as_name:
-//     | dotted_name [as_name]
-static void *dotted_as_name(parser_t *p) {
-    const frame_t f = {55, p->pos, FUNC};
-    void *res_55;
-    void *_dotted_name;
-    void *_as_name;
-    res_55 = enter_frame(p, &f) && (
-        (_dotted_name = dotted_name(p)) &&
-        (_as_name = as_name(p), 1)
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_55);
-}
-
-// import_as_names:
-//     | ','.import_as_name+
-static void *import_as_names(parser_t *p) {
-    const frame_t f = {56, p->pos, FUNC};
-    void *res_56;
-    ast_list_t *_import_as_names;
-    res_56 = enter_frame(p, &f) && (
-        (_import_as_names = import_as_name_delimited(p))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_56);
-}
-
-static ast_list_t *import_as_name_delimited(parser_t *p) {
-    void *_import_as_name = import_as_name(p);
-    if (!_import_as_name) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _import_as_name);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_import_as_name = import_as_name(p)));
-    p->pos = pos;
-    return list;
-}
-
-// dotted_as_names:
-//     | ','.dotted_as_name+
-static void *dotted_as_names(parser_t *p) {
-    const frame_t f = {57, p->pos, FUNC};
-    void *res_57;
-    ast_list_t *_dotted_as_names;
-    res_57 = enter_frame(p, &f) && (
-        (_dotted_as_names = dotted_as_name_delimited(p))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_57);
-}
-
-static ast_list_t *dotted_as_name_delimited(parser_t *p) {
-    void *_dotted_as_name = dotted_as_name(p);
-    if (!_dotted_as_name) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _dotted_as_name);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_dotted_as_name = dotted_as_name(p)));
-    p->pos = pos;
-    return list;
-}
-
-// dotted_name:
-//     | '.'.NAME+
-static void *dotted_name(parser_t *p) {
-    const frame_t f = {58, p->pos, FUNC};
-    void *res_58;
-    ast_list_t *_names;
-    res_58 = enter_frame(p, &f) && (
-        (_names = dotted_name_delimited(p))
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_58);
-}
-
-static ast_list_t *dotted_name_delimited(parser_t *p) {
-    token_t *_name = consume(p, 3, "NAME");
-    if (!_name) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _name);
-        pos = p->pos;
-    } while (consume(p, 6, ".") &&
-            (_name = consume(p, 3, "NAME")));
-    p->pos = pos;
-    return list;
-}
-
 // compound_stmt:
 //     | if_stmt
 //     | while_stmt
@@ -1281,36 +1052,36 @@ static ast_list_t *dotted_name_delimited(parser_t *p) {
 //     | try_stmt
 //     | with_stmt
 static void *compound_stmt(parser_t *p) {
-    const frame_t f = {59, p->pos, FUNC};
-    void *res_59;
-    void *alt_59;
-    res_59 = enter_frame(p, &f) && (
-        (alt_59 = if_stmt(p)) ||
-        (alt_59 = while_stmt(p)) ||
-        (alt_59 = for_stmt(p)) ||
-        (alt_59 = try_stmt(p)) ||
-        (alt_59 = with_stmt(p))
-    ) ? alt_59 : 0;
-    return exit_frame(p, &f, res_59);
+    const frame_t f = {48, p->pos, FUNC};
+    void *res_48;
+    void *alt_48;
+    res_48 = enter_frame(p, &f) && (
+        (alt_48 = if_stmt(p)) ||
+        (alt_48 = while_stmt(p)) ||
+        (alt_48 = for_stmt(p)) ||
+        (alt_48 = try_stmt(p)) ||
+        (alt_48 = with_stmt(p))
+    ) ? alt_48 : 0;
+    return exit_frame(p, &f, res_48);
 }
 
 // if_stmt:
 //     | 'if' named_expr suite elif_stmt* [else_suite]
 static void *if_stmt(parser_t *p) {
-    const frame_t f = {60, p->pos, FUNC};
-    void *res_60;
+    const frame_t f = {49, p->pos, FUNC};
+    void *res_49;
     ast_named_t *_named_expr;
     void *_suite;
     ast_list_t *_elif_stmts;
     void *_else_suite;
-    res_60 = enter_frame(p, &f) && (
+    res_49 = enter_frame(p, &f) && (
         (consume(p, 56, "if")) &&
         (_named_expr = named_expr(p)) &&
         (_suite = suite(p)) &&
         (_elif_stmts = elif_stmt_loop(p)) &&
         (_else_suite = else_suite(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_60);
+    return exit_frame(p, &f, res_49);
 }
 
 static ast_list_t *elif_stmt_loop(parser_t *p) {
@@ -1325,45 +1096,45 @@ static ast_list_t *elif_stmt_loop(parser_t *p) {
 // elif_stmt:
 //     | 'elif' named_expr suite
 static void *elif_stmt(parser_t *p) {
-    const frame_t f = {61, p->pos, FUNC};
-    void *res_61;
+    const frame_t f = {50, p->pos, FUNC};
+    void *res_50;
     ast_named_t *_named_expr;
     void *_suite;
-    res_61 = enter_frame(p, &f) && (
+    res_50 = enter_frame(p, &f) && (
         (consume(p, 57, "elif")) &&
         (_named_expr = named_expr(p)) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_61);
+    return exit_frame(p, &f, res_50);
 }
 
 // while_stmt:
 //     | 'while' named_expr suite [else_suite]
 static void *while_stmt(parser_t *p) {
-    const frame_t f = {62, p->pos, FUNC};
-    void *res_62;
+    const frame_t f = {51, p->pos, FUNC};
+    void *res_51;
     ast_named_t *_named_expr;
     void *_suite;
     void *_else_suite;
-    res_62 = enter_frame(p, &f) && (
+    res_51 = enter_frame(p, &f) && (
         (consume(p, 71, "while")) &&
         (_named_expr = named_expr(p)) &&
         (_suite = suite(p)) &&
         (_else_suite = else_suite(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_62);
+    return exit_frame(p, &f, res_51);
 }
 
 // for_stmt:
 //     | 'for' targetlist 'in' exprlist suite [else_suite]
 static void *for_stmt(parser_t *p) {
-    const frame_t f = {63, p->pos, FUNC};
-    void *res_63;
+    const frame_t f = {52, p->pos, FUNC};
+    void *res_52;
     void *_targetlist;
     void *_exprlist;
     void *_suite;
     void *_else_suite;
-    res_63 = enter_frame(p, &f) && (
+    res_52 = enter_frame(p, &f) && (
         (consume(p, 72, "for")) &&
         (_targetlist = targetlist(p)) &&
         (consume(p, 63, "in")) &&
@@ -1371,48 +1142,48 @@ static void *for_stmt(parser_t *p) {
         (_suite = suite(p)) &&
         (_else_suite = else_suite(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_63);
+    return exit_frame(p, &f, res_52);
 }
 
 // try_stmt:
 //     | 'try' suite (except_suite | finally_suite)
 static void *try_stmt(parser_t *p) {
-    const frame_t f = {64, p->pos, FUNC};
-    void *res_64;
+    const frame_t f = {53, p->pos, FUNC};
+    void *res_53;
     void *_suite;
     void *_except_suite_or_finally_suite;
-    res_64 = enter_frame(p, &f) && (
+    res_53 = enter_frame(p, &f) && (
         (consume(p, 75, "try")) &&
         (_suite = suite(p)) &&
         (_except_suite_or_finally_suite = try_stmt_3(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_64);
+    return exit_frame(p, &f, res_53);
 }
 
 static void *try_stmt_3(parser_t *p) {
-    const frame_t f = {65, p->pos, FUNC};
-    void *res_65;
-    void *alt_65;
-    res_65 = enter_frame(p, &f) && (
-        (alt_65 = except_suite(p)) ||
-        (alt_65 = finally_suite(p))
-    ) ? alt_65 : 0;
-    return exit_frame(p, &f, res_65);
+    const frame_t f = {54, p->pos, FUNC};
+    void *res_54;
+    void *alt_54;
+    res_54 = enter_frame(p, &f) && (
+        (alt_54 = except_suite(p)) ||
+        (alt_54 = finally_suite(p))
+    ) ? alt_54 : 0;
+    return exit_frame(p, &f, res_54);
 }
 
 // with_stmt:
 //     | 'with' ','.expr_as_name+ suite
 static void *with_stmt(parser_t *p) {
-    const frame_t f = {66, p->pos, FUNC};
-    void *res_66;
+    const frame_t f = {55, p->pos, FUNC};
+    void *res_55;
     ast_list_t *_expr_as_names;
     void *_suite;
-    res_66 = enter_frame(p, &f) && (
+    res_55 = enter_frame(p, &f) && (
         (consume(p, 68, "with")) &&
         (_expr_as_names = expr_as_name_delimited(p)) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_66);
+    return exit_frame(p, &f, res_55);
 }
 
 static ast_list_t *expr_as_name_delimited(parser_t *p) {
@@ -1434,137 +1205,137 @@ static ast_list_t *expr_as_name_delimited(parser_t *p) {
 // expr_as_name:
 //     | expr [as_name]
 static void *expr_as_name(parser_t *p) {
-    const frame_t f = {67, p->pos, FUNC};
-    void *res_67;
+    const frame_t f = {56, p->pos, FUNC};
+    void *res_56;
     ast_expr_t *_expr;
     void *_as_name;
-    res_67 = enter_frame(p, &f) && (
+    res_56 = enter_frame(p, &f) && (
         (_expr = expr(p)) &&
         (_as_name = as_name(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_67);
+    return exit_frame(p, &f, res_56);
 }
 
 // block_suite:
 //     | '{' NEWLINE stmt_list '}'
 //     | '{' [simple_stmt] '}'
 static void *block_suite(parser_t *p) {
-    const frame_t f = {68, p->pos, FUNC};
-    void *res_68;
-    void *alt_68;
-    res_68 = enter_frame(p, &f) && (
-        (alt_68 = block_suite_1(p)) ||
-        (alt_68 = block_suite_2(p))
-    ) ? alt_68 : 0;
-    return exit_frame(p, &f, res_68);
+    const frame_t f = {57, p->pos, FUNC};
+    void *res_57;
+    void *alt_57;
+    res_57 = enter_frame(p, &f) && (
+        (alt_57 = block_suite_1(p)) ||
+        (alt_57 = block_suite_2(p))
+    ) ? alt_57 : 0;
+    return exit_frame(p, &f, res_57);
 }
 
 static void *block_suite_1(parser_t *p) {
-    const frame_t f = {69, p->pos, FUNC};
-    void *res_69;
+    const frame_t f = {58, p->pos, FUNC};
+    void *res_58;
     token_t *_newline;
     void *_stmt_list;
-    res_69 = enter_frame(p, &f) && (
+    res_58 = enter_frame(p, &f) && (
         (consume(p, 15, "{")) &&
         (_newline = consume(p, 2, "NEWLINE")) &&
         (_stmt_list = stmt_list(p)) &&
         (consume(p, 16, "}"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_69);
+    return exit_frame(p, &f, res_58);
 }
 
 static void *block_suite_2(parser_t *p) {
-    const frame_t f = {70, p->pos, FUNC};
-    void *res_70;
+    const frame_t f = {59, p->pos, FUNC};
+    void *res_59;
     void *_simple_stmt;
-    res_70 = enter_frame(p, &f) && (
+    res_59 = enter_frame(p, &f) && (
         (consume(p, 15, "{")) &&
         (_simple_stmt = simple_stmt(p), 1) &&
         (consume(p, 16, "}"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_70);
+    return exit_frame(p, &f, res_59);
 }
 
 // suite:
 //     | ':' simple_stmt
 //     | block_suite
 static void *suite(parser_t *p) {
-    const frame_t f = {71, p->pos, FUNC};
-    void *res_71;
-    void *alt_71;
-    res_71 = enter_frame(p, &f) && (
-        (alt_71 = suite_1(p)) ||
-        (alt_71 = block_suite(p))
-    ) ? alt_71 : 0;
-    return exit_frame(p, &f, res_71);
+    const frame_t f = {60, p->pos, FUNC};
+    void *res_60;
+    void *alt_60;
+    res_60 = enter_frame(p, &f) && (
+        (alt_60 = suite_1(p)) ||
+        (alt_60 = block_suite(p))
+    ) ? alt_60 : 0;
+    return exit_frame(p, &f, res_60);
 }
 
 static void *suite_1(parser_t *p) {
-    const frame_t f = {72, p->pos, FUNC};
-    void *res_72;
+    const frame_t f = {61, p->pos, FUNC};
+    void *res_61;
     void *_simple_stmt;
-    res_72 = enter_frame(p, &f) && (
+    res_61 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_simple_stmt = simple_stmt(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_72);
+    return exit_frame(p, &f, res_61);
 }
 
 // else_suite:
 //     | 'else' suite
 static void *else_suite(parser_t *p) {
-    const frame_t f = {73, p->pos, FUNC};
-    void *res_73;
+    const frame_t f = {62, p->pos, FUNC};
+    void *res_62;
     void *_suite;
-    res_73 = enter_frame(p, &f) && (
+    res_62 = enter_frame(p, &f) && (
         (consume(p, 58, "else")) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_73);
+    return exit_frame(p, &f, res_62);
 }
 
 // finally_suite:
 //     | 'finally' suite
 static void *finally_suite(parser_t *p) {
-    const frame_t f = {74, p->pos, FUNC};
-    void *res_74;
+    const frame_t f = {63, p->pos, FUNC};
+    void *res_63;
     void *_suite;
-    res_74 = enter_frame(p, &f) && (
+    res_63 = enter_frame(p, &f) && (
         (consume(p, 77, "finally")) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_74);
+    return exit_frame(p, &f, res_63);
 }
 
 // except_clause:
 //     | 'except' [expr_as_name] suite
 static void *except_clause(parser_t *p) {
-    const frame_t f = {75, p->pos, FUNC};
-    void *res_75;
+    const frame_t f = {64, p->pos, FUNC};
+    void *res_64;
     void *_expr_as_name;
     void *_suite;
-    res_75 = enter_frame(p, &f) && (
+    res_64 = enter_frame(p, &f) && (
         (consume(p, 76, "except")) &&
         (_expr_as_name = expr_as_name(p), 1) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_75);
+    return exit_frame(p, &f, res_64);
 }
 
 // except_suite:
 //     | except_clause+ [else_suite] [finally_suite]
 static void *except_suite(parser_t *p) {
-    const frame_t f = {76, p->pos, FUNC};
-    void *res_76;
+    const frame_t f = {65, p->pos, FUNC};
+    void *res_65;
     ast_list_t *_except_clauses;
     void *_else_suite;
     void *_finally_suite;
-    res_76 = enter_frame(p, &f) && (
+    res_65 = enter_frame(p, &f) && (
         (_except_clauses = except_clause_loop(p)) &&
         (_else_suite = else_suite(p), 1) &&
         (_finally_suite = finally_suite(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_76);
+    return exit_frame(p, &f, res_65);
 }
 
 static ast_list_t *except_clause_loop(parser_t *p) {
@@ -1582,29 +1353,29 @@ static ast_list_t *except_clause_loop(parser_t *p) {
 // invocation:
 //     | '(' [call_arg_list] ')'
 static void *invocation(parser_t *p) {
-    const frame_t f = {77, p->pos, FUNC};
-    void *res_77;
+    const frame_t f = {66, p->pos, FUNC};
+    void *res_66;
     void *_call_arg_list;
-    res_77 = enter_frame(p, &f) && (
+    res_66 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (_call_arg_list = call_arg_list(p), 1) &&
         (consume(p, 14, ")"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_77);
+    return exit_frame(p, &f, res_66);
 }
 
 // call_arg_list:
 //     | ','.call_arg+ [',']
 static void *call_arg_list(parser_t *p) {
-    const frame_t f = {78, p->pos, FUNC};
-    void *res_78;
+    const frame_t f = {67, p->pos, FUNC};
+    void *res_67;
     ast_list_t *_call_args;
     token_t *_is_comma;
-    res_78 = enter_frame(p, &f) && (
+    res_67 = enter_frame(p, &f) && (
         (_call_args = call_arg_delimited(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_78);
+    return exit_frame(p, &f, res_67);
 }
 
 static ast_list_t *call_arg_delimited(parser_t *p) {
@@ -1630,65 +1401,65 @@ static ast_list_t *call_arg_delimited(parser_t *p) {
 //     | '*' expr
 //     | expr
 static void *call_arg(parser_t *p) {
-    const frame_t f = {79, p->pos, FUNC};
-    void *res_79;
-    void *alt_79;
-    res_79 = enter_frame(p, &f) && (
-        (alt_79 = call_arg_1(p)) ||
-        (alt_79 = call_arg_2(p)) ||
-        (alt_79 = call_arg_3(p)) ||
-        (alt_79 = call_arg_4(p)) ||
-        (alt_79 = expr(p))
-    ) ? alt_79 : 0;
-    return exit_frame(p, &f, res_79);
+    const frame_t f = {68, p->pos, FUNC};
+    void *res_68;
+    void *alt_68;
+    res_68 = enter_frame(p, &f) && (
+        (alt_68 = call_arg_1(p)) ||
+        (alt_68 = call_arg_2(p)) ||
+        (alt_68 = call_arg_3(p)) ||
+        (alt_68 = call_arg_4(p)) ||
+        (alt_68 = expr(p))
+    ) ? alt_68 : 0;
+    return exit_frame(p, &f, res_68);
 }
 
 static void *call_arg_1(parser_t *p) {
-    const frame_t f = {80, p->pos, FUNC};
-    void *res_80;
+    const frame_t f = {69, p->pos, FUNC};
+    void *res_69;
     token_t *_name;
     ast_expr_t *_expr;
-    res_80 = enter_frame(p, &f) && (
+    res_69 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_80);
+    return exit_frame(p, &f, res_69);
 }
 
 static void *call_arg_2(parser_t *p) {
-    const frame_t f = {81, p->pos, FUNC};
-    void *res_81;
+    const frame_t f = {70, p->pos, FUNC};
+    void *res_70;
     token_t *_name;
     ast_expr_t *_expr;
-    res_81 = enter_frame(p, &f) && (
+    res_70 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_81);
+    return exit_frame(p, &f, res_70);
 }
 
 static void *call_arg_3(parser_t *p) {
-    const frame_t f = {82, p->pos, FUNC};
-    void *res_82;
+    const frame_t f = {71, p->pos, FUNC};
+    void *res_71;
     ast_expr_t *_expr;
-    res_82 = enter_frame(p, &f) && (
+    res_71 = enter_frame(p, &f) && (
         (consume(p, 38, "**")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_82);
+    return exit_frame(p, &f, res_71);
 }
 
 static void *call_arg_4(parser_t *p) {
-    const frame_t f = {83, p->pos, FUNC};
-    void *res_83;
+    const frame_t f = {72, p->pos, FUNC};
+    void *res_72;
     ast_expr_t *_expr;
-    res_83 = enter_frame(p, &f) && (
+    res_72 = enter_frame(p, &f) && (
         (consume(p, 23, "*")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_83);
+    return exit_frame(p, &f, res_72);
 }
 
 // typed_arg_list:
@@ -1696,29 +1467,29 @@ static void *call_arg_4(parser_t *p) {
 //     | args_kwargs
 //     | full_arg_list
 static void *typed_arg_list(parser_t *p) {
-    const frame_t f = {84, p->pos, FUNC};
-    void *res_84;
-    void *alt_84;
-    res_84 = enter_frame(p, &f) && (
-        (alt_84 = kwargs(p)) ||
-        (alt_84 = args_kwargs(p)) ||
-        (alt_84 = full_arg_list(p))
-    ) ? alt_84 : 0;
-    return exit_frame(p, &f, res_84);
+    const frame_t f = {73, p->pos, FUNC};
+    void *res_73;
+    void *alt_73;
+    res_73 = enter_frame(p, &f) && (
+        (alt_73 = kwargs(p)) ||
+        (alt_73 = args_kwargs(p)) ||
+        (alt_73 = full_arg_list(p))
+    ) ? alt_73 : 0;
+    return exit_frame(p, &f, res_73);
 }
 
 // full_arg_list:
 //     | ','.default_arg+ [',' [kwargs | args_kwargs]]
 static void *full_arg_list(parser_t *p) {
-    const frame_t f = {85, p->pos, FUNC};
-    void *res_85;
+    const frame_t f = {74, p->pos, FUNC};
+    void *res_74;
     ast_list_t *_default_args;
     void *_full_arg_list_2;
-    res_85 = enter_frame(p, &f) && (
+    res_74 = enter_frame(p, &f) && (
         (_default_args = default_arg_delimited(p)) &&
         (_full_arg_list_2 = full_arg_list_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_85);
+    return exit_frame(p, &f, res_74);
 }
 
 static ast_list_t *default_arg_delimited(parser_t *p) {
@@ -1738,42 +1509,42 @@ static ast_list_t *default_arg_delimited(parser_t *p) {
 }
 
 static void *full_arg_list_2(parser_t *p) {
-    const frame_t f = {86, p->pos, FUNC};
-    void *res_86;
+    const frame_t f = {75, p->pos, FUNC};
+    void *res_75;
     void *_kwargs_or_args_kwargs;
-    res_86 = enter_frame(p, &f) && (
+    res_75 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_kwargs_or_args_kwargs = full_arg_list_2_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_86);
+    return exit_frame(p, &f, res_75);
 }
 
 static void *full_arg_list_2_2(parser_t *p) {
-    const frame_t f = {87, p->pos, FUNC};
-    void *res_87;
-    void *alt_87;
-    res_87 = enter_frame(p, &f) && (
-        (alt_87 = kwargs(p)) ||
-        (alt_87 = args_kwargs(p))
-    ) ? alt_87 : 0;
-    return exit_frame(p, &f, res_87);
+    const frame_t f = {76, p->pos, FUNC};
+    void *res_76;
+    void *alt_76;
+    res_76 = enter_frame(p, &f) && (
+        (alt_76 = kwargs(p)) ||
+        (alt_76 = args_kwargs(p))
+    ) ? alt_76 : 0;
+    return exit_frame(p, &f, res_76);
 }
 
 // args_kwargs:
 //     | '*' [typed_arg] (',' default_arg)* [',' [kwargs]]
 static void *args_kwargs(parser_t *p) {
-    const frame_t f = {88, p->pos, FUNC};
-    void *res_88;
+    const frame_t f = {77, p->pos, FUNC};
+    void *res_77;
     void *_typed_arg;
     ast_list_t *_comma_default_args;
     void *_args_kwargs_4;
-    res_88 = enter_frame(p, &f) && (
+    res_77 = enter_frame(p, &f) && (
         (consume(p, 23, "*")) &&
         (_typed_arg = typed_arg(p), 1) &&
         (_comma_default_args = args_kwargs_3_loop(p)) &&
         (_args_kwargs_4 = args_kwargs_4(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_88);
+    return exit_frame(p, &f, res_77);
 }
 
 static ast_list_t *args_kwargs_3_loop(parser_t *p) {
@@ -1786,127 +1557,127 @@ static ast_list_t *args_kwargs_3_loop(parser_t *p) {
 }
 
 static void *args_kwargs_3(parser_t *p) {
-    const frame_t f = {89, p->pos, FUNC};
-    void *res_89;
+    const frame_t f = {78, p->pos, FUNC};
+    void *res_78;
     void *_default_arg;
-    res_89 = enter_frame(p, &f) && (
+    res_78 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_default_arg = default_arg(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_89);
+    return exit_frame(p, &f, res_78);
 }
 
 static void *args_kwargs_4(parser_t *p) {
-    const frame_t f = {90, p->pos, FUNC};
-    void *res_90;
+    const frame_t f = {79, p->pos, FUNC};
+    void *res_79;
     void *_kwargs;
-    res_90 = enter_frame(p, &f) && (
+    res_79 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_kwargs = kwargs(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_90);
+    return exit_frame(p, &f, res_79);
 }
 
 // kwargs:
 //     | '**' typed_arg [',']
 static void *kwargs(parser_t *p) {
-    const frame_t f = {91, p->pos, FUNC};
-    void *res_91;
+    const frame_t f = {80, p->pos, FUNC};
+    void *res_80;
     void *_typed_arg;
     token_t *_is_comma;
-    res_91 = enter_frame(p, &f) && (
+    res_80 = enter_frame(p, &f) && (
         (consume(p, 38, "**")) &&
         (_typed_arg = typed_arg(p)) &&
         (_is_comma = consume(p, 7, ","), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_91);
+    return exit_frame(p, &f, res_80);
 }
 
 // default_arg:
 //     | typed_arg ['=' expr]
 static void *default_arg(parser_t *p) {
-    const frame_t f = {92, p->pos, FUNC};
-    void *res_92;
+    const frame_t f = {81, p->pos, FUNC};
+    void *res_81;
     void *_typed_arg;
     void *_assign_expr;
-    res_92 = enter_frame(p, &f) && (
+    res_81 = enter_frame(p, &f) && (
         (_typed_arg = typed_arg(p)) &&
         (_assign_expr = default_arg_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_92);
+    return exit_frame(p, &f, res_81);
 }
 
 static void *default_arg_2(parser_t *p) {
-    const frame_t f = {93, p->pos, FUNC};
-    void *res_93;
+    const frame_t f = {82, p->pos, FUNC};
+    void *res_82;
     ast_expr_t *_expr;
-    res_93 = enter_frame(p, &f) && (
+    res_82 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_93);
+    return exit_frame(p, &f, res_82);
 }
 
 // typed_arg:
 //     | NAME [':' expr]
 static void *typed_arg(parser_t *p) {
-    const frame_t f = {94, p->pos, FUNC};
-    void *res_94;
+    const frame_t f = {83, p->pos, FUNC};
+    void *res_83;
     token_t *_name;
     void *_colon_expr;
-    res_94 = enter_frame(p, &f) && (
+    res_83 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_colon_expr = typed_arg_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_94);
+    return exit_frame(p, &f, res_83);
 }
 
 static void *typed_arg_2(parser_t *p) {
-    const frame_t f = {95, p->pos, FUNC};
-    void *res_95;
+    const frame_t f = {84, p->pos, FUNC};
+    void *res_84;
     ast_expr_t *_expr;
-    res_95 = enter_frame(p, &f) && (
+    res_84 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_95);
+    return exit_frame(p, &f, res_84);
 }
 
 // simple_arg:
 //     | NAME ['=' expr]
 static void *simple_arg(parser_t *p) {
-    const frame_t f = {96, p->pos, FUNC};
-    void *res_96;
+    const frame_t f = {85, p->pos, FUNC};
+    void *res_85;
     token_t *_name;
     void *_assign_expr;
-    res_96 = enter_frame(p, &f) && (
+    res_85 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_assign_expr = simple_arg_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_96);
+    return exit_frame(p, &f, res_85);
 }
 
 static void *simple_arg_2(parser_t *p) {
-    const frame_t f = {97, p->pos, FUNC};
-    void *res_97;
+    const frame_t f = {86, p->pos, FUNC};
+    void *res_86;
     ast_expr_t *_expr;
-    res_97 = enter_frame(p, &f) && (
+    res_86 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_97);
+    return exit_frame(p, &f, res_86);
 }
 
 // simple_args:
 //     | ','.simple_arg+
 static void *simple_args(parser_t *p) {
-    const frame_t f = {98, p->pos, FUNC};
-    void *res_98;
+    const frame_t f = {87, p->pos, FUNC};
+    void *res_87;
     ast_list_t *_simple_args;
-    res_98 = enter_frame(p, &f) && (
+    res_87 = enter_frame(p, &f) && (
         (_simple_args = simple_arg_delimited(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_98);
+    return exit_frame(p, &f, res_87);
 }
 
 static ast_list_t *simple_arg_delimited(parser_t *p) {
@@ -1928,81 +1699,81 @@ static ast_list_t *simple_arg_delimited(parser_t *p) {
 // builder_hint:
 //     | '<' name_list '>'
 static void *builder_hint(parser_t *p) {
-    const frame_t f = {99, p->pos, FUNC};
-    void *res_99;
+    const frame_t f = {88, p->pos, FUNC};
+    void *res_88;
     void *_name_list;
-    res_99 = enter_frame(p, &f) && (
+    res_88 = enter_frame(p, &f) && (
         (consume(p, 19, "<")) &&
         (_name_list = name_list(p)) &&
         (consume(p, 20, ">"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_99);
+    return exit_frame(p, &f, res_88);
 }
 
 // builder_args:
 //     | simple_args
 //     | '(' [typed_arg_list] ')'
 static void *builder_args(parser_t *p) {
-    const frame_t f = {100, p->pos, FUNC};
-    void *res_100;
-    void *alt_100;
-    res_100 = enter_frame(p, &f) && (
-        (alt_100 = simple_args(p)) ||
-        (alt_100 = builder_args_2(p))
-    ) ? alt_100 : 0;
-    return exit_frame(p, &f, res_100);
+    const frame_t f = {89, p->pos, FUNC};
+    void *res_89;
+    void *alt_89;
+    res_89 = enter_frame(p, &f) && (
+        (alt_89 = simple_args(p)) ||
+        (alt_89 = builder_args_2(p))
+    ) ? alt_89 : 0;
+    return exit_frame(p, &f, res_89);
 }
 
 static void *builder_args_2(parser_t *p) {
-    const frame_t f = {101, p->pos, FUNC};
-    void *res_101;
+    const frame_t f = {90, p->pos, FUNC};
+    void *res_90;
     void *_typed_arg_list;
-    res_101 = enter_frame(p, &f) && (
+    res_90 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (_typed_arg_list = typed_arg_list(p), 1) &&
         (consume(p, 14, ")"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_101);
+    return exit_frame(p, &f, res_90);
 }
 
 // named_expr:
 //     | NAME ':=' expr
 //     | expr
 static ast_named_t *named_expr(parser_t *p) {
-    const frame_t f = {102, p->pos, FUNC};
-    ast_named_t *res_102;
+    const frame_t f = {91, p->pos, FUNC};
+    ast_named_t *res_91;
     ast_expr_t *_expr;
-    ast_named_t *alt_102;
-    res_102 = enter_frame(p, &f) && (
-        (alt_102 = named_expr_1(p)) || (
+    ast_named_t *alt_91;
+    res_91 = enter_frame(p, &f) && (
+        (alt_91 = named_expr_1(p)) || (
             (_expr = expr(p)) &&
-            (alt_102 = ast_unnamed(p, _expr)))
-    ) ? alt_102 : 0;
-    return exit_frame(p, &f, res_102);
+            (alt_91 = ast_unnamed(p, _expr)))
+    ) ? alt_91 : 0;
+    return exit_frame(p, &f, res_91);
 }
 
 static ast_named_t *named_expr_1(parser_t *p) {
-    const frame_t f = {103, p->pos, FUNC};
-    ast_named_t *res_103;
+    const frame_t f = {92, p->pos, FUNC};
+    ast_named_t *res_92;
     token_t *_name;
     ast_expr_t *_expr;
-    res_103 = enter_frame(p, &f) && (
+    res_92 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
         (_expr = expr(p))
     ) ? ast_named(p, _name, _expr) : 0;
-    return exit_frame(p, &f, res_103);
+    return exit_frame(p, &f, res_92);
 }
 
 // conditional:
 //     | 'if' disjunction '?' disjunction ':' expr
 static ast_expr_t *conditional(parser_t *p) {
-    const frame_t f = {104, p->pos, FUNC};
-    ast_expr_t *res_104;
+    const frame_t f = {93, p->pos, FUNC};
+    ast_expr_t *res_93;
     ast_expr_t *_disjunction;
     ast_expr_t *_disjunction_1;
     ast_expr_t *_expr;
-    res_104 = enter_frame(p, &f) && (
+    res_93 = enter_frame(p, &f) && (
         (consume(p, 56, "if")) &&
         (_disjunction = disjunction(p)) &&
         (consume(p, 10, "?")) &&
@@ -2010,158 +1781,158 @@ static ast_expr_t *conditional(parser_t *p) {
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
     ) ? ast_conditional(p, _disjunction, _disjunction_1, _expr) : 0;
-    return exit_frame(p, &f, res_104);
+    return exit_frame(p, &f, res_93);
 }
 
 // expr:
 //     | conditional
 //     | disjunction
 static ast_expr_t *expr(parser_t *p) {
-    const frame_t f = {105, p->pos, FUNC};
-    ast_expr_t *res_105;
-    ast_expr_t *alt_105;
-    res_105 = enter_frame(p, &f) && (
-        (alt_105 = conditional(p)) ||
-        (alt_105 = disjunction(p))
-    ) ? alt_105 : 0;
-    return exit_frame(p, &f, res_105);
+    const frame_t f = {94, p->pos, FUNC};
+    ast_expr_t *res_94;
+    ast_expr_t *alt_94;
+    res_94 = enter_frame(p, &f) && (
+        (alt_94 = conditional(p)) ||
+        (alt_94 = disjunction(p))
+    ) ? alt_94 : 0;
+    return exit_frame(p, &f, res_94);
 }
 
 // disjunction (left_recursive):
 //     | disjunction 'or' conjunction
 //     | conjunction
 static ast_expr_t *disjunction(parser_t *p) {
-    const frame_t f = {106, p->pos, FUNC};
-    ast_expr_t *res_106 = 0;
-    if (is_memoized(p, &f, (void **) &res_106)) {
-        return res_106;
+    const frame_t f = {95, p->pos, FUNC};
+    ast_expr_t *res_95 = 0;
+    if (is_memoized(p, &f, (void **) &res_95)) {
+        return res_95;
     }
-    ast_expr_t *alt_106;
+    ast_expr_t *alt_95;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_106;
+            max = res_95;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_106 = (
-                (alt_106 = disjunction_1(p)) ||
-                (alt_106 = conjunction(p))
-            ) ? alt_106 : 0;
+            res_95 = (
+                (alt_95 = disjunction_1(p)) ||
+                (alt_95 = conjunction(p))
+            ) ? alt_95 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_106 = max;
+        res_95 = max;
     }
-    insert_memo(p, &f, res_106);
-    return exit_frame(p, &f, res_106);
+    insert_memo(p, &f, res_95);
+    return exit_frame(p, &f, res_95);
 }
 
 static ast_expr_t *disjunction_1(parser_t *p) {
-    const frame_t f = {107, p->pos, FUNC};
-    ast_expr_t *res_107;
+    const frame_t f = {96, p->pos, FUNC};
+    ast_expr_t *res_96;
     ast_expr_t *_disjunction;
     ast_expr_t *_conjunction;
-    res_107 = enter_frame(p, &f) && (
+    res_96 = enter_frame(p, &f) && (
         (_disjunction = disjunction(p)) &&
         (consume(p, 60, "or")) &&
         (_conjunction = conjunction(p))
     ) ? ast_binary(p, _disjunction, _conjunction, LOGIC_OR) : 0;
-    return exit_frame(p, &f, res_107);
+    return exit_frame(p, &f, res_96);
 }
 
 // conjunction (left_recursive):
 //     | conjunction 'and' inversion
 //     | inversion
 static ast_expr_t *conjunction(parser_t *p) {
-    const frame_t f = {108, p->pos, FUNC};
-    ast_expr_t *res_108 = 0;
-    if (is_memoized(p, &f, (void **) &res_108)) {
-        return res_108;
+    const frame_t f = {97, p->pos, FUNC};
+    ast_expr_t *res_97 = 0;
+    if (is_memoized(p, &f, (void **) &res_97)) {
+        return res_97;
     }
-    ast_expr_t *alt_108;
+    ast_expr_t *alt_97;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_108;
+            max = res_97;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_108 = (
-                (alt_108 = conjunction_1(p)) ||
-                (alt_108 = inversion(p))
-            ) ? alt_108 : 0;
+            res_97 = (
+                (alt_97 = conjunction_1(p)) ||
+                (alt_97 = inversion(p))
+            ) ? alt_97 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_108 = max;
+        res_97 = max;
     }
-    insert_memo(p, &f, res_108);
-    return exit_frame(p, &f, res_108);
+    insert_memo(p, &f, res_97);
+    return exit_frame(p, &f, res_97);
 }
 
 static ast_expr_t *conjunction_1(parser_t *p) {
-    const frame_t f = {109, p->pos, FUNC};
-    ast_expr_t *res_109;
+    const frame_t f = {98, p->pos, FUNC};
+    ast_expr_t *res_98;
     ast_expr_t *_conjunction;
     ast_expr_t *_inversion;
-    res_109 = enter_frame(p, &f) && (
+    res_98 = enter_frame(p, &f) && (
         (_conjunction = conjunction(p)) &&
         (consume(p, 59, "and")) &&
         (_inversion = inversion(p))
     ) ? ast_binary(p, _conjunction, _inversion, LOGIC_AND) : 0;
-    return exit_frame(p, &f, res_109);
+    return exit_frame(p, &f, res_98);
 }
 
 // inversion:
 //     | 'not' inversion
 //     | comparison
 static ast_expr_t *inversion(parser_t *p) {
-    const frame_t f = {110, p->pos, FUNC};
-    ast_expr_t *res_110;
-    ast_expr_t *alt_110;
-    res_110 = enter_frame(p, &f) && (
-        (alt_110 = inversion_1(p)) ||
-        (alt_110 = comparison(p))
-    ) ? alt_110 : 0;
-    return exit_frame(p, &f, res_110);
+    const frame_t f = {99, p->pos, FUNC};
+    ast_expr_t *res_99;
+    ast_expr_t *alt_99;
+    res_99 = enter_frame(p, &f) && (
+        (alt_99 = inversion_1(p)) ||
+        (alt_99 = comparison(p))
+    ) ? alt_99 : 0;
+    return exit_frame(p, &f, res_99);
 }
 
 static ast_expr_t *inversion_1(parser_t *p) {
-    const frame_t f = {111, p->pos, FUNC};
-    ast_expr_t *res_111;
+    const frame_t f = {100, p->pos, FUNC};
+    ast_expr_t *res_100;
     ast_expr_t *_inversion;
-    res_111 = enter_frame(p, &f) && (
+    res_100 = enter_frame(p, &f) && (
         (consume(p, 61, "not")) &&
         (_inversion = inversion(p))
     ) ? ast_unary(p, _inversion, LOGIC_NOT) : 0;
-    return exit_frame(p, &f, res_111);
+    return exit_frame(p, &f, res_100);
 }
 
 // comparison:
 //     | bitwise_or (comp_op bitwise_or)+
 //     | bitwise_or
 static ast_expr_t *comparison(parser_t *p) {
-    const frame_t f = {112, p->pos, FUNC};
-    ast_expr_t *res_112;
-    ast_expr_t *alt_112;
-    res_112 = enter_frame(p, &f) && (
-        (alt_112 = comparison_1(p)) ||
-        (alt_112 = bitwise_or(p))
-    ) ? alt_112 : 0;
-    return exit_frame(p, &f, res_112);
+    const frame_t f = {101, p->pos, FUNC};
+    ast_expr_t *res_101;
+    ast_expr_t *alt_101;
+    res_101 = enter_frame(p, &f) && (
+        (alt_101 = comparison_1(p)) ||
+        (alt_101 = bitwise_or(p))
+    ) ? alt_101 : 0;
+    return exit_frame(p, &f, res_101);
 }
 
 static ast_expr_t *comparison_1(parser_t *p) {
-    const frame_t f = {113, p->pos, FUNC};
-    ast_expr_t *res_113;
+    const frame_t f = {102, p->pos, FUNC};
+    ast_expr_t *res_102;
     ast_expr_t *_bitwise_or;
     ast_list_t *_comp_op_bitwise_ors;
-    res_113 = enter_frame(p, &f) && (
+    res_102 = enter_frame(p, &f) && (
         (_bitwise_or = bitwise_or(p)) &&
         (_comp_op_bitwise_ors = comparison_1_2_loop(p))
     ) ? ast_comparison(p, _bitwise_or, _comp_op_bitwise_ors) : 0;
-    return exit_frame(p, &f, res_113);
+    return exit_frame(p, &f, res_102);
 }
 
 static ast_list_t *comparison_1_2_loop(parser_t *p) {
@@ -2177,15 +1948,15 @@ static ast_list_t *comparison_1_2_loop(parser_t *p) {
 }
 
 static ast_expr_t *comparison_1_2(parser_t *p) {
-    const frame_t f = {114, p->pos, FUNC};
-    ast_expr_t *res_114;
+    const frame_t f = {103, p->pos, FUNC};
+    ast_expr_t *res_103;
     int *_comp_op;
     ast_expr_t *_bitwise_or;
-    res_114 = enter_frame(p, &f) && (
+    res_103 = enter_frame(p, &f) && (
         (_comp_op = comp_op(p)) &&
         (_bitwise_or = bitwise_or(p))
     ) ? ast_comp_term(p, _comp_op, _bitwise_or) : 0;
-    return exit_frame(p, &f, res_114);
+    return exit_frame(p, &f, res_103);
 }
 
 // comp_op:
@@ -2200,187 +1971,187 @@ static ast_expr_t *comparison_1_2(parser_t *p) {
 //     | 'is'
 //     | 'is' 'not'
 static int *comp_op(parser_t *p) {
-    const frame_t f = {115, p->pos, FUNC};
-    int *res_115;
-    int *alt_115;
-    res_115 = enter_frame(p, &f) && ((
+    const frame_t f = {104, p->pos, FUNC};
+    int *res_104;
+    int *alt_104;
+    res_104 = enter_frame(p, &f) && ((
             (consume(p, 19, "<")) &&
-            (alt_115 = ast_integer(p, CMP_LT))
+            (alt_104 = ast_integer(p, CMP_LT))
         ) || (
             (consume(p, 20, ">")) &&
-            (alt_115 = ast_integer(p, CMP_GT))
+            (alt_104 = ast_integer(p, CMP_GT))
         ) || (
             (consume(p, 31, "==")) &&
-            (alt_115 = ast_integer(p, CMP_EQ))
+            (alt_104 = ast_integer(p, CMP_EQ))
         ) || (
             (consume(p, 34, ">=")) &&
-            (alt_115 = ast_integer(p, CMP_GE))
+            (alt_104 = ast_integer(p, CMP_GE))
         ) || (
             (consume(p, 33, "<=")) &&
-            (alt_115 = ast_integer(p, CMP_LE))
+            (alt_104 = ast_integer(p, CMP_LE))
         ) || (
             (consume(p, 32, "!=")) &&
-            (alt_115 = ast_integer(p, CMP_NE))
+            (alt_104 = ast_integer(p, CMP_NE))
         ) || (
             (consume(p, 63, "in")) &&
-            (alt_115 = ast_integer(p, CMP_IN))
+            (alt_104 = ast_integer(p, CMP_IN))
         ) ||
-        (alt_115 = comp_op_8(p)) || (
+        (alt_104 = comp_op_8(p)) || (
             (consume(p, 62, "is")) &&
-            (alt_115 = ast_integer(p, CMP_IS))
+            (alt_104 = ast_integer(p, CMP_IS))
         ) ||
-        (alt_115 = comp_op_10(p))
-    ) ? alt_115 : 0;
-    return exit_frame(p, &f, res_115);
+        (alt_104 = comp_op_10(p))
+    ) ? alt_104 : 0;
+    return exit_frame(p, &f, res_104);
 }
 
 static int *comp_op_8(parser_t *p) {
-    const frame_t f = {116, p->pos, FUNC};
-    int *res_116;
-    res_116 = enter_frame(p, &f) && (
+    const frame_t f = {105, p->pos, FUNC};
+    int *res_105;
+    res_105 = enter_frame(p, &f) && (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
     ) ? ast_integer(p, CMP_NI) : 0;
-    return exit_frame(p, &f, res_116);
+    return exit_frame(p, &f, res_105);
 }
 
 static int *comp_op_10(parser_t *p) {
-    const frame_t f = {117, p->pos, FUNC};
-    int *res_117;
-    res_117 = enter_frame(p, &f) && (
+    const frame_t f = {106, p->pos, FUNC};
+    int *res_106;
+    res_106 = enter_frame(p, &f) && (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
     ) ? ast_integer(p, CMP_NS) : 0;
-    return exit_frame(p, &f, res_117);
+    return exit_frame(p, &f, res_106);
 }
 
 // bitwise_or (left_recursive):
 //     | bitwise_or '|' bitwise_xor
 //     | bitwise_xor
 static ast_expr_t *bitwise_or(parser_t *p) {
-    const frame_t f = {118, p->pos, FUNC};
-    ast_expr_t *res_118 = 0;
-    if (is_memoized(p, &f, (void **) &res_118)) {
-        return res_118;
+    const frame_t f = {107, p->pos, FUNC};
+    ast_expr_t *res_107 = 0;
+    if (is_memoized(p, &f, (void **) &res_107)) {
+        return res_107;
     }
-    ast_expr_t *alt_118;
+    ast_expr_t *alt_107;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_118;
+            max = res_107;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_118 = (
-                (alt_118 = bitwise_or_1(p)) ||
-                (alt_118 = bitwise_xor(p))
-            ) ? alt_118 : 0;
+            res_107 = (
+                (alt_107 = bitwise_or_1(p)) ||
+                (alt_107 = bitwise_xor(p))
+            ) ? alt_107 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_118 = max;
+        res_107 = max;
     }
-    insert_memo(p, &f, res_118);
-    return exit_frame(p, &f, res_118);
+    insert_memo(p, &f, res_107);
+    return exit_frame(p, &f, res_107);
 }
 
 static ast_expr_t *bitwise_or_1(parser_t *p) {
-    const frame_t f = {119, p->pos, FUNC};
-    ast_expr_t *res_119;
+    const frame_t f = {108, p->pos, FUNC};
+    ast_expr_t *res_108;
     ast_expr_t *_bitwise_or;
     ast_expr_t *_bitwise_xor;
-    res_119 = enter_frame(p, &f) && (
+    res_108 = enter_frame(p, &f) && (
         (_bitwise_or = bitwise_or(p)) &&
         (consume(p, 27, "|")) &&
         (_bitwise_xor = bitwise_xor(p))
     ) ? ast_binary(p, _bitwise_or, _bitwise_xor, BINOP_IOR) : 0;
-    return exit_frame(p, &f, res_119);
+    return exit_frame(p, &f, res_108);
 }
 
 // bitwise_xor (left_recursive):
 //     | bitwise_xor '^' bitwise_and
 //     | bitwise_and
 static ast_expr_t *bitwise_xor(parser_t *p) {
-    const frame_t f = {120, p->pos, FUNC};
-    ast_expr_t *res_120 = 0;
-    if (is_memoized(p, &f, (void **) &res_120)) {
-        return res_120;
+    const frame_t f = {109, p->pos, FUNC};
+    ast_expr_t *res_109 = 0;
+    if (is_memoized(p, &f, (void **) &res_109)) {
+        return res_109;
     }
-    ast_expr_t *alt_120;
+    ast_expr_t *alt_109;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_120;
+            max = res_109;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_120 = (
-                (alt_120 = bitwise_xor_1(p)) ||
-                (alt_120 = bitwise_and(p))
-            ) ? alt_120 : 0;
+            res_109 = (
+                (alt_109 = bitwise_xor_1(p)) ||
+                (alt_109 = bitwise_and(p))
+            ) ? alt_109 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_120 = max;
+        res_109 = max;
     }
-    insert_memo(p, &f, res_120);
-    return exit_frame(p, &f, res_120);
+    insert_memo(p, &f, res_109);
+    return exit_frame(p, &f, res_109);
 }
 
 static ast_expr_t *bitwise_xor_1(parser_t *p) {
-    const frame_t f = {121, p->pos, FUNC};
-    ast_expr_t *res_121;
+    const frame_t f = {110, p->pos, FUNC};
+    ast_expr_t *res_110;
     ast_expr_t *_bitwise_xor;
     ast_expr_t *_bitwise_and;
-    res_121 = enter_frame(p, &f) && (
+    res_110 = enter_frame(p, &f) && (
         (_bitwise_xor = bitwise_xor(p)) &&
         (consume(p, 30, "^")) &&
         (_bitwise_and = bitwise_and(p))
     ) ? ast_binary(p, _bitwise_xor, _bitwise_and, BINOP_XOR) : 0;
-    return exit_frame(p, &f, res_121);
+    return exit_frame(p, &f, res_110);
 }
 
 // bitwise_and (left_recursive):
 //     | bitwise_and '&' shift_expr
 //     | shift_expr
 static ast_expr_t *bitwise_and(parser_t *p) {
-    const frame_t f = {122, p->pos, FUNC};
-    ast_expr_t *res_122 = 0;
-    if (is_memoized(p, &f, (void **) &res_122)) {
-        return res_122;
+    const frame_t f = {111, p->pos, FUNC};
+    ast_expr_t *res_111 = 0;
+    if (is_memoized(p, &f, (void **) &res_111)) {
+        return res_111;
     }
-    ast_expr_t *alt_122;
+    ast_expr_t *alt_111;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_122;
+            max = res_111;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_122 = (
-                (alt_122 = bitwise_and_1(p)) ||
-                (alt_122 = shift_expr(p))
-            ) ? alt_122 : 0;
+            res_111 = (
+                (alt_111 = bitwise_and_1(p)) ||
+                (alt_111 = shift_expr(p))
+            ) ? alt_111 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_122 = max;
+        res_111 = max;
     }
-    insert_memo(p, &f, res_122);
-    return exit_frame(p, &f, res_122);
+    insert_memo(p, &f, res_111);
+    return exit_frame(p, &f, res_111);
 }
 
 static ast_expr_t *bitwise_and_1(parser_t *p) {
-    const frame_t f = {123, p->pos, FUNC};
-    ast_expr_t *res_123;
+    const frame_t f = {112, p->pos, FUNC};
+    ast_expr_t *res_112;
     ast_expr_t *_bitwise_and;
     ast_expr_t *_shift_expr;
-    res_123 = enter_frame(p, &f) && (
+    res_112 = enter_frame(p, &f) && (
         (_bitwise_and = bitwise_and(p)) &&
         (consume(p, 28, "&")) &&
         (_shift_expr = shift_expr(p))
     ) ? ast_binary(p, _bitwise_and, _shift_expr, BINOP_AND) : 0;
-    return exit_frame(p, &f, res_123);
+    return exit_frame(p, &f, res_112);
 }
 
 // shift_expr (left_recursive):
@@ -2388,57 +2159,57 @@ static ast_expr_t *bitwise_and_1(parser_t *p) {
 //     | shift_expr '>>' sum
 //     | sum
 static ast_expr_t *shift_expr(parser_t *p) {
-    const frame_t f = {124, p->pos, FUNC};
-    ast_expr_t *res_124 = 0;
-    if (is_memoized(p, &f, (void **) &res_124)) {
-        return res_124;
+    const frame_t f = {113, p->pos, FUNC};
+    ast_expr_t *res_113 = 0;
+    if (is_memoized(p, &f, (void **) &res_113)) {
+        return res_113;
     }
-    ast_expr_t *alt_124;
+    ast_expr_t *alt_113;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_124;
+            max = res_113;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_124 = (
-                (alt_124 = shift_expr_1(p)) ||
-                (alt_124 = shift_expr_2(p)) ||
-                (alt_124 = sum(p))
-            ) ? alt_124 : 0;
+            res_113 = (
+                (alt_113 = shift_expr_1(p)) ||
+                (alt_113 = shift_expr_2(p)) ||
+                (alt_113 = sum(p))
+            ) ? alt_113 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_124 = max;
+        res_113 = max;
     }
-    insert_memo(p, &f, res_124);
-    return exit_frame(p, &f, res_124);
+    insert_memo(p, &f, res_113);
+    return exit_frame(p, &f, res_113);
 }
 
 static ast_expr_t *shift_expr_1(parser_t *p) {
-    const frame_t f = {125, p->pos, FUNC};
-    ast_expr_t *res_125;
+    const frame_t f = {114, p->pos, FUNC};
+    ast_expr_t *res_114;
     ast_expr_t *_shift_expr;
     ast_expr_t *_sum;
-    res_125 = enter_frame(p, &f) && (
+    res_114 = enter_frame(p, &f) && (
         (_shift_expr = shift_expr(p)) &&
         (consume(p, 48, "<<")) &&
         (_sum = sum(p))
     ) ? ast_binary(p, _shift_expr, _sum, BINOP_SHL) : 0;
-    return exit_frame(p, &f, res_125);
+    return exit_frame(p, &f, res_114);
 }
 
 static ast_expr_t *shift_expr_2(parser_t *p) {
-    const frame_t f = {126, p->pos, FUNC};
-    ast_expr_t *res_126;
+    const frame_t f = {115, p->pos, FUNC};
+    ast_expr_t *res_115;
     ast_expr_t *_shift_expr;
     ast_expr_t *_sum;
-    res_126 = enter_frame(p, &f) && (
+    res_115 = enter_frame(p, &f) && (
         (_shift_expr = shift_expr(p)) &&
         (consume(p, 49, ">>")) &&
         (_sum = sum(p))
     ) ? ast_binary(p, _shift_expr, _sum, BINOP_SHR) : 0;
-    return exit_frame(p, &f, res_126);
+    return exit_frame(p, &f, res_115);
 }
 
 // sum (left_recursive):
@@ -2446,57 +2217,57 @@ static ast_expr_t *shift_expr_2(parser_t *p) {
 //     | sum '-' term
 //     | term
 static ast_expr_t *sum(parser_t *p) {
-    const frame_t f = {127, p->pos, FUNC};
-    ast_expr_t *res_127 = 0;
-    if (is_memoized(p, &f, (void **) &res_127)) {
-        return res_127;
+    const frame_t f = {116, p->pos, FUNC};
+    ast_expr_t *res_116 = 0;
+    if (is_memoized(p, &f, (void **) &res_116)) {
+        return res_116;
     }
-    ast_expr_t *alt_127;
+    ast_expr_t *alt_116;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_127;
+            max = res_116;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_127 = (
-                (alt_127 = sum_1(p)) ||
-                (alt_127 = sum_2(p)) ||
-                (alt_127 = term(p))
-            ) ? alt_127 : 0;
+            res_116 = (
+                (alt_116 = sum_1(p)) ||
+                (alt_116 = sum_2(p)) ||
+                (alt_116 = term(p))
+            ) ? alt_116 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_127 = max;
+        res_116 = max;
     }
-    insert_memo(p, &f, res_127);
-    return exit_frame(p, &f, res_127);
+    insert_memo(p, &f, res_116);
+    return exit_frame(p, &f, res_116);
 }
 
 static ast_expr_t *sum_1(parser_t *p) {
-    const frame_t f = {128, p->pos, FUNC};
-    ast_expr_t *res_128;
+    const frame_t f = {117, p->pos, FUNC};
+    ast_expr_t *res_117;
     ast_expr_t *_sum;
     ast_expr_t *_term;
-    res_128 = enter_frame(p, &f) && (
+    res_117 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
         (_term = term(p))
     ) ? ast_binary(p, _sum, _term, BINOP_PLS) : 0;
-    return exit_frame(p, &f, res_128);
+    return exit_frame(p, &f, res_117);
 }
 
 static ast_expr_t *sum_2(parser_t *p) {
-    const frame_t f = {129, p->pos, FUNC};
-    ast_expr_t *res_129;
+    const frame_t f = {118, p->pos, FUNC};
+    ast_expr_t *res_118;
     ast_expr_t *_sum;
     ast_expr_t *_term;
-    res_129 = enter_frame(p, &f) && (
+    res_118 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
         (_term = term(p))
     ) ? ast_binary(p, _sum, _term, BINOP_MIN) : 0;
-    return exit_frame(p, &f, res_129);
+    return exit_frame(p, &f, res_118);
 }
 
 // term (left_recursive):
@@ -2507,142 +2278,142 @@ static ast_expr_t *sum_2(parser_t *p) {
 //     | term '@' pipe_expr
 //     | pipe_expr
 static ast_expr_t *term(parser_t *p) {
-    const frame_t f = {130, p->pos, FUNC};
-    ast_expr_t *res_130 = 0;
-    if (is_memoized(p, &f, (void **) &res_130)) {
-        return res_130;
+    const frame_t f = {119, p->pos, FUNC};
+    ast_expr_t *res_119 = 0;
+    if (is_memoized(p, &f, (void **) &res_119)) {
+        return res_119;
     }
-    ast_expr_t *alt_130;
+    ast_expr_t *alt_119;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_130;
+            max = res_119;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_130 = (
-                (alt_130 = term_1(p)) ||
-                (alt_130 = term_2(p)) ||
-                (alt_130 = term_3(p)) ||
-                (alt_130 = term_4(p)) ||
-                (alt_130 = term_5(p)) ||
-                (alt_130 = pipe_expr(p))
-            ) ? alt_130 : 0;
+            res_119 = (
+                (alt_119 = term_1(p)) ||
+                (alt_119 = term_2(p)) ||
+                (alt_119 = term_3(p)) ||
+                (alt_119 = term_4(p)) ||
+                (alt_119 = term_5(p)) ||
+                (alt_119 = pipe_expr(p))
+            ) ? alt_119 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_130 = max;
+        res_119 = max;
     }
-    insert_memo(p, &f, res_130);
-    return exit_frame(p, &f, res_130);
+    insert_memo(p, &f, res_119);
+    return exit_frame(p, &f, res_119);
 }
 
 static ast_expr_t *term_1(parser_t *p) {
-    const frame_t f = {131, p->pos, FUNC};
-    ast_expr_t *res_131;
+    const frame_t f = {120, p->pos, FUNC};
+    ast_expr_t *res_120;
     ast_expr_t *_term;
     ast_expr_t *_pipe_expr;
-    res_131 = enter_frame(p, &f) && (
+    res_120 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
         (_pipe_expr = pipe_expr(p))
     ) ? ast_binary(p, _term, _pipe_expr, BINOP_MUL) : 0;
-    return exit_frame(p, &f, res_131);
+    return exit_frame(p, &f, res_120);
 }
 
 static ast_expr_t *term_2(parser_t *p) {
-    const frame_t f = {132, p->pos, FUNC};
-    ast_expr_t *res_132;
+    const frame_t f = {121, p->pos, FUNC};
+    ast_expr_t *res_121;
     ast_expr_t *_term;
     ast_expr_t *_pipe_expr;
-    res_132 = enter_frame(p, &f) && (
+    res_121 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
         (_pipe_expr = pipe_expr(p))
     ) ? ast_binary(p, _term, _pipe_expr, BINOP_DIV) : 0;
-    return exit_frame(p, &f, res_132);
+    return exit_frame(p, &f, res_121);
 }
 
 static ast_expr_t *term_3(parser_t *p) {
-    const frame_t f = {133, p->pos, FUNC};
-    ast_expr_t *res_133;
+    const frame_t f = {122, p->pos, FUNC};
+    ast_expr_t *res_122;
     ast_expr_t *_term;
     ast_expr_t *_pipe_expr;
-    res_133 = enter_frame(p, &f) && (
+    res_122 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
         (_pipe_expr = pipe_expr(p))
     ) ? ast_binary(p, _term, _pipe_expr, BINOP_MOD) : 0;
-    return exit_frame(p, &f, res_133);
+    return exit_frame(p, &f, res_122);
 }
 
 static ast_expr_t *term_4(parser_t *p) {
-    const frame_t f = {134, p->pos, FUNC};
-    ast_expr_t *res_134;
+    const frame_t f = {123, p->pos, FUNC};
+    ast_expr_t *res_123;
     ast_expr_t *_term;
     ast_expr_t *_pipe_expr;
-    res_134 = enter_frame(p, &f) && (
+    res_123 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 37, "//")) &&
         (_pipe_expr = pipe_expr(p))
     ) ? ast_binary(p, _term, _pipe_expr, BINOP_FDV) : 0;
-    return exit_frame(p, &f, res_134);
+    return exit_frame(p, &f, res_123);
 }
 
 static ast_expr_t *term_5(parser_t *p) {
-    const frame_t f = {135, p->pos, FUNC};
-    ast_expr_t *res_135;
+    const frame_t f = {124, p->pos, FUNC};
+    ast_expr_t *res_124;
     ast_expr_t *_term;
     ast_expr_t *_pipe_expr;
-    res_135 = enter_frame(p, &f) && (
+    res_124 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 26, "@")) &&
         (_pipe_expr = pipe_expr(p))
     ) ? ast_binary(p, _term, _pipe_expr, BINOP_MML) : 0;
-    return exit_frame(p, &f, res_135);
+    return exit_frame(p, &f, res_124);
 }
 
 // pipe_expr (left_recursive):
 //     | pipe_expr '->' factor
 //     | factor
 static ast_expr_t *pipe_expr(parser_t *p) {
-    const frame_t f = {136, p->pos, FUNC};
-    ast_expr_t *res_136 = 0;
-    if (is_memoized(p, &f, (void **) &res_136)) {
-        return res_136;
+    const frame_t f = {125, p->pos, FUNC};
+    ast_expr_t *res_125 = 0;
+    if (is_memoized(p, &f, (void **) &res_125)) {
+        return res_125;
     }
-    ast_expr_t *alt_136;
+    ast_expr_t *alt_125;
     size_t maxpos;
     ast_expr_t *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_136;
+            max = res_125;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_136 = (
-                (alt_136 = pipe_expr_1(p)) ||
-                (alt_136 = factor(p))
-            ) ? alt_136 : 0;
+            res_125 = (
+                (alt_125 = pipe_expr_1(p)) ||
+                (alt_125 = factor(p))
+            ) ? alt_125 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_136 = max;
+        res_125 = max;
     }
-    insert_memo(p, &f, res_136);
-    return exit_frame(p, &f, res_136);
+    insert_memo(p, &f, res_125);
+    return exit_frame(p, &f, res_125);
 }
 
 static ast_expr_t *pipe_expr_1(parser_t *p) {
-    const frame_t f = {137, p->pos, FUNC};
-    ast_expr_t *res_137;
+    const frame_t f = {126, p->pos, FUNC};
+    ast_expr_t *res_126;
     ast_expr_t *_pipe_expr;
     ast_expr_t *_factor;
-    res_137 = enter_frame(p, &f) && (
+    res_126 = enter_frame(p, &f) && (
         (_pipe_expr = pipe_expr(p)) &&
         (consume(p, 35, "->")) &&
         (_factor = factor(p))
     ) ? ast_binary(p, _pipe_expr, _factor, BINOP_PIP) : 0;
-    return exit_frame(p, &f, res_137);
+    return exit_frame(p, &f, res_126);
 }
 
 // factor:
@@ -2651,78 +2422,78 @@ static ast_expr_t *pipe_expr_1(parser_t *p) {
 //     | '~' factor
 //     | power
 static ast_expr_t *factor(parser_t *p) {
-    const frame_t f = {138, p->pos, FUNC};
-    ast_expr_t *res_138;
-    ast_expr_t *alt_138;
-    res_138 = enter_frame(p, &f) && (
-        (alt_138 = factor_1(p)) ||
-        (alt_138 = factor_2(p)) ||
-        (alt_138 = factor_3(p)) ||
-        (alt_138 = power(p))
-    ) ? alt_138 : 0;
-    return exit_frame(p, &f, res_138);
+    const frame_t f = {127, p->pos, FUNC};
+    ast_expr_t *res_127;
+    ast_expr_t *alt_127;
+    res_127 = enter_frame(p, &f) && (
+        (alt_127 = factor_1(p)) ||
+        (alt_127 = factor_2(p)) ||
+        (alt_127 = factor_3(p)) ||
+        (alt_127 = power(p))
+    ) ? alt_127 : 0;
+    return exit_frame(p, &f, res_127);
 }
 
 static ast_expr_t *factor_1(parser_t *p) {
-    const frame_t f = {139, p->pos, FUNC};
-    ast_expr_t *res_139;
+    const frame_t f = {128, p->pos, FUNC};
+    ast_expr_t *res_128;
     ast_expr_t *_factor;
-    res_139 = enter_frame(p, &f) && (
+    res_128 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
     ) ? ast_unary(p, _factor, UNARY_PLS) : 0;
-    return exit_frame(p, &f, res_139);
+    return exit_frame(p, &f, res_128);
 }
 
 static ast_expr_t *factor_2(parser_t *p) {
-    const frame_t f = {140, p->pos, FUNC};
-    ast_expr_t *res_140;
+    const frame_t f = {129, p->pos, FUNC};
+    ast_expr_t *res_129;
     ast_expr_t *_factor;
-    res_140 = enter_frame(p, &f) && (
+    res_129 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
     ) ? ast_unary(p, _factor, UNARY_MIN) : 0;
-    return exit_frame(p, &f, res_140);
+    return exit_frame(p, &f, res_129);
 }
 
 static ast_expr_t *factor_3(parser_t *p) {
-    const frame_t f = {141, p->pos, FUNC};
-    ast_expr_t *res_141;
+    const frame_t f = {130, p->pos, FUNC};
+    ast_expr_t *res_130;
     ast_expr_t *_factor;
-    res_141 = enter_frame(p, &f) && (
+    res_130 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
     ) ? ast_unary(p, _factor, UNARY_INV) : 0;
-    return exit_frame(p, &f, res_141);
+    return exit_frame(p, &f, res_130);
 }
 
 // power:
 //     | primary '**' factor
 //     | primary
 static ast_expr_t *power(parser_t *p) {
-    const frame_t f = {142, p->pos, FUNC};
-    ast_expr_t *res_142;
+    const frame_t f = {131, p->pos, FUNC};
+    ast_expr_t *res_131;
     void *_primary;
-    ast_expr_t *alt_142;
-    res_142 = enter_frame(p, &f) && (
-        (alt_142 = power_1(p)) || (
+    ast_expr_t *alt_131;
+    res_131 = enter_frame(p, &f) && (
+        (alt_131 = power_1(p)) || (
             (_primary = primary(p)) &&
-            (alt_142 = ast_primary_expr(p, _primary)))
-    ) ? alt_142 : 0;
-    return exit_frame(p, &f, res_142);
+            (alt_131 = ast_primary_expr(p, _primary)))
+    ) ? alt_131 : 0;
+    return exit_frame(p, &f, res_131);
 }
 
 static ast_expr_t *power_1(parser_t *p) {
-    const frame_t f = {143, p->pos, FUNC};
-    ast_expr_t *res_143;
+    const frame_t f = {132, p->pos, FUNC};
+    ast_expr_t *res_132;
     void *_primary;
     ast_expr_t *_factor;
-    res_143 = enter_frame(p, &f) && (
+    res_132 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
     ) ? ast_binary(p, _primary, _factor, BINOP_POW) : 0;
-    return exit_frame(p, &f, res_143);
+    return exit_frame(p, &f, res_132);
 }
 
 // primary (left_recursive):
@@ -2731,142 +2502,142 @@ static ast_expr_t *power_1(parser_t *p) {
 //     | primary subscript
 //     | atom
 static void *primary(parser_t *p) {
-    const frame_t f = {144, p->pos, FUNC};
-    void *res_144 = 0;
-    if (is_memoized(p, &f, (void **) &res_144)) {
-        return res_144;
+    const frame_t f = {133, p->pos, FUNC};
+    void *res_133 = 0;
+    if (is_memoized(p, &f, (void **) &res_133)) {
+        return res_133;
     }
-    void *alt_144;
+    void *alt_133;
     size_t maxpos;
     void *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_144;
+            max = res_133;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_144 = (
-                (alt_144 = primary_1(p)) ||
-                (alt_144 = primary_2(p)) ||
-                (alt_144 = primary_3(p)) ||
-                (alt_144 = atom(p))
-            ) ? alt_144 : 0;
+            res_133 = (
+                (alt_133 = primary_1(p)) ||
+                (alt_133 = primary_2(p)) ||
+                (alt_133 = primary_3(p)) ||
+                (alt_133 = atom(p))
+            ) ? alt_133 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_144 = max;
+        res_133 = max;
     }
-    insert_memo(p, &f, res_144);
-    return exit_frame(p, &f, res_144);
+    insert_memo(p, &f, res_133);
+    return exit_frame(p, &f, res_133);
 }
 
 static void *primary_1(parser_t *p) {
-    const frame_t f = {145, p->pos, FUNC};
-    void *res_145;
+    const frame_t f = {134, p->pos, FUNC};
+    void *res_134;
     void *_primary;
     token_t *_name;
-    res_145 = enter_frame(p, &f) && (
+    res_134 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (consume(p, 6, ".")) &&
         (_name = consume(p, 3, "NAME"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_145);
+    return exit_frame(p, &f, res_134);
 }
 
 static void *primary_2(parser_t *p) {
-    const frame_t f = {146, p->pos, FUNC};
-    void *res_146;
+    const frame_t f = {135, p->pos, FUNC};
+    void *res_135;
     void *_primary;
     void *_invocation;
-    res_146 = enter_frame(p, &f) && (
+    res_135 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (_invocation = invocation(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_146);
+    return exit_frame(p, &f, res_135);
 }
 
 static void *primary_3(parser_t *p) {
-    const frame_t f = {147, p->pos, FUNC};
-    void *res_147;
+    const frame_t f = {136, p->pos, FUNC};
+    void *res_136;
     void *_primary;
     void *_subscript;
-    res_147 = enter_frame(p, &f) && (
+    res_136 = enter_frame(p, &f) && (
         (_primary = primary(p)) &&
         (_subscript = subscript(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_147);
+    return exit_frame(p, &f, res_136);
 }
 
 // tuple_atom:
 //     | '(' [list_items] ')'
 static void *tuple_atom(parser_t *p) {
-    const frame_t f = {148, p->pos, FUNC};
-    void *res_148;
+    const frame_t f = {137, p->pos, FUNC};
+    void *res_137;
     void *_list_items;
-    res_148 = enter_frame(p, &f) && (
+    res_137 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (_list_items = list_items(p), 1) &&
         (consume(p, 14, ")"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_148);
+    return exit_frame(p, &f, res_137);
 }
 
 // list_atom:
 //     | '[' [list_items] ']'
 static void *list_atom(parser_t *p) {
-    const frame_t f = {149, p->pos, FUNC};
-    void *res_149;
+    const frame_t f = {138, p->pos, FUNC};
+    void *res_138;
     void *_list_items;
-    res_149 = enter_frame(p, &f) && (
+    res_138 = enter_frame(p, &f) && (
         (consume(p, 17, "[")) &&
         (_list_items = list_items(p), 1) &&
         (consume(p, 18, "]"))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_149);
+    return exit_frame(p, &f, res_138);
 }
 
 // builder:
 //     | NAME simple_args ':' expr
 //     | NAME [builder_hint] [builder_args] block_suite
 static void *builder(parser_t *p) {
-    const frame_t f = {150, p->pos, FUNC};
-    void *res_150;
-    void *alt_150;
-    res_150 = enter_frame(p, &f) && (
-        (alt_150 = builder_1(p)) ||
-        (alt_150 = builder_2(p))
-    ) ? alt_150 : 0;
-    return exit_frame(p, &f, res_150);
+    const frame_t f = {139, p->pos, FUNC};
+    void *res_139;
+    void *alt_139;
+    res_139 = enter_frame(p, &f) && (
+        (alt_139 = builder_1(p)) ||
+        (alt_139 = builder_2(p))
+    ) ? alt_139 : 0;
+    return exit_frame(p, &f, res_139);
 }
 
 static void *builder_1(parser_t *p) {
-    const frame_t f = {151, p->pos, FUNC};
-    void *res_151;
+    const frame_t f = {140, p->pos, FUNC};
+    void *res_140;
     token_t *_name;
     void *_simple_args;
     ast_expr_t *_expr;
-    res_151 = enter_frame(p, &f) && (
+    res_140 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_simple_args = simple_args(p)) &&
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_151);
+    return exit_frame(p, &f, res_140);
 }
 
 static void *builder_2(parser_t *p) {
-    const frame_t f = {152, p->pos, FUNC};
-    void *res_152;
+    const frame_t f = {141, p->pos, FUNC};
+    void *res_141;
     token_t *_name;
     void *_builder_hint;
     void *_builder_args;
     void *_block_suite;
-    res_152 = enter_frame(p, &f) && (
+    res_141 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (_builder_hint = builder_hint(p), 1) &&
         (_builder_args = builder_args(p), 1) &&
         (_block_suite = block_suite(p))
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_152);
+    return exit_frame(p, &f, res_141);
 }
 
 // atom:
@@ -2880,19 +2651,19 @@ static void *builder_2(parser_t *p) {
 //     | 'True'
 //     | 'False'
 static void *atom(parser_t *p) {
-    const frame_t f = {153, p->pos, FUNC};
-    void *res_153;
-    void *alt_153;
-    res_153 = enter_frame(p, &f) && (
-        (alt_153 = tuple_atom(p)) ||
-        (alt_153 = list_atom(p)) ||
-        (alt_153 = builder(p)) ||
-        (alt_153 = consume(p, 3, "NAME")) ||
-        (alt_153 = consume(p, 4, "NUMBER")) ||
-        (alt_153 = consume(p, 5, "STRING")) ||
-        (alt_153 = consume(p, 81, "None")) ||
-        (alt_153 = consume(p, 82, "True")) ||
-        (alt_153 = consume(p, 83, "False"))
-    ) ? alt_153 : 0;
-    return exit_frame(p, &f, res_153);
+    const frame_t f = {142, p->pos, FUNC};
+    void *res_142;
+    void *alt_142;
+    res_142 = enter_frame(p, &f) && (
+        (alt_142 = tuple_atom(p)) ||
+        (alt_142 = list_atom(p)) ||
+        (alt_142 = builder(p)) ||
+        (alt_142 = consume(p, 3, "NAME")) ||
+        (alt_142 = consume(p, 4, "NUMBER")) ||
+        (alt_142 = consume(p, 5, "STRING")) ||
+        (alt_142 = consume(p, 81, "None")) ||
+        (alt_142 = consume(p, 82, "True")) ||
+        (alt_142 = consume(p, 83, "False"))
+    ) ? alt_142 : 0;
+    return exit_frame(p, &f, res_142);
 }
