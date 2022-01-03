@@ -1,7 +1,7 @@
 #ifndef CPEG_MEM_DEBUG_H
 #define CPEG_MEM_DEBUG_H
 
-#include "mem_internal.h"
+#include "../mem.h"
 
 char *memregion_copy(FMemRegion *region);
 

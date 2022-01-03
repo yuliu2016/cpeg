@@ -216,7 +216,7 @@ parser_t *parser_init_state(
         return NULL;
     }
 
-    FMemRegion *region = FMemRegion_new();
+    FMemRegion *region = mbregion(REGION_DEFAULT_SIZE);
     if (!region) {
         return NULL;
     }
@@ -244,7 +244,7 @@ parser_t *parser_init_state(
 
 void parser_free_state(parser_t *p) {
     lexer_free_state(&p->lexer_state);
-    FMemRegion_free(p->region);
+    mbpurge(p->region);
     free(p);
 }
 

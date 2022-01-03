@@ -87,6 +87,9 @@ void print_buf(void *head, int size) {
     free(buf);
 }
 
+
+FMemBlock *mem_block_new(size_t size);
+
 void test_block() {
     FMemBlock *block = mem_block_new(256);
     char *dest = block->head_ptr;
@@ -100,20 +103,20 @@ void test_block() {
 }
 
 void test_region() {
-    FMemRegion *reg = FMemRegion_from_size(32);
+    FMemRegion *reg = mbregion(32);
     PRINT_ADDR(reg);
     PRINT_ADDR(reg->cur_block);
-    char *dst = FMemRegion_malloc(reg, 11);
+    char *dst = mballoc(reg, 11);
     PRINT_ADDR(dst);
     strcpy(dst, "HelloWorld");
-    dst = FMemRegion_malloc(reg, 3);
+    dst = mballoc(reg, 3);
     PRINT_ADDR(dst);
     strcpy(dst, "Hi");
     dst = NULL;
     printf("%zu\n", sizeof(char *));
     char *x = memregion_copy(reg);
     printf("%s\n", x);
-    FMemRegion_free(reg);
+    mbpurge(reg);
     free(x);
 }
 

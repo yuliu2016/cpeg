@@ -1,4 +1,4 @@
-#include "include/internal/mem_internal.h"
+#include "include/mem.h"
 #include "stdint.h"
 #include "stdlib.h"
 
@@ -28,13 +28,9 @@ FMemBlock *mem_block_new(size_t size) {
     return b;
 }
 
-#define DEFAULT_BLOCK_SIZE 8192
 
-FMemRegion *FMemRegion_new() {
-    return FMemRegion_from_size(DEFAULT_BLOCK_SIZE);
-}
 
-FMemRegion *FMemRegion_from_size(size_t initial_size) {
+FMemRegion *mbregion(size_t initial_size) {
     FMemRegion *region = malloc(sizeof(FMemRegion));
     if (!region) return NULL;
     FMemBlock *b = mem_block_new(initial_size);
@@ -44,7 +40,7 @@ FMemRegion *FMemRegion_from_size(size_t initial_size) {
     return region;
 }
 
-void FMemRegion_free(FMemRegion *region) {
+void mbpurge(FMemRegion *region) {
     FMemBlock *curr;
     FMemBlock *head = region->head_block;
     while (head) {
@@ -55,7 +51,7 @@ void FMemRegion_free(FMemRegion *region) {
     free(region);
 }
 
-void *FMemRegion_malloc(FMemRegion *region, size_t size) {
+void *mballoc(FMemRegion *region, size_t size) {
     FMemBlock *b = region->cur_block;
     size_t avail_size = b->block_size - b->alloc_offset;
     // round up the size needed to multiple of the required alignment

@@ -110,7 +110,7 @@ typedef struct parser_state {
 
 } parser_t;
 
-#define PARSER_ALLOC(p, size) FMemRegion_malloc((p)->region, size)
+#define PARSER_ALLOC(p, size) mballoc((p)->region, size)
 
 typedef struct frame {
     const int f_type;

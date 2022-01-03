@@ -5,12 +5,27 @@
 
 typedef struct mem_region_t FMemRegion;
 
-FMemRegion *FMemRegion_new();
+typedef struct mem_block_t FMemBlock;
 
-FMemRegion *FMemRegion_from_size(size_t initial_size);
+struct mem_block_t {
+    size_t block_size;
+    size_t alloc_offset;
+    void *head_ptr;
+    FMemBlock *next_block;
+};
 
-void FMemRegion_free(FMemRegion *region);
+struct mem_region_t {
+    FMemBlock *head_block;
+    FMemBlock *cur_block;
+};
 
-void *FMemRegion_malloc(FMemRegion *region, size_t size);
+#define REGION_DEFAULT_SIZE 8192
+
+
+FMemRegion *mbregion(size_t initial_size);
+
+void mbpurge(FMemRegion *region);
+
+void *mballoc(FMemRegion *region, size_t size);
 
 #endif //CPEG_MEM_H
