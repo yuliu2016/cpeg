@@ -14,12 +14,12 @@ static inline size_t mem_size_up(size_t s, size_t align) {
 
 #define ALIGNMENT sizeof(uintptr_t)
 
-FMemBlock *mem_block_new(size_t size) {
-    FMemBlock *b = calloc(sizeof(FMemBlock) + size, sizeof(char));
+mem_block_t *mem_block_new(size_t size) {
+    mem_block_t *b = calloc(sizeof(mem_block_t) + size, sizeof(char));
     if (!b) return NULL;
 
     b->block_size = size;
-    b->head_ptr = ((char *) b) + sizeof(FMemBlock);
+    b->head_ptr = ((char *) b) + sizeof(mem_block_t);
 
     char *aligned_addr = mem_align_up(b->head_ptr, ALIGNMENT);
     b->alloc_offset = aligned_addr - (char *) b->head_ptr;
@@ -30,19 +30,19 @@ FMemBlock *mem_block_new(size_t size) {
 
 
 
-FMemRegion *mbregion(size_t initial_size) {
-    FMemRegion *region = malloc(sizeof(FMemRegion));
+mem_region_t *mbregion(size_t initial_size) {
+    mem_region_t *region = malloc(sizeof(mem_region_t));
     if (!region) return NULL;
-    FMemBlock *b = mem_block_new(initial_size);
+    mem_block_t *b = mem_block_new(initial_size);
     if (!b) return NULL;
     region->head_block = b;
     region->cur_block = b;
     return region;
 }
 
-void mbpurge(FMemRegion *region) {
-    FMemBlock *curr;
-    FMemBlock *head = region->head_block;
+void mbpurge(mem_region_t *region) {
+    mem_block_t *curr;
+    mem_block_t *head = region->head_block;
     while (head) {
         curr = head;
         head = curr->next_block;
@@ -51,14 +51,14 @@ void mbpurge(FMemRegion *region) {
     free(region);
 }
 
-void *mballoc(FMemRegion *region, size_t size) {
-    FMemBlock *b = region->cur_block;
+void *mballoc(mem_region_t *region, size_t size) {
+    mem_block_t *b = region->cur_block;
     size_t avail_size = b->block_size - b->alloc_offset;
     // round up the size needed to multiple of the required alignment
     size = mem_size_up(size, ALIGNMENT);
     if (avail_size < size) {
         // make a block exactly the right size
-        FMemBlock *tail = mem_block_new(size);
+        mem_block_t *tail = mem_block_new(size);
         if (!tail) return NULL;
         b->next_block = tail;
         region->cur_block = tail;

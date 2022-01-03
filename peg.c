@@ -216,7 +216,7 @@ parser_t *parser_init_state(
         return NULL;
     }
 
-    FMemRegion *region = mbregion(REGION_DEFAULT_SIZE);
+    mem_region_t *region = mbregion(REGION_DEFAULT_SIZE);
     if (!region) {
         return NULL;
     }

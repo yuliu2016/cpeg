@@ -98,7 +98,7 @@ typedef struct parser_state {
     lexer_func_t lexer_func;
 
     // Allocate nodes in the same region so it can be freed all at once
-    FMemRegion *region;
+    mem_region_t *region;
 
     size_t pos;
     size_t max_reached_pos;

@@ -3,29 +3,29 @@
 
 #include "stddef.h"
 
-typedef struct mem_region_t FMemRegion;
+typedef struct mem_region mem_region_t;
 
-typedef struct mem_block_t FMemBlock;
+typedef struct mem_block mem_block_t;
 
-struct mem_block_t {
+struct mem_block {
     size_t block_size;
     size_t alloc_offset;
     void *head_ptr;
-    FMemBlock *next_block;
+    mem_block_t *next_block;
 };
 
-struct mem_region_t {
-    FMemBlock *head_block;
-    FMemBlock *cur_block;
+struct mem_region {
+    mem_block_t *head_block;
+    mem_block_t *cur_block;
 };
 
 #define REGION_DEFAULT_SIZE 8192
 
 
-FMemRegion *mbregion(size_t initial_size);
+mem_region_t *mbregion(size_t initial_size);
 
-void mbpurge(FMemRegion *region);
+void mem_region_t_free(mem_region_t *region);
 
-void *mballoc(FMemRegion *region, size_t size);
+void *mballoc(mem_region_t *region, size_t size);
 
 #endif //CPEG_MEM_H

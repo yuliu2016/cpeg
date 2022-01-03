@@ -3,7 +3,7 @@
 
 #include "../mem.h"
 
-char *memregion_copy(FMemRegion *region);
+char *memregion_copy(mem_region_t *region);
 
 void print_buf(void *head, int size);
 

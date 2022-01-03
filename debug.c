@@ -37,9 +37,9 @@ void println(char *s) {
     printf("%s\n", s);
 }
 
-char *memregion_copy(FMemRegion *region) {
+char *memregion_copy(mem_region_t *region) {
     size_t s = 0;
-    FMemBlock *head = region->head_block;
+    mem_block_t *head = region->head_block;
     while (head) {
         s += head->block_size;
         head = head->next_block;
@@ -88,10 +88,10 @@ void print_buf(void *head, int size) {
 }
 
 
-FMemBlock *mem_block_new(size_t size);
+mem_block_t *mem_block_new(size_t size);
 
 void test_block() {
-    FMemBlock *block = mem_block_new(256);
+    mem_block_t *block = mem_block_new(256);
     char *dest = block->head_ptr;
     block->alloc_offset += 11;
     strcpy(dest, "HelloWorld");
@@ -103,7 +103,7 @@ void test_block() {
 }
 
 void test_region() {
-    FMemRegion *reg = mbregion(32);
+    mem_region_t *reg = mbregion(32);
     PRINT_ADDR(reg);
     PRINT_ADDR(reg->cur_block);
     char *dst = mballoc(reg, 11);
