@@ -40,19 +40,29 @@ enum expr_opcode {
 
     UNARY_PLS,
     UNARY_MIN,
-    UNARY_INV
+    UNARY_INV,
+
+    LOGIC_AND,
+    LOGIC_OR,
+    LOGIC_NOT
 };
+
+
 
 typedef struct ast_expr {
     enum expr_opcode opcode;
+    struct ast_expr *left;
     union {
         void *primary;
         struct ast_expr *expr;
-    } left;
-    struct ast_expr *right;
+        struct ast_expr **comp_terms;
+    } right;
 } ast_expr_t;
 
-
+typedef struct ast_named {
+    char *name;
+    ast_expr_t *expr;
+} ast_named_t;
 
 ast_expr_t *ast_binary(parser_t *p, ast_expr_t *left, 
         ast_expr_t *right, enum expr_opcode binop_code);
