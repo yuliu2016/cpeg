@@ -2157,7 +2157,7 @@ static ast_named_t *named_expr(parser_t *p) {
     res_112 = enter_frame(p, &f) && (
         (alt_112 = named_expr_1(p)) || (
             (_expr = expr(p)) &&
-            (alt_112 = ast_unnamed(_expr)))
+            (alt_112 = ast_unnamed(p, _expr)))
     ) ? alt_112 : 0;
     return exit_frame(p, &f, res_112);
 }
@@ -2166,11 +2166,12 @@ static ast_named_t *named_expr_1(parser_t *p) {
     const frame_t f = {113, p->pos, FUNC};
     ast_named_t *res_113;
     token_t *_name;
+    ast_expr_t *_expr;
     res_113 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
-        (expr(p))
-    ) ? ast_named(_name) : 0;
+        (_expr = expr(p))
+    ) ? ast_named(p, _name, _expr) : 0;
     return exit_frame(p, &f, res_113);
 }
 

@@ -269,10 +269,6 @@ int parser_advance_frame(parser_t *p) {
         return 0;
     }
 
-    if (p->pos > p->max_reached_pos) {
-        p->max_reached_pos = p->pos;
-    }
-
     return 1;
 }
 
@@ -389,6 +385,9 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
 
     // now check for correct type
     if (curr_token->tk_type == tk_type) {
+        if (p->pos > p->max_reached_pos) {
+            p->max_reached_pos = p->pos;
+        }
         p->pos += 1;
         printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
                 literal, p->level, p->pos);
