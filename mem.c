@@ -30,13 +30,14 @@ mem_block_t *mem_block_new(size_t size) {
 
 
 
-mem_region_t *mbregion(size_t initial_size) {
+mem_region_t *mbregion(size_t initial_size, size_t increment_size) {
     mem_region_t *region = malloc(sizeof(mem_region_t));
     if (!region) return NULL;
     mem_block_t *b = mem_block_new(initial_size);
     if (!b) return NULL;
     region->head_block = b;
     region->cur_block = b;
+    region->increment_size = increment_size;
     return region;
 }
 
@@ -57,12 +58,18 @@ void *mballoc(mem_region_t *region, size_t size) {
     // round up the size needed to multiple of the required alignment
     size = mem_size_up(size, ALIGNMENT);
     if (avail_size < size) {
-        // make a block exactly the right size
-        mem_block_t *tail = mem_block_new(size);
-        if (!tail) return NULL;
+        mem_block_t *tail;
+        if (region->increment_size != 0) {
+            tail = mem_block_new(region->increment_size);
+        } else {
+            tail = mem_block_new(size);
+        }
+        if (!tail) {
+            return NULL;
+        }
         b->next_block = tail;
         region->cur_block = tail;
-        return tail->head_ptr;
+        return ((char *) tail->head_ptr) + tail->alloc_offset;
     } else {
         void *ptr = ((char *) b->head_ptr) + b->alloc_offset;
         b->alloc_offset += size;

@@ -17,14 +17,15 @@ struct mem_block {
 struct mem_region {
     mem_block_t *head_block;
     mem_block_t *cur_block;
+    size_t increment_size;
 };
 
 #define REGION_DEFAULT_SIZE 8192
 
 
-mem_region_t *mbregion(size_t initial_size);
+mem_region_t *mbregion(size_t initial_size, size_t increment_size);
 
-void mem_region_t_free(mem_region_t *region);
+void mbpurge(mem_region_t *region);
 
 void *mballoc(mem_region_t *region, size_t size);
 

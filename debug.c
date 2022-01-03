@@ -103,7 +103,7 @@ void test_block() {
 }
 
 void test_region() {
-    mem_region_t *reg = mbregion(32);
+    mem_region_t *reg = mbregion(32, 0);
     PRINT_ADDR(reg);
     PRINT_ADDR(reg->cur_block);
     char *dst = mballoc(reg, 11);
