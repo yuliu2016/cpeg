@@ -2,9 +2,10 @@
 #include "include/float.h"
 #include "include/internal/float_type.h"
 #include "math.h"
+#include "stdlib.h"
 
 VALUE FFloat_from_double(double d) {
-    FFloat *fobj = FMem_malloc(sizeof(FFloat));
+    FFloat *fobj = malloc(sizeof(FFloat));
     fobj->float_val = d;
     return (VALUE) fobj;
 }

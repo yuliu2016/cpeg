@@ -44,7 +44,7 @@ char *memregion_copy(FMemRegion *region) {
         s += head->block_size;
         head = head->next_block;
     }
-    char *buf = FMem_malloc(s + 1);
+    char *buf = malloc(s + 1);
     head = region->head_block;
     int i = 0;
     while (head) {
@@ -84,10 +84,10 @@ void print_buf(void *head, int size) {
     }
     buf[size] = '\0';
     printf("%s\n", buf);
+    free(buf);
 }
 
 void test_block() {
-    FMem_set_allocator(default_allocator());
     FMemBlock *block = mem_block_new(256);
     char *dest = block->head_ptr;
     block->alloc_offset += 11;
@@ -100,7 +100,6 @@ void test_block() {
 }
 
 void test_region() {
-    FMem_set_allocator(default_allocator());
     FMemRegion *reg = FMemRegion_from_size(32);
     PRINT_ADDR(reg);
     PRINT_ADDR(reg->cur_block);
@@ -115,7 +114,7 @@ void test_region() {
     char *x = memregion_copy(reg);
     printf("%s\n", x);
     FMemRegion_free(reg);
-    FMem_free(x);
+    free(x);
 }
 
 void print_address(void *ptr, const char *name) {
@@ -128,33 +127,6 @@ void print_address(void *ptr, const char *name) {
     }
 }
 
-void *dbmalloc(size_t size) {
-    void *r = malloc(size);
-    if (r) {
-        printf("Got malloc for size %zu\n", size);
-    } else {
-        printf("malloc returned null\n");
-    }
-    return r;
-}
-
-void *dbcalloc(size_t count, size_t size) {
-    void *r = calloc(count, size);
-    if (r) {
-        printf("Got calloc for size %zu and count %zu\n", size, count);
-    } else {
-        printf("calloc returned null\n");
-    }
-    return r;
-}
-
-FMemAllocator dballoc() {
-    return (FMemAllocator) {dbmalloc, dbcalloc, realloc, free};
-}
-
-FMemAllocator default_allocator() {
-    return (FMemAllocator) {malloc, calloc, realloc, free};
-}
 
 typedef struct token_kind {
     const char * name;
@@ -173,7 +145,27 @@ static TokenKind token_kinds[] = {
     {"KEYWORD", "\033[34;1m", 55, 84}, // bright blue
 };
 
-lexer_t *lexer_analyze_all(char *src);
+
+token_t *lexer_get_next_token(lexer_t *ls);
+
+static lexer_t *lexer_analyze_all(char *src) {
+    lexer_t *ls = malloc(sizeof(lexer_t));
+
+    // find length of string
+    size_t len = strlen(src);
+
+    lexer_init_state(ls, src, len, 0);
+
+    for (;;) {
+        token_t *token = lexer_get_next_token(ls);
+        if (!token) {
+            break;
+        }
+        lexer_append_token(ls, token);
+    }
+
+    return ls;
+}
 
 char *tokenizer_repl(char *in) {
     lexer_t *ls = lexer_analyze_all(in);
@@ -191,14 +183,14 @@ char *tokenizer_repl(char *in) {
 
     size_t previous_line = -1;
     size_t literal_len = 100;
-    char *literal = FMem_malloc(literal_len);
+    char *literal = malloc(literal_len);
 
     for (int i = 0; i < ls->token_len; ++i) {
         token_t *token = ls->tokens[i];
 
         if (token->len > literal_len) {
             literal_len = token->len;
-            literal = FMem_realloc(literal, literal_len);
+            literal = realloc(literal, literal_len);
         }
 
         for (int j = 0; j < literal_len; ++j) {
@@ -230,7 +222,7 @@ char *tokenizer_repl(char *in) {
                 kind.name, kind.style, literal);
     }
 
-    FMem_free(literal);
+    free(literal);
     lexer_free_state(ls);
     return "";
 }
@@ -243,7 +235,7 @@ static void print_indent_level(size_t s) {
     if (s > 40) {
         s = s % 40u;
     }
-    char *b = FMem_malloc(sizeof(char) * (s * 2 + 1));
+    char *b = malloc(sizeof(char) * (s * 2 + 1));
     if (!b) {
         return;
     }
@@ -257,7 +249,7 @@ static void print_indent_level(size_t s) {
     }
     b[s * 2] = '\0';
     printf("%s", b);
-    FMem_free(b);
+    free(b);
 }
 
 token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
@@ -285,7 +277,7 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
 
         printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
-        FMem_free(token_buf);
+        free(token_buf);
         return NULL;
     }
 }
@@ -302,7 +294,7 @@ void parser_enter_debug(parser_t *p, const frame_t *f) {
     printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             f->f_rule, p->level, p->pos, token_buf);
 
-    FMem_free(token_buf);
+    free(token_buf);
 }
 
 void parser_exit_debug(parser_t *p, void *res, const frame_t *f) {

@@ -1,41 +1,21 @@
 #include "include/internal/mem_internal.h"
 #include "stdint.h"
+#include "stdlib.h"
 
-static FMemAllocator allocator_;
 
-void FMem_set_allocator(FMemAllocator alloc) {
-    allocator_ = alloc;
-}
-
-void *FMem_malloc(size_t size) {
-    return allocator_.malloc(size);
-}
-
-void *FMem_calloc(size_t count, size_t size) {
-    return allocator_.calloc(count, size);
-}
-
-void *FMem_realloc(void *ptr, size_t size) {
-    return allocator_.realloc(ptr, size);
-}
-
-void FMem_free(void *ptr) {
-    allocator_.free(ptr);
-}
-
-void *mem_align_up(void *ptr, uintptr_t align) {
+static inline void *mem_align_up(void *ptr, uintptr_t align) {
     uintptr_t aptr = (uintptr_t) (ptr) + (align - 1) & ~(align - 1);
     return (void *) aptr;
 }
 
-size_t mem_size_up(size_t s, size_t align) {
+static inline size_t mem_size_up(size_t s, size_t align) {
     return s + (align - 1) & ~(align - 1);
 }
 
 #define ALIGNMENT sizeof(uintptr_t)
 
 FMemBlock *mem_block_new(size_t size) {
-    FMemBlock *b = FMem_calloc(sizeof(FMemBlock) + size, sizeof(char));
+    FMemBlock *b = calloc(sizeof(FMemBlock) + size, sizeof(char));
     if (!b) return NULL;
 
     b->block_size = size;
@@ -55,7 +35,7 @@ FMemRegion *FMemRegion_new() {
 }
 
 FMemRegion *FMemRegion_from_size(size_t initial_size) {
-    FMemRegion *region = FMem_malloc(sizeof(FMemRegion));
+    FMemRegion *region = malloc(sizeof(FMemRegion));
     if (!region) return NULL;
     FMemBlock *b = mem_block_new(initial_size);
     if (!b) return NULL;
@@ -70,9 +50,9 @@ void FMemRegion_free(FMemRegion *region) {
     while (head) {
         curr = head;
         head = curr->next_block;
-        FMem_free(curr);
+        free(curr);
     }
-    FMem_free(region);
+    free(region);
 }
 
 void *FMemRegion_malloc(FMemRegion *region, size_t size) {

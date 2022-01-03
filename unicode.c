@@ -2,6 +2,7 @@
 #include "mem.h"
 #include "unicode_type.h"
 #include "string.h"
+#include "stdlib.h"
 
 struct stringbuffer_t {
     size_t len;
@@ -13,7 +14,7 @@ VALUE FUnicode_from_ascii_and_size(const char * array, size_t len) {
     if (!array) return NULL;
     const char *p = array;
 
-    FUnicode *u = FMem_malloc(sizeof(FUnicode) + len);
+    FUnicode *u = malloc(sizeof(FUnicode) + len);
     if (!u) return NULL;
     u->base.refcount = 0;
 

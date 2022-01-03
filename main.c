@@ -71,8 +71,6 @@ int main() {
     }
 #endif
 
-    FMem_set_allocator(default_allocator());
-
 #define MAIN_LOOP
 #ifdef MAIN_LOOP
     input_loop(">>>", tokparse);

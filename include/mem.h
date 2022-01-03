@@ -3,26 +3,6 @@
 
 #include "stddef.h"
 
-typedef struct allocator_t {
-    void *(*malloc)(size_t size);
-
-    void *(*calloc)(size_t count, size_t size);
-
-    void *(*realloc)(void *ptr, size_t size);
-
-    void (*free)(void *ptr);
-} FMemAllocator;
-
-void FMem_set_allocator(FMemAllocator alloc);
-
-void *FMem_malloc(size_t size);
-
-void *FMem_calloc(size_t count, size_t size);
-
-void *FMem_realloc(void *ptr, size_t size);
-
-void FMem_free(void *ptr);
-
 typedef struct mem_region_t FMemRegion;
 
 FMemRegion *FMemRegion_new();

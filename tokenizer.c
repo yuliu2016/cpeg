@@ -3,6 +3,7 @@
 #include "stdbool.h"
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 
 static inline int _has_remaining(lexer_t *ls) {
@@ -485,23 +486,4 @@ token_t *lexer_get_next_token(lexer_t *ls) {
     }
 
     return ls->next_token;
-}
-
-lexer_t *lexer_analyze_all(char *src) {
-    lexer_t *ls = FMem_malloc(sizeof(lexer_t));
-
-    // find length of string
-    size_t len = strlen(src);
-
-    lexer_init_state(ls, src, len, false);
-
-    for (;;) {
-        token_t *token = lexer_get_next_token(ls);
-        if (!token) {
-            break;
-        }
-        lexer_append_token(ls, token);
-    }
-
-    return ls;
 }

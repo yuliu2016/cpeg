@@ -1,7 +1,8 @@
 #include "include/hash.h"
+#include "stdlib.h"
 
 ht_str *ht_str_new(char *str) {
-    ht_str *cs = FMem_malloc(sizeof(ht_str));
+    ht_str *cs = malloc(sizeof(ht_str));
     if (!cs) {
         return NULL;
     }
@@ -44,7 +45,7 @@ int ht_resize(ht_hashtable *ht) {
 }
 
 ht_node *ht_node_new(ht_str *key, char *value) {
-    ht_node *node = FMem_malloc(sizeof(ht_node));
+    ht_node *node = malloc(sizeof(ht_node));
     node->hash = key->computed_hash;
     node->key = key;
     node->value = value;
@@ -109,7 +110,7 @@ char *ht_put(ht_hashtable *ht, ht_str *key, char *value) {
 void ht_put_free(ht_hashtable *ht, ht_str *key, char *value) {
     char * old_val = ht_put(ht, key, value);
     if (old_val) {
-        FMem_free(old_val);
+        free(old_val);
     }
 }
 
@@ -128,7 +129,7 @@ char *ht_get(ht_hashtable *ht, ht_str *key) {
 }
 
 ht_hashtable *ht_new() {
-    ht_hashtable *ht = FMem_malloc(sizeof(ht_hashtable));
+    ht_hashtable *ht = malloc(sizeof(ht_hashtable));
     if (!ht) {
         return NULL;
     }
@@ -142,7 +143,7 @@ ht_hashtable *ht_new() {
 }
 
 void ht_free(ht_hashtable *ht) {
-    FMem_free(ht);
+    free(ht);
 }
 
 int ht_iter_head(ht_hashtable *ht) {

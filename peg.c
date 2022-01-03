@@ -1,6 +1,7 @@
 #include "include/peg.h"
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 
 
@@ -23,12 +24,12 @@ void token_nullterm_restore() {
 char *token_heap_copy(token_t *token) {
     char *dest;
     if (!token) {
-        dest = FMem_malloc(7 * sizeof(char));
+        dest = malloc(7 * sizeof(char));
         strcpy(dest, "(null)");
         return dest;
     } else {
         char *view = token_nullterm_view(token);
-        dest = FMem_malloc((strlen(view) + 1) * sizeof(char));
+        dest = malloc((strlen(view) + 1) * sizeof(char));
         strcpy(dest, view);
         token_nullterm_restore();
         return dest;
@@ -53,7 +54,7 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
     ls->next_token = NULL;
 
     // always non-empty
-    ls->line_to_index = FMem_malloc(sizeof(size_t));
+    ls->line_to_index = malloc(sizeof(size_t));
     ls->line_to_index[0] = 0;
     ls->lines_size = 1;
     ls->lines_capacity = 1;
@@ -65,7 +66,7 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
 void lexer_add_line_index(lexer_t *ls, size_t i) {
     if (ls->lines_size >= ls->lines_capacity) {
         ls->lines_capacity = ls->lines_capacity << 1u;
-        ls->line_to_index = FMem_realloc(
+        ls->line_to_index = realloc(
                 ls->line_to_index, ls->lines_capacity * sizeof(size_t));
     }
     ls->line_to_index[ls->lines_size] = i;
@@ -77,10 +78,10 @@ void lexer_append_token(lexer_t *ls, token_t *token) {
         if (!ls->token_capacity) {
             ls->token_capacity = 1;
             ls->token_len = 0;
-            ls->tokens = FMem_malloc(sizeof(token_t *));
+            ls->tokens = malloc(sizeof(token_t *));
         } else {
             ls->token_capacity = ls->token_capacity << 1u;
-            ls->tokens = FMem_realloc(ls->tokens, ls->token_capacity * sizeof(token_t *));
+            ls->tokens = realloc(ls->tokens, ls->token_capacity * sizeof(token_t *));
         }
     }
     ls->tokens[ls->token_len] = token;
@@ -152,32 +153,32 @@ void lexer_set_error(lexer_t *ls, char *error_msg, size_t char_offset) {
     size_t col = ls->curr_index - line_start + char_offset;
 
     // include an extra char for \0
-    char *line_buf = FMem_calloc(line_end - line_start + 1, sizeof(char));
+    char *line_buf = calloc(line_end - line_start + 1, sizeof(char));
     int j = 0;
     for (size_t i = line_start; i < line_end; ++i) {
         line_buf[j] = ls->src[i];
         ++j;
     }
 
-    char *caret_buf = FMem_calloc(col + 5, sizeof(char));
+    char *caret_buf = calloc(col + 5, sizeof(char));
     for (size_t i = 0; i < col + 4; ++i) {
         caret_buf[i] = ' ';
     }
     
     size_t max_len = 45 + (line_end - line_start) + col + strlen(error_msg);
-    char *err_buf = FMem_calloc(max_len, sizeof(char));
+    char *err_buf = calloc(max_len, sizeof(char));
     
     sprintf(err_buf, "line %zu:\n    %s\n%s^\nError: %s", 
             lineno + 1, line_buf, caret_buf, error_msg);
 
     ls->error = err_buf;
 
-    FMem_free(line_buf);
-    FMem_free(caret_buf);
+    free(line_buf);
+    free(caret_buf);
 }
 
 token_t *lexer_create_token(lexer_t *ls, int tk_type) {
-    token_t *token = FMem_malloc(sizeof(token_t));
+    token_t *token = malloc(sizeof(token_t));
     if (!token) {
         return NULL;
     }
@@ -197,12 +198,12 @@ token_t *lexer_create_token(lexer_t *ls, int tk_type) {
 
 void lexer_free_state(lexer_t *ls) {
     for (int i = 0; i < ls->token_len; ++i) {
-        FMem_free(ls->tokens[i]);
+        free(ls->tokens[i]);
     }
-    FMem_free(ls->tokens);
-    FMem_free(ls->line_to_index);
+    free(ls->tokens);
+    free(ls->line_to_index);
     if (ls->error) {
-        FMem_free(ls->error);
+        free(ls->error);
     }
 }
 
@@ -220,7 +221,7 @@ parser_t *parser_init_state(
         return NULL;
     }
 
-    parser_t *p = FMem_malloc(sizeof(parser_t));
+    parser_t *p = malloc(sizeof(parser_t));
     if (!p) {
         return NULL;
     }
@@ -244,7 +245,7 @@ parser_t *parser_init_state(
 void parser_free_state(parser_t *p) {
     lexer_free_state(&p->lexer_state);
     FMemRegion_free(p->region);
-    FMem_free(p);
+    free(p);
 }
 
 int parser_advance_frame(parser_t *p) {

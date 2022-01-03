@@ -15,8 +15,4 @@ void test_block();
 
 void test_region();
 
-FMemAllocator dballoc();
-
-FMemAllocator default_allocator();
-
 #endif //CPEG_MEM_DEBUG_H
