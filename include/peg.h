@@ -127,11 +127,20 @@ int parser_advance_frame(parser_t *p);
 
 token_t *parser_consume_token(parser_t *p, int tk_type);
 
-token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal);
-
 void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node);
 
 token_memo_t *parser_get_memo(parser_t *p, int f_type);
+
+void parser_verify_eof(parser_t *p);
+
+static inline void *parser_alloc(parser_t *p, size_t size) {
+    return mballoc(p->region, size);
+}
+
+
+// Parser debugging tools
+
+token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal);
 
 void parser_enter_debug(parser_t *p, const frame_t *f);
 
@@ -139,10 +148,8 @@ void parser_exit_debug(parser_t *p, void *res, const frame_t *f);
 
 void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
 
-static inline void *parser_alloc(parser_t *p, size_t size) {
-    return mballoc(p->region, size);
-}
 
+// List data structure
 
 typedef struct ast_list {
     size_t len;

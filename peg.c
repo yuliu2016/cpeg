@@ -317,8 +317,6 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
 token_memo_t *parser_get_memo(parser_t *p, int f_type) {
     token_t *curr_token = parser_fetch_token(p, p->pos);
     if (!curr_token) {
-        // should never reach here
-        p->error = "Attempting to get memo without any more tokens";
         return NULL;
     }
     token_memo_t *memo = curr_token->memo;
@@ -351,6 +349,48 @@ token_t *parser_consume_token(parser_t *p, int tk_type) {
     } else {
         return NULL;
     }
+}
+
+
+void parser_verify_eof(parser_t *p) {
+    lexer_t *ls = &p->lexer_state;
+    if (p->pos >= ls->token_len && !ls->next_token) {
+        // Everything is parsed; No problem.
+        return;
+    }
+    size_t pos = p->max_reached_pos;
+    token_t *tok = ls->tokens[pos];
+    
+    size_t lineno = tok->lineno;
+    size_t line_start = ls->line_to_index[lineno];
+    size_t line_end = _find_eol_index(ls, lineno);
+    size_t col = tok->column;
+
+    // include an extra char for \0
+    char *line_buf = calloc(line_end - line_start + 1, sizeof(char));
+    int j = 0;
+    for (size_t i = line_start; i < line_end; ++i) {
+        line_buf[j] = ls->src[i];
+        ++j;
+    }
+
+    char *caret_buf = calloc(col + 5, sizeof(char));
+    for (size_t i = 0; i < col + 4; ++i) {
+        caret_buf[i] = ' ';
+    }
+
+    char *error_msg = "Invalid Syntax";
+    
+    size_t max_len = 45 + (line_end - line_start) + col + strlen(error_msg);
+    char *err_buf = calloc(max_len, sizeof(char));
+    
+    sprintf(err_buf, "line %zu\n    %s\n%s^\nError: %s", 
+            lineno + 1, line_buf, caret_buf, error_msg);
+
+    p->error = err_buf;
+
+    free(line_buf);
+    free(caret_buf);
 }
 
 

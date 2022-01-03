@@ -1,4 +1,3 @@
-#include "include/internal/debugcli.h"
 #include "include/internal/mem_debug.h"
 #include "stdio.h"
 #include "string.h"
@@ -7,10 +6,10 @@
 #include "include/peg.h"
 
 
-void input_loop(char *prompt, char *(*func)(char *)) {
-    print(prompt);
+void input_loop(char *prompt, char *(*func)(char *), int times) {
+    printf("%s", prompt);
     char line[1024];
-    for (;;) {
+    while (times--) {
         fgets(line, 1024, stdin);
         if (strlen(line) == 0) {
             continue;
@@ -24,18 +23,11 @@ void input_loop(char *prompt, char *(*func)(char *)) {
         if (!s) {
             break;
         }
-        print(s);
-        print(prompt);
+        printf("%s", s);
+        printf("%s", prompt);
     }
 }
 
-void print(char *s) {
-    printf("%s", s);
-}
-
-void println(char *s) {
-    printf("%s\n", s);
-}
 
 char *memregion_copy(mem_region_t *region) {
     size_t s = 0;

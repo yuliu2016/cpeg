@@ -1,5 +1,4 @@
 #include "include/internal/mem_debug.h"
-#include "include/internal/debugcli.h"
 #include "include/ast.h"
 
 #ifdef WIN32
@@ -17,11 +16,21 @@ double *parse_calc(parser_t *p);
 
 token_t *lexer_get_next_token(lexer_t *ls);
 
+void input_loop(char *prompt, char *(*func)(char *), int times);
 
-char *tokparse(char *in) {
+void print(char *s);
+
+void println(char *s);
+
+char *tokenizer_repl(char *in);
+
+
+static char *tokparse(char *in) {
     parser_t *p = parser_init_state(in, strlen(in), lexer_get_next_token);
     double *n = parse_calc(p);
     lexer_t *ls = &p->lexer_state;
+    parser_verify_eof(p);
+
     if (p->error) {
         printf("======================\n\033[31;1m");
         printf("parser error: %s\n\033[0m", p->error);
@@ -34,10 +43,6 @@ char *tokparse(char *in) {
         printf("======================\n\033[31;1m");
         printf("Not a valid parse tree\n\033[0m");
         printf("======================");
-    } else if (!(p->pos >= ls->token_len && !ls->next_token)) {
-        printf("=====================\n\033[31;1m");
-        printf("Not all tokens parsed\n\033[0m");
-        printf("=====================");
     } else {
         printf("Result: %lf\n", *n);
     }
@@ -45,10 +50,7 @@ char *tokparse(char *in) {
     return "\n";
 }
 
-int main() {
-    
-    srand(time(NULL));
-
+static DWORD init_console() {
 #ifdef WIN32
     // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
     // Set output mode to handle virtual terminal sequences
@@ -70,30 +72,12 @@ int main() {
         return GetLastError();
     }
 #endif
+    return 0;
+}
 
-#define MAIN_LOOP
-#ifdef MAIN_LOOP
-    input_loop(">>>", tokparse);
-#else
-
-    printf(">>>");
-    char line[1024];
-
-    fgets(line, 1024, stdin);
-    if (strlen(line) == 0) {
-        return 1;
-    }
-    if (strcmp(line, "exit\n") == 0) {
-        return 1;
-    }
-    // remove the newline character at the end
-    line[strlen(line) - 1] = 0;
-    char *s = tokparse(line);
-    if (!s) {
-        return 1;
-    }
-    print(s);
-#endif
-
+int main() {
+    srand(time(NULL));
+    init_console();
+    input_loop(">>>", tokparse, -1);
     return 0;
 }
