@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdlib.h"
+#include "ctype.h"
 
 
 static inline int _has_remaining(lexer_t *ls) {
@@ -31,11 +32,6 @@ static inline void _advance(lexer_t *ls) {
 }
 
 
-
-static int char_is_whitespace(char ch) {
-    return ch == ' ' || ch == '\t';
-}
-
 // skip spaces and comments
 static void skip_whitespace(lexer_t *ls) {
     if (ls->error) {
@@ -49,7 +45,7 @@ static void skip_whitespace(lexer_t *ls) {
         } else if (ch == '\n' || ch == '\r') {
             in_comment = false;
         }
-        if (!in_comment && !char_is_whitespace(ch)) {
+        if (!in_comment && !isblank(ch)) {
             return;
         }
         _advance(ls);
@@ -95,7 +91,7 @@ static bool tokenize_newline_or_indent(lexer_t *ls) {
             if (!in_comment && ch == ' ') {
                 ++indent;
             }
-            if (!in_comment && !char_is_whitespace(ch)) {
+            if (!in_comment && !isblank(ch)) {
                 break;
             }
         }
@@ -119,7 +115,7 @@ static bool tokenize_newline_or_indent(lexer_t *ls) {
     return true;
 }
 
-static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *name) {
+static bool tokenize_non_decimal(lexer_t *ls, int (*test_char)(int), char *name) {
     size_t j = ls->curr_index + 2;
 
     while (j < ls->src_len) {
@@ -150,29 +146,21 @@ static bool tokenize_non_decimal(lexer_t *ls, bool (*test_char)(char), char *nam
     return true;
 }
 
-static bool test_hex(char ch) {
-    return (ch >= 'A' && ch <= 'F') ||
-            (ch >= 'a' && ch <= 'f') ||
-            ch >= '0' && ch <= '9';
-}
 
-static bool test_oct(char ch) {
+static int is_oct_digit(int ch) {
     return ch >= '0' && ch <= '7';
 }
 
-static bool test_bin(char ch) {
+static int is_bin_digit(int ch) {
     return ch == '0' || ch == '1';
 }
 
-static bool test_dec(char ch) {
-    return ch >= '0' && ch <= '9';
-}
 
 static size_t advance_decimal_sequence(lexer_t *ls, size_t i) {
     size_t j = i;
     while (j < ls->src_len) {
         char ch = ls->src[j];
-        if (ch != '_' && !test_dec(ch)) {
+        if (ch != '_' && !isdigit(ch)) {
             break;
         }
         j++;
@@ -191,7 +179,7 @@ static bool tokenize_decimal(lexer_t *ls) {
 
     size_t j = ls->curr_index;
 
-    if (!test_dec(_peek(ls))) {
+    if (!isdigit(_peek(ls))) {
         return false;
     }
 
@@ -268,13 +256,13 @@ static bool tokenize_number(lexer_t *ls) {
         switch (ch2) {
             case 'x':
             case 'X':
-                return tokenize_non_decimal(ls, test_hex, "hexadecimal");
+                return tokenize_non_decimal(ls, isxdigit, "hexadecimal");
             case 'b':
             case 'B':
-                return tokenize_non_decimal(ls, test_bin, "binary");
+                return tokenize_non_decimal(ls, is_bin_digit, "binary");
             case 'o':
             case 'O':
-                return tokenize_non_decimal(ls, test_oct, "octal");
+                return tokenize_non_decimal(ls, is_oct_digit, "octal");
             default:;
         }
     }
@@ -362,11 +350,8 @@ static bool tokenize_string(lexer_t *ls) {
     return true;
 }
 
-static bool test_name(char ch) {
-    return (ch >= 'A' && ch <= 'Z') ||
-            (ch >= 'a' && ch <= 'z') ||
-            (ch >= '0' && ch <= '9') ||
-            (ch == '_');
+static bool test_name(int ch) {
+    return isalnum(ch) || ch == '_';
 }
 
 
