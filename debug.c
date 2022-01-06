@@ -165,7 +165,7 @@ static lexer_t *lexer_analyze_all(char *src) {
 char *tokenizer_repl(char *in) {
     lexer_t *ls = lexer_analyze_all(in);
     if (ls->error) {
-        printf("\033[31mFile <repl>, %s\033[0m", ls->error);
+        printf("\033[31mFile <lexertest>, %s\033[0m", ls->error);
         lexer_free_state(ls);
         return "\n";
     }
@@ -213,7 +213,7 @@ char *tokenizer_repl(char *in) {
             }
         }
 
-        printf("L%d:%d\t%-10s%s%s\033[0m\n", line + 1, token->column,
+        printf("L%d:%-5d%-10s%s%s\033[0m\n", line + 1, token->column,
                 kind.name, kind.style, literal);
     }
 
@@ -314,4 +314,34 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
     }
     printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
             f->f_rule, p->level, p->pos, succ);
+}
+
+
+void *parse_grammar(parser_t *p, int entry_point);
+
+double *parse_calc(parser_t *p);
+
+char *calc_repl(char *in) {
+    parser_t *p = parser_init_state(in, strlen(in), lexer_get_next_token);
+    double *n = parse_calc(p);
+    lexer_t *ls = &p->lexer_state;
+    parser_verify_eof(p);
+
+    if (p->error) {
+        printf("======================\n\033[31;1m");
+        printf("parser error: %s\n\033[0m", p->error);
+        printf("======================");
+    } else if (ls->error) {
+        printf("======================\n\033[31;1m");
+        printf("lexer error: %s\n\033[0m", ls->error);
+        printf("======================");
+    } else if (!n) {
+        printf("======================\n\033[31;1m");
+        printf("Not a valid parse tree\n\033[0m");
+        printf("======================");
+    } else {
+        printf("Result: %lf", *n);
+    }
+    parser_free_state(p);
+    return "\n";
 }
