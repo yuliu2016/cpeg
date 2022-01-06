@@ -47,6 +47,14 @@ ast_expr_t *ast_comparison(parser_t *p, ast_expr_t *first, ast_list_t *terms) {
     return 0;
 }
 
-void *ast_nop(parser_t *p) {
+ast_stmt_t *ast_nop(parser_t *p) {
+    return 0;
+}
+
+ast_stmt_t *ast_break(parser_t *p) {
+    return 0;
+}
+
+ast_stmt_t *ast_continue(parser_t *p) {
     return 0;
 }

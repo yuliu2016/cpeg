@@ -64,6 +64,19 @@ typedef struct ast_named {
     ast_expr_t *expr;
 } ast_named_t;
 
+typedef struct ast_primary {
+    char *name;
+} ast_primary_t;
+
+
+typedef struct ast_atom {
+    char *name;
+} ast_atom_t;
+
+typedef struct ast_stmt {
+    char *name;
+} ast_stmt_t;
+
 ast_expr_t *ast_binary(parser_t *p, ast_expr_t *left, 
         ast_expr_t *right, enum expr_opcode binop_code);
 
@@ -84,6 +97,10 @@ ast_expr_t *ast_comp_term(parser_t *p, int *comp_op, ast_expr_t *operand);
 
 ast_expr_t *ast_comparison(parser_t *p, ast_expr_t *first, ast_list_t *terms);
 
-void *ast_nop(parser_t *p);
+ast_stmt_t *ast_nop(parser_t *p);
+
+ast_stmt_t *ast_break(parser_t *p);
+
+ast_stmt_t *ast_continue(parser_t *p);
 
 #endif //CPEG_AST_H

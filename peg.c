@@ -402,6 +402,11 @@ ast_list_t *ast_list_new(parser_t *p) {
     return seq;
 }
 
+ast_list_t *ast_list_of(parser_t *p, void *first) {
+    ast_list_t *seq = ast_list_new(p);
+    ast_list_append(p, seq, first);
+}
+
 
 void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
     if (seq->len >= seq->capacity) {
