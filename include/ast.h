@@ -84,4 +84,6 @@ ast_expr_t *ast_comp_term(parser_t *p, int *comp_op, ast_expr_t *operand);
 
 ast_expr_t *ast_comparison(parser_t *p, ast_expr_t *first, ast_list_t *terms);
 
+void *ast_nop(parser_t *p);
+
 #endif //CPEG_AST_H

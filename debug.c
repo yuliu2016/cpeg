@@ -149,7 +149,7 @@ static lexer_t *lexer_analyze_all(char *src) {
     // find length of string
     size_t len = strlen(src);
 
-    lexer_init_state(ls, src, len, 0);
+    lexer_init_state(ls, src, len);
 
     for (;;) {
         token_t *token = lexer_get_next_token(ls);
@@ -345,3 +345,13 @@ char *calc_repl(char *in) {
     parser_free_state(p);
     return "\n";
 }
+
+typedef struct iotest {
+    char *in;
+    char *out;
+} iotest_t;
+
+typedef struct iostest_suite {
+    int ntests;
+    iotest_t *tests;
+} iotest_suite_t;

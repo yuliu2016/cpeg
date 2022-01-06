@@ -68,11 +68,10 @@ typedef struct lexer_state {
     size_t lines_capacity;
 
     char *error;
-    int endmarker;
 } lexer_t;
 
 
-void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker);
+void lexer_init_state(lexer_t *ls, char *src, size_t len);
 
 void lexer_add_line_index(lexer_t *ls, size_t i);
 

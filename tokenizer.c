@@ -424,12 +424,7 @@ token_t *lexer_get_next_token(lexer_t *ls) {
 
     skip_whitespace(ls);
 
-    // lexer still needs an ending token
     if (!_has_remaining(ls)) {
-        if (ls->endmarker) {
-            ls->endmarker = 0;
-            return lexer_create_token(ls, T_ENDMARKER);
-        }
         return NULL;
     }
 

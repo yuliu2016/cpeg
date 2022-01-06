@@ -44,7 +44,11 @@ static unsigned long init_console() {
 
 int getmode() {
     printf("\033[32mcpeg (%s, %s)\033[0m\n", __DATE__, __TIME__);
-    printf("1 - parser\n0 - tokenizer\nMode: ");
+    printf(
+        "1 - parser\n"
+        "0 - tokenizer\n"
+        "Mode: "
+    );
     char mode[10];
     fgets(mode, 10, stdin);
     return mode[0];

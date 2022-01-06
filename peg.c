@@ -38,7 +38,7 @@ char *token_heap_copy(token_t *token) {
 
 
 
-void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
+void lexer_init_state(lexer_t *ls, char *src, size_t len) {
     ls->src = src;
     ls->src_len = len;
 
@@ -57,8 +57,7 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
     ls->lines_size = 1;
     ls->lines_capacity = 1;
 
-    ls->error = NULL;
-    ls->endmarker = endmarker;
+    ls->error = NULL;;
 }
 
 void lexer_add_line_index(lexer_t *ls, size_t i) {
@@ -224,7 +223,7 @@ parser_t *parser_init_state(
         return NULL;
     }
 
-    lexer_init_state(&p->lexer_state, src, len, 1);
+    lexer_init_state(&p->lexer_state, src, len);
 
     p->lexer_func = lexer_func;
     p->region = region;
