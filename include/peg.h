@@ -52,9 +52,6 @@ typedef struct lexer_state {
     // Index of the start of the token;
     size_t start_index;
 
-    // Indentation level (multiple of 4, in spaces)
-    size_t indent;
-
     // Dynamically-growing list of tokens
     token_t **tokens;
     size_t token_len;

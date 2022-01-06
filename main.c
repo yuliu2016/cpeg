@@ -75,9 +75,23 @@ static DWORD init_console() {
     return 0;
 }
 
+int getmode() {
+    printf("\033[32mcpeg (%s, %s)\033[0m\n", __DATE__, __TIME__);
+    printf("1 - parser\n0 - tokenizer\nMode:");
+    char mode[10];
+    fgets(mode, 10, stdin);
+    return mode[0];
+}
+
 int main() {
     srand(time(NULL));
     init_console();
-    input_loop(">>>", tokparse, -1);
+    int m = getmode();
+    if (m == '1')
+        input_loop(">>>", tokparse, -1);
+    else if (m == '0')
+        input_loop(">>>", tokenizer_repl, -1);
+    else
+        printf("Invalid mode\n");
     return 0;
 }

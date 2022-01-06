@@ -45,8 +45,6 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len, int endmarker) {
     ls->curr_index = 0;
     ls->start_index = 0;
 
-    ls->indent = 0;
-
     ls->tokens = NULL;
     ls->token_len = 0;
     ls->token_capacity = 0;

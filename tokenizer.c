@@ -52,20 +52,17 @@ static void skip_whitespace(lexer_t *ls) {
     }
 }
 
-#define T_INDENT 300
-#define T_DEDENT 301
-
 static bool tokenize_newline_or_indent(lexer_t *ls) {
     if (ls->error || ls->next_token) {
         return false;
     }
 
-    if (!(_peek(ls) == '\n' || _peek(ls) == '\r')) {
+    char firstchar = _peek(ls);
+    if (!(firstchar == '\n' || firstchar == '\r')) {
         return false;
     }
 
     bool in_comment = false;
-    size_t indent = 0;
 
     while (_has_remaining(ls)) {
         char ch = _peek(ls);
@@ -81,15 +78,11 @@ static bool tokenize_newline_or_indent(lexer_t *ls) {
         }
 
         if (newline) {
-            indent = 0;
             lexer_add_line_index(ls, ls->curr_index);
             in_comment = false;
         } else {
             if (ch == '#') {
                 in_comment = true;
-            }
-            if (!in_comment && ch == ' ') {
-                ++indent;
             }
             if (!in_comment && !isblank(ch)) {
                 break;
@@ -99,19 +92,7 @@ static bool tokenize_newline_or_indent(lexer_t *ls) {
         _advance(ls);
     }
 
-    if (indent == ls->indent) {
-        ls->next_token = lexer_create_token(ls, T_NEWLINE);
-    } else if (indent == (ls->indent + 4)) {
-        ls->next_token = lexer_create_token(ls, T_INDENT);
-    } else if (indent == (ls->indent - 4)) {
-        ls->next_token = lexer_create_token(ls, T_DEDENT);
-    } else {
-        lexer_set_error(ls, "Incorrect indentation", 0);
-        return false;
-    }
-
-    ls->indent = indent;
-
+    ls->next_token = lexer_create_token(ls, T_NEWLINE);
     return true;
 }
 
