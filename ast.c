@@ -58,3 +58,27 @@ ast_stmt_t *ast_break(parser_t *p) {
 ast_stmt_t *ast_continue(parser_t *p) {
     return 0;
 }
+
+ast_atom_t *ast_name_atom(parser_t *p, token_t *name) {
+    return 0;
+}
+
+ast_atom_t *ast_number_atom(parser_t *p, token_t *name) {
+    return 0;
+}
+
+ast_atom_t *ast_string_atom(parser_t *p, token_t *name) {
+    return 0;
+}
+
+ast_atom_t *ast_none(parser_t *p) {
+    return 0;
+}
+
+ast_atom_t *ast_true(parser_t *p) {
+    return 0;
+}
+
+ast_atom_t *ast_false(parser_t *p) {
+    return 0;
+}
