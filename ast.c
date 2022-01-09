@@ -28,11 +28,11 @@ int *ast_integer(parser_t *p, int i) {
 }
 
 ast_expr_t *ast_conditional(parser_t *p, ast_expr_t *cond, ast_expr_t *a, ast_expr_t *b) {
-    return 0;
+    return node(p);
 }
 
 ast_named_t *ast_named(parser_t *p, token_t *name, ast_expr_t *expr) {
-    return 0;
+    return node(p);
 }
 
 ast_named_t *ast_unnamed(parser_t *p, ast_expr_t *expr) {
@@ -40,45 +40,45 @@ ast_named_t *ast_unnamed(parser_t *p, ast_expr_t *expr) {
 }
 
 ast_expr_t *ast_comp_term(parser_t *p, int *comp_op, ast_expr_t *operand) {
-    return 0;
+    return node(p);
 }
 
 ast_expr_t *ast_comparison(parser_t *p, ast_expr_t *first, ast_list_t *terms) {
-    return 0;
+    return node(p);
 }
 
 ast_stmt_t *ast_nop(parser_t *p) {
-    return 0;
+    return node(p);
 }
 
 ast_stmt_t *ast_break(parser_t *p) {
-    return 0;
+    return node(p);
 }
 
 ast_stmt_t *ast_continue(parser_t *p) {
-    return 0;
+    return node(p);
 }
 
-ast_atom_t *ast_name_atom(parser_t *p, token_t *name) {
-    return 0;
+ast_primary_t *ast_name_atom(parser_t *p, token_t *name) {
+    return  node(p);
 }
 
-ast_atom_t *ast_number_atom(parser_t *p, token_t *name) {
-    return 0;
+ast_primary_t *ast_number_atom(parser_t *p, token_t *name) {
+    return node(p);
 }
 
-ast_atom_t *ast_string_atom(parser_t *p, token_t *name) {
-    return 0;
+ast_primary_t *ast_string_atom(parser_t *p, token_t *name) {
+    return  node(p);
 }
 
-ast_atom_t *ast_none(parser_t *p) {
-    return 0;
+ast_primary_t *ast_none(parser_t *p) {
+    return node(p);
 }
 
-ast_atom_t *ast_true(parser_t *p) {
-    return 0;
+ast_primary_t *ast_true(parser_t *p) {
+    return node(p);
 }
 
-ast_atom_t *ast_false(parser_t *p) {
-    return 0;
+ast_primary_t *ast_false(parser_t *p) {
+    return  node(p);
 }

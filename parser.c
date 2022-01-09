@@ -148,12 +148,12 @@ static ast_primary_t *primary(parser_t *);
 static ast_primary_t *primary_1(parser_t *);
 static ast_primary_t *primary_2(parser_t *);
 static ast_primary_t *primary_3(parser_t *);
-static ast_atom_t *tuple_atom(parser_t *);
-static ast_atom_t *list_atom(parser_t *);
-static ast_atom_t *builder(parser_t *);
-static ast_atom_t *builder_1(parser_t *);
-static ast_atom_t *builder_2(parser_t *);
-static ast_atom_t *atom(parser_t *);
+static ast_primary_t *tuple_atom(parser_t *);
+static ast_primary_t *list_atom(parser_t *);
+static ast_primary_t *builder(parser_t *);
+static ast_primary_t *builder_1(parser_t *);
+static ast_primary_t *builder_2(parser_t *);
+static ast_primary_t *atom(parser_t *);
 
 
 
@@ -563,7 +563,7 @@ static ast_primary_t *t_primary_3(parser_t *p) {
 static ast_primary_t *t_primary_4(parser_t *p) {
     const frame_t f = {24, p->pos, FUNC};
     ast_primary_t *res_24;
-    ast_atom_t *_atom;
+    ast_primary_t *_atom;
     res_24 = enter_frame(p, &f) && (
         (_atom = atom(p)) &&
         (test_and_reset(p, &f, t_lookahead(p)))
@@ -2464,9 +2464,9 @@ static ast_primary_t *primary_3(parser_t *p) {
 
 // tuple_atom:
 //     | '(' [list_items] ')'
-static ast_atom_t *tuple_atom(parser_t *p) {
+static ast_primary_t *tuple_atom(parser_t *p) {
     const frame_t f = {131, p->pos, FUNC};
-    ast_atom_t *res_131;
+    ast_primary_t *res_131;
     ast_list_t *_list_items;
     res_131 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
@@ -2478,9 +2478,9 @@ static ast_atom_t *tuple_atom(parser_t *p) {
 
 // list_atom:
 //     | '[' [list_items] ']'
-static ast_atom_t *list_atom(parser_t *p) {
+static ast_primary_t *list_atom(parser_t *p) {
     const frame_t f = {132, p->pos, FUNC};
-    ast_atom_t *res_132;
+    ast_primary_t *res_132;
     ast_list_t *_list_items;
     res_132 = enter_frame(p, &f) && (
         (consume(p, 17, "[")) &&
@@ -2493,10 +2493,10 @@ static ast_atom_t *list_atom(parser_t *p) {
 // builder:
 //     | NAME simple_args ':' expr
 //     | NAME [builder_hint] [builder_args] block_suite
-static ast_atom_t *builder(parser_t *p) {
+static ast_primary_t *builder(parser_t *p) {
     const frame_t f = {133, p->pos, FUNC};
-    ast_atom_t *res_133;
-    ast_atom_t *alt_133;
+    ast_primary_t *res_133;
+    ast_primary_t *alt_133;
     res_133 = enter_frame(p, &f) && (
         (alt_133 = builder_1(p)) ||
         (alt_133 = builder_2(p))
@@ -2504,9 +2504,9 @@ static ast_atom_t *builder(parser_t *p) {
     return exit_frame(p, &f, res_133);
 }
 
-static ast_atom_t *builder_1(parser_t *p) {
+static ast_primary_t *builder_1(parser_t *p) {
     const frame_t f = {134, p->pos, FUNC};
-    ast_atom_t *res_134;
+    ast_primary_t *res_134;
     token_t *_name;
     ast_list_t *_simple_args;
     ast_expr_t *_expr;
@@ -2519,9 +2519,9 @@ static ast_atom_t *builder_1(parser_t *p) {
     return exit_frame(p, &f, res_134);
 }
 
-static ast_atom_t *builder_2(parser_t *p) {
+static ast_primary_t *builder_2(parser_t *p) {
     const frame_t f = {135, p->pos, FUNC};
-    ast_atom_t *res_135;
+    ast_primary_t *res_135;
     token_t *_name;
     ast_list_t *_builder_hint;
     void *_builder_args;
@@ -2545,13 +2545,13 @@ static ast_atom_t *builder_2(parser_t *p) {
 //     | 'None'
 //     | 'True'
 //     | 'False'
-static ast_atom_t *atom(parser_t *p) {
+static ast_primary_t *atom(parser_t *p) {
     const frame_t f = {136, p->pos, FUNC};
-    ast_atom_t *res_136;
+    ast_primary_t *res_136;
     token_t *_name;
     token_t *_number;
     token_t *_string;
-    ast_atom_t *alt_136;
+    ast_primary_t *alt_136;
     res_136 = enter_frame(p, &f) && (
         (alt_136 = tuple_atom(p)) ||
         (alt_136 = list_atom(p)) ||
