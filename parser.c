@@ -344,7 +344,7 @@ static ast_stmt_t *del_stmt(parser_t *p) {
     res_10 = enter_frame(p, &f) && (
         (consume(p, 79, "del")) &&
         (_targetlist = targetlist(p))
-    ) ? node(p) : 0;
+    ) ? _targetlist : 0;
     return exit_frame(p, &f, res_10);
 }
 
@@ -357,7 +357,7 @@ static ast_stmt_t *return_stmt(parser_t *p) {
     res_11 = enter_frame(p, &f) && (
         (consume(p, 54, "return")) &&
         (_exprlist_star = exprlist_star(p), 1)
-    ) ? node(p) : 0;
+    ) ? _exprlist_star : 0;
     return exit_frame(p, &f, res_11);
 }
 
@@ -1147,7 +1147,7 @@ static void *block_suite_2(parser_t *p) {
         (consume(p, 15, "{")) &&
         (_simple_stmt = simple_stmt(p), 1) &&
         (consume(p, 16, "}"))
-    ) ? node(p) : 0;
+    ) ? _simple_stmt : 0;
     return exit_frame(p, &f, res_54);
 }
 
@@ -1455,7 +1455,7 @@ static void *args_kwargs_3(parser_t *p) {
     res_73 = enter_frame(p, &f) && (
         (consume(p, 7, ",")) &&
         (_default_arg = default_arg(p))
-    ) ? node(p) : 0;
+    ) ? _default_arg : 0;
     return exit_frame(p, &f, res_73);
 }
 
@@ -1505,7 +1505,7 @@ static void *default_arg_2(parser_t *p) {
     res_77 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
-    ) ? node(p) : 0;
+    ) ? _expr : 0;
     return exit_frame(p, &f, res_77);
 }
 
@@ -1530,7 +1530,7 @@ static void *typed_arg_2(parser_t *p) {
     res_79 = enter_frame(p, &f) && (
         (consume(p, 9, ":")) &&
         (_expr = expr(p))
-    ) ? node(p) : 0;
+    ) ? _expr : 0;
     return exit_frame(p, &f, res_79);
 }
 
@@ -1555,7 +1555,7 @@ static void *simple_arg_2(parser_t *p) {
     res_81 = enter_frame(p, &f) && (
         (consume(p, 8, "=")) &&
         (_expr = expr(p))
-    ) ? node(p) : 0;
+    ) ? _expr : 0;
     return exit_frame(p, &f, res_81);
 }
 

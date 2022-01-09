@@ -321,26 +321,51 @@ void *parse_grammar(parser_t *p, int entry_point);
 
 double *parse_calc(parser_t *p);
 
-char *calc_repl(char *in) {
-    parser_t *p = parser_init_state(in, strlen(in), lexer_get_next_token);
-    double *n = parse_calc(p);
-    lexer_t *ls = &p->lexer_state;
-    parser_verify_eof(p);
 
+static int print_if_error(parser_t *p, void *result) {
+    lexer_t *ls = &p->lexer_state;
     if (p->error) {
         printf("======================\n\033[31;1m");
         printf("parser error: %s\n\033[0m", p->error);
         printf("======================");
+        return 1;
     } else if (ls->error) {
         printf("======================\n\033[31;1m");
         printf("lexer error: %s\n\033[0m", ls->error);
         printf("======================");
-    } else if (!n) {
+        return 1;
+    } else if (!result) {
         printf("======================\n\033[31;1m");
         printf("Not a valid parse tree\n\033[0m");
         printf("======================");
-    } else {
+        return 1;
+    } 
+    return 0;
+}
+
+static parser_t *simple_parser(char *in) {
+    return parser_init_state(in, strlen(in), lexer_get_next_token);
+}
+
+char *calc_repl(char *in) {
+    parser_t *p = simple_parser(in);
+    double *n = parse_calc(p);
+    lexer_t *ls = &p->lexer_state;
+    parser_verify_eof(p);
+    if (!print_if_error(p, n)) {
         printf("Result: %lf", *n);
+    }
+    parser_free_state(p);
+    return "\n";
+}
+
+char *parser_repl(char *in) {
+    parser_t *p = simple_parser(in);
+    void *n = parse_grammar(p, 0);
+    lexer_t *ls = &p->lexer_state;
+    parser_verify_eof(p);
+    if (!print_if_error(p, n)) {
+        printf("Success!");
     }
     parser_free_state(p);
     return "\n";

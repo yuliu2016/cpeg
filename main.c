@@ -16,6 +16,8 @@ char *tokenizer_repl(char *in);
 
 char *calc_repl(char *in);
 
+char *parser_repl(char *in);
+
 
 static unsigned long init_console() {
 #ifdef WIN32
@@ -45,7 +47,8 @@ static unsigned long init_console() {
 int getmode() {
     printf("\033[32mcpeg (%s, %s)\033[0m\n", __DATE__, __TIME__);
     printf(
-        "1 - parser\n"
+        "1 - calculator parser\n"
+        "2 - main parser\n"
         "0 - tokenizer\n"
         "Mode: "
     );
@@ -62,6 +65,8 @@ int main() {
         input_loop(">>> ", calc_repl, -1);
     else if (m == '0')
         input_loop(">>> ", tokenizer_repl, -1);
+    else if (m == '2')
+        input_loop(">>> ", parser_repl, -1);
     else
         printf("Invalid mode\n");
     return 0;

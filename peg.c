@@ -341,6 +341,9 @@ token_t *parser_consume_token(parser_t *p, int tk_type) {
 
     // now check for correct type
     if (curr_token->tk_type == tk_type) {
+        if (p->pos > p->max_reached_pos) {
+            p->max_reached_pos = p->pos;
+        }
         p->pos += 1;
         return curr_token;
     } else {
@@ -361,7 +364,7 @@ void parser_verify_eof(parser_t *p) {
     size_t lineno = tok->lineno;
     size_t line_start = ls->line_to_index[lineno];
     size_t line_end = _find_eol_index(ls, lineno);
-    size_t col = tok->column;
+    size_t col = tok->column + tok->len;
 
     // include an extra char for \0
     char *line_buf = calloc(line_end - line_start + 1, sizeof(char));
@@ -405,6 +408,7 @@ ast_list_t *ast_list_new(parser_t *p) {
 ast_list_t *ast_list_of(parser_t *p, void *first) {
     ast_list_t *seq = ast_list_new(p);
     ast_list_append(p, seq, first);
+    return seq;
 }
 
 
