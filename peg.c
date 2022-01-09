@@ -358,13 +358,29 @@ void parser_verify_eof(parser_t *p) {
         // Everything is parsed; No problem.
         return;
     }
-    size_t pos = p->max_reached_pos;
-    token_t *tok = ls->tokens[pos];
     
+    // There are more unparsed tokens; produce an error
+    size_t pos = p->max_reached_pos;
+
+    token_t *tok;
+    size_t col_start;
+    size_t col_end;
+    
+    if (pos == ls->token_len - 1) {
+        // Last token: Move caret to just 
+        tok = ls->tokens[pos];
+        col_start = tok->column + tok->len;
+        col_end = col_start + 1;
+    } else {
+        // Highlight the next token
+        tok = ls->tokens[pos + 1];
+        col_start = tok->column;
+        col_end = col_start + tok->len;
+    }
+
     size_t lineno = tok->lineno;
     size_t line_start = ls->line_to_index[lineno];
     size_t line_end = _find_eol_index(ls, lineno);
-    size_t col = tok->column + tok->len;
 
     // include an extra char for \0
     char *line_buf = calloc(line_end - line_start + 1, sizeof(char));
@@ -374,23 +390,26 @@ void parser_verify_eof(parser_t *p) {
         ++j;
     }
 
-    char *caret_buf = calloc(col + 5, sizeof(char));
-    for (size_t i = 0; i < col + 4; ++i) {
-        caret_buf[i] = ' ';
+    char *highlight = calloc(col_end + 5, sizeof(char));
+    for (size_t i = 0; i < col_start + 4; ++i) {
+        highlight[i] = ' ';
+    }
+    for (size_t i = col_start; i < col_end; ++i) {
+        highlight[i+4] = '^';
     }
 
     char *error_msg = "Invalid Syntax";
     
-    size_t max_len = 45 + (line_end - line_start) + col + strlen(error_msg);
+    size_t max_len = 45 + (line_end - line_start) + col_end + strlen(error_msg);
     char *err_buf = calloc(max_len, sizeof(char));
     
-    sprintf(err_buf, "line %zu\n    %s\n%s^\nError: %s", 
-            lineno + 1, line_buf, caret_buf, error_msg);
+    sprintf(err_buf, "line %zu\n    %s\n%s\nError: %s", 
+            lineno + 1, line_buf, highlight, error_msg);
 
     p->error = err_buf;
 
     free(line_buf);
-    free(caret_buf);
+    free(highlight);
 }
 
 
