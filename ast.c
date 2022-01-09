@@ -59,6 +59,14 @@ ast_stmt_t *ast_continue(parser_t *p) {
     return node(p);
 }
 
+ast_stmt_t *ast_del(parser_t *p, ast_list_t *li) {
+    return node(p);
+}
+
+ast_stmt_t *ast_return(parser_t *p, ast_list_t *li) {
+    return node(p);
+}
+
 ast_primary_t *ast_name_atom(parser_t *p, token_t *name) {
     return  node(p);
 }

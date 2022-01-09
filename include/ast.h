@@ -98,6 +98,10 @@ ast_stmt_t *ast_break(parser_t *p);
 
 ast_stmt_t *ast_continue(parser_t *p);
 
+ast_stmt_t *ast_del(parser_t *p, ast_list_t *li);
+
+ast_stmt_t *ast_return(parser_t *p, ast_list_t *li);
+
 ast_primary_t *ast_name_atom(parser_t *p, token_t *name);
 ast_primary_t *ast_number_atom(parser_t *p, token_t *name);
 ast_primary_t *ast_string_atom(parser_t *p, token_t *name);

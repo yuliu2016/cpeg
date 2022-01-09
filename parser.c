@@ -7,8 +7,8 @@ static ast_list_t *file_input(parser_t *);
 static ast_list_t *eval_input(parser_t *);
 static ast_list_t *stmt_list(parser_t *);
 static ast_list_t *stmt_loop(parser_t *);
-static ast_stmt_t *stmt(parser_t *);
-static ast_stmt_t *stmt_1(parser_t *);
+static ast_list_t *stmt(parser_t *);
+static ast_list_t *stmt_1(parser_t *);
 static ast_list_t *simple_stmt(parser_t *);
 static ast_list_t *small_stmt_delimited(parser_t *);
 static ast_stmt_t *small_stmt(parser_t *);
@@ -241,7 +241,7 @@ static ast_list_t *stmt_list(parser_t *p) {
 }
 
 static ast_list_t *stmt_loop(parser_t *p) {
-    ast_stmt_t *_stmt = stmt(p);
+    ast_list_t *_stmt = stmt(p);
     if (!_stmt) {
         return 0;
     }
@@ -254,10 +254,10 @@ static ast_list_t *stmt_loop(parser_t *p) {
 
 // stmt:
 //     | (simple_stmt | compound_stmt) NEWLINE
-static ast_stmt_t *stmt(parser_t *p) {
+static ast_list_t *stmt(parser_t *p) {
     const frame_t f = {6, p->pos, FUNC};
-    ast_stmt_t *res_6;
-    ast_stmt_t *_simple_stmt_or_compound_stmt;
+    ast_list_t *res_6;
+    ast_list_t *_simple_stmt_or_compound_stmt;
     res_6 = enter_frame(p, &f) && (
         (_simple_stmt_or_compound_stmt = stmt_1(p)) &&
         (consume(p, 2, "NEWLINE"))
@@ -265,13 +265,15 @@ static ast_stmt_t *stmt(parser_t *p) {
     return exit_frame(p, &f, res_6);
 }
 
-static ast_stmt_t *stmt_1(parser_t *p) {
+static ast_list_t *stmt_1(parser_t *p) {
     const frame_t f = {7, p->pos, FUNC};
-    ast_stmt_t *res_7;
-    ast_stmt_t *alt_7;
+    ast_list_t *res_7;
+    void *_compound_stmt;
+    ast_list_t *alt_7;
     res_7 = enter_frame(p, &f) && (
-        (alt_7 = simple_stmt(p)) ||
-        (alt_7 = compound_stmt(p))
+        (alt_7 = simple_stmt(p)) || (
+            (_compound_stmt = compound_stmt(p)) &&
+            (alt_7 = ast_list_of(p, _compound_stmt)))
     ) ? alt_7 : 0;
     return exit_frame(p, &f, res_7);
 }
@@ -344,7 +346,7 @@ static ast_stmt_t *del_stmt(parser_t *p) {
     res_10 = enter_frame(p, &f) && (
         (consume(p, 79, "del")) &&
         (_targetlist = targetlist(p))
-    ) ? _targetlist : 0;
+    ) ? ast_del(p, _targetlist) : 0;
     return exit_frame(p, &f, res_10);
 }
 
@@ -357,7 +359,7 @@ static ast_stmt_t *return_stmt(parser_t *p) {
     res_11 = enter_frame(p, &f) && (
         (consume(p, 54, "return")) &&
         (_exprlist_star = exprlist_star(p), 1)
-    ) ? _exprlist_star : 0;
+    ) ? ast_return(p, _exprlist_star) : 0;
     return exit_frame(p, &f, res_11);
 }
 
