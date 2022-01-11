@@ -414,39 +414,16 @@ void parser_verify_eof(parser_t *p) {
 
 
 ast_list_t *ast_list_new(parser_t *p) {
-    ast_list_t *seq = parser_alloc(p, sizeof(ast_list_t));
-    if (!seq) {
-        return NULL;
-    }
-    seq->capacity = 0;
-    seq->len = 0;
-    seq->items = NULL;
-    return seq;
+    return mblist_new(p->region, 0);
 }
 
 ast_list_t *ast_list_of(parser_t *p, void *first) {
-    ast_list_t *seq = ast_list_new(p);
-    ast_list_append(p, seq, first);
+    ast_list_t *seq = mblist_new(p->region, 1);
+    mblist_append(p->region, seq, first);
     return seq;
 }
 
 
 void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
-    if (seq->len >= seq->capacity) {
-        if (!seq->capacity) {
-            seq->capacity = 1;
-            seq->len = 0;
-            seq->items = parser_alloc(p, sizeof(void *));
-        } else {
-            seq->capacity = seq->capacity << 1u;
-            // Since realloc isn't available with memory regions,
-            // the nodes needs to be copied in a loop
-            void **old_items = seq->items;
-            seq->items = parser_alloc(p, seq->capacity * sizeof(void *));
-            for (int i = 0; i < seq->len; ++i) {
-                seq->items[i] = old_items[i];
-            }
-        }
-    }
-    seq->items[seq->len++] = item;
+    mblist_append(p->region, seq, item);
 }

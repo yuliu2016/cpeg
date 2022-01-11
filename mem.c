@@ -76,3 +76,49 @@ void *mballoc(mem_region_t *region, size_t size) {
         return ptr;
     }
 }
+
+
+mblist_t *mblist_new(mem_region_t *region, size_t initial_size) {
+    mblist_t *seq = mballoc(region, sizeof(mblist_t));
+    if (!seq) {
+        return NULL;
+    }
+
+    size_t capacity = 0;
+    while (capacity < initial_size)
+        capacity *= 2;
+
+    seq->capacity = capacity;
+    seq->len = 0;
+
+    if (!capacity) {
+        seq->items = NULL;
+    } else {
+        void** items = mballoc(region, capacity * sizeof(void *));
+        if (!items) {
+            return NULL;
+        }
+        seq->items = items;
+    }
+    return seq;
+}
+
+void mblist_append(mem_region_t *region, mblist_t *seq, void *item) {
+    if (seq->len >= seq->capacity) {
+        if (!seq->capacity) {
+            seq->capacity = 1;
+            seq->len = 0;
+            seq->items = mballoc(region, sizeof(void *));
+            if (!seq->items) return;
+        } else {
+            seq->capacity = seq->capacity << 1u;
+            void **old_items = seq->items;
+            seq->items = mballoc(region, seq->capacity * sizeof(void *));
+            if (!seq->items) return;
+            for (int i = 0; i < seq->len; ++i) {
+                seq->items[i] = old_items[i];
+            }
+        }
+    }
+    seq->items[seq->len++] = item;
+}

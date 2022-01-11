@@ -22,11 +22,21 @@ struct mem_region {
 
 #define REGION_DEFAULT_SIZE 8192
 
-
 mem_region_t *mbregion(size_t initial_size, size_t increment_size);
 
 void mbpurge(mem_region_t *region);
 
 void *mballoc(mem_region_t *region, size_t size);
+
+typedef struct mblist {
+    size_t len;
+    size_t capacity;
+    void **items;
+} mblist_t;
+
+mblist_t *mblist_new(mem_region_t *region, size_t initial_size);
+
+void mblist_append(mem_region_t *region, mblist_t *seq, void *item);
+
 
 #endif //CPEG_MEM_H

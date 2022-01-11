@@ -147,11 +147,7 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
 
 // List data structure
 
-typedef struct ast_list {
-    size_t len;
-    size_t capacity;
-    void **items;
-} ast_list_t;
+typedef mblist_t ast_list_t;
 
 ast_list_t *ast_list_new(parser_t *p);
 
