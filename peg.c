@@ -207,7 +207,8 @@ void lexer_free_state(lexer_t *ls) {
 parser_t *parser_init_state(
         char *src,
         size_t len,
-        lexer_func_t lexer_func) {
+        lexer_func_t lexer_func,
+        char **tk_indices) {
 
     if (!src || !lexer_func) {
         return NULL;
@@ -231,6 +232,7 @@ parser_t *parser_init_state(
     p->max_reached_pos = 0;
     p->level = 0;
     p->error = 0;
+    p->tk_indices = tk_indices;
 
     // Need to scan at least one token to see
     // if there is anything to parse

@@ -86,6 +86,33 @@
 #define T_TRUE 82  // True
 #define T_FALSE 83  // False
 
+
+static char *indices[] = {
+    "",
+    "ENDMARKER",
+    "NEWLINE",
+    "NAME",
+    "NUMBER",
+    "STRING",
+    ".", ",", "=", ":", "?", 
+    "!", ";", "(", ")", "{", 
+    "}", "[", "]", "<", ">", 
+    "+", "-", "*", "/", "%", 
+    "@", "|", "&", "~", "^", 
+    "==", "!=", "<=", ">=", "->", 
+    ":=", "//", "**", "+=", "-=", 
+    "*=", "/=", "%=", "@=", "|=", 
+    "&=", "^=", "<<", ">>", "//=", 
+    "**=", "<<=", ">>=", "return", "nonlocal", 
+    "if", "elif", "else", "and", "or", 
+    "not", "is", "in", "pass", "as", 
+    "from", "import", "with", "async", "await", 
+    "while", "for", "continue", "break", "try", 
+    "except", "finally", "raise", "del", "assert", 
+    "None", "True", "False", ""
+};
+
+
 struct token_literal {
     const char *literal;
     size_t tkl_type;

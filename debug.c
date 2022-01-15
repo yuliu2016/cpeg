@@ -1,4 +1,5 @@
 #include "include/internal/mem_debug.h"
+#include "include/internal/tokenmap.h"
 #include "stdio.h"
 #include "string.h"
 #include "stdlib.h"
@@ -264,13 +265,15 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
             p->max_reached_pos = p->pos;
         }
         p->pos += 1;
-        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n",
-                literal, p->level, p->pos);
+        char *token_buf = token_heap_copy(curr_token);
+        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[32mt='%s'\033[0m)\n",
+                literal, p->level, p->pos, token_buf);
+        free(token_buf);
         return curr_token;
     } else {
         char *token_buf = token_heap_copy(curr_token);
 
-        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mt='%s'\033[0m)\n",
+        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[31mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
         free(token_buf);
         return NULL;
@@ -344,7 +347,7 @@ static int print_if_error(parser_t *p, void *result) {
 }
 
 static parser_t *simple_parser(char *in) {
-    return parser_init_state(in, strlen(in), lexer_get_next_token);
+    return parser_init_state(in, strlen(in), lexer_get_next_token, (char **) indices);
 }
 
 char *calc_repl(char *in) {

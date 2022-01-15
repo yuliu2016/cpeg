@@ -97,11 +97,11 @@ typedef struct parser_state {
     mem_region_t *region;
 
     size_t pos;
-    size_t max_reached_pos;
-
-    char *error;
 
     // Debugging
+    size_t max_reached_pos;
+    char **tk_indices;
+    char *error;
     size_t level;
 
 } parser_t;
@@ -113,7 +113,8 @@ typedef struct frame {
 } frame_t;
 
 
-parser_t *parser_init_state(char *src, size_t len, lexer_func_t lexer_func);
+parser_t *parser_init_state(char *src, size_t len, 
+        lexer_func_t lexer_func, char **tk_indices);
 
 token_t *parser_fetch_token(parser_t *p, size_t pos);
 
@@ -159,7 +160,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define PARSER_MAX_RECURSION 500
 
 #ifndef PARSER_NODEBUG
-// #define PARSER_DEBUG
+#define PARSER_DEBUG
 #endif
 
 
