@@ -32,57 +32,57 @@ double *parse_calc(parser_t *p) {
 //     | sum '-' term
 //     | term
 static double *sum(parser_t *p) {
-    const frame_t f = {1, p->pos, FUNC};
-    double *res_1 = 0;
-    if (is_memoized(p, &f, (void **) &res_1)) {
-        return res_1;
+    const frame_t f = {251, p->pos, FUNC};
+    double *res_251 = 0;
+    if (is_memoized(p, &f, (void **) &res_251)) {
+        return res_251;
     }
-    double *alt_1;
+    double *alt_251;
     size_t maxpos;
     double *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_1;
+            max = res_251;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_1 = (
-                (alt_1 = sum_1(p)) ||
-                (alt_1 = sum_2(p)) ||
-                (alt_1 = term(p))
-            ) ? alt_1 : 0;
+            res_251 = (
+                (alt_251 = sum_1(p)) ||
+                (alt_251 = sum_2(p)) ||
+                (alt_251 = term(p))
+            ) ? alt_251 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_1 = max;
+        res_251 = max;
     }
-    insert_memo(p, &f, res_1);
-    return exit_frame(p, &f, res_1);
+    insert_memo(p, &f, res_251);
+    return exit_frame(p, &f, res_251);
 }
 
 static double *sum_1(parser_t *p) {
-    const frame_t f = {2, p->pos, FUNC};
-    double *res_2;
+    const frame_t f = {205, p->pos, FUNC};
+    double *res_205;
     double *_sum;
     double *_term;
-    res_2 = enter_frame(p, &f) && (
+    res_205 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
         (_term = term(p))
     ) ? binop_add(p, _sum, _term) : 0;
-    return exit_frame(p, &f, res_2);
+    return exit_frame(p, &f, res_205);
 }
 
 static double *sum_2(parser_t *p) {
-    const frame_t f = {3, p->pos, FUNC};
-    double *res_3;
+    const frame_t f = {206, p->pos, FUNC};
+    double *res_206;
     double *_sum;
     double *_term;
-    res_3 = enter_frame(p, &f) && (
+    res_206 = enter_frame(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
         (_term = term(p))
     ) ? binop_sub(p, _sum, _term) : 0;
-    return exit_frame(p, &f, res_3);
+    return exit_frame(p, &f, res_206);
 }
 
 // term (left_recursive):
@@ -91,71 +91,71 @@ static double *sum_2(parser_t *p) {
 //     | term '%' factor
 //     | factor
 static double *term(parser_t *p) {
-    const frame_t f = {4, p->pos, FUNC};
-    double *res_4 = 0;
-    if (is_memoized(p, &f, (void **) &res_4)) {
-        return res_4;
+    const frame_t f = {460, p->pos, FUNC};
+    double *res_460 = 0;
+    if (is_memoized(p, &f, (void **) &res_460)) {
+        return res_460;
     }
-    double *alt_4;
+    double *alt_460;
     size_t maxpos;
     double *max;
     if (enter_frame(p, &f)) {
         do {
             maxpos = p->pos;
-            max = res_4;
+            max = res_460;
             insert_memo(p, &f, max);
             p->pos = f.f_pos;
-            res_4 = (
-                (alt_4 = term_1(p)) ||
-                (alt_4 = term_2(p)) ||
-                (alt_4 = term_3(p)) ||
-                (alt_4 = factor(p))
-            ) ? alt_4 : 0;
+            res_460 = (
+                (alt_460 = term_1(p)) ||
+                (alt_460 = term_2(p)) ||
+                (alt_460 = term_3(p)) ||
+                (alt_460 = factor(p))
+            ) ? alt_460 : 0;
         } while (p->pos > maxpos);
         p->pos = maxpos;
-        res_4 = max;
+        res_460 = max;
     }
-    insert_memo(p, &f, res_4);
-    return exit_frame(p, &f, res_4);
+    insert_memo(p, &f, res_460);
+    return exit_frame(p, &f, res_460);
 }
 
 static double *term_1(parser_t *p) {
-    const frame_t f = {5, p->pos, FUNC};
-    double *res_5;
+    const frame_t f = {758, p->pos, FUNC};
+    double *res_758;
     double *_term;
     double *_factor;
-    res_5 = enter_frame(p, &f) && (
+    res_758 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
         (_factor = factor(p))
     ) ? binop_mul(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_5);
+    return exit_frame(p, &f, res_758);
 }
 
 static double *term_2(parser_t *p) {
-    const frame_t f = {6, p->pos, FUNC};
-    double *res_6;
+    const frame_t f = {759, p->pos, FUNC};
+    double *res_759;
     double *_term;
     double *_factor;
-    res_6 = enter_frame(p, &f) && (
+    res_759 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
         (_factor = factor(p))
     ) ? binop_div(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_6);
+    return exit_frame(p, &f, res_759);
 }
 
 static double *term_3(parser_t *p) {
-    const frame_t f = {7, p->pos, FUNC};
-    double *res_7;
+    const frame_t f = {760, p->pos, FUNC};
+    double *res_760;
     double *_term;
     double *_factor;
-    res_7 = enter_frame(p, &f) && (
+    res_760 = enter_frame(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
         (_factor = factor(p))
     ) ? binop_mod(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_7);
+    return exit_frame(p, &f, res_760);
 }
 
 // factor:
@@ -164,76 +164,76 @@ static double *term_3(parser_t *p) {
 //     | '~' factor
 //     | power
 static double *factor(parser_t *p) {
-    const frame_t f = {8, p->pos, FUNC};
-    double *res_8;
-    double *alt_8;
-    res_8 = enter_frame(p, &f) && (
-        (alt_8 = factor_1(p)) ||
-        (alt_8 = factor_2(p)) ||
-        (alt_8 = factor_3(p)) ||
-        (alt_8 = power(p))
-    ) ? alt_8 : 0;
-    return exit_frame(p, &f, res_8);
+    const frame_t f = {983, p->pos, FUNC};
+    double *res_983;
+    double *alt_983;
+    res_983 = enter_frame(p, &f) && (
+        (alt_983 = factor_1(p)) ||
+        (alt_983 = factor_2(p)) ||
+        (alt_983 = factor_3(p)) ||
+        (alt_983 = power(p))
+    ) ? alt_983 : 0;
+    return exit_frame(p, &f, res_983);
 }
 
 static double *factor_1(parser_t *p) {
-    const frame_t f = {9, p->pos, FUNC};
-    double *res_9;
+    const frame_t f = {609, p->pos, FUNC};
+    double *res_609;
     double *_factor;
-    res_9 = enter_frame(p, &f) && (
+    res_609 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
     ) ? unary_plus(p, _factor) : 0;
-    return exit_frame(p, &f, res_9);
+    return exit_frame(p, &f, res_609);
 }
 
 static double *factor_2(parser_t *p) {
-    const frame_t f = {10, p->pos, FUNC};
-    double *res_10;
+    const frame_t f = {610, p->pos, FUNC};
+    double *res_610;
     double *_factor;
-    res_10 = enter_frame(p, &f) && (
+    res_610 = enter_frame(p, &f) && (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
     ) ? unary_minus(p, _factor) : 0;
-    return exit_frame(p, &f, res_10);
+    return exit_frame(p, &f, res_610);
 }
 
 static double *factor_3(parser_t *p) {
-    const frame_t f = {11, p->pos, FUNC};
-    double *res_11;
+    const frame_t f = {611, p->pos, FUNC};
+    double *res_611;
     double *_factor;
-    res_11 = enter_frame(p, &f) && (
+    res_611 = enter_frame(p, &f) && (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
     ) ? unary_not(p, _factor) : 0;
-    return exit_frame(p, &f, res_11);
+    return exit_frame(p, &f, res_611);
 }
 
 // power:
 //     | atom '**' factor
 //     | atom
 static double *power(parser_t *p) {
-    const frame_t f = {12, p->pos, FUNC};
-    double *res_12;
-    double *alt_12;
-    res_12 = enter_frame(p, &f) && (
-        (alt_12 = power_1(p)) ||
-        (alt_12 = atom(p))
-    ) ? alt_12 : 0;
-    return exit_frame(p, &f, res_12);
+    const frame_t f = {757, p->pos, FUNC};
+    double *res_757;
+    double *alt_757;
+    res_757 = enter_frame(p, &f) && (
+        (alt_757 = power_1(p)) ||
+        (alt_757 = atom(p))
+    ) ? alt_757 : 0;
+    return exit_frame(p, &f, res_757);
 }
 
 static double *power_1(parser_t *p) {
-    const frame_t f = {13, p->pos, FUNC};
-    double *res_13;
+    const frame_t f = {367, p->pos, FUNC};
+    double *res_367;
     double *_atom;
     double *_factor;
-    res_13 = enter_frame(p, &f) && (
+    res_367 = enter_frame(p, &f) && (
         (_atom = atom(p)) &&
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
     ) ? binop_pow(p, _atom, _factor) : 0;
-    return exit_frame(p, &f, res_13);
+    return exit_frame(p, &f, res_367);
 }
 
 // atom:
@@ -242,60 +242,60 @@ static double *power_1(parser_t *p) {
 //     | NAME
 //     | NUMBER
 static double *atom(parser_t *p) {
-    const frame_t f = {14, p->pos, FUNC};
-    double *res_14;
+    const frame_t f = {753, p->pos, FUNC};
+    double *res_753;
     token_t *_name;
     token_t *_number;
-    double *alt_14;
-    res_14 = enter_frame(p, &f) && (
-        (alt_14 = atom_1(p)) ||
-        (alt_14 = atom_2(p)) || (
+    double *alt_753;
+    res_753 = enter_frame(p, &f) && (
+        (alt_753 = atom_1(p)) ||
+        (alt_753 = atom_2(p)) || (
             (_name = consume(p, 3, "NAME")) &&
-            (alt_14 = load_const(p, _name))
+            (alt_753 = load_const(p, _name))
         ) || (
             (_number = consume(p, 4, "NUMBER")) &&
-            (alt_14 = to_double(p, _number)))
-    ) ? alt_14 : 0;
-    return exit_frame(p, &f, res_14);
+            (alt_753 = to_double(p, _number)))
+    ) ? alt_753 : 0;
+    return exit_frame(p, &f, res_753);
 }
 
 static double *atom_1(parser_t *p) {
-    const frame_t f = {15, p->pos, FUNC};
-    double *res_15;
+    const frame_t f = {331, p->pos, FUNC};
+    double *res_331;
     double *_sum;
-    res_15 = enter_frame(p, &f) && (
+    res_331 = enter_frame(p, &f) && (
         (consume(p, 13, "(")) &&
         (_sum = sum(p)) &&
         (consume(p, 14, ")"))
     ) ? _sum : 0;
-    return exit_frame(p, &f, res_15);
+    return exit_frame(p, &f, res_331);
 }
 
 static double *atom_2(parser_t *p) {
-    const frame_t f = {16, p->pos, FUNC};
-    double *res_16;
+    const frame_t f = {332, p->pos, FUNC};
+    double *res_332;
     token_t *_name;
     ast_list_t *_parameters;
-    res_16 = enter_frame(p, &f) && (
+    res_332 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
         (_parameters = parameters(p), 1) &&
         (consume(p, 14, ")"))
     ) ? call_func(p, _name, _parameters) : 0;
-    return exit_frame(p, &f, res_16);
+    return exit_frame(p, &f, res_332);
 }
 
 // parameters:
 //     | ','.sum+ [',']
 static ast_list_t *parameters(parser_t *p) {
-    const frame_t f = {17, p->pos, FUNC};
-    ast_list_t *res_17;
+    const frame_t f = {106, p->pos, FUNC};
+    ast_list_t *res_106;
     ast_list_t *_sums;
-    res_17 = enter_frame(p, &f) && (
+    res_106 = enter_frame(p, &f) && (
         (_sums = sum_delimited(p)) &&
         (consume(p, 7, ","), 1)
     ) ? _sums : 0;
-    return exit_frame(p, &f, res_17);
+    return exit_frame(p, &f, res_106);
 }
 
 static ast_list_t *sum_delimited(parser_t *p) {
