@@ -160,7 +160,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define PARSER_MAX_RECURSION 500
 
 #ifndef PARSER_NODEBUG
-#define PARSER_DEBUG
+// #define PARSER_DEBUG
 #endif
 
 

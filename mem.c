@@ -84,9 +84,14 @@ mblist_t *mblist_new(mem_region_t *region, size_t initial_size) {
         return NULL;
     }
 
-    size_t capacity = 0;
-    while (capacity < initial_size)
-        capacity *= 2;
+    size_t capacity;
+    if (!initial_size) {
+        capacity = 0;
+    } else {
+        capacity = 1;
+        while (capacity < initial_size)
+            capacity *= 2;
+    }
 
     seq->capacity = capacity;
     seq->len = 0;
