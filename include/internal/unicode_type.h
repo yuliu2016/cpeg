@@ -4,7 +4,11 @@
 #include "../object.h"
 #include "stdint.h"
 
-typedef struct stringbuffer_t FStringBuffer;
+typedef struct stringbuffer_t {
+    size_t len;
+    size_t capacity;
+    VALUE *objects;
+} FStringBuffer;
 
 typedef struct unicode_t {
     FObject_Base;

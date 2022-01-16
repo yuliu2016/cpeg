@@ -1,10 +1,10 @@
 #include "include/mem.h"
-#include "include/float.h"
+#include "include/arith.h"
 #include "include/internal/float_type.h"
 #include "math.h"
 #include "stdlib.h"
 
-VALUE FFloat_from_double(double d) {
+VALUE vfloat_from_double(double d) {
     FFloat *fobj = malloc(sizeof(FFloat));
     fobj->float_val = d;
     return (VALUE) fobj;
@@ -57,7 +57,7 @@ VALUE float_binop(VALUE a, VALUE b, FBinaryOp binop) {
             r = 0;
             break;
     }
-    return FFloat_from_double(r);
+    return vfloat_from_double(r);
 }
 
 VALUE float_as_string(double d1) {
@@ -110,7 +110,7 @@ VALUE float_unary(VALUE a, FUnaryOp unary) {
             r = 0;
             break;
     }
-    return FFloat_from_double(r);
+    return vfloat_from_double(r);
 }
 
 static FTypeObject FFloatType = {
