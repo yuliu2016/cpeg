@@ -8,6 +8,7 @@ static ast_list_t *eval_input(parser_t *);
 static ast_list_t *statement_list(parser_t *);
 static ast_list_t *line_statement_loop(parser_t *);
 static ast_list_t *line_statement(parser_t *);
+static ast_list_t *line_statement_1(parser_t *);
 static ast_list_t *line_statement_2(parser_t *);
 static ast_list_t *simple_statements(parser_t *);
 static ast_list_t *simple_statement_delimited(parser_t *);
@@ -254,17 +255,29 @@ static ast_list_t *line_statement_loop(parser_t *p) {
 }
 
 // line_statement:
-//     | simple_statements
+//     | simple_statements NEWLINE
 //     | compound_statement NEWLINE
 static ast_list_t *line_statement(parser_t *p) {
     const frame_t f = {260, p->pos, FUNC};
     ast_list_t *res_260;
     ast_list_t *alt_260;
     res_260 = enter_frame(p, &f) && (
-        (alt_260 = simple_statements(p)) ||
+        (alt_260 = line_statement_1(p)) ||
         (alt_260 = line_statement_2(p))
     ) ? alt_260 : 0;
     return exit_frame(p, &f, res_260);
+}
+
+// simple_statements NEWLINE
+static ast_list_t *line_statement_1(parser_t *p) {
+    const frame_t f = {726, p->pos, FUNC};
+    ast_list_t *res_726;
+    ast_list_t *_simple_statements;
+    res_726 = enter_frame(p, &f) && (
+        (_simple_statements = simple_statements(p)) &&
+        (consume(p, 2, "NEWLINE"))
+    ) ? _simple_statements : 0;
+    return exit_frame(p, &f, res_726);
 }
 
 // compound_statement NEWLINE
@@ -280,15 +293,14 @@ static ast_list_t *line_statement_2(parser_t *p) {
 }
 
 // simple_statements:
-//     | ';'.simple_statement+ [';'] NEWLINE
+//     | ';'.simple_statement+ [';']
 static ast_list_t *simple_statements(parser_t *p) {
     const frame_t f = {129, p->pos, FUNC};
     ast_list_t *res_129;
     ast_list_t *_simple_statements;
     res_129 = enter_frame(p, &f) && (
         (_simple_statements = simple_statement_delimited(p)) &&
-        (consume(p, 12, ";"), 1) &&
-        (consume(p, 2, "NEWLINE"))
+        (consume(p, 12, ";"), 1)
     ) ? _simple_statements : 0;
     return exit_frame(p, &f, res_129);
 }
@@ -429,7 +441,7 @@ static ast_list_t *expr_delimited(parser_t *p) {
     return list;
 }
 
-// target:
+// target (memo):
 //     | t_primary '.' NAME !t_lookahead
 //     | t_primary subscript !t_lookahead
 //     | NAME
@@ -437,6 +449,9 @@ static ast_list_t *expr_delimited(parser_t *p) {
 static void *target(parser_t *p) {
     const frame_t f = {161, p->pos, FUNC};
     void *res_161;
+    if (is_memoized(p, &f, (void **) &res_161)) {
+        return res_161;
+    }
     void *alt_161;
     res_161 = enter_frame(p, &f) && (
         (alt_161 = target_1(p)) ||
@@ -444,6 +459,7 @@ static void *target(parser_t *p) {
         (alt_161 = consume(p, 3, "NAME")) ||
         (alt_161 = target_4(p))
     ) ? alt_161 : 0;
+    insert_memo(p, &f, res_161);
     return exit_frame(p, &f, res_161);
 }
 
@@ -2356,7 +2372,7 @@ static ast_expr_t *pipeline_1(parser_t *p) {
     return exit_frame(p, &f, res_876);
 }
 
-// factor:
+// factor (memo):
 //     | '+' factor
 //     | '-' factor
 //     | '~' factor
@@ -2364,6 +2380,9 @@ static ast_expr_t *pipeline_1(parser_t *p) {
 static ast_expr_t *factor(parser_t *p) {
     const frame_t f = {983, p->pos, FUNC};
     ast_expr_t *res_983;
+    if (is_memoized(p, &f, (void **) &res_983)) {
+        return res_983;
+    }
     ast_expr_t *alt_983;
     res_983 = enter_frame(p, &f) && (
         (alt_983 = factor_1(p)) ||
@@ -2371,6 +2390,7 @@ static ast_expr_t *factor(parser_t *p) {
         (alt_983 = factor_3(p)) ||
         (alt_983 = power(p))
     ) ? alt_983 : 0;
+    insert_memo(p, &f, res_983);
     return exit_frame(p, &f, res_983);
 }
 
@@ -2410,12 +2430,15 @@ static ast_expr_t *factor_3(parser_t *p) {
     return exit_frame(p, &f, res_611);
 }
 
-// power:
+// power (memo):
 //     | primary '**' factor
 //     | primary
 static ast_expr_t *power(parser_t *p) {
     const frame_t f = {757, p->pos, FUNC};
     ast_expr_t *res_757;
+    if (is_memoized(p, &f, (void **) &res_757)) {
+        return res_757;
+    }
     ast_primary_t *_primary;
     ast_expr_t *alt_757;
     res_757 = enter_frame(p, &f) && (
@@ -2423,6 +2446,7 @@ static ast_expr_t *power(parser_t *p) {
             (_primary = primary(p)) &&
             (alt_757 = ast_primary_expr(p, _primary)))
     ) ? alt_757 : 0;
+    insert_memo(p, &f, res_757);
     return exit_frame(p, &f, res_757);
 }
 
@@ -2589,7 +2613,7 @@ static ast_primary_t *builder_expression_2(parser_t *p) {
     return exit_frame(p, &f, res_256);
 }
 
-// atom:
+// atom (memo):
 //     | paren_expression
 //     | list_expression
 //     | builder_expression
@@ -2602,6 +2626,9 @@ static ast_primary_t *builder_expression_2(parser_t *p) {
 static ast_primary_t *atom(parser_t *p) {
     const frame_t f = {753, p->pos, FUNC};
     ast_primary_t *res_753;
+    if (is_memoized(p, &f, (void **) &res_753)) {
+        return res_753;
+    }
     token_t *_name;
     token_t *_number;
     token_t *_string;
@@ -2628,5 +2655,6 @@ static ast_primary_t *atom(parser_t *p) {
             (consume(p, 83, "False")) &&
             (alt_753 = ast_false(p)))
     ) ? alt_753 : 0;
+    insert_memo(p, &f, res_753);
     return exit_frame(p, &f, res_753);
 }

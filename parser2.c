@@ -163,7 +163,7 @@ static double *term_3(parser_t *p) {
     return exit_frame(p, &f, res_760);
 }
 
-// factor:
+// factor (memo):
 //     | '+' factor
 //     | '-' factor
 //     | '~' factor
@@ -171,6 +171,9 @@ static double *term_3(parser_t *p) {
 static double *factor(parser_t *p) {
     const frame_t f = {983, p->pos, FUNC};
     double *res_983;
+    if (is_memoized(p, &f, (void **) &res_983)) {
+        return res_983;
+    }
     double *alt_983;
     res_983 = enter_frame(p, &f) && (
         (alt_983 = factor_1(p)) ||
@@ -178,6 +181,7 @@ static double *factor(parser_t *p) {
         (alt_983 = factor_3(p)) ||
         (alt_983 = power(p))
     ) ? alt_983 : 0;
+    insert_memo(p, &f, res_983);
     return exit_frame(p, &f, res_983);
 }
 
@@ -217,17 +221,21 @@ static double *factor_3(parser_t *p) {
     return exit_frame(p, &f, res_611);
 }
 
-// power:
+// power (memo):
 //     | atom '**' factor
 //     | atom
 static double *power(parser_t *p) {
     const frame_t f = {757, p->pos, FUNC};
     double *res_757;
+    if (is_memoized(p, &f, (void **) &res_757)) {
+        return res_757;
+    }
     double *alt_757;
     res_757 = enter_frame(p, &f) && (
         (alt_757 = power_1(p)) ||
         (alt_757 = atom(p))
     ) ? alt_757 : 0;
+    insert_memo(p, &f, res_757);
     return exit_frame(p, &f, res_757);
 }
 
@@ -245,7 +253,7 @@ static double *power_1(parser_t *p) {
     return exit_frame(p, &f, res_367);
 }
 
-// atom:
+// atom (memo):
 //     | '(' sum ')'
 //     | NAME '(' [parameters] ')'
 //     | NAME
@@ -253,6 +261,9 @@ static double *power_1(parser_t *p) {
 static double *atom(parser_t *p) {
     const frame_t f = {753, p->pos, FUNC};
     double *res_753;
+    if (is_memoized(p, &f, (void **) &res_753)) {
+        return res_753;
+    }
     token_t *_name;
     token_t *_number;
     double *alt_753;
@@ -265,6 +276,7 @@ static double *atom(parser_t *p) {
             (_number = consume(p, 4, "NUMBER")) &&
             (alt_753 = to_double(p, _number)))
     ) ? alt_753 : 0;
+    insert_memo(p, &f, res_753);
     return exit_frame(p, &f, res_753);
 }
 

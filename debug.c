@@ -254,7 +254,7 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
 
     token_t *curr_token = parser_fetch_token(p, p->pos);
     if (!curr_token) {
-        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
+        printf("Mismatch   \033[31;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
                 literal, p->level, p->pos);
         return NULL;
     }
@@ -266,14 +266,14 @@ token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
         }
         p->pos += 1;
         char *token_buf = token_heap_copy(curr_token);
-        printf("Matched    \033[32;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[32mt='%s'\033[0m)\n",
+        printf("Matched    \033[32;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[32mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
         free(token_buf);
         return curr_token;
     } else {
         char *token_buf = token_heap_copy(curr_token);
 
-        printf("Mismatch   \033[31;1m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[31mt='%s'\033[0m)\n",
+        printf("Mismatch   \033[31;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[31mt='%s'\033[0m)\n",
                 literal, p->level, p->pos, token_buf);
         free(token_buf);
         return NULL;
@@ -289,7 +289,7 @@ void parser_enter_debug(parser_t *p, const frame_t *f) {
 
     char *token_buf = token_heap_copy(curr_token);
 
-    printf("Checking   \033[36m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
+    printf("Checking   \033[36m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[36m t='%s'\033[0m)\n",
             f->f_rule, p->level, p->pos, token_buf);
 
     free(token_buf);
@@ -298,9 +298,9 @@ void parser_enter_debug(parser_t *p, const frame_t *f) {
 void parser_exit_debug(parser_t *p, void *res, const frame_t *f) {
     print_indent_level(p->level);
     if (res) {
-        printf("Success in \033[32m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
+        printf("Success in \033[32m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
     } else {
-        printf("Failure in \033[31m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
+        printf("Failure in \033[31m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m)\n", f->f_rule, p->level, p->pos);
     }
 }
 
@@ -315,7 +315,7 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
     } else {
         succ = "was a \033[31mFailure\033[0m";
     }
-    printf("Memoized   \033[35m%-15s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
+    printf("Memoized   \033[35m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu\033[0m, %s)\n", 
             f->f_rule, p->level, p->pos, succ);
 }
 

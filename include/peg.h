@@ -160,7 +160,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define PARSER_MAX_RECURSION 500
 
 #ifndef PARSER_NODEBUG
-// #define PARSER_DEBUG
+#define PARSER_DEBUG
 #endif
 
 
@@ -174,6 +174,13 @@ static inline int enter_frame(parser_t *p, const frame_t *f) {
     #endif
 
     return parser_advance_frame(p);
+}
+
+static inline int enter_inline(parser_t *p, const frame_t *f) {
+    if (p->error) {
+        return 0;
+    }
+    return 1;
 }
 
 
@@ -190,6 +197,14 @@ static inline void *exit_frame(parser_t *p, const frame_t *f, void *result) {
         parser_exit_debug(p, result, f);
     #endif
 
+    return result;
+}
+
+static inline void *exit_inline(parser_t *p, const frame_t *f, void *result) {
+    if (!result) { 
+        // Frame did not parse successfully; reset position.
+        p->pos = f->f_pos;
+    }
     return result;
 }
 
