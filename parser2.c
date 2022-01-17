@@ -65,12 +65,12 @@ static double *sum_1(parser_t *p) {
     double *res_205;
     double *_sum;
     double *_term;
-    res_205 = enter_frame(p, &f) && (
+    res_205 = enter_inline(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
         (_term = term(p))
     ) ? binop_add(p, _sum, _term) : 0;
-    return exit_frame(p, &f, res_205);
+    return exit_inline(p, &f, res_205);
 }
 
 // sum '-' term
@@ -79,12 +79,12 @@ static double *sum_2(parser_t *p) {
     double *res_206;
     double *_sum;
     double *_term;
-    res_206 = enter_frame(p, &f) && (
+    res_206 = enter_inline(p, &f) && (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
         (_term = term(p))
     ) ? binop_sub(p, _sum, _term) : 0;
-    return exit_frame(p, &f, res_206);
+    return exit_inline(p, &f, res_206);
 }
 
 // term (left_recursive):
@@ -127,12 +127,12 @@ static double *term_1(parser_t *p) {
     double *res_758;
     double *_term;
     double *_factor;
-    res_758 = enter_frame(p, &f) && (
+    res_758 = enter_inline(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
         (_factor = factor(p))
     ) ? binop_mul(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_758);
+    return exit_inline(p, &f, res_758);
 }
 
 // term '/' factor
@@ -141,12 +141,12 @@ static double *term_2(parser_t *p) {
     double *res_759;
     double *_term;
     double *_factor;
-    res_759 = enter_frame(p, &f) && (
+    res_759 = enter_inline(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
         (_factor = factor(p))
     ) ? binop_div(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_759);
+    return exit_inline(p, &f, res_759);
 }
 
 // term '%' factor
@@ -155,12 +155,12 @@ static double *term_3(parser_t *p) {
     double *res_760;
     double *_term;
     double *_factor;
-    res_760 = enter_frame(p, &f) && (
+    res_760 = enter_inline(p, &f) && (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
         (_factor = factor(p))
     ) ? binop_mod(p, _term, _factor) : 0;
-    return exit_frame(p, &f, res_760);
+    return exit_inline(p, &f, res_760);
 }
 
 // factor (memo):
@@ -190,11 +190,11 @@ static double *factor_1(parser_t *p) {
     const frame_t f = {609, p->pos, FUNC};
     double *res_609;
     double *_factor;
-    res_609 = enter_frame(p, &f) && (
+    res_609 = enter_inline(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
     ) ? _factor : 0;
-    return exit_frame(p, &f, res_609);
+    return exit_inline(p, &f, res_609);
 }
 
 // '-' factor
@@ -202,11 +202,11 @@ static double *factor_2(parser_t *p) {
     const frame_t f = {610, p->pos, FUNC};
     double *res_610;
     double *_factor;
-    res_610 = enter_frame(p, &f) && (
+    res_610 = enter_inline(p, &f) && (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
     ) ? unary_minus(p, _factor) : 0;
-    return exit_frame(p, &f, res_610);
+    return exit_inline(p, &f, res_610);
 }
 
 // '~' factor
@@ -214,11 +214,11 @@ static double *factor_3(parser_t *p) {
     const frame_t f = {611, p->pos, FUNC};
     double *res_611;
     double *_factor;
-    res_611 = enter_frame(p, &f) && (
+    res_611 = enter_inline(p, &f) && (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
     ) ? unary_not(p, _factor) : 0;
-    return exit_frame(p, &f, res_611);
+    return exit_inline(p, &f, res_611);
 }
 
 // power (memo):
@@ -245,12 +245,12 @@ static double *power_1(parser_t *p) {
     double *res_367;
     double *_atom;
     double *_factor;
-    res_367 = enter_frame(p, &f) && (
+    res_367 = enter_inline(p, &f) && (
         (_atom = atom(p)) &&
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
     ) ? binop_pow(p, _atom, _factor) : 0;
-    return exit_frame(p, &f, res_367);
+    return exit_inline(p, &f, res_367);
 }
 
 // atom (memo):
@@ -285,12 +285,12 @@ static double *atom_1(parser_t *p) {
     const frame_t f = {331, p->pos, FUNC};
     double *res_331;
     double *_sum;
-    res_331 = enter_frame(p, &f) && (
+    res_331 = enter_inline(p, &f) && (
         (consume(p, 13, "(")) &&
         (_sum = sum(p)) &&
         (consume(p, 14, ")"))
     ) ? _sum : 0;
-    return exit_frame(p, &f, res_331);
+    return exit_inline(p, &f, res_331);
 }
 
 // NAME '(' [parameters] ')'
@@ -299,13 +299,13 @@ static double *atom_2(parser_t *p) {
     double *res_332;
     token_t *_name;
     ast_list_t *_parameters;
-    res_332 = enter_frame(p, &f) && (
+    res_332 = enter_inline(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
         (_parameters = parameters(p), 1) &&
         (consume(p, 14, ")"))
     ) ? call_func(p, _name, _parameters) : 0;
-    return exit_frame(p, &f, res_332);
+    return exit_inline(p, &f, res_332);
 }
 
 // parameters:
