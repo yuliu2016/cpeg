@@ -15,7 +15,7 @@ static ast_list_t *simple_statement_delimited(parser_t *);
 static ast_stmt_t *simple_statement(parser_t *);
 static ast_stmt_t *simple_statement_4(parser_t *);
 static ast_stmt_t *simple_statement_5(parser_t *);
-static ast_stmt_t *simple_statement_5_3(parser_t *);
+static ast_expr_t *simple_statement_5_3(parser_t *);
 static ast_stmt_t *simple_statement_6(parser_t *);
 static ast_expr_t *star_expr(parser_t *);
 static ast_list_t *exprlist(parser_t *);
@@ -62,7 +62,7 @@ static void *try_statement_3(parser_t *);
 static void *with_statement(parser_t *);
 static ast_list_t *expr_as_name_delimited(parser_t *);
 static void *expr_as_name(parser_t *);
-static void *expr_as_name_2(parser_t *);
+static token_t *expr_as_name_2(parser_t *);
 static void *block_suite(parser_t *);
 static void *block_suite_1(parser_t *);
 static void *block_suite_2(parser_t *);
@@ -376,9 +376,9 @@ static ast_stmt_t *simple_statement_5(parser_t *p) {
 }
 
 // 'from' expr
-static ast_stmt_t *simple_statement_5_3(parser_t *p) {
+static ast_expr_t *simple_statement_5_3(parser_t *p) {
     const frame_t f = {276, p->pos, FUNC};
-    ast_stmt_t *res_276;
+    ast_expr_t *res_276;
     ast_expr_t *_expr;
     res_276 = enter_frame(p, &f) && (
         (consume(p, 66, "from")) &&
@@ -1116,7 +1116,7 @@ static void *expr_as_name(parser_t *p) {
     const frame_t f = {782, p->pos, FUNC};
     void *res_782;
     ast_expr_t *_expr;
-    void *_as_name;
+    token_t *_as_name;
     res_782 = enter_frame(p, &f) && (
         (_expr = expr(p)) &&
         (_as_name = expr_as_name_2(p), 1)
@@ -1125,9 +1125,9 @@ static void *expr_as_name(parser_t *p) {
 }
 
 // 'as' NAME
-static void *expr_as_name_2(parser_t *p) {
+static token_t *expr_as_name_2(parser_t *p) {
     const frame_t f = {121, p->pos, FUNC};
-    void *res_121;
+    token_t *res_121;
     token_t *_name;
     res_121 = enter_frame(p, &f) && (
         (consume(p, 65, "as")) &&
