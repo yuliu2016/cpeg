@@ -59,6 +59,7 @@ static double *sum(parser_t *p) {
     return exit_frame(p, &f, res_251);
 }
 
+// sum '+' term
 static double *sum_1(parser_t *p) {
     const frame_t f = {205, p->pos, FUNC};
     double *res_205;
@@ -72,6 +73,7 @@ static double *sum_1(parser_t *p) {
     return exit_frame(p, &f, res_205);
 }
 
+// sum '-' term
 static double *sum_2(parser_t *p) {
     const frame_t f = {206, p->pos, FUNC};
     double *res_206;
@@ -119,6 +121,7 @@ static double *term(parser_t *p) {
     return exit_frame(p, &f, res_460);
 }
 
+// term '*' factor
 static double *term_1(parser_t *p) {
     const frame_t f = {758, p->pos, FUNC};
     double *res_758;
@@ -132,6 +135,7 @@ static double *term_1(parser_t *p) {
     return exit_frame(p, &f, res_758);
 }
 
+// term '/' factor
 static double *term_2(parser_t *p) {
     const frame_t f = {759, p->pos, FUNC};
     double *res_759;
@@ -145,6 +149,7 @@ static double *term_2(parser_t *p) {
     return exit_frame(p, &f, res_759);
 }
 
+// term '%' factor
 static double *term_3(parser_t *p) {
     const frame_t f = {760, p->pos, FUNC};
     double *res_760;
@@ -176,6 +181,7 @@ static double *factor(parser_t *p) {
     return exit_frame(p, &f, res_983);
 }
 
+// '+' factor
 static double *factor_1(parser_t *p) {
     const frame_t f = {609, p->pos, FUNC};
     double *res_609;
@@ -183,10 +189,11 @@ static double *factor_1(parser_t *p) {
     res_609 = enter_frame(p, &f) && (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
-    ) ? unary_plus(p, _factor) : 0;
+    ) ? _factor : 0;
     return exit_frame(p, &f, res_609);
 }
 
+// '-' factor
 static double *factor_2(parser_t *p) {
     const frame_t f = {610, p->pos, FUNC};
     double *res_610;
@@ -198,6 +205,7 @@ static double *factor_2(parser_t *p) {
     return exit_frame(p, &f, res_610);
 }
 
+// '~' factor
 static double *factor_3(parser_t *p) {
     const frame_t f = {611, p->pos, FUNC};
     double *res_611;
@@ -223,6 +231,7 @@ static double *power(parser_t *p) {
     return exit_frame(p, &f, res_757);
 }
 
+// atom '**' factor
 static double *power_1(parser_t *p) {
     const frame_t f = {367, p->pos, FUNC};
     double *res_367;
@@ -259,6 +268,7 @@ static double *atom(parser_t *p) {
     return exit_frame(p, &f, res_753);
 }
 
+// '(' sum ')'
 static double *atom_1(parser_t *p) {
     const frame_t f = {331, p->pos, FUNC};
     double *res_331;
@@ -271,6 +281,7 @@ static double *atom_1(parser_t *p) {
     return exit_frame(p, &f, res_331);
 }
 
+// NAME '(' [parameters] ')'
 static double *atom_2(parser_t *p) {
     const frame_t f = {332, p->pos, FUNC};
     double *res_332;
