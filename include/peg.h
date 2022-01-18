@@ -193,13 +193,6 @@ static inline void *exit_frame(parser_t *p, const frame_t *f, void *result) {
     return result;
 }
 
-static inline void *exit_inline(parser_t *p, const frame_t *f, void *result) {
-    if (!result) { 
-        // Frame did not parse successfully; reset position.
-        p->pos = f->f_pos;
-    }
-    return result;
-}
 
 static inline void insert_memo(parser_t *p, const frame_t *f, void *node) {
     parser_memoize(p, f->f_pos, f->f_type, node);
@@ -219,8 +212,8 @@ static inline int is_memoized(parser_t *p, const frame_t *f, void **resptr) {
     return 0;
 }
 
-static inline int test_and_reset(parser_t *p, const frame_t *f, void *node) {
-    return node && (p->pos = f->f_pos, 1);
+static inline int test_and_reset(parser_t *p, size_t f_pos, void *node) {
+    return node && (p->pos = f_pos, 1);
 }
 
 
