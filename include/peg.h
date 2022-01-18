@@ -101,6 +101,7 @@ typedef struct parser_state {
     // Debugging
     size_t max_reached_pos;
     char **tk_indices;
+    char *tk_max_attempted;
     char *error;
     size_t level;
 
@@ -160,7 +161,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 #define PARSER_MAX_RECURSION 500
 
 #ifndef PARSER_NODEBUG
-#define PARSER_DEBUG
+// #define PARSER_DEBUG
 #endif
 
 
