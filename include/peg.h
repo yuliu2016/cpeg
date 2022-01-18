@@ -177,9 +177,6 @@ static inline int enter_frame(parser_t *p, const frame_t *f) {
 }
 
 static inline int enter_inline(parser_t *p, const frame_t *f) {
-    if (p->error) {
-        return 0;
-    }
     return 1;
 }
 
