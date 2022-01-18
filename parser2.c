@@ -69,7 +69,7 @@ static double *sum_1(parser_t *p) {
         (consume(p, 21, "+")) &&
         (_term = term(p))
     ) ? binop_add(p, _sum, _term) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // sum '-' term
@@ -82,7 +82,7 @@ static double *sum_2(parser_t *p) {
         (consume(p, 22, "-")) &&
         (_term = term(p))
     ) ? binop_sub(p, _sum, _term) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // term (left_recursive):
@@ -129,7 +129,7 @@ static double *term_1(parser_t *p) {
         (consume(p, 23, "*")) &&
         (_factor = factor(p))
     ) ? binop_mul(p, _term, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // term '/' factor
@@ -142,7 +142,7 @@ static double *term_2(parser_t *p) {
         (consume(p, 24, "/")) &&
         (_factor = factor(p))
     ) ? binop_div(p, _term, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // term '%' factor
@@ -155,7 +155,7 @@ static double *term_3(parser_t *p) {
         (consume(p, 25, "%")) &&
         (_factor = factor(p))
     ) ? binop_mod(p, _term, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // factor (memo):
@@ -187,8 +187,7 @@ static double *factor_1(parser_t *p) {
     return (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
-    ) ? _factor :
-        (p->pos = pos, (void *) 0);
+    ) ? _factor : (p->pos = pos, NULL);
 }
 
 // '-' factor
@@ -199,7 +198,7 @@ static double *factor_2(parser_t *p) {
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
     ) ? unary_minus(p, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // '~' factor
@@ -210,7 +209,7 @@ static double *factor_3(parser_t *p) {
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
     ) ? unary_not(p, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // power (memo):
@@ -241,7 +240,7 @@ static double *power_1(parser_t *p) {
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
     ) ? binop_pow(p, _atom, _factor) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // atom (memo):
@@ -279,8 +278,7 @@ static double *atom_1(parser_t *p) {
         (consume(p, 13, "(")) &&
         (_sum = sum(p)) &&
         (consume(p, 14, ")"))
-    ) ? _sum :
-        (p->pos = pos, (void *) 0);
+    ) ? _sum : (p->pos = pos, NULL);
 }
 
 // NAME '(' [parameters] ')'
@@ -294,7 +292,7 @@ static double *atom_2(parser_t *p) {
         (_parameters = parameters(p), 1) &&
         (consume(p, 14, ")"))
     ) ? call_func(p, _name, _parameters) :
-        (p->pos = pos, (void *) 0);
+        (p->pos = pos, NULL);
 }
 
 // parameters:
