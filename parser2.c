@@ -65,7 +65,7 @@ static double *sum_1(parser_t *p) {
     double *res_205;
     double *_sum;
     double *_term;
-    res_205 = enter_inline(p, &f) && (
+    res_205 = (
         (_sum = sum(p)) &&
         (consume(p, 21, "+")) &&
         (_term = term(p))
@@ -79,7 +79,7 @@ static double *sum_2(parser_t *p) {
     double *res_206;
     double *_sum;
     double *_term;
-    res_206 = enter_inline(p, &f) && (
+    res_206 = (
         (_sum = sum(p)) &&
         (consume(p, 22, "-")) &&
         (_term = term(p))
@@ -127,7 +127,7 @@ static double *term_1(parser_t *p) {
     double *res_758;
     double *_term;
     double *_factor;
-    res_758 = enter_inline(p, &f) && (
+    res_758 = (
         (_term = term(p)) &&
         (consume(p, 23, "*")) &&
         (_factor = factor(p))
@@ -141,7 +141,7 @@ static double *term_2(parser_t *p) {
     double *res_759;
     double *_term;
     double *_factor;
-    res_759 = enter_inline(p, &f) && (
+    res_759 = (
         (_term = term(p)) &&
         (consume(p, 24, "/")) &&
         (_factor = factor(p))
@@ -155,7 +155,7 @@ static double *term_3(parser_t *p) {
     double *res_760;
     double *_term;
     double *_factor;
-    res_760 = enter_inline(p, &f) && (
+    res_760 = (
         (_term = term(p)) &&
         (consume(p, 25, "%")) &&
         (_factor = factor(p))
@@ -190,7 +190,7 @@ static double *factor_1(parser_t *p) {
     const frame_t f = {609, p->pos, FUNC};
     double *res_609;
     double *_factor;
-    res_609 = enter_inline(p, &f) && (
+    res_609 = (
         (consume(p, 21, "+")) &&
         (_factor = factor(p))
     ) ? _factor : 0;
@@ -202,7 +202,7 @@ static double *factor_2(parser_t *p) {
     const frame_t f = {610, p->pos, FUNC};
     double *res_610;
     double *_factor;
-    res_610 = enter_inline(p, &f) && (
+    res_610 = (
         (consume(p, 22, "-")) &&
         (_factor = factor(p))
     ) ? unary_minus(p, _factor) : 0;
@@ -214,7 +214,7 @@ static double *factor_3(parser_t *p) {
     const frame_t f = {611, p->pos, FUNC};
     double *res_611;
     double *_factor;
-    res_611 = enter_inline(p, &f) && (
+    res_611 = (
         (consume(p, 29, "~")) &&
         (_factor = factor(p))
     ) ? unary_not(p, _factor) : 0;
@@ -245,7 +245,7 @@ static double *power_1(parser_t *p) {
     double *res_367;
     double *_atom;
     double *_factor;
-    res_367 = enter_inline(p, &f) && (
+    res_367 = (
         (_atom = atom(p)) &&
         (consume(p, 38, "**")) &&
         (_factor = factor(p))
@@ -285,7 +285,7 @@ static double *atom_1(parser_t *p) {
     const frame_t f = {331, p->pos, FUNC};
     double *res_331;
     double *_sum;
-    res_331 = enter_inline(p, &f) && (
+    res_331 = (
         (consume(p, 13, "(")) &&
         (_sum = sum(p)) &&
         (consume(p, 14, ")"))
@@ -299,7 +299,7 @@ static double *atom_2(parser_t *p) {
     double *res_332;
     token_t *_name;
     ast_list_t *_parameters;
-    res_332 = enter_inline(p, &f) && (
+    res_332 = (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 13, "(")) &&
         (_parameters = parameters(p), 1) &&

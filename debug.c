@@ -308,6 +308,7 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
     if (!memo) {
         return;
     };
+    if (!memo->node) return;
     print_indent_level(p->level);
     char *succ;
     if (memo->node) {

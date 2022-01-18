@@ -176,10 +176,6 @@ static inline int enter_frame(parser_t *p, const frame_t *f) {
     return parser_advance_frame(p);
 }
 
-static inline int enter_inline(parser_t *p, const frame_t *f) {
-    return 1;
-}
-
 
 static inline void *exit_frame(parser_t *p, const frame_t *f, void *result) {
 
