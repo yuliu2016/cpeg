@@ -17,9 +17,6 @@ static ast_stmt_t *simple_statement_6(parser_t *);
 static ast_stmt_t *simple_statement_7(parser_t *);
 static ast_expr_t *simple_statement_7_3(parser_t *);
 static ast_stmt_t *simple_statement_8(parser_t *);
-static ast_expr_t *star_expr(parser_t *);
-static ast_list_t *exprlist(parser_t *);
-static ast_list_t *expr_delimited(parser_t *);
 static void *target(parser_t *);
 static void *target_1(parser_t *);
 static void *target_2(parser_t *);
@@ -29,19 +26,8 @@ static ast_primary_t *t_primary_2(parser_t *);
 static ast_primary_t *t_primary_3(parser_t *);
 static ast_primary_t *t_primary_4(parser_t *);
 static void *t_lookahead(parser_t *);
-static ast_list_t *targetlist(parser_t *);
+static ast_list_t *targets(parser_t *);
 static ast_list_t *target_delimited(parser_t *);
-static void *expr_or_star(parser_t *);
-static ast_list_t *exprlist_star(parser_t *);
-static ast_list_t *expr_or_star_delimited(parser_t *);
-static ast_list_t *subscript(parser_t *);
-static ast_list_t *slice_delimited(parser_t *);
-static void *slice(parser_t *);
-static void *slice_1(parser_t *);
-static void *slice_expr(parser_t *);
-static void *list_item(parser_t *);
-static ast_list_t *list_items(parser_t *);
-static ast_list_t *list_item_delimited(parser_t *);
 static void *assignment(parser_t *);
 static void *assignment_1(parser_t *);
 static void *assignment_1_4(parser_t *);
@@ -59,9 +45,9 @@ static void *for_statement(parser_t *);
 static void *try_statement(parser_t *);
 static void *try_statement_3(parser_t *);
 static void *with_statement(parser_t *);
-static ast_list_t *expr_as_name_delimited(parser_t *);
-static void *expr_as_name(parser_t *);
-static token_t *expr_as_name_2(parser_t *);
+static ast_list_t *expression_as_name_delimited(parser_t *);
+static void *expression_as_name(parser_t *);
+static token_t *expression_as_name_2(parser_t *);
 static void *block_suite(parser_t *);
 static void *block_suite_1(parser_t *);
 static void *block_suite_2(parser_t *);
@@ -80,10 +66,21 @@ static void *call_argument_1(parser_t *);
 static void *call_argument_2(parser_t *);
 static void *call_argument_3(parser_t *);
 static void *call_argument_4(parser_t *);
+static ast_list_t *subscript(parser_t *);
+static ast_list_t *slice_delimited(parser_t *);
+static void *slice(parser_t *);
+static void *slice_1(parser_t *);
+static void *slice_expression(parser_t *);
+static ast_list_t *expressions(parser_t *);
+static ast_list_t *expression_delimited(parser_t *);
+static ast_expr_t *starred_expression(parser_t *);
+static ast_expr_t *maybe_starred(parser_t *);
+static ast_list_t *starred_expressions(parser_t *);
+static ast_list_t *maybe_starred_delimited(parser_t *);
 static ast_named_t *named_expression(parser_t *);
 static ast_named_t *named_expression_1(parser_t *);
 static ast_expr_t *conditional(parser_t *);
-static ast_expr_t *expr(parser_t *);
+static ast_expr_t *expression(parser_t *);
 static ast_expr_t *disjunction(parser_t *);
 static ast_expr_t *disjunction_1(parser_t *);
 static ast_expr_t *conjunction(parser_t *);
@@ -127,25 +124,28 @@ static ast_primary_t *primary(parser_t *);
 static ast_primary_t *primary_1(parser_t *);
 static ast_primary_t *primary_2(parser_t *);
 static ast_primary_t *primary_3(parser_t *);
+static void *list_item(parser_t *);
+static ast_list_t *list_items(parser_t *);
+static ast_list_t *list_item_delimited(parser_t *);
 static ast_primary_t *paren_expression(parser_t *);
 static ast_primary_t *list_expression(parser_t *);
-static void *typed_argument(parser_t *);
-static void *typed_argument_2(parser_t *);
-static void *builder_argument(parser_t *);
-static void *builder_argument_1(parser_t *);
-static void *builder_argument_1_2(parser_t *);
-static void *builder_argument_2(parser_t *);
-static void *builder_argument_3(parser_t *);
-static void *simple_argument(parser_t *);
-static void *simple_argument_2(parser_t *);
+static void *typed_parameter(parser_t *);
+static void *typed_parameter_2(parser_t *);
+static void *builder_parameter(parser_t *);
+static void *builder_parameter_1(parser_t *);
+static void *builder_parameter_1_2(parser_t *);
+static void *builder_parameter_2(parser_t *);
+static void *builder_parameter_3(parser_t *);
+static void *simple_parameter(parser_t *);
+static void *simple_parameter_2(parser_t *);
+static void *builder_parameters(parser_t *);
+static void *builder_parameters_2(parser_t *);
+static ast_list_t *builder_parameter_delimited(parser_t *);
+static void *builder_generics(parser_t *);
 static ast_primary_t *builder_expression(parser_t *);
 static ast_primary_t *builder_expression_1(parser_t *);
-static ast_primary_t *builder_expression_1_2(parser_t *);
-static ast_primary_t *builder_expression_1_3(parser_t *);
-static ast_primary_t *builder_expression_1_3_2(parser_t *);
-static ast_list_t *builder_argument_delimited(parser_t *);
 static ast_primary_t *builder_expression_2(parser_t *);
-static ast_list_t *simple_argument_delimited(parser_t *);
+static ast_list_t *simple_parameter_delimited(parser_t *);
 static ast_primary_t *atom(parser_t *);
 
 
@@ -210,15 +210,15 @@ static ast_list_t *file_input(parser_t *p) {
 }
 
 // eval_input:
-//     | exprlist [NEWLINE]
+//     | expressions [NEWLINE]
 static ast_list_t *eval_input(parser_t *p) {
     const frame_t f = {471, p->pos, FUNC};
     ast_list_t *res_471;
-    ast_list_t *_exprlist;
+    ast_list_t *_expressions;
     res_471 = enter_frame(p, &f) && (
-        (_exprlist = exprlist(p)) &&
+        (_expressions = expressions(p)) &&
         (consume(p, 2, "NEWLINE"), 1)
-    ) ? _exprlist : 0;
+    ) ? _expressions : 0;
     return exit_frame(p, &f, res_471);
 }
 
@@ -315,20 +315,20 @@ static ast_list_t *simple_statement_delimited(parser_t *p) {
 
 // simple_statement:
 //     | assignment
-//     | exprlist_star
+//     | starred_expressions
 //     | 'pass'
 //     | 'break'
 //     | 'continue'
-//     | 'return' [exprlist_star]
-//     | 'raise' expr ['from' expr]
-//     | 'del' targetlist
+//     | 'return' [starred_expressions]
+//     | 'raise' expression ['from' expression]
+//     | 'del' targets
 static ast_stmt_t *simple_statement(parser_t *p) {
     const frame_t f = {930, p->pos, FUNC};
     ast_stmt_t *res_930;
     ast_stmt_t *alt_930;
     res_930 = enter_frame(p, &f) && (
         (alt_930 = assignment(p)) || (
-            (exprlist_star(p)) &&
+            (starred_expressions(p)) &&
             (alt_930 = node(p))
         ) || (
             (consume(p, 64, "pass")) &&
@@ -347,86 +347,45 @@ static ast_stmt_t *simple_statement(parser_t *p) {
     return exit_frame(p, &f, res_930);
 }
 
-// 'return' [exprlist_star]
+// 'return' [starred_expressions]
 static ast_stmt_t *simple_statement_6(parser_t *p) {
     size_t pos = p->pos;
-    ast_list_t *_exprlist_star;
+    ast_list_t *_starred_expressions;
     return (
         (consume(p, 54, "return")) &&
-        (_exprlist_star = exprlist_star(p), 1)
-    ) ? ast_return(p, _exprlist_star) :
+        (_starred_expressions = starred_expressions(p), 1)
+    ) ? ast_return(p, _starred_expressions) :
         (p->pos = pos, NULL);
 }
 
-// 'raise' expr ['from' expr]
+// 'raise' expression ['from' expression]
 static ast_stmt_t *simple_statement_7(parser_t *p) {
     size_t pos = p->pos;
     return (
         (consume(p, 78, "raise")) &&
-        (expr(p)) &&
+        (expression(p)) &&
         (simple_statement_7_3(p), 1)
     ) ? ast_nop(p) : (p->pos = pos, NULL);
 }
 
-// 'from' expr
+// 'from' expression
 static ast_expr_t *simple_statement_7_3(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 66, "from")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
 }
 
-// 'del' targetlist
+// 'del' targets
 static ast_stmt_t *simple_statement_8(parser_t *p) {
     size_t pos = p->pos;
-    ast_list_t *_targetlist;
+    ast_list_t *_targets;
     return (
         (consume(p, 79, "del")) &&
-        (_targetlist = targetlist(p))
-    ) ? ast_del(p, _targetlist) :
-        (p->pos = pos, NULL);
-}
-
-// star_expr (inline):
-//     | '*' bitwise_or
-static ast_expr_t *star_expr(parser_t *p) {
-    size_t pos = p->pos;
-    ast_expr_t *_bitwise_or;
-    return (
-        (consume(p, 23, "*")) &&
-        (_bitwise_or = bitwise_or(p))
-    ) ? _bitwise_or : (p->pos = pos, NULL);
-}
-
-// exprlist:
-//     | ','.expr+ [',']
-static ast_list_t *exprlist(parser_t *p) {
-    const frame_t f = {43, p->pos, FUNC};
-    ast_list_t *res_43;
-    ast_list_t *_exprs;
-    res_43 = enter_frame(p, &f) && (
-        (_exprs = expr_delimited(p)) &&
-        (consume(p, 7, ","), 1)
-    ) ? _exprs : 0;
-    return exit_frame(p, &f, res_43);
-}
-
-static ast_list_t *expr_delimited(parser_t *p) {
-    ast_expr_t *_expr = expr(p);
-    if (!_expr) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _expr);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_expr = expr(p)));
-    p->pos = pos;
-    return list;
+        (_targets = targets(p))
+    ) ? ast_del(p, _targets) : (p->pos = pos, NULL);
 }
 
 // target (memo):
@@ -537,14 +496,12 @@ static ast_primary_t *t_primary_3(parser_t *p) {
 
 // atom &t_lookahead
 static ast_primary_t *t_primary_4(parser_t *p) {
-    const frame_t f = {844, p->pos, FUNC};
-    ast_primary_t *res_844;
+    size_t pos = p->pos;
     ast_primary_t *_atom;
-    res_844 = enter_frame(p, &f) && (
+    return (
         (_atom = atom(p)) &&
-        (test_and_reset(p, f.f_pos, t_lookahead(p)))
-    ) ? _atom : 0;
-    return exit_frame(p, &f, res_844);
+        (test_and_reset(p, pos, t_lookahead(p)))
+    ) ? _atom : (p->pos = pos, NULL);
 }
 
 // t_lookahead (inline):
@@ -561,17 +518,17 @@ static void *t_lookahead(parser_t *p) {
     ) ? alt : (p->pos = pos, NULL);
 }
 
-// targetlist:
+// targets:
 //     | ','.target+ [',']
-static ast_list_t *targetlist(parser_t *p) {
-    const frame_t f = {31, p->pos, FUNC};
-    ast_list_t *res_31;
+static ast_list_t *targets(parser_t *p) {
+    const frame_t f = {882, p->pos, FUNC};
+    ast_list_t *res_882;
     ast_list_t *_targets;
-    res_31 = enter_frame(p, &f) && (
+    res_882 = enter_frame(p, &f) && (
         (_targets = target_delimited(p)) &&
         (consume(p, 7, ","), 1)
     ) ? _targets : 0;
-    return exit_frame(p, &f, res_31);
+    return exit_frame(p, &f, res_882);
 }
 
 static ast_list_t *target_delimited(parser_t *p) {
@@ -590,169 +547,10 @@ static ast_list_t *target_delimited(parser_t *p) {
     return list;
 }
 
-// expr_or_star:
-//     | star_expr
-//     | expr
-static void *expr_or_star(parser_t *p) {
-    const frame_t f = {132, p->pos, FUNC};
-    void *res_132;
-    void *alt_132;
-    res_132 = enter_frame(p, &f) && (
-        (alt_132 = star_expr(p)) ||
-        (alt_132 = expr(p))
-    ) ? alt_132 : 0;
-    return exit_frame(p, &f, res_132);
-}
-
-// exprlist_star:
-//     | ','.expr_or_star+ [',']
-static ast_list_t *exprlist_star(parser_t *p) {
-    const frame_t f = {918, p->pos, FUNC};
-    ast_list_t *res_918;
-    ast_list_t *_expr_or_stars;
-    res_918 = enter_frame(p, &f) && (
-        (_expr_or_stars = expr_or_star_delimited(p)) &&
-        (consume(p, 7, ","), 1)
-    ) ? _expr_or_stars : 0;
-    return exit_frame(p, &f, res_918);
-}
-
-static ast_list_t *expr_or_star_delimited(parser_t *p) {
-    void *_expr_or_star = expr_or_star(p);
-    if (!_expr_or_star) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _expr_or_star);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_expr_or_star = expr_or_star(p)));
-    p->pos = pos;
-    return list;
-}
-
-// subscript:
-//     | '[' ','.slice+ [','] ']'
-static ast_list_t *subscript(parser_t *p) {
-    const frame_t f = {379, p->pos, FUNC};
-    ast_list_t *res_379;
-    ast_list_t *_slices;
-    res_379 = enter_frame(p, &f) && (
-        (consume(p, 17, "[")) &&
-        (_slices = slice_delimited(p)) &&
-        (consume(p, 7, ","), 1) &&
-        (consume(p, 18, "]"))
-    ) ? _slices : 0;
-    return exit_frame(p, &f, res_379);
-}
-
-static ast_list_t *slice_delimited(parser_t *p) {
-    void *_slice = slice(p);
-    if (!_slice) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _slice);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_slice = slice(p)));
-    p->pos = pos;
-    return list;
-}
-
-// slice:
-//     | [expr] slice_expr [slice_expr]
-//     | expr
-static void *slice(parser_t *p) {
-    const frame_t f = {418, p->pos, FUNC};
-    void *res_418;
-    void *alt_418;
-    res_418 = enter_frame(p, &f) && (
-        (alt_418 = slice_1(p)) ||
-        (alt_418 = expr(p))
-    ) ? alt_418 : 0;
-    return exit_frame(p, &f, res_418);
-}
-
-// [expr] slice_expr [slice_expr]
-static void *slice_1(parser_t *p) {
-    const frame_t f = {292, p->pos, FUNC};
-    void *res_292;
-    ast_expr_t *_expr;
-    void *_slice_expr;
-    void *_slice_expr_1;
-    res_292 = enter_frame(p, &f) && (
-        (_expr = expr(p), 1) &&
-        (_slice_expr = slice_expr(p)) &&
-        (_slice_expr_1 = slice_expr(p), 1)
-    ) ? node(p) : 0;
-    return exit_frame(p, &f, res_292);
-}
-
-// slice_expr:
-//     | ':' [expr]
-static void *slice_expr(parser_t *p) {
-    const frame_t f = {210, p->pos, FUNC};
-    void *res_210;
-    ast_expr_t *_expr;
-    res_210 = enter_frame(p, &f) && (
-        (consume(p, 9, ":")) &&
-        (_expr = expr(p), 1)
-    ) ? _expr : 0;
-    return exit_frame(p, &f, res_210);
-}
-
-// list_item:
-//     | star_expr
-//     | named_expression
-static void *list_item(parser_t *p) {
-    const frame_t f = {756, p->pos, FUNC};
-    void *res_756;
-    void *alt_756;
-    res_756 = enter_frame(p, &f) && (
-        (alt_756 = star_expr(p)) ||
-        (alt_756 = named_expression(p))
-    ) ? alt_756 : 0;
-    return exit_frame(p, &f, res_756);
-}
-
-// list_items:
-//     | ','.list_item+ [',']
-static ast_list_t *list_items(parser_t *p) {
-    const frame_t f = {215, p->pos, FUNC};
-    ast_list_t *res_215;
-    ast_list_t *_list_items;
-    res_215 = enter_frame(p, &f) && (
-        (_list_items = list_item_delimited(p)) &&
-        (consume(p, 7, ","), 1)
-    ) ? _list_items : 0;
-    return exit_frame(p, &f, res_215);
-}
-
-static ast_list_t *list_item_delimited(parser_t *p) {
-    void *_list_item = list_item(p);
-    if (!_list_item) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _list_item);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_list_item = list_item(p)));
-    p->pos = pos;
-    return list;
-}
-
 // assignment:
-//     | target ':' expr ['=' exprlist]
-//     | (targetlist '=')+ exprlist_star
-//     | target augmented_assign exprlist
+//     | target ':' expression ['=' expressions]
+//     | (targets '=')+ starred_expressions
+//     | target augmented_assign expressions
 static void *assignment(parser_t *p) {
     const frame_t f = {733, p->pos, FUNC};
     void *res_733;
@@ -765,65 +563,65 @@ static void *assignment(parser_t *p) {
     return exit_frame(p, &f, res_733);
 }
 
-// target ':' expr ['=' exprlist]
+// target ':' expression ['=' expressions]
 static void *assignment_1(parser_t *p) {
     size_t pos = p->pos;
     return (
         (target(p)) &&
         (consume(p, 9, ":")) &&
-        (expr(p)) &&
+        (expression(p)) &&
         (assignment_1_4(p), 1)
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
-// '=' exprlist
+// '=' expressions
 static void *assignment_1_4(parser_t *p) {
     size_t pos = p->pos;
-    ast_list_t *_exprlist;
+    ast_list_t *_expressions;
     return (
         (consume(p, 8, "=")) &&
-        (_exprlist = exprlist(p))
-    ) ? _exprlist : (p->pos = pos, NULL);
+        (_expressions = expressions(p))
+    ) ? _expressions : (p->pos = pos, NULL);
 }
 
-// (targetlist '=')+ exprlist_star
+// (targets '=')+ starred_expressions
 static void *assignment_2(parser_t *p) {
     size_t pos = p->pos;
     return (
         (assignment_2_1_loop(p)) &&
-        (exprlist_star(p))
+        (starred_expressions(p))
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
 static ast_list_t *assignment_2_1_loop(parser_t *p) {
-    void *_targetlist_assign = assignment_2_1(p);
-    if (!_targetlist_assign) {
+    void *_targets_assign = assignment_2_1(p);
+    if (!_targets_assign) {
         return 0;
     }
     ast_list_t *list = ast_list_new(p);
     do {
-        ast_list_append(p, list, _targetlist_assign);
-    } while ((_targetlist_assign = assignment_2_1(p)));
+        ast_list_append(p, list, _targets_assign);
+    } while ((_targets_assign = assignment_2_1(p)));
     return list;
 }
 
-// targetlist '='
+// targets '='
 static void *assignment_2_1(parser_t *p) {
     size_t pos = p->pos;
-    ast_list_t *_targetlist;
+    ast_list_t *_targets;
     return (
-        (_targetlist = targetlist(p)) &&
+        (_targets = targets(p)) &&
         (consume(p, 8, "="))
-    ) ? _targetlist : (p->pos = pos, NULL);
+    ) ? _targets : (p->pos = pos, NULL);
 }
 
-// target augmented_assign exprlist
+// target augmented_assign expressions
 static void *assignment_3(parser_t *p) {
     size_t pos = p->pos;
     return (
         (target(p)) &&
         (augmented_assign(p)) &&
-        (exprlist(p))
+        (expressions(p))
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
@@ -969,19 +767,19 @@ static void *while_statement(parser_t *p) {
 }
 
 // for_statement:
-//     | 'for' targetlist 'in' exprlist suite [else_suite]
+//     | 'for' targets 'in' expressions suite [else_suite]
 static void *for_statement(parser_t *p) {
     const frame_t f = {465, p->pos, FUNC};
     void *res_465;
-    ast_list_t *_targetlist;
-    ast_list_t *_exprlist;
+    ast_list_t *_targets;
+    ast_list_t *_expressions;
     void *_suite;
     void *_else_suite;
     res_465 = enter_frame(p, &f) && (
         (consume(p, 72, "for")) &&
-        (_targetlist = targetlist(p)) &&
+        (_targets = targets(p)) &&
         (consume(p, 63, "in")) &&
-        (_exprlist = exprlist(p)) &&
+        (_expressions = expressions(p)) &&
         (_suite = suite(p)) &&
         (_else_suite = else_suite(p), 1)
     ) ? node(p) : 0;
@@ -1016,52 +814,52 @@ static void *try_statement_3(parser_t *p) {
 }
 
 // with_statement:
-//     | 'with' ','.expr_as_name+ suite
+//     | 'with' ','.expression_as_name+ suite
 static void *with_statement(parser_t *p) {
     const frame_t f = {214, p->pos, FUNC};
     void *res_214;
-    ast_list_t *_expr_as_names;
+    ast_list_t *_expression_as_names;
     void *_suite;
     res_214 = enter_frame(p, &f) && (
         (consume(p, 68, "with")) &&
-        (_expr_as_names = expr_as_name_delimited(p)) &&
+        (_expression_as_names = expression_as_name_delimited(p)) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
     return exit_frame(p, &f, res_214);
 }
 
-static ast_list_t *expr_as_name_delimited(parser_t *p) {
-    void *_expr_as_name = expr_as_name(p);
-    if (!_expr_as_name) {
+static ast_list_t *expression_as_name_delimited(parser_t *p) {
+    void *_expression_as_name = expression_as_name(p);
+    if (!_expression_as_name) {
         return 0;
     }
     ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, list, _expr_as_name);
+        ast_list_append(p, list, _expression_as_name);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (_expr_as_name = expr_as_name(p)));
+            (_expression_as_name = expression_as_name(p)));
     p->pos = pos;
     return list;
 }
 
-// expr_as_name:
-//     | expr ['as' NAME]
-static void *expr_as_name(parser_t *p) {
-    const frame_t f = {782, p->pos, FUNC};
-    void *res_782;
-    ast_expr_t *_expr;
+// expression_as_name:
+//     | expression ['as' NAME]
+static void *expression_as_name(parser_t *p) {
+    const frame_t f = {169, p->pos, FUNC};
+    void *res_169;
+    ast_expr_t *_expression;
     token_t *_as_name;
-    res_782 = enter_frame(p, &f) && (
-        (_expr = expr(p)) &&
-        (_as_name = expr_as_name_2(p), 1)
+    res_169 = enter_frame(p, &f) && (
+        (_expression = expression(p)) &&
+        (_as_name = expression_as_name_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_782);
+    return exit_frame(p, &f, res_169);
 }
 
 // 'as' NAME
-static token_t *expr_as_name_2(parser_t *p) {
+static token_t *expression_as_name_2(parser_t *p) {
     size_t pos = p->pos;
     token_t *_name;
     return (
@@ -1160,15 +958,15 @@ static void *finally_suite(parser_t *p) {
 }
 
 // except_clause:
-//     | 'except' [expr_as_name] suite
+//     | 'except' [expression_as_name] suite
 static void *except_clause(parser_t *p) {
     const frame_t f = {357, p->pos, FUNC};
     void *res_357;
-    void *_expr_as_name;
+    void *_expression_as_name;
     void *_suite;
     res_357 = enter_frame(p, &f) && (
         (consume(p, 76, "except")) &&
-        (_expr_as_name = expr_as_name(p), 1) &&
+        (_expression_as_name = expression_as_name(p), 1) &&
         (_suite = suite(p))
     ) ? node(p) : 0;
     return exit_frame(p, &f, res_357);
@@ -1245,11 +1043,11 @@ static ast_list_t *call_argument_delimited(parser_t *p) {
 }
 
 // call_argument:
-//     | NAME ':=' expr
-//     | NAME '=' expr
-//     | '**' expr
-//     | '*' expr
-//     | expr
+//     | NAME ':=' expression
+//     | NAME '=' expression
+//     | '**' expression
+//     | '*' expression
+//     | expression
 static void *call_argument(parser_t *p) {
     const frame_t f = {78, p->pos, FUNC};
     void *res_78;
@@ -1259,116 +1057,272 @@ static void *call_argument(parser_t *p) {
         (alt_78 = call_argument_2(p)) ||
         (alt_78 = call_argument_3(p)) ||
         (alt_78 = call_argument_4(p)) ||
-        (alt_78 = expr(p))
+        (alt_78 = expression(p))
     ) ? alt_78 : 0;
     return exit_frame(p, &f, res_78);
 }
 
-// NAME ':=' expr
+// NAME ':=' expression
 static void *call_argument_1(parser_t *p) {
     size_t pos = p->pos;
     token_t *_name;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
-        (_expr = expr(p))
-    ) ? ast_named(p, _name, _expr) :
+        (_expression = expression(p))
+    ) ? ast_named(p, _name, _expression) :
         (p->pos = pos, NULL);
 }
 
-// NAME '=' expr
+// NAME '=' expression
 static void *call_argument_2(parser_t *p) {
     size_t pos = p->pos;
     token_t *_name;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 8, "=")) &&
-        (_expr = expr(p))
-    ) ? ast_named(p, _name, _expr) :
+        (_expression = expression(p))
+    ) ? ast_named(p, _name, _expression) :
         (p->pos = pos, NULL);
 }
 
-// '**' expr
+// '**' expression
 static void *call_argument_3(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 38, "**")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
 }
 
-// '*' expr
+// '*' expression
 static void *call_argument_4(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 23, "*")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
+}
+
+// subscript:
+//     | '[' ','.slice+ [','] ']'
+static ast_list_t *subscript(parser_t *p) {
+    const frame_t f = {379, p->pos, FUNC};
+    ast_list_t *res_379;
+    ast_list_t *_slices;
+    res_379 = enter_frame(p, &f) && (
+        (consume(p, 17, "[")) &&
+        (_slices = slice_delimited(p)) &&
+        (consume(p, 7, ","), 1) &&
+        (consume(p, 18, "]"))
+    ) ? _slices : 0;
+    return exit_frame(p, &f, res_379);
+}
+
+static ast_list_t *slice_delimited(parser_t *p) {
+    void *_slice = slice(p);
+    if (!_slice) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _slice);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_slice = slice(p)));
+    p->pos = pos;
+    return list;
+}
+
+// slice:
+//     | [expression] slice_expression [slice_expression]
+//     | expression
+static void *slice(parser_t *p) {
+    const frame_t f = {418, p->pos, FUNC};
+    void *res_418;
+    void *alt_418;
+    res_418 = enter_frame(p, &f) && (
+        (alt_418 = slice_1(p)) ||
+        (alt_418 = expression(p))
+    ) ? alt_418 : 0;
+    return exit_frame(p, &f, res_418);
+}
+
+// [expression] slice_expression [slice_expression]
+static void *slice_1(parser_t *p) {
+    const frame_t f = {292, p->pos, FUNC};
+    void *res_292;
+    ast_expr_t *_expression;
+    void *_slice_expression;
+    void *_slice_expression_1;
+    res_292 = enter_frame(p, &f) && (
+        (_expression = expression(p), 1) &&
+        (_slice_expression = slice_expression(p)) &&
+        (_slice_expression_1 = slice_expression(p), 1)
+    ) ? node(p) : 0;
+    return exit_frame(p, &f, res_292);
+}
+
+// slice_expression:
+//     | ':' [expression]
+static void *slice_expression(parser_t *p) {
+    const frame_t f = {421, p->pos, FUNC};
+    void *res_421;
+    ast_expr_t *_expression;
+    res_421 = enter_frame(p, &f) && (
+        (consume(p, 9, ":")) &&
+        (_expression = expression(p), 1)
+    ) ? _expression : 0;
+    return exit_frame(p, &f, res_421);
+}
+
+// expressions:
+//     | ','.expression+ [',']
+static ast_list_t *expressions(parser_t *p) {
+    const frame_t f = {779, p->pos, FUNC};
+    ast_list_t *res_779;
+    ast_list_t *_expressions;
+    res_779 = enter_frame(p, &f) && (
+        (_expressions = expression_delimited(p)) &&
+        (consume(p, 7, ","), 1)
+    ) ? _expressions : 0;
+    return exit_frame(p, &f, res_779);
+}
+
+static ast_list_t *expression_delimited(parser_t *p) {
+    ast_expr_t *_expression = expression(p);
+    if (!_expression) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _expression);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_expression = expression(p)));
+    p->pos = pos;
+    return list;
+}
+
+// starred_expression (inline):
+//     | '*' bitwise_or
+static ast_expr_t *starred_expression(parser_t *p) {
+    size_t pos = p->pos;
+    ast_expr_t *_bitwise_or;
+    return (
+        (consume(p, 23, "*")) &&
+        (_bitwise_or = bitwise_or(p))
+    ) ? _bitwise_or : (p->pos = pos, NULL);
+}
+
+// maybe_starred:
+//     | starred_expression
+//     | expression
+static ast_expr_t *maybe_starred(parser_t *p) {
+    const frame_t f = {984, p->pos, FUNC};
+    ast_expr_t *res_984;
+    ast_expr_t *alt_984;
+    res_984 = enter_frame(p, &f) && (
+        (alt_984 = starred_expression(p)) ||
+        (alt_984 = expression(p))
+    ) ? alt_984 : 0;
+    return exit_frame(p, &f, res_984);
+}
+
+// starred_expressions:
+//     | ','.maybe_starred+ [',']
+static ast_list_t *starred_expressions(parser_t *p) {
+    const frame_t f = {171, p->pos, FUNC};
+    ast_list_t *res_171;
+    ast_list_t *_maybe_starreds;
+    res_171 = enter_frame(p, &f) && (
+        (_maybe_starreds = maybe_starred_delimited(p)) &&
+        (consume(p, 7, ","), 1)
+    ) ? _maybe_starreds : 0;
+    return exit_frame(p, &f, res_171);
+}
+
+static ast_list_t *maybe_starred_delimited(parser_t *p) {
+    ast_expr_t *_maybe_starred = maybe_starred(p);
+    if (!_maybe_starred) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _maybe_starred);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_maybe_starred = maybe_starred(p)));
+    p->pos = pos;
+    return list;
 }
 
 // named_expression:
-//     | NAME ':=' expr
-//     | expr
+//     | NAME ':=' expression
+//     | expression
 static ast_named_t *named_expression(parser_t *p) {
     const frame_t f = {358, p->pos, FUNC};
     ast_named_t *res_358;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     ast_named_t *alt_358;
     res_358 = enter_frame(p, &f) && (
         (alt_358 = named_expression_1(p)) || (
-            (_expr = expr(p)) &&
-            (alt_358 = ast_unnamed(p, _expr)))
+            (_expression = expression(p)) &&
+            (alt_358 = ast_unnamed(p, _expression)))
     ) ? alt_358 : 0;
     return exit_frame(p, &f, res_358);
 }
 
-// NAME ':=' expr
+// NAME ':=' expression
 static ast_named_t *named_expression_1(parser_t *p) {
     size_t pos = p->pos;
     token_t *_name;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (_name = consume(p, 3, "NAME")) &&
         (consume(p, 36, ":=")) &&
-        (_expr = expr(p))
-    ) ? ast_named(p, _name, _expr) :
+        (_expression = expression(p))
+    ) ? ast_named(p, _name, _expression) :
         (p->pos = pos, NULL);
 }
 
 // conditional (inline):
-//     | 'if' disjunction '?' disjunction ':' expr
+//     | 'if' disjunction '?' disjunction ':' expression
 static ast_expr_t *conditional(parser_t *p) {
     size_t pos = p->pos;
     ast_expr_t *_disjunction;
     ast_expr_t *_disjunction_1;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 56, "if")) &&
         (_disjunction = disjunction(p)) &&
         (consume(p, 10, "?")) &&
         (_disjunction_1 = disjunction(p)) &&
         (consume(p, 9, ":")) &&
-        (_expr = expr(p))
-    ) ? ast_conditional(p, _disjunction, _disjunction_1, _expr) :
+        (_expression = expression(p))
+    ) ? ast_conditional(p, _disjunction, _disjunction_1, _expression) :
         (p->pos = pos, NULL);
 }
 
-// expr:
+// expression:
 //     | conditional
 //     | disjunction
-static ast_expr_t *expr(parser_t *p) {
-    const frame_t f = {797, p->pos, FUNC};
-    ast_expr_t *res_797;
-    ast_expr_t *alt_797;
-    res_797 = enter_frame(p, &f) && (
-        (alt_797 = conditional(p)) ||
-        (alt_797 = disjunction(p))
-    ) ? alt_797 : 0;
-    return exit_frame(p, &f, res_797);
+static ast_expr_t *expression(parser_t *p) {
+    const frame_t f = {736, p->pos, FUNC};
+    ast_expr_t *res_736;
+    ast_expr_t *alt_736;
+    res_736 = enter_frame(p, &f) && (
+        (alt_736 = conditional(p)) ||
+        (alt_736 = disjunction(p))
+    ) ? alt_736 : 0;
+    return exit_frame(p, &f, res_736);
 }
 
 // disjunction (left_recursive):
@@ -2139,6 +2093,49 @@ static ast_primary_t *primary_3(parser_t *p) {
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
+// list_item:
+//     | starred_expression
+//     | named_expression
+static void *list_item(parser_t *p) {
+    const frame_t f = {756, p->pos, FUNC};
+    void *res_756;
+    void *alt_756;
+    res_756 = enter_frame(p, &f) && (
+        (alt_756 = starred_expression(p)) ||
+        (alt_756 = named_expression(p))
+    ) ? alt_756 : 0;
+    return exit_frame(p, &f, res_756);
+}
+
+// list_items:
+//     | ','.list_item+ [',']
+static ast_list_t *list_items(parser_t *p) {
+    const frame_t f = {215, p->pos, FUNC};
+    ast_list_t *res_215;
+    ast_list_t *_list_items;
+    res_215 = enter_frame(p, &f) && (
+        (_list_items = list_item_delimited(p)) &&
+        (consume(p, 7, ","), 1)
+    ) ? _list_items : 0;
+    return exit_frame(p, &f, res_215);
+}
+
+static ast_list_t *list_item_delimited(parser_t *p) {
+    void *_list_item = list_item(p);
+    if (!_list_item) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _list_item);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_list_item = list_item(p)));
+    p->pos = pos;
+    return list;
+}
+
 // paren_expression (inline):
 //     | '(' [list_items] ')'
 static ast_primary_t *paren_expression(parser_t *p) {
@@ -2163,116 +2160,167 @@ static ast_primary_t *list_expression(parser_t *p) {
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
-// typed_argument:
-//     | NAME [':' expr]
-static void *typed_argument(parser_t *p) {
-    const frame_t f = {314, p->pos, FUNC};
-    void *res_314;
+// typed_parameter:
+//     | NAME [':' expression]
+static void *typed_parameter(parser_t *p) {
+    const frame_t f = {868, p->pos, FUNC};
+    void *res_868;
     token_t *_name;
-    void *_colon_expr;
-    res_314 = enter_frame(p, &f) && (
+    void *_colon_expression;
+    res_868 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
-        (_colon_expr = typed_argument_2(p), 1)
+        (_colon_expression = typed_parameter_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_314);
+    return exit_frame(p, &f, res_868);
 }
 
-// ':' expr
-static void *typed_argument_2(parser_t *p) {
+// ':' expression
+static void *typed_parameter_2(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 9, ":")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
 }
 
-// builder_argument:
-//     | typed_argument ['=' expr]
-//     | '*' typed_argument
-//     | '**' typed_argument
-static void *builder_argument(parser_t *p) {
-    const frame_t f = {713, p->pos, FUNC};
-    void *res_713;
-    void *alt_713;
-    res_713 = enter_frame(p, &f) && (
-        (alt_713 = builder_argument_1(p)) ||
-        (alt_713 = builder_argument_2(p)) ||
-        (alt_713 = builder_argument_3(p))
-    ) ? alt_713 : 0;
-    return exit_frame(p, &f, res_713);
+// builder_parameter:
+//     | typed_parameter ['=' expression]
+//     | '*' typed_parameter
+//     | '**' typed_parameter
+static void *builder_parameter(parser_t *p) {
+    const frame_t f = {789, p->pos, FUNC};
+    void *res_789;
+    void *alt_789;
+    res_789 = enter_frame(p, &f) && (
+        (alt_789 = builder_parameter_1(p)) ||
+        (alt_789 = builder_parameter_2(p)) ||
+        (alt_789 = builder_parameter_3(p))
+    ) ? alt_789 : 0;
+    return exit_frame(p, &f, res_789);
 }
 
-// typed_argument ['=' expr]
-static void *builder_argument_1(parser_t *p) {
-    const frame_t f = {667, p->pos, FUNC};
-    void *res_667;
-    void *_typed_argument;
-    void *_assign_expr;
-    res_667 = enter_frame(p, &f) && (
-        (_typed_argument = typed_argument(p)) &&
-        (_assign_expr = builder_argument_1_2(p), 1)
+// typed_parameter ['=' expression]
+static void *builder_parameter_1(parser_t *p) {
+    const frame_t f = {887, p->pos, FUNC};
+    void *res_887;
+    void *_typed_parameter;
+    void *_assign_expression;
+    res_887 = enter_frame(p, &f) && (
+        (_typed_parameter = typed_parameter(p)) &&
+        (_assign_expression = builder_parameter_1_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_667);
+    return exit_frame(p, &f, res_887);
 }
 
-// '=' expr
-static void *builder_argument_1_2(parser_t *p) {
+// '=' expression
+static void *builder_parameter_1_2(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 8, "=")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
 }
 
-// '*' typed_argument
-static void *builder_argument_2(parser_t *p) {
+// '*' typed_parameter
+static void *builder_parameter_2(parser_t *p) {
     size_t pos = p->pos;
-    void *_typed_argument;
+    void *_typed_parameter;
     return (
         (consume(p, 23, "*")) &&
-        (_typed_argument = typed_argument(p))
-    ) ? _typed_argument : (p->pos = pos, NULL);
+        (_typed_parameter = typed_parameter(p))
+    ) ? _typed_parameter : (p->pos = pos, NULL);
 }
 
-// '**' typed_argument
-static void *builder_argument_3(parser_t *p) {
+// '**' typed_parameter
+static void *builder_parameter_3(parser_t *p) {
     size_t pos = p->pos;
-    void *_typed_argument;
+    void *_typed_parameter;
     return (
         (consume(p, 38, "**")) &&
-        (_typed_argument = typed_argument(p))
-    ) ? _typed_argument : (p->pos = pos, NULL);
+        (_typed_parameter = typed_parameter(p))
+    ) ? _typed_parameter : (p->pos = pos, NULL);
 }
 
-// simple_argument:
-//     | NAME ['=' expr]
-static void *simple_argument(parser_t *p) {
-    const frame_t f = {450, p->pos, FUNC};
-    void *res_450;
+// simple_parameter:
+//     | NAME ['=' expression]
+static void *simple_parameter(parser_t *p) {
+    const frame_t f = {524, p->pos, FUNC};
+    void *res_524;
     token_t *_name;
-    void *_assign_expr;
-    res_450 = enter_frame(p, &f) && (
+    void *_assign_expression;
+    res_524 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
-        (_assign_expr = simple_argument_2(p), 1)
+        (_assign_expression = simple_parameter_2(p), 1)
     ) ? node(p) : 0;
-    return exit_frame(p, &f, res_450);
+    return exit_frame(p, &f, res_524);
 }
 
-// '=' expr
-static void *simple_argument_2(parser_t *p) {
+// '=' expression
+static void *simple_parameter_2(parser_t *p) {
     size_t pos = p->pos;
-    ast_expr_t *_expr;
+    ast_expr_t *_expression;
     return (
         (consume(p, 8, "=")) &&
-        (_expr = expr(p))
-    ) ? _expr : (p->pos = pos, NULL);
+        (_expression = expression(p))
+    ) ? _expression : (p->pos = pos, NULL);
+}
+
+// builder_parameters (inline):
+//     | '(' [','.builder_parameter+ [',']] ')'
+static void *builder_parameters(parser_t *p) {
+    size_t pos = p->pos;
+    void *_builder_parameters_2;
+    return (
+        (consume(p, 13, "(")) &&
+        (_builder_parameters_2 = builder_parameters_2(p), 1) &&
+        (consume(p, 14, ")"))
+    ) ? _builder_parameters_2 :
+        (p->pos = pos, NULL);
+}
+
+// ','.builder_parameter+ [',']
+static void *builder_parameters_2(parser_t *p) {
+    size_t pos = p->pos;
+    ast_list_t *_builder_parameters;
+    return (
+        (_builder_parameters = builder_parameter_delimited(p)) &&
+        (consume(p, 7, ","), 1)
+    ) ? _builder_parameters : (p->pos = pos, NULL);
+}
+
+static ast_list_t *builder_parameter_delimited(parser_t *p) {
+    void *_builder_parameter = builder_parameter(p);
+    if (!_builder_parameter) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _builder_parameter);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_builder_parameter = builder_parameter(p)));
+    p->pos = pos;
+    return list;
+}
+
+// builder_generics (inline):
+//     | '[' expressions ']'
+static void *builder_generics(parser_t *p) {
+    size_t pos = p->pos;
+    ast_list_t *_expressions;
+    return (
+        (consume(p, 17, "[")) &&
+        (_expressions = expressions(p)) &&
+        (consume(p, 18, "]"))
+    ) ? _expressions : (p->pos = pos, NULL);
 }
 
 // builder_expression (inline):
-//     | NAME ['[' exprlist ']'] ['(' [','.builder_argument+ [',']] ')'] block_suite
-//     | NAME ','.simple_argument+ ':' expr
+//     | NAME [builder_generics] [builder_parameters] block_suite
+//     | NAME ','.simple_parameter+ ':' expression
 static ast_primary_t *builder_expression(parser_t *p) {
     size_t pos = p->pos;
     ast_primary_t *alt;
@@ -2282,100 +2330,51 @@ static ast_primary_t *builder_expression(parser_t *p) {
     ) ? alt : (p->pos = pos, NULL);
 }
 
-// NAME ['[' exprlist ']'] ['(' [','.builder_argument+ [',']] ')'] block_suite
+// NAME [builder_generics] [builder_parameters] block_suite
 static ast_primary_t *builder_expression_1(parser_t *p) {
     const frame_t f = {254, p->pos, FUNC};
     ast_primary_t *res_254;
     token_t *_name;
-    ast_primary_t *_lsqb_exprlist_rsqb;
-    ast_primary_t *_builder_expression_1_3;
+    void *_builder_generics;
+    void *_builder_parameters;
     void *_block_suite;
     res_254 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
-        (_lsqb_exprlist_rsqb = builder_expression_1_2(p), 1) &&
-        (_builder_expression_1_3 = builder_expression_1_3(p), 1) &&
+        (_builder_generics = builder_generics(p), 1) &&
+        (_builder_parameters = builder_parameters(p), 1) &&
         (_block_suite = block_suite(p))
     ) ? node(p) : 0;
     return exit_frame(p, &f, res_254);
 }
 
-// '[' exprlist ']'
-static ast_primary_t *builder_expression_1_2(parser_t *p) {
-    size_t pos = p->pos;
-    ast_list_t *_exprlist;
-    return (
-        (consume(p, 17, "[")) &&
-        (_exprlist = exprlist(p)) &&
-        (consume(p, 18, "]"))
-    ) ? _exprlist : (p->pos = pos, NULL);
-}
-
-// '(' [','.builder_argument+ [',']] ')'
-static ast_primary_t *builder_expression_1_3(parser_t *p) {
-    size_t pos = p->pos;
-    ast_primary_t *_builder_expression_1_3_2;
-    return (
-        (consume(p, 13, "(")) &&
-        (_builder_expression_1_3_2 = builder_expression_1_3_2(p), 1) &&
-        (consume(p, 14, ")"))
-    ) ? _builder_expression_1_3_2 :
-        (p->pos = pos, NULL);
-}
-
-// ','.builder_argument+ [',']
-static ast_primary_t *builder_expression_1_3_2(parser_t *p) {
-    size_t pos = p->pos;
-    ast_list_t *_builder_arguments;
-    return (
-        (_builder_arguments = builder_argument_delimited(p)) &&
-        (consume(p, 7, ","), 1)
-    ) ? _builder_arguments : (p->pos = pos, NULL);
-}
-
-static ast_list_t *builder_argument_delimited(parser_t *p) {
-    void *_builder_argument = builder_argument(p);
-    if (!_builder_argument) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _builder_argument);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_builder_argument = builder_argument(p)));
-    p->pos = pos;
-    return list;
-}
-
-// NAME ','.simple_argument+ ':' expr
+// NAME ','.simple_parameter+ ':' expression
 static ast_primary_t *builder_expression_2(parser_t *p) {
     const frame_t f = {256, p->pos, FUNC};
     ast_primary_t *res_256;
     token_t *_name;
-    ast_list_t *_simple_arguments;
-    ast_expr_t *_expr;
+    ast_list_t *_simple_parameters;
+    ast_expr_t *_expression;
     res_256 = enter_frame(p, &f) && (
         (_name = consume(p, 3, "NAME")) &&
-        (_simple_arguments = simple_argument_delimited(p)) &&
+        (_simple_parameters = simple_parameter_delimited(p)) &&
         (consume(p, 9, ":")) &&
-        (_expr = expr(p))
+        (_expression = expression(p))
     ) ? node(p) : 0;
     return exit_frame(p, &f, res_256);
 }
 
-static ast_list_t *simple_argument_delimited(parser_t *p) {
-    void *_simple_argument = simple_argument(p);
-    if (!_simple_argument) {
+static ast_list_t *simple_parameter_delimited(parser_t *p) {
+    void *_simple_parameter = simple_parameter(p);
+    if (!_simple_parameter) {
         return 0;
     }
     ast_list_t *list = ast_list_new(p);
     size_t pos;
     do {
-        ast_list_append(p, list, _simple_argument);
+        ast_list_append(p, list, _simple_parameter);
         pos = p->pos;
     } while (consume(p, 7, ",") &&
-            (_simple_argument = simple_argument(p)));
+            (_simple_parameter = simple_parameter(p)));
     p->pos = pos;
     return list;
 }
