@@ -21,11 +21,6 @@ ast_expr_t *ast_primary_expr(parser_t *p, void *primary) {
     return r;
 }
 
-int *ast_integer(parser_t *p, int i) {
-    int *r = parser_alloc(p, sizeof(int));
-    *r = i;
-    return r;
-}
 
 ast_expr_t *ast_conditional(parser_t *p, ast_expr_t *cond, ast_expr_t *a, ast_expr_t *b) {
     return node(p);
@@ -39,7 +34,7 @@ ast_named_t *ast_unnamed(parser_t *p, ast_expr_t *expr) {
     return ast_named(p, NULL, expr);
 }
 
-ast_expr_t *ast_comp_term(parser_t *p, int *comp_op, ast_expr_t *operand) {
+ast_expr_t *ast_comp_term(parser_t *p, int comp_op, ast_expr_t *operand) {
     return node(p);
 }
 

@@ -35,7 +35,7 @@ static void *assignment_2(parser_t *);
 static ast_list_t *assignment_2_1_loop(parser_t *);
 static void *assignment_2_1(parser_t *);
 static void *assignment_3(parser_t *);
-static int *augmented_assign(parser_t *);
+static int augmented_assign(parser_t *);
 static void *compound_statement(parser_t *);
 static void *if_statement(parser_t *);
 static ast_list_t *elif_statement_loop(parser_t *);
@@ -91,9 +91,9 @@ static ast_expr_t *comparison(parser_t *);
 static ast_expr_t *comparison_1(parser_t *);
 static ast_list_t *comparison_1_2_loop(parser_t *);
 static ast_expr_t *comparison_1_2(parser_t *);
-static int *comparator(parser_t *);
-static int *comparator_8(parser_t *);
-static int *comparator_10(parser_t *);
+static int comparator(parser_t *);
+static int comparator_8(parser_t *);
+static int comparator_10(parser_t *);
 static ast_expr_t *bitwise_or(parser_t *);
 static ast_expr_t *bitwise_or_1(parser_t *);
 static ast_expr_t *bitwise_xor(parser_t *);
@@ -625,7 +625,7 @@ static void *assignment_3(parser_t *p) {
     ) ? node(p) : (p->pos = pos, NULL);
 }
 
-// augmented_assign:
+// augmented_assign (inline):
 //     | '+='
 //     | '-='
 //     | '*='
@@ -639,51 +639,49 @@ static void *assignment_3(parser_t *p) {
 //     | '**='
 //     | '<<='
 //     | '>>='
-static int *augmented_assign(parser_t *p) {
-    const frame_t f = {982, p->pos, FUNC};
-    int *res_982;
-    int *alt_982;
-    res_982 = enter_frame(p, &f) && ((
+static int augmented_assign(parser_t *p) {
+    size_t pos = p->pos;
+    int alt;
+    return ((
             (consume(p, 39, "+=")) &&
-            (alt_982 = ast_integer(p, BINOP_PLS))
+            (alt = BINOP_PLS)
         ) || (
             (consume(p, 40, "-=")) &&
-            (alt_982 = ast_integer(p, BINOP_MIN))
+            (alt = BINOP_MIN)
         ) || (
             (consume(p, 41, "*=")) &&
-            (alt_982 = ast_integer(p, BINOP_MUL))
+            (alt = BINOP_MUL)
         ) || (
             (consume(p, 42, "/=")) &&
-            (alt_982 = ast_integer(p, BINOP_DIV))
+            (alt = BINOP_DIV)
         ) || (
             (consume(p, 43, "%=")) &&
-            (alt_982 = ast_integer(p, BINOP_MOD))
+            (alt = BINOP_MOD)
         ) || (
             (consume(p, 44, "@=")) &&
-            (alt_982 = ast_integer(p, BINOP_MML))
+            (alt = BINOP_MML)
         ) || (
             (consume(p, 45, "|=")) &&
-            (alt_982 = ast_integer(p, BINOP_IOR))
+            (alt = BINOP_IOR)
         ) || (
             (consume(p, 46, "&=")) &&
-            (alt_982 = ast_integer(p, BINOP_AND))
+            (alt = BINOP_AND)
         ) || (
             (consume(p, 47, "^=")) &&
-            (alt_982 = ast_integer(p, BINOP_XOR))
+            (alt = BINOP_XOR)
         ) || (
             (consume(p, 50, "//=")) &&
-            (alt_982 = ast_integer(p, BINOP_FDV))
+            (alt = BINOP_FDV)
         ) || (
             (consume(p, 51, "**=")) &&
-            (alt_982 = ast_integer(p, BINOP_POW))
+            (alt = BINOP_POW)
         ) || (
             (consume(p, 52, "<<=")) &&
-            (alt_982 = ast_integer(p, BINOP_SHL))
+            (alt = BINOP_SHL)
         ) || (
             (consume(p, 53, ">>=")) &&
-            (alt_982 = ast_integer(p, BINOP_SHR)))
-    ) ? alt_982 : 0;
-    return exit_frame(p, &f, res_982);
+            (alt = BINOP_SHR))
+    ) ? alt : (p->pos = pos, 0);
 }
 
 // compound_statement:
@@ -1477,7 +1475,7 @@ static ast_list_t *comparison_1_2_loop(parser_t *p) {
 // comparator bitwise_or
 static ast_expr_t *comparison_1_2(parser_t *p) {
     size_t pos = p->pos;
-    int *_comparator;
+    int _comparator;
     ast_expr_t *_bitwise_or;
     return (
         (_comparator = comparator(p)) &&
@@ -1486,7 +1484,7 @@ static ast_expr_t *comparison_1_2(parser_t *p) {
         (p->pos = pos, NULL);
 }
 
-// comparator:
+// comparator (inline):
 //     | '<'
 //     | '>'
 //     | '=='
@@ -1497,59 +1495,55 @@ static ast_expr_t *comparison_1_2(parser_t *p) {
 //     | 'not' 'in'
 //     | 'is'
 //     | 'is' 'not'
-static int *comparator(parser_t *p) {
-    const frame_t f = {166, p->pos, FUNC};
-    int *res_166;
-    int *alt_166;
-    res_166 = enter_frame(p, &f) && ((
+static int comparator(parser_t *p) {
+    size_t pos = p->pos;
+    int alt;
+    return ((
             (consume(p, 19, "<")) &&
-            (alt_166 = ast_integer(p, CMP_LT))
+            (alt = CMP_LT)
         ) || (
             (consume(p, 20, ">")) &&
-            (alt_166 = ast_integer(p, CMP_GT))
+            (alt = CMP_GT)
         ) || (
             (consume(p, 31, "==")) &&
-            (alt_166 = ast_integer(p, CMP_EQ))
+            (alt = CMP_EQ)
         ) || (
             (consume(p, 34, ">=")) &&
-            (alt_166 = ast_integer(p, CMP_GE))
+            (alt = CMP_GE)
         ) || (
             (consume(p, 33, "<=")) &&
-            (alt_166 = ast_integer(p, CMP_LE))
+            (alt = CMP_LE)
         ) || (
             (consume(p, 32, "!=")) &&
-            (alt_166 = ast_integer(p, CMP_NE))
+            (alt = CMP_NE)
         ) || (
             (consume(p, 63, "in")) &&
-            (alt_166 = ast_integer(p, CMP_IN))
+            (alt = CMP_IN)
         ) ||
-        (alt_166 = comparator_8(p)) || (
+        (alt = comparator_8(p)) || (
             (consume(p, 62, "is")) &&
-            (alt_166 = ast_integer(p, CMP_IS))
+            (alt = CMP_IS)
         ) ||
-        (alt_166 = comparator_10(p))
-    ) ? alt_166 : 0;
-    return exit_frame(p, &f, res_166);
+        (alt = comparator_10(p))
+    ) ? alt : (p->pos = pos, 0);
 }
 
 // 'not' 'in'
-static int *comparator_8(parser_t *p) {
+static int comparator_8(parser_t *p) {
     size_t pos = p->pos;
     return (
         (consume(p, 61, "not")) &&
         (consume(p, 63, "in"))
-    ) ? ast_integer(p, CMP_NI) :
-        (p->pos = pos, NULL);
+    ) ? CMP_NI : (p->pos = pos, 0);
 }
 
 // 'is' 'not'
-static int *comparator_10(parser_t *p) {
+static int comparator_10(parser_t *p) {
     size_t pos = p->pos;
     return (
         (consume(p, 62, "is")) &&
         (consume(p, 61, "not"))
-    ) ? ast_integer(p, CMP_NS) :
-        (p->pos = pos, NULL);
+    ) ? CMP_NS : (p->pos = pos, 0);
 }
 
 // bitwise_or (left_recursive):

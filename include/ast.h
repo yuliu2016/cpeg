@@ -80,15 +80,13 @@ ast_expr_t *ast_unary(parser_t *p, ast_expr_t *expr, enum expr_opcode unary_opco
 
 ast_expr_t *ast_primary_expr(parser_t *p, void *primary);
 
-int *ast_integer(parser_t *p, int i);
-
 ast_expr_t *ast_conditional(parser_t *p, ast_expr_t *cond, ast_expr_t *a, ast_expr_t *b);
 
 ast_named_t *ast_named(parser_t *p, token_t *name, ast_expr_t *expr);
 
 ast_named_t *ast_unnamed(parser_t *p, ast_expr_t *expr);
 
-ast_expr_t *ast_comp_term(parser_t *p, int *comp_op, ast_expr_t *operand);
+ast_expr_t *ast_comp_term(parser_t *p, int comp_op, ast_expr_t *operand);
 
 ast_expr_t *ast_comparison(parser_t *p, ast_expr_t *first, ast_list_t *terms);
 
