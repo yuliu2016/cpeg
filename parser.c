@@ -164,6 +164,10 @@ void *parse_grammar(parser_t *p, int entry_point) {
     }
 }
 
+static ast_stmt_t *ast_nop(parser_t *p) {
+    return node(p);
+}
+
 // single_input:
 //     | NEWLINE
 //     | simple_statements
@@ -311,6 +315,26 @@ static ast_list_t *simple_statement_delimited(parser_t *p) {
             (_simple_statement = simple_statement(p)));
     p->pos = pos;
     return list;
+}
+
+static ast_stmt_t *ast_break(parser_t *p) {
+    return node(p);
+}
+
+static ast_stmt_t *ast_continue(parser_t *p) {
+    return node(p);
+}
+
+static ast_stmt_t *ast_del(parser_t *p, ast_list_t *li) {
+    return node(p);
+}
+
+static ast_stmt_t *ast_return(parser_t *p, ast_list_t *li) {
+    return node(p);
+}
+
+static ast_named_t *ast_named(parser_t *p, token_t *name, ast_expr_t *expr) {
+    return node(p);
 }
 
 // simple_statement:
@@ -1262,6 +1286,25 @@ static ast_list_t *maybe_starred_delimited(parser_t *p) {
     return list;
 }
 
+static ast_expr_t *ast_conditional(parser_t *p,
+        ast_expr_t *cond, ast_expr_t *a, ast_expr_t *b) {
+    return node(p);
+}
+
+static ast_named_t *ast_unnamed(parser_t *p, ast_expr_t *expr) {
+    return ast_named(p, NULL, expr);
+}
+
+static ast_expr_t *ast_comp_term(parser_t *p,
+        int comp_op, ast_expr_t *operand) {
+    return node(p);
+}
+
+static ast_expr_t *ast_comparison(parser_t *p,
+        ast_expr_t *first, ast_list_t *terms) {
+    return node(p);
+}
+
 // named_expression:
 //     | NAME ':=' expression
 //     | expression
@@ -1321,6 +1364,22 @@ static ast_expr_t *expression(parser_t *p) {
         (alt_736 = disjunction(p))
     ) ? alt_736 : 0;
     return exit_frame(p, &f, res_736);
+}
+
+// Construct a binary operation
+static ast_expr_t *ast_binary(parser_t *p, ast_expr_t *left,
+        ast_expr_t *right, enum expr_opcode binop_code) {
+    ast_expr_t *r = parser_alloc(p, sizeof(ast_expr_t));
+    r->opcode = binop_code;
+    r->left = left;
+    r->right.expr = right;
+    return r;
+}
+
+// Construct a unary operation
+static ast_expr_t *ast_unary(parser_t *p, ast_expr_t *expr,
+        enum expr_opcode unary_opcode) {
+    return ast_binary(p, expr, NULL, unary_opcode);
 }
 
 // disjunction (left_recursive):
@@ -1992,6 +2051,15 @@ static ast_expr_t *factor_3(parser_t *p) {
         (p->pos = pos, NULL);
 }
 
+// Convert a primary to an expression
+static ast_expr_t *ast_primary_expr(parser_t *p, void *primary) {
+    ast_expr_t *r = parser_alloc(p, sizeof(ast_expr_t));
+    r->opcode = BINOP_PRIMARY;
+    r->left = NULL;
+    r->right.primary = primary;
+    return r;
+}
+
 // power (memo):
 //     | primary '**' factor
 //     | primary
@@ -2371,6 +2439,30 @@ static ast_list_t *simple_parameter_delimited(parser_t *p) {
             (_simple_parameter = simple_parameter(p)));
     p->pos = pos;
     return list;
+}
+
+static ast_primary_t *ast_name_atom(parser_t *p, token_t *name) {
+    return node(p);
+}
+
+static ast_primary_t *ast_number_atom(parser_t *p, token_t *name) {
+    return node(p);
+}
+
+static ast_primary_t *ast_string_atom(parser_t *p, token_t *name) {
+    return node(p);
+}
+
+static ast_primary_t *ast_none(parser_t *p) {
+    return node(p);
+}
+
+static ast_primary_t *ast_true(parser_t *p) {
+    return node(p);
+}
+
+static ast_primary_t *ast_false(parser_t *p) {
+    return node(p);
 }
 
 // atom (memo):
