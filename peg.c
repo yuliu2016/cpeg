@@ -204,24 +204,20 @@ void lexer_free_state(lexer_t *ls) {
     }
 }
 
-parser_t *parser_init_state(
+void parser_init_state(
+        parser_t *p, 
         char *src,
         size_t len,
         lexer_func_t lexer_func,
         char **tk_indices) {
 
     if (!src || !lexer_func) {
-        return NULL;
+        return;
     }
 
     mem_region_t *region = mbregion(REGION_DEFAULT_SIZE, REGION_DEFAULT_SIZE);
     if (!region) {
-        return NULL;
-    }
-
-    parser_t *p = malloc(sizeof(parser_t));
-    if (!p) {
-        return NULL;
+        return;
     }
 
     lexer_init_state(&p->lexer_state, src, len);
@@ -237,14 +233,11 @@ parser_t *parser_init_state(
     // Need to scan at least one token to see
     // if there is anything to parse
     _compute_next_token(p);
-
-    return p;
 }
 
 void parser_free_state(parser_t *p) {
     lexer_free_state(&p->lexer_state);
     mbpurge(p->region);
-    free(p);
 }
 
 int parser_advance_frame(parser_t *p) {

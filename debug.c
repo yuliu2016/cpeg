@@ -321,9 +321,10 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f) {
 }
 
 
-void *parse_grammar(parser_t *p, int entry_point);
-
-double *parse_calc(parser_t *p);
+void *parse_grammar(int entry_point);
+double *parse_calc();
+parser_t *get_static_parser();
+parser_t *get_calc_parser();
 
 
 static int print_if_error(parser_t *p, void *result) {
@@ -347,13 +348,13 @@ static int print_if_error(parser_t *p, void *result) {
     return 0;
 }
 
-static parser_t *simple_parser(char *in) {
-    return parser_init_state(in, strlen(in), lexer_get_next_token, (char **) indices);
-}
-
 char *calc_repl(char *in) {
-    parser_t *p = simple_parser(in);
-    double *n = parse_calc(p);
+    
+    parser_t *p = get_calc_parser();
+    parser_init_state(p, in, strlen(in), 
+            lexer_get_next_token, (char **) indices);
+    
+    double *n = parse_calc();
     lexer_t *ls = &p->lexer_state;
     parser_verify_eof(p);
     if (!print_if_error(p, n)) {
@@ -364,8 +365,10 @@ char *calc_repl(char *in) {
 }
 
 char *parser_repl(char *in) {
-    parser_t *p = simple_parser(in);
-    void *n = parse_grammar(p, 0);
+    parser_t *p = get_static_parser();
+    parser_init_state(p, in, strlen(in), 
+            lexer_get_next_token, (char **) indices);
+    void *n = parse_grammar(0);
     lexer_t *ls = &p->lexer_state;
     parser_verify_eof(p);
     if (!print_if_error(p, n)) {

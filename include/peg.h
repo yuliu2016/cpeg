@@ -114,7 +114,7 @@ typedef struct frame {
 } frame_t;
 
 
-parser_t *parser_init_state(char *src, size_t len, 
+void parser_init_state(parser_t *p, char *src, size_t len, 
         lexer_func_t lexer_func, char **tk_indices);
 
 token_t *parser_fetch_token(parser_t *p, size_t pos);
