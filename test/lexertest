@@ -1,0 +1,46 @@
+
+>>> 
+[Empty Token List]
+
+>>> 123
+L1:0    NUMBER    123
+
+>>> 1_2
+L1:0    NUMBER    1_2
+
+>>> 12_3
+L1:0    NUMBER    12_3
+
+>>> 1.23
+L1:0    NUMBER    1.23
+
+>>> 1.23j
+L1:0    NUMBER    1.23j
+
+>>> 123j
+L1:0    NUMBER    123j
+
+>>> 1e5
+L1:0    NUMBER    1e5
+
+>>> 1E0
+L1:0    NUMBER    1E0
+
+>>> 1.23E-5
+L1:0    NUMBER    1.23E-5
+
+>>> 0x_1
+L1:0    NUMBER    0x_1
+
+>>> 12_
+File <lexertest>, line 1:
+    12_
+      ^
+Error: Invalid decimal literal
+
+>>> 1__2
+File <lexertest>, line 1:
+    1__2
+      ^
+Error: Invalid decimal literal
+
