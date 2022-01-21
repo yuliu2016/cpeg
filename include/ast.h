@@ -5,11 +5,6 @@
 #include "peg.h"
 
 
-static inline void *node(parser_t *p) {
-    return parser_alloc(p, sizeof(char));
-}
-
-
 enum expr_opcode {
     CMP_LT,
     CMP_GT,

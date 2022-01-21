@@ -149,21 +149,73 @@ static ast_list_t *simple_parameter_delimited(parser_t *);
 static ast_primary_t *atom(parser_t *);
 
 
+static parser_t _parser;
 
-// Parser Entry Point
-void *parse_grammar(parser_t *p, int entry_point) {
-    switch (entry_point) {
-    case 0:
-        return single_input(p);
-    case 1:
-        return file_input(p);
-    case 2:
-        return eval_input(p);
-    default:
-        return 0;
-    }
+parser_t *get_static_parser() {
+    return &_parser;
 }
 
+static inline size_t _pos() {
+    return _parser.pos;
+}
+
+static inline void *palloc(size_t size) {
+    return mballoc(_parser.region, size);
+}
+
+static inline int _enter_frame(const frame_t *f) {
+    #ifdef PARSER_DEBUG
+        parser_enter_debug(&_parser, f);
+    #endif
+    return parser_advance_frame(&_parser);
+}
+
+static inline void *_exit_frame(const frame_t *f, void *result) {
+    _parser.level--;
+    if (!result) {
+        _parser.pos = f->f_pos;
+    }
+    #ifdef PARSER_DEBUG
+        parser_exit_debug(&_parser, result, f);
+    #endif
+    return result;
+}
+
+
+static inline void _insert_memo(const frame_t *f, void *node) {
+    parser_memoize(&_parser, f->f_pos, f->f_type, node);
+}
+
+static inline int _is_memoized(const frame_t *f, void **resptr) {
+   token_memo_t *memo = parser_get_memo(&_parser, f->f_type);
+    #ifdef PARSER_DEBUG
+        parser_memo_debug(&_parser, memo, f);
+    #endif
+    if (memo) {
+        *resptr = memo->node;
+        return 1;
+    }
+    return 0;
+}
+
+static inline int _test_and_reset(size_t f_pos, void *node) {
+    return node && (_parser.pos = f_pos, 1);
+}
+
+static inline token_t *_consume(int tk_type, const char *literal) {
+    #ifdef PARSER_DEBUG
+        return parser_consume_debug(&_parser, tk_type, literal);
+    #else
+        return parser_consume_token(&_parser, tk_type);
+    #endif
+}
+
+// Placeholder node
+static inline void *node(parser_t *p) {
+    return parser_alloc(p, sizeof(char));
+}
+
+// Do nothing operation
 static ast_stmt_t *ast_nop(parser_t *p) {
     return node(p);
 }
@@ -2509,4 +2561,18 @@ static ast_primary_t *atom(parser_t *p) {
     ) ? alt_753 : 0;
     insert_memo(p, &f, res_753);
     return exit_frame(p, &f, res_753);
+}
+
+// Parser Entry Point
+void *parse_grammar(parser_t *p, int entry_point) {
+    switch (entry_point) {
+    case 0:
+        return single_input(p);
+    case 1:
+        return file_input(p);
+    case 2:
+        return eval_input(p);
+    default:
+        return 0;
+    }
 }

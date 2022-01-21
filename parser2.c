@@ -14,18 +14,12 @@ static double *factor_2(parser_t *);
 static double *factor_3(parser_t *);
 static double *power(parser_t *);
 static double *power_1(parser_t *);
+static ast_list_t *parameters(parser_t *);
+static ast_list_t *sum_delimited(parser_t *);
 static double *atom(parser_t *);
 static double *atom_1(parser_t *);
 static double *atom_2(parser_t *);
-static ast_list_t *parameters(parser_t *);
-static ast_list_t *sum_delimited(parser_t *);
 
-
-
-// Parser Entry Point
-double *parse_calc(parser_t *p) {
-    return sum(p);
-}
 
 // sum (left_recursive):
 //     | sum '+' term
@@ -243,6 +237,35 @@ static double *power_1(parser_t *p) {
         (p->pos = pos, NULL);
 }
 
+// parameters:
+//     | ','.sum+ [',']
+static ast_list_t *parameters(parser_t *p) {
+    const frame_t f = {106, p->pos, FUNC};
+    ast_list_t *res_106;
+    ast_list_t *_sums;
+    res_106 = enter_frame(p, &f) && (
+        (_sums = sum_delimited(p)) &&
+        (consume(p, 7, ","), 1)
+    ) ? _sums : 0;
+    return exit_frame(p, &f, res_106);
+}
+
+static ast_list_t *sum_delimited(parser_t *p) {
+    double *_sum = sum(p);
+    if (!_sum) {
+        return 0;
+    }
+    ast_list_t *list = ast_list_new(p);
+    size_t pos;
+    do {
+        ast_list_append(p, list, _sum);
+        pos = p->pos;
+    } while (consume(p, 7, ",") &&
+            (_sum = sum(p)));
+    p->pos = pos;
+    return list;
+}
+
 // atom (memo):
 //     | '(' sum ')'
 //     | NAME '(' [parameters] ')'
@@ -295,31 +318,7 @@ static double *atom_2(parser_t *p) {
         (p->pos = pos, NULL);
 }
 
-// parameters:
-//     | ','.sum+ [',']
-static ast_list_t *parameters(parser_t *p) {
-    const frame_t f = {106, p->pos, FUNC};
-    ast_list_t *res_106;
-    ast_list_t *_sums;
-    res_106 = enter_frame(p, &f) && (
-        (_sums = sum_delimited(p)) &&
-        (consume(p, 7, ","), 1)
-    ) ? _sums : 0;
-    return exit_frame(p, &f, res_106);
-}
-
-static ast_list_t *sum_delimited(parser_t *p) {
-    double *_sum = sum(p);
-    if (!_sum) {
-        return 0;
-    }
-    ast_list_t *list = ast_list_new(p);
-    size_t pos;
-    do {
-        ast_list_append(p, list, _sum);
-        pos = p->pos;
-    } while (consume(p, 7, ",") &&
-            (_sum = sum(p)));
-    p->pos = pos;
-    return list;
+// Parser Entry Point
+double *parse_calc(parser_t *p) {
+    return sum(p);
 }
