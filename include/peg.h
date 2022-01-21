@@ -148,14 +148,7 @@ void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
 
 
 // List data structure
-
 typedef mblist_t ast_list_t;
-
-ast_list_t *ast_list_new(parser_t *p);
-
-ast_list_t *ast_list_of(parser_t *p, void *first);
-
-void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 
 
 #define PARSER_MAX_RECURSION 500
@@ -164,66 +157,7 @@ void ast_list_append(parser_t *p, ast_list_t *seq, void *item);
 // #define PARSER_DEBUG
 #endif
 
-
 #define FUNC __func__
 
-
-static inline int enter_frame(parser_t *p, const frame_t *f) {
-
-    #ifdef PARSER_DEBUG
-        parser_enter_debug(p, f);
-    #endif
-
-    return parser_advance_frame(p);
-}
-
-
-static inline void *exit_frame(parser_t *p, const frame_t *f, void *result) {
-
-    p->level -= 1;
-
-    if (!result) { 
-        // Frame did not parse successfully; reset position.
-        p->pos = f->f_pos;
-    }
-
-    #ifdef PARSER_DEBUG
-        parser_exit_debug(p, result, f);
-    #endif
-
-    return result;
-}
-
-
-static inline void insert_memo(parser_t *p, const frame_t *f, void *node) {
-    parser_memoize(p, f->f_pos, f->f_type, node);
-}
-
-static inline int is_memoized(parser_t *p, const frame_t *f, void **resptr) {
-   token_memo_t *memo = parser_get_memo(p, f->f_type);
-
-    #ifdef PARSER_DEBUG
-        parser_memo_debug(p, memo, f);
-    #endif
-
-    if (memo) {
-        *resptr = memo->node;
-        return 1;
-    }
-    return 0;
-}
-
-static inline int test_and_reset(parser_t *p, size_t f_pos, void *node) {
-    return node && (p->pos = f_pos, 1);
-}
-
-
-static inline token_t *consume(parser_t *p, int tk_type, const char *literal) {
-    #ifdef PARSER_DEBUG
-        return parser_consume_debug(p, tk_type, literal);
-    #else
-        return parser_consume_token(p, tk_type);
-    #endif
-}
 
 #endif //CPEG_PEG_H

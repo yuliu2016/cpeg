@@ -406,19 +406,3 @@ void parser_verify_eof(parser_t *p) {
     free(line_buf);
     free(highlight);
 }
-
-
-ast_list_t *ast_list_new(parser_t *p) {
-    return mblist_new(p->region, 0);
-}
-
-ast_list_t *ast_list_of(parser_t *p, void *first) {
-    ast_list_t *seq = mblist_new(p->region, 1);
-    mblist_append(p->region, seq, first);
-    return seq;
-}
-
-
-void ast_list_append(parser_t *p, ast_list_t *seq, void *item) {
-    mblist_append(p->region, seq, item);
-}

@@ -5,11 +5,11 @@
 
 static parser_t __parser;
 
-static inline size_t _pos() {
+static inline size_t pos() {
     return __parser.pos;
 }
 
-static inline void _set_pos(size_t pos) {
+static inline void setpos(size_t pos) {
     __parser.pos = pos;
 }
 
@@ -17,14 +17,14 @@ static inline void *palloc(size_t size) {
     return mballoc(__parser.region, size);
 }
 
-static inline int _enter_frame(const frame_t *f) {
+static inline int enter_frame(const frame_t *f) {
     #ifdef PARSER_DEBUG
         parser_enter_debug(&__parser, f);
     #endif
     return parser_advance_frame(&__parser);
 }
 
-static inline void *_exit_frame(const frame_t *f, void *result) {
+static inline void *exit_frame(const frame_t *f, void *result) {
     __parser.level--;
     if (!result) {
         __parser.pos = f->f_pos;
@@ -36,11 +36,11 @@ static inline void *_exit_frame(const frame_t *f, void *result) {
 }
 
 
-static inline void _insert_memo(const frame_t *f, void *node) {
+static inline void insert_memo(const frame_t *f, void *node) {
     parser_memoize(&__parser, f->f_pos, f->f_type, node);
 }
 
-static inline int _is_memoized(const frame_t *f, void **resptr) {
+static inline int is_memoized(const frame_t *f, void **resptr) {
    token_memo_t *memo = parser_get_memo(&__parser, f->f_type);
     #ifdef PARSER_DEBUG
         parser_memo_debug(&__parser, memo, f);
@@ -52,11 +52,11 @@ static inline int _is_memoized(const frame_t *f, void **resptr) {
     return 0;
 }
 
-static inline int _test_and_reset(size_t f_pos, void *node) {
+static inline int test_and_reset(size_t f_pos, void *node) {
     return node && (__parser.pos = f_pos, 1);
 }
 
-static inline token_t *_consume(int tk_type, const char *literal) {
+static inline token_t *consume(int tk_type, const char *literal) {
     #ifdef PARSER_DEBUG
         return parser_consume_debug(&__parser, tk_type, literal);
     #else
@@ -64,18 +64,18 @@ static inline token_t *_consume(int tk_type, const char *literal) {
     #endif
 }
 
-static inline ast_list_t *_ast_list_new() {
+static inline ast_list_t *ast_list_new() {
     return mblist_new(__parser.region, 0);
 }
 
-static inline ast_list_t *_ast_list_of(void *first) {
+static inline ast_list_t *ast_list_of(void *first) {
     ast_list_t *seq = mblist_new(__parser.region, 1);
     mblist_append(__parser.region, seq, first);
     return seq;
 }
 
 
-static inline void _ast_list_append(ast_list_t *seq, void *item) {
+static inline void ast_list_append(ast_list_t *seq, void *item) {
     mblist_append(__parser.region, seq, item);
 }
 
