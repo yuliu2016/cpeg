@@ -29,31 +29,31 @@ static double *atom_2();
 //     | sum '-' term
 //     | term
 static double *sum() {
-    frame_t f = {251, pos(), FUNC};
+    size_t _pos = pos();
     double *res_251 = 0;
-    if (is_memoized(&f, (void **) &res_251)) {
+    if (is_memoized(251, (void **) &res_251, FUNC)) {
         return res_251;
     }
     double *alt_251;
     size_t maxpos;
     double *max;
-    if (enter_frame(&f)) {
+    if (enter_frame(FUNC)) {
         do {
             maxpos = pos();
             max = res_251;
-            insert_memo(&f, max);
-            setpos(f.f_pos);
+            insert_memo(_pos, 251, max);
+            restore(_pos);
             res_251 = (
                 (alt_251 = sum_1()) ||
                 (alt_251 = sum_2()) ||
                 (alt_251 = term())
             ) ? alt_251 : 0;
         } while (pos() > maxpos);
-        setpos(maxpos);
+        restore(maxpos);
         res_251 = max;
-        insert_memo(&f, res_251);
+        insert_memo(_pos, 251, res_251);
     }
-    return exit_frame(&f, res_251);
+    return exit_frame(_pos, res_251, FUNC);
 }
 
 // sum '+' term
@@ -66,7 +66,7 @@ static double *sum_1() {
         (consume(21, "+")) &&
         (_term = term())
     ) ? binop_add(p, _sum, _term) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // sum '-' term
@@ -79,7 +79,7 @@ static double *sum_2() {
         (consume(22, "-")) &&
         (_term = term())
     ) ? binop_sub(p, _sum, _term) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // term (left_recursive):
@@ -88,20 +88,20 @@ static double *sum_2() {
 //     | term '%' factor
 //     | factor
 static double *term() {
-    frame_t f = {460, pos(), FUNC};
+    size_t _pos = pos();
     double *res_460 = 0;
-    if (is_memoized(&f, (void **) &res_460)) {
+    if (is_memoized(460, (void **) &res_460, FUNC)) {
         return res_460;
     }
     double *alt_460;
     size_t maxpos;
     double *max;
-    if (enter_frame(&f)) {
+    if (enter_frame(FUNC)) {
         do {
             maxpos = pos();
             max = res_460;
-            insert_memo(&f, max);
-            setpos(f.f_pos);
+            insert_memo(_pos, 460, max);
+            restore(_pos);
             res_460 = (
                 (alt_460 = term_1()) ||
                 (alt_460 = term_2()) ||
@@ -109,11 +109,11 @@ static double *term() {
                 (alt_460 = factor())
             ) ? alt_460 : 0;
         } while (pos() > maxpos);
-        setpos(maxpos);
+        restore(maxpos);
         res_460 = max;
-        insert_memo(&f, res_460);
+        insert_memo(_pos, 460, res_460);
     }
-    return exit_frame(&f, res_460);
+    return exit_frame(_pos, res_460, FUNC);
 }
 
 // term '*' factor
@@ -126,7 +126,7 @@ static double *term_1() {
         (consume(23, "*")) &&
         (_factor = factor())
     ) ? binop_mul(p, _term, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // term '/' factor
@@ -139,7 +139,7 @@ static double *term_2() {
         (consume(24, "/")) &&
         (_factor = factor())
     ) ? binop_div(p, _term, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // term '%' factor
@@ -152,7 +152,7 @@ static double *term_3() {
         (consume(25, "%")) &&
         (_factor = factor())
     ) ? binop_mod(p, _term, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // factor (memo):
@@ -161,20 +161,20 @@ static double *term_3() {
 //     | '~' factor
 //     | power
 static double *factor() {
-    frame_t f = {983, pos(), FUNC};
+    size_t _pos = pos();
     double *res_983;
-    if (is_memoized(&f, (void **) &res_983)) {
+    if (is_memoized(983, (void **) &res_983, FUNC)) {
         return res_983;
     }
     double *alt_983;
-    res_983 = enter_frame(&f) && (
+    res_983 = enter_frame(FUNC) && (
         (alt_983 = factor_1()) ||
         (alt_983 = factor_2()) ||
         (alt_983 = factor_3()) ||
         (alt_983 = power())
     ) ? alt_983 : 0;
-    insert_memo(&f, res_983);
-    return exit_frame(&f, res_983);
+    insert_memo(_pos, 983, res_983);
+    return exit_frame(_pos, res_983, FUNC);
 }
 
 // '+' factor
@@ -184,7 +184,7 @@ static double *factor_1() {
     return (
         (consume(21, "+")) &&
         (_factor = factor())
-    ) ? _factor : (setpos(_pos), NULL);
+    ) ? _factor : (restore(_pos), NULL);
 }
 
 // '-' factor
@@ -195,7 +195,7 @@ static double *factor_2() {
         (consume(22, "-")) &&
         (_factor = factor())
     ) ? unary_minus(p, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // '~' factor
@@ -206,25 +206,25 @@ static double *factor_3() {
         (consume(29, "~")) &&
         (_factor = factor())
     ) ? unary_not(p, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // power (memo):
 //     | atom '**' factor
 //     | atom
 static double *power() {
-    frame_t f = {757, pos(), FUNC};
+    size_t _pos = pos();
     double *res_757;
-    if (is_memoized(&f, (void **) &res_757)) {
+    if (is_memoized(757, (void **) &res_757, FUNC)) {
         return res_757;
     }
     double *alt_757;
-    res_757 = enter_frame(&f) && (
+    res_757 = enter_frame(FUNC) && (
         (alt_757 = power_1()) ||
         (alt_757 = atom())
     ) ? alt_757 : 0;
-    insert_memo(&f, res_757);
-    return exit_frame(&f, res_757);
+    insert_memo(_pos, 757, res_757);
+    return exit_frame(_pos, res_757, FUNC);
 }
 
 // atom '**' factor
@@ -237,20 +237,20 @@ static double *power_1() {
         (consume(38, "**")) &&
         (_factor = factor())
     ) ? binop_pow(p, _atom, _factor) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 // parameters:
 //     | ','.sum+ [',']
 static ast_list_t *parameters() {
-    frame_t f = {106, pos(), FUNC};
+    size_t _pos = pos();
     ast_list_t *res_106;
     ast_list_t *_sums;
-    res_106 = enter_frame(&f) && (
+    res_106 = enter_frame(FUNC) && (
         (_sums = sum_delimited()) &&
         (consume(7, ","), 1)
     ) ? _sums : 0;
-    return exit_frame(&f, res_106);
+    return exit_frame(_pos, res_106, FUNC);
 }
 
 static ast_list_t *sum_delimited() {
@@ -265,7 +265,7 @@ static ast_list_t *sum_delimited() {
         _pos = pos();
     } while (consume(7, ",") &&
             (_sum = sum()));
-    setpos(_pos);
+    restore(_pos);
     return list;
 }
 
@@ -275,15 +275,15 @@ static ast_list_t *sum_delimited() {
 //     | NAME
 //     | NUMBER
 static double *atom() {
-    frame_t f = {753, pos(), FUNC};
+    size_t _pos = pos();
     double *res_753;
-    if (is_memoized(&f, (void **) &res_753)) {
+    if (is_memoized(753, (void **) &res_753, FUNC)) {
         return res_753;
     }
     token_t *_name;
     token_t *_number;
     double *alt_753;
-    res_753 = enter_frame(&f) && (
+    res_753 = enter_frame(FUNC) && (
         (alt_753 = atom_1()) ||
         (alt_753 = atom_2()) || (
             (_name = consume(3, "NAME")) &&
@@ -292,8 +292,8 @@ static double *atom() {
             (_number = consume(4, "NUMBER")) &&
             (alt_753 = to_double(p, _number)))
     ) ? alt_753 : 0;
-    insert_memo(&f, res_753);
-    return exit_frame(&f, res_753);
+    insert_memo(_pos, 753, res_753);
+    return exit_frame(_pos, res_753, FUNC);
 }
 
 // '(' sum ')'
@@ -304,7 +304,7 @@ static double *atom_1() {
         (consume(13, "(")) &&
         (_sum = sum()) &&
         (consume(14, ")"))
-    ) ? _sum : (setpos(_pos), NULL);
+    ) ? _sum : (restore(_pos), NULL);
 }
 
 // NAME '(' [parameters] ')'
@@ -318,7 +318,7 @@ static double *atom_2() {
         (_parameters = parameters(), 1) &&
         (consume(14, ")"))
     ) ? call_func(p, _name, _parameters) :
-        (setpos(_pos), NULL);
+        (restore(_pos), NULL);
 }
 
 

@@ -107,12 +107,6 @@ typedef struct parser_state {
 
 } parser_t;
 
-typedef struct frame {
-    const int f_type;
-    const size_t f_pos;
-    const char *f_rule;
-} frame_t;
-
 
 void parser_init_state(parser_t *p, char *src, size_t len, 
         lexer_func_t lexer_func, char **tk_indices);
@@ -140,11 +134,11 @@ static inline void *parser_alloc(parser_t *p, size_t size) {
 
 token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal);
 
-void parser_enter_debug(parser_t *p, const frame_t *f);
+void parser_enter_debug(parser_t *p, const char *f_rule);
 
-void parser_exit_debug(parser_t *p, void *res, const frame_t *f);
+void parser_exit_debug(parser_t *p, void *res, const char *f_rule);
 
-void parser_memo_debug(parser_t *p, token_memo_t *memo, const frame_t *f);
+void parser_memo_debug(parser_t *p, token_memo_t *memo, const char *f_rule);
 
 
 // List data structure

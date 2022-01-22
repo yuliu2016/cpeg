@@ -9,7 +9,7 @@ static inline size_t pos() {
     return __parser.pos;
 }
 
-static inline void setpos(size_t pos) {
+static inline void restore(size_t pos) {
     __parser.pos = pos;
 }
 
@@ -17,33 +17,33 @@ static inline void *palloc(size_t size) {
     return mballoc(__parser.region, size);
 }
 
-static inline int enter_frame(const frame_t *f) {
+static inline int enter_frame(const char *f_rule) {
     #ifdef PARSER_DEBUG
-        parser_enter_debug(&__parser, f);
+        parser_enter_debug(&__parser, f_rule);
     #endif
     return parser_advance_frame(&__parser);
 }
 
-static inline void *exit_frame(const frame_t *f, void *result) {
+static inline void *exit_frame(size_t f_pos, void *result, const char *f_rule) {
     __parser.level--;
     if (!result) {
-        __parser.pos = f->f_pos;
+        __parser.pos = f_pos;
     }
     #ifdef PARSER_DEBUG
-        parser_exit_debug(&__parser, result, f);
+        parser_exit_debug(&__parser, result, f_rule);
     #endif
     return result;
 }
 
 
-static inline void insert_memo(const frame_t *f, void *node) {
-    parser_memoize(&__parser, f->f_pos, f->f_type, node);
+static inline void insert_memo(size_t f_pos, int f_type, void *node) {
+    parser_memoize(&__parser, f_pos, f_type, node);
 }
 
-static inline int is_memoized(const frame_t *f, void **resptr) {
-   token_memo_t *memo = parser_get_memo(&__parser, f->f_type);
+static inline int is_memoized(int f_type, void **resptr, const char *f_rule) {
+   token_memo_t *memo = parser_get_memo(&__parser, f_type);
     #ifdef PARSER_DEBUG
-        parser_memo_debug(&__parser, memo, f);
+        parser_memo_debug(&__parser, memo, f_rule);
     #endif
     if (memo) {
         *resptr = memo->node;
