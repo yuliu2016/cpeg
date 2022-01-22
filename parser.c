@@ -474,8 +474,8 @@ static ast_primary_t *t_primary() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_255 = max;
+        insert_memo(&f, res_255);
     }
-    insert_memo(&f, res_255);
     return exit_frame(&f, res_255);
 }
 
@@ -1399,8 +1399,8 @@ static ast_expr_t *disjunction() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_410 = max;
+        insert_memo(&f, res_410);
     }
-    insert_memo(&f, res_410);
     return exit_frame(&f, res_410);
 }
 
@@ -1442,8 +1442,8 @@ static ast_expr_t *conjunction() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_462 = max;
+        insert_memo(&f, res_462);
     }
-    insert_memo(&f, res_462);
     return exit_frame(&f, res_462);
 }
 
@@ -1622,8 +1622,8 @@ static ast_expr_t *bitwise_or() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_201 = max;
+        insert_memo(&f, res_201);
     }
-    insert_memo(&f, res_201);
     return exit_frame(&f, res_201);
 }
 
@@ -1665,8 +1665,8 @@ static ast_expr_t *bitwise_xor() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_565 = max;
+        insert_memo(&f, res_565);
     }
-    insert_memo(&f, res_565);
     return exit_frame(&f, res_565);
 }
 
@@ -1708,8 +1708,8 @@ static ast_expr_t *bitwise_and() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_417 = max;
+        insert_memo(&f, res_417);
     }
-    insert_memo(&f, res_417);
     return exit_frame(&f, res_417);
 }
 
@@ -1753,8 +1753,8 @@ static ast_expr_t *bitwise_shift() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_532 = max;
+        insert_memo(&f, res_532);
     }
-    insert_memo(&f, res_532);
     return exit_frame(&f, res_532);
 }
 
@@ -1811,8 +1811,8 @@ static ast_expr_t *sum() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_252 = max;
+        insert_memo(&f, res_252);
     }
-    insert_memo(&f, res_252);
     return exit_frame(&f, res_252);
 }
 
@@ -1875,8 +1875,8 @@ static ast_expr_t *term() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_460 = max;
+        insert_memo(&f, res_460);
     }
-    insert_memo(&f, res_460);
     return exit_frame(&f, res_460);
 }
 
@@ -1970,8 +1970,8 @@ static ast_expr_t *pipeline() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_274 = max;
+        insert_memo(&f, res_274);
     }
-    insert_memo(&f, res_274);
     return exit_frame(&f, res_274);
 }
 
@@ -2114,8 +2114,8 @@ static ast_primary_t *primary() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_178 = max;
+        insert_memo(&f, res_178);
     }
-    insert_memo(&f, res_178);
     return exit_frame(&f, res_178);
 }
 

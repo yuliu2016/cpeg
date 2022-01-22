@@ -51,8 +51,8 @@ static double *sum() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_251 = max;
+        insert_memo(&f, res_251);
     }
-    insert_memo(&f, res_251);
     return exit_frame(&f, res_251);
 }
 
@@ -111,8 +111,8 @@ static double *term() {
         } while (pos() > maxpos);
         setpos(maxpos);
         res_460 = max;
+        insert_memo(&f, res_460);
     }
-    insert_memo(&f, res_460);
     return exit_frame(&f, res_460);
 }
 
