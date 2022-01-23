@@ -411,8 +411,9 @@ static ast_stmt_t *simple_statement_8() {
 static void *target() {
     size_t _pos = pos();
     void *res_161;
-    if (is_memoized(161, (void **) &res_161, FUNC)) {
-        return res_161;
+    memo_t *memo = fetch_memo(161, FUNC);
+    if (memo) {
+        return memo->node;
     }
     void *alt_161;
     res_161 = enter_frame(FUNC) && (
@@ -453,8 +454,9 @@ static void *target_2() {
 static ast_primary_t *t_primary() {
     size_t _pos = pos();
     ast_primary_t *res_255 = 0;
-    if (is_memoized(255, (void **) &res_255, FUNC)) {
-        return res_255;
+    memo_t *memo = fetch_memo(255, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_primary_t *alt_255;
     size_t maxpos;
@@ -1380,8 +1382,9 @@ static ast_expr_t *ast_unary(ast_expr_t *expr,
 static ast_expr_t *disjunction() {
     size_t _pos = pos();
     ast_expr_t *res_410 = 0;
-    if (is_memoized(410, (void **) &res_410, FUNC)) {
-        return res_410;
+    memo_t *memo = fetch_memo(410, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_410;
     size_t maxpos;
@@ -1423,8 +1426,9 @@ static ast_expr_t *disjunction_1() {
 static ast_expr_t *conjunction() {
     size_t _pos = pos();
     ast_expr_t *res_462 = 0;
-    if (is_memoized(462, (void **) &res_462, FUNC)) {
-        return res_462;
+    memo_t *memo = fetch_memo(462, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_462;
     size_t maxpos;
@@ -1603,8 +1607,9 @@ static int comparator_10() {
 static ast_expr_t *bitwise_or() {
     size_t _pos = pos();
     ast_expr_t *res_201 = 0;
-    if (is_memoized(201, (void **) &res_201, FUNC)) {
-        return res_201;
+    memo_t *memo = fetch_memo(201, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_201;
     size_t maxpos;
@@ -1646,8 +1651,9 @@ static ast_expr_t *bitwise_or_1() {
 static ast_expr_t *bitwise_xor() {
     size_t _pos = pos();
     ast_expr_t *res_565 = 0;
-    if (is_memoized(565, (void **) &res_565, FUNC)) {
-        return res_565;
+    memo_t *memo = fetch_memo(565, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_565;
     size_t maxpos;
@@ -1689,8 +1695,9 @@ static ast_expr_t *bitwise_xor_1() {
 static ast_expr_t *bitwise_and() {
     size_t _pos = pos();
     ast_expr_t *res_417 = 0;
-    if (is_memoized(417, (void **) &res_417, FUNC)) {
-        return res_417;
+    memo_t *memo = fetch_memo(417, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_417;
     size_t maxpos;
@@ -1733,8 +1740,9 @@ static ast_expr_t *bitwise_and_1() {
 static ast_expr_t *bitwise_shift() {
     size_t _pos = pos();
     ast_expr_t *res_532 = 0;
-    if (is_memoized(532, (void **) &res_532, FUNC)) {
-        return res_532;
+    memo_t *memo = fetch_memo(532, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_532;
     size_t maxpos;
@@ -1791,8 +1799,9 @@ static ast_expr_t *bitwise_shift_2() {
 static ast_expr_t *sum() {
     size_t _pos = pos();
     ast_expr_t *res_252 = 0;
-    if (is_memoized(252, (void **) &res_252, FUNC)) {
-        return res_252;
+    memo_t *memo = fetch_memo(252, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_252;
     size_t maxpos;
@@ -1852,8 +1861,9 @@ static ast_expr_t *sum_2() {
 static ast_expr_t *term() {
     size_t _pos = pos();
     ast_expr_t *res_460 = 0;
-    if (is_memoized(460, (void **) &res_460, FUNC)) {
-        return res_460;
+    memo_t *memo = fetch_memo(460, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_460;
     size_t maxpos;
@@ -1951,8 +1961,9 @@ static ast_expr_t *term_5() {
 static ast_expr_t *pipeline() {
     size_t _pos = pos();
     ast_expr_t *res_274 = 0;
-    if (is_memoized(274, (void **) &res_274, FUNC)) {
-        return res_274;
+    memo_t *memo = fetch_memo(274, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_274;
     size_t maxpos;
@@ -1996,8 +2007,9 @@ static ast_expr_t *pipeline_1() {
 static ast_expr_t *factor() {
     size_t _pos = pos();
     ast_expr_t *res_983;
-    if (is_memoized(983, (void **) &res_983, FUNC)) {
-        return res_983;
+    memo_t *memo = fetch_memo(983, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_expr_t *alt_983;
     res_983 = enter_frame(FUNC) && (
@@ -2058,8 +2070,9 @@ static ast_expr_t *ast_primary_expr(void *primary) {
 static ast_expr_t *power() {
     size_t _pos = pos();
     ast_expr_t *res_757;
-    if (is_memoized(757, (void **) &res_757, FUNC)) {
-        return res_757;
+    memo_t *memo = fetch_memo(757, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_primary_t *_primary;
     ast_expr_t *alt_757;
@@ -2093,8 +2106,9 @@ static ast_expr_t *power_1() {
 static ast_primary_t *primary() {
     size_t _pos = pos();
     ast_primary_t *res_178 = 0;
-    if (is_memoized(178, (void **) &res_178, FUNC)) {
-        return res_178;
+    memo_t *memo = fetch_memo(178, FUNC);
+    if (memo) {
+        return memo->node;
     }
     ast_primary_t *alt_178;
     size_t maxpos;
@@ -2470,8 +2484,9 @@ static ast_primary_t *ast_false() {
 static ast_primary_t *atom() {
     size_t _pos = pos();
     ast_primary_t *res_753;
-    if (is_memoized(753, (void **) &res_753, FUNC)) {
-        return res_753;
+    memo_t *memo = fetch_memo(753, FUNC);
+    if (memo) {
+        return memo->node;
     }
     token_t *_name;
     token_t *_number;

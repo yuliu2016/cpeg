@@ -88,7 +88,7 @@ static void parser_append_token(parser_t *p) {
         p->fast_match = realloc(p->fast_match,
                 cap * sizeof(int));
         p->memoized_cache = realloc(p->memoized_cache,
-                cap * sizeof(token_memo_t *));
+                cap * sizeof(memo_t *));
     }
     token_t *token = ls->next_token;
     p->fast_match[ls->token_len] = token->tk_type;
@@ -212,7 +212,6 @@ void parser_init_state(
     p->lexer_read_token = lexer_read_token;
     p->region = region;
     p->pos = 0;
-    p->max_reached_pos = 0;
     p->level = 0;
     p->error = 0;
     p->tk_indices = tk_indices;
@@ -222,7 +221,7 @@ void parser_init_state(
     if (!(p->fast_match = calloc(
         TK_CAPACITY, sizeof(int)))) return;
     if (!(p->memoized_cache = calloc(
-        TK_CAPACITY, sizeof(token_memo_t *)))) return;    
+        TK_CAPACITY, sizeof(memo_t *)))) return;    
 
     // Need to scan at least one token to see
     // if there is anything to parse
@@ -262,8 +261,8 @@ int parser_advance_frame(parser_t *p) {
 }
 
 
-token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
-    token_memo_t *new_memo = parser_alloc(p, sizeof(token_memo_t));
+memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
+    memo_t *new_memo = parser_alloc(p, sizeof(memo_t));
     if (!new_memo) {
         return NULL;
     }
@@ -281,7 +280,7 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
         return;
     }
 
-    token_memo_t *memo = p->memoized_cache[token_pos];
+    memo_t *memo = p->memoized_cache[token_pos];
     if (!memo) {
         // create a "head" memo
         p->memoized_cache[token_pos] = new_memo(p, f_type, node, endpos);
@@ -303,11 +302,11 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
     }
 }
 
-token_memo_t *parser_get_memo(parser_t *p, int f_type) {
+memo_t *parser_get_memo(parser_t *p, int f_type) {
     if (p->fast_match[p->pos] == 0) {
         return NULL;
     }
-    token_memo_t *memo = p->memoized_cache[p->pos];
+    memo_t *memo = p->memoized_cache[p->pos];
     while (memo) {
         if (memo->f_type == f_type) {
             if (memo->node) {
@@ -323,25 +322,6 @@ token_memo_t *parser_get_memo(parser_t *p, int f_type) {
 }
 
 
-token_t *parser_consume_token(parser_t *p, int tk_type) {
-
-    token_t *curr_token = parser_fetch_token(p, p->pos);
-    if (!curr_token) {
-        return NULL;
-    }
-
-    // now check for correct type
-    if (curr_token->tk_type == tk_type) {
-        if (p->pos > p->max_reached_pos) {
-            p->max_reached_pos = p->pos;
-        }
-        p->pos += 1;
-        return curr_token;
-    } else {
-        return NULL;
-    }
-}
-
 
 void parser_verify_eof(parser_t *p) {
     lexer_t *ls = &p->lexer_state;
@@ -351,7 +331,7 @@ void parser_verify_eof(parser_t *p) {
     }
     
     // There are more unparsed tokens; produce an error
-    size_t pos = p->max_reached_pos;
+    size_t pos = ls->token_len - 2;
 
     token_t *tok;
     size_t col_start;

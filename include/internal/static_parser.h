@@ -41,8 +41,16 @@ static inline void insert_memo(size_t f_pos, int f_type, void *node) {
     parser_memoize(p, f_pos, f_type, node);
 }
 
+static inline memo_t *fetch_memo(int f_type, const char *f_rule) {
+    memo_t *memo = parser_get_memo(p, f_type);
+    #ifdef PARSER_DEBUG
+        parser_memo_debug(p, memo, f_rule);
+    #endif
+    return memo;
+}
+
 static inline int is_memoized(int f_type, void **resptr, const char *f_rule) {
-   token_memo_t *memo = parser_get_memo(p, f_type);
+   memo_t *memo = parser_get_memo(p, f_type);
     #ifdef PARSER_DEBUG
         parser_memo_debug(p, memo, f_rule);
     #endif

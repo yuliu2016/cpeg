@@ -31,8 +31,9 @@ static double *atom_2();
 static double *sum() {
     size_t _pos = pos();
     double *res_251 = 0;
-    if (is_memoized(251, (void **) &res_251, FUNC)) {
-        return res_251;
+    memo_t *memo = fetch_memo(251, FUNC);
+    if (memo) {
+        return memo->node;
     }
     double *alt_251;
     size_t maxpos;
@@ -90,8 +91,9 @@ static double *sum_2() {
 static double *term() {
     size_t _pos = pos();
     double *res_460 = 0;
-    if (is_memoized(460, (void **) &res_460, FUNC)) {
-        return res_460;
+    memo_t *memo = fetch_memo(460, FUNC);
+    if (memo) {
+        return memo->node;
     }
     double *alt_460;
     size_t maxpos;
@@ -163,8 +165,9 @@ static double *term_3() {
 static double *factor() {
     size_t _pos = pos();
     double *res_983;
-    if (is_memoized(983, (void **) &res_983, FUNC)) {
-        return res_983;
+    memo_t *memo = fetch_memo(983, FUNC);
+    if (memo) {
+        return memo->node;
     }
     double *alt_983;
     res_983 = enter_frame(FUNC) && (
@@ -215,8 +218,9 @@ static double *factor_3() {
 static double *power() {
     size_t _pos = pos();
     double *res_757;
-    if (is_memoized(757, (void **) &res_757, FUNC)) {
-        return res_757;
+    memo_t *memo = fetch_memo(757, FUNC);
+    if (memo) {
+        return memo->node;
     }
     double *alt_757;
     res_757 = enter_frame(FUNC) && (
@@ -277,8 +281,9 @@ static ast_list_t *sum_delimited() {
 static double *atom() {
     size_t _pos = pos();
     double *res_753;
-    if (is_memoized(753, (void **) &res_753, FUNC)) {
-        return res_753;
+    memo_t *memo = fetch_memo(753, FUNC);
+    if (memo) {
+        return memo->node;
     }
     token_t *_name;
     token_t *_number;

@@ -15,12 +15,12 @@
 
 // Memo stored in a linked list, assuming not storing
 // too many types at the same position
-typedef struct token_memo {
+typedef struct memo {
     int f_type;
     void *node;
     size_t end_pos;
-    struct token_memo *next;
-} token_memo_t;
+    struct memo *next;
+} memo_t;
 
 typedef struct token {
     int tk_type;
@@ -98,7 +98,7 @@ typedef struct parser_state {
 
     // Cache the results (enables packrat parsing)
     // Same size & capacity as .lexer_state.tokens
-    token_memo_t **memoized_cache;
+    memo_t **memoized_cache;
 
     // Allocate nodes in the same region so it can be freed all at once
     mem_region_t *region;
@@ -108,7 +108,6 @@ typedef struct parser_state {
     lexer_func_t lexer_read_token;
 
     // Debugging variables
-    size_t max_reached_pos;
     char **tk_indices;
     char *tk_max_attempted;
     char *error;
@@ -126,11 +125,9 @@ void parser_free_state(parser_t *p);
 
 int parser_advance_frame(parser_t *p);
 
-token_t *parser_consume_token(parser_t *p, int tk_type);
-
 void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node);
 
-token_memo_t *parser_get_memo(parser_t *p, int f_type);
+memo_t *parser_get_memo(parser_t *p, int f_type);
 
 void parser_verify_eof(parser_t *p);
 
@@ -149,7 +146,7 @@ void parser_enter_debug(parser_t *p, const char *f_rule);
 
 void parser_exit_debug(parser_t *p, void *res, const char *f_rule);
 
-void parser_memo_debug(parser_t *p, token_memo_t *memo, const char *f_rule);
+void parser_memo_debug(parser_t *p, memo_t *memo, const char *f_rule);
 
 
 // List data structure

@@ -301,7 +301,7 @@ void parser_exit_debug(parser_t *p, void *res, const char *f_rule) {
     }
 }
 
-void parser_memo_debug(parser_t *p, token_memo_t *memo, const char *f_rule) {
+void parser_memo_debug(parser_t *p, memo_t *memo, const char *f_rule) {
     p->level--;
     if (!memo) {
         return;
