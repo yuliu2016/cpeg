@@ -420,16 +420,16 @@ static bool tokenize_operator_or_symbol(lexer_t *ls) {
     return false;
 }
 
-token_t *lexer_get_next_token(lexer_t *ls) {
+void lexer_compute_next(lexer_t *ls) {
 
     skip_whitespace(ls);
 
+    ls->next_token = NULL;
     if (!_has_remaining(ls)) {
-        return NULL;
+        return;
     }
 
     ls->start_index = ls->curr_index;
-    ls->next_token = NULL;
 
     tokenize_newline_or_indent(ls);
     tokenize_number(ls);
@@ -438,13 +438,9 @@ token_t *lexer_get_next_token(lexer_t *ls) {
     tokenize_operator_or_symbol(ls);
 
     if (ls->error) {
-        return NULL;
-    }
-
-    if (!ls->next_token) {
+        ls->next_token = NULL;
+    } else if (!ls->next_token) {
         lexer_set_error(ls, "Unknown Syntax", 0);
-        return NULL;
+        return;
     }
-
-    return ls->next_token;
 }

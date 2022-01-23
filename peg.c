@@ -36,7 +36,7 @@ char *token_heap_copy(token_t *token) {
     }
 }
 
-
+#define TK_CAPACITY 32
 
 void lexer_init_state(lexer_t *ls, char *src, size_t len) {
     ls->src = src;
@@ -45,14 +45,15 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len) {
     ls->curr_index = 0;
     ls->start_index = 0;
 
-    ls->tokens = NULL;
+    if (!(ls->tokens = malloc(
+            TK_CAPACITY * sizeof(token_t *)))) return;
     ls->token_len = 0;
-    ls->token_capacity = 0;
+    ls->token_capacity = TK_CAPACITY;
 
     ls->next_token = NULL;
 
     // always non-empty
-    ls->line_to_index = malloc(sizeof(size_t));
+    if (!(ls->line_to_index = malloc(sizeof(size_t)))) return;
     ls->line_to_index[0] = 0;
     ls->lines_size = 1;
     ls->lines_capacity = 1;
@@ -62,7 +63,7 @@ void lexer_init_state(lexer_t *ls, char *src, size_t len) {
 
 void lexer_add_line_index(lexer_t *ls, size_t i) {
     if (ls->lines_size >= ls->lines_capacity) {
-        ls->lines_capacity = ls->lines_capacity << 1u;
+        ls->lines_capacity = ls->lines_capacity << 1;
         ls->line_to_index = realloc(
                 ls->line_to_index, ls->lines_capacity * sizeof(size_t));
     }
@@ -72,51 +73,37 @@ void lexer_add_line_index(lexer_t *ls, size_t i) {
 
 void lexer_append_token(lexer_t *ls, token_t *token) {
     if (ls->token_len >= ls->token_capacity) {
-        if (!ls->token_capacity) {
-            ls->token_capacity = 1;
-            ls->token_len = 0;
-            ls->tokens = malloc(sizeof(token_t *));
-        } else {
-            ls->token_capacity = ls->token_capacity << 1u;
-            ls->tokens = realloc(ls->tokens, ls->token_capacity * sizeof(token_t *));
-        }
+        ls->token_capacity = ls->token_capacity << 1;
+        ls->tokens = realloc(ls->tokens, ls->token_capacity * sizeof(token_t *));
     }
     ls->tokens[ls->token_len] = token;
     ls->token_len += 1;
 }
 
-static void _compute_next_token(parser_t *p) {
+
+static void parser_append_token(parser_t *p) {
     lexer_t *ls = &p->lexer_state;
-    if (ls->curr_index < ls->src_len) {
-        lexer_func_t lexer_func = p->lexer_func;
-        ls->next_token = lexer_func(ls);
-    } else {
-        ls->next_token = NULL;
+    if (ls->token_len >= ls->token_capacity) {
+        size_t cap = ls->token_capacity << 1;
+        p->fast_match = realloc(p->fast_match,
+                cap * sizeof(int));
+        p->memoized_cache = realloc(p->memoized_cache,
+                cap * sizeof(token_memo_t *));
     }
+    token_t *token = ls->next_token;
+    p->fast_match[ls->token_len] = token->tk_type;
+    p->memoized_cache[ls->token_len] = NULL;
+    lexer_append_token(ls, token);
+
 }
 
 token_t *parser_fetch_token(parser_t *p, size_t pos) {
     lexer_t *ls = &p->lexer_state;
 
-    if (pos > ls->token_len) {
-        p->error = "Token index too big";
-        return NULL;
-    }
-
-    // scan the next unknown token
-    if (pos == ls->token_len) {
-        token_t *this_token = ls->next_token;
-
-        if (this_token) {
-            lexer_append_token(ls, this_token);
-
-            ls->next_token = NULL;
-            _compute_next_token(p);
-
-            return this_token;
-        } else {
-            // end of token stream
-            return NULL;
+    if (pos == ls->token_len - 1) {
+        p->lexer_read_token(ls);
+        if (ls->next_token) {
+            parser_append_token(p);
         }
     }
 
@@ -188,7 +175,6 @@ token_t *lexer_create_token(lexer_t *ls, int tk_type) {
     token->len = ls->curr_index - ls->start_index;
     token->start = ls->src + ls->start_index;
     token->tk_type = tk_type;
-    token->memo = NULL;
 
     return token;
 }
@@ -208,10 +194,10 @@ void parser_init_state(
         parser_t *p, 
         char *src,
         size_t len,
-        lexer_func_t lexer_func,
+        lexer_func_t lexer_read_token,
         char **tk_indices) {
 
-    if (!src || !lexer_func) {
+    if (!src || !lexer_read_token) {
         return;
     }
 
@@ -220,19 +206,32 @@ void parser_init_state(
         return;
     }
 
-    lexer_init_state(&p->lexer_state, src, len);
+    lexer_t *ls = &p->lexer_state;
+    lexer_init_state(ls, src, len);
 
-    p->lexer_func = lexer_func;
+    p->lexer_read_token = lexer_read_token;
     p->region = region;
     p->pos = 0;
     p->max_reached_pos = 0;
     p->level = 0;
     p->error = 0;
     p->tk_indices = tk_indices;
+    p->errorcode = 0;
+
+    
+    if (!(p->fast_match = calloc(
+        TK_CAPACITY, sizeof(int)))) return;
+    if (!(p->memoized_cache = calloc(
+        TK_CAPACITY, sizeof(token_memo_t *)))) return;    
 
     // Need to scan at least one token to see
     // if there is anything to parse
-    _compute_next_token(p);
+    p->lexer_read_token(ls);
+    if (ls->next_token) {
+        ls->tokens[0] = ls->next_token;
+        ls->token_len = 1;
+        p->fast_match[0] = ls->next_token->tk_type;
+    }
 }
 
 void parser_free_state(parser_t *p) {
@@ -245,9 +244,6 @@ int parser_advance_frame(parser_t *p) {
         // Early exit the function when there is already an error
         return 0;
     }
-
-    // Increase recursion depth
-    p->level += 1;
 
     if (p->level > PARSER_MAX_RECURSION) {
         // Do not allow trees that are too deep.
@@ -280,14 +276,15 @@ token_memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
 
 void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
     size_t endpos = p->pos;
-    token_t *curr_token = parser_fetch_token(p, token_pos);
-    if (!curr_token) {
+
+    if (p->fast_match[token_pos] == 0) {
         return;
     }
-    token_memo_t *memo = curr_token->memo;
+
+    token_memo_t *memo = p->memoized_cache[token_pos];
     if (!memo) {
         // create a "head" memo
-        curr_token->memo = new_memo(p, f_type, node, endpos);
+        p->memoized_cache[token_pos] = new_memo(p, f_type, node, endpos);
         return;
     }
     for(;;) {
@@ -307,11 +304,10 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
 }
 
 token_memo_t *parser_get_memo(parser_t *p, int f_type) {
-    token_t *curr_token = parser_fetch_token(p, p->pos);
-    if (!curr_token) {
+    if (p->fast_match[p->pos] == 0) {
         return NULL;
     }
-    token_memo_t *memo = curr_token->memo;
+    token_memo_t *memo = p->memoized_cache[p->pos];
     while (memo) {
         if (memo->f_type == f_type) {
             if (memo->node) {

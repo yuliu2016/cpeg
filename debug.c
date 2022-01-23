@@ -142,7 +142,7 @@ static TokenKind token_kinds[] = {
 };
 
 
-token_t *lexer_get_next_token(lexer_t *ls);
+void lexer_compute_next(lexer_t *ls);
 
 static lexer_t *lexer_analyze_all(char *src) {
     lexer_t *ls = malloc(sizeof(lexer_t));
@@ -153,7 +153,8 @@ static lexer_t *lexer_analyze_all(char *src) {
     lexer_init_state(ls, src, len);
 
     for (;;) {
-        token_t *token = lexer_get_next_token(ls);
+        lexer_compute_next(ls);
+        token_t *token = ls->next_token;
         if (!token) {
             break;
         }
@@ -248,36 +249,31 @@ static void print_indent_level(size_t s) {
     free(b);
 }
 
-token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal) {
-
+void parser_matched_debug(parser_t *p, const char *literal) {
     print_indent_level(p->level);
+    token_t *curr_token = parser_fetch_token(p, p->pos);
+    if (!curr_token) {
+        printf("fatal: no curr_token when debugging matched");
+        exit(1);
+    }
+    char *token_buf = token_heap_copy(curr_token);
+    printf("Matched    \033[32;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[32mt='%s'\033[0m)\n",
+            literal, p->level, p->pos, token_buf);
+    free(token_buf);
+}
 
+void parser_mismatch_debug(parser_t *p, const char *literal) {
+    print_indent_level(p->level);
     token_t *curr_token = parser_fetch_token(p, p->pos);
     if (!curr_token) {
         printf("Mismatch   \033[31;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu, \033[31mno more tokens\033[0m)\n",
                 literal, p->level, p->pos);
-        return NULL;
+        return;
     }
-
-    // now check for correct type
-    if (curr_token->tk_type == tk_type) {
-        if (p->pos > p->max_reached_pos) {
-            p->max_reached_pos = p->pos;
-        }
-        p->pos += 1;
-        char *token_buf = token_heap_copy(curr_token);
-        printf("Matched    \033[32;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[32mt='%s'\033[0m)\n",
-                literal, p->level, p->pos, token_buf);
-        free(token_buf);
-        return curr_token;
-    } else {
-        char *token_buf = token_heap_copy(curr_token);
-
-        printf("Mismatch   \033[31;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[31mt='%s'\033[0m)\n",
-                literal, p->level, p->pos, token_buf);
-        free(token_buf);
-        return NULL;
-    }
+    char *token_buf = token_heap_copy(curr_token);
+    printf("Mismatch   \033[31;1m%-20s\033[0m (\033[33mlv=%zu \033[34mi=%zu \033[31mt='%s'\033[0m)\n",
+            literal, p->level, p->pos, token_buf);
+    free(token_buf);
 }
 
 
@@ -293,6 +289,7 @@ void parser_enter_debug(parser_t *p, const char *f_rule) {
             f_rule, p->level, p->pos, token_buf);
 
     free(token_buf);
+    p->level++;
 }
 
 void parser_exit_debug(parser_t *p, void *res, const char *f_rule) {
@@ -305,6 +302,7 @@ void parser_exit_debug(parser_t *p, void *res, const char *f_rule) {
 }
 
 void parser_memo_debug(parser_t *p, token_memo_t *memo, const char *f_rule) {
+    p->level--;
     if (!memo) {
         return;
     };
@@ -352,7 +350,7 @@ char *calc_repl(char *in) {
     
     parser_t *p = get_calc_parser();
     parser_init_state(p, in, strlen(in), 
-            lexer_get_next_token, (char **) indices);
+            lexer_compute_next, (char **) indices);
     
     double *n = parse_calc();
     lexer_t *ls = &p->lexer_state;
@@ -367,7 +365,7 @@ char *calc_repl(char *in) {
 char *parser_repl(char *in) {
     parser_t *p = get_static_parser();
     parser_init_state(p, in, strlen(in), 
-            lexer_get_next_token, (char **) indices);
+            lexer_compute_next, (char **) indices);
     void *n = parse_grammar(0);
     lexer_t *ls = &p->lexer_state;
     parser_verify_eof(p);

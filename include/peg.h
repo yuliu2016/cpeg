@@ -28,7 +28,6 @@ typedef struct token {
     size_t len;
     int lineno;
     int column;
-    token_memo_t *memo;
 } token_t;
 
 // Token helpers
@@ -83,22 +82,32 @@ token_t *lexer_create_token(lexer_t *ls, int tk_type);
 
 void lexer_free_state(lexer_t *ls);
 
-typedef token_t *(*lexer_func_t)(lexer_t *);
+typedef void (*lexer_func_t)(lexer_t *);
 
 
 typedef struct parser_state {
-    // Use to get lazily scan the next token
-    lexer_t lexer_state;
+    // Current parser position
+    size_t pos;
 
-    // Use to get the next token
-    lexer_func_t lexer_func;
+    // 0 if okay, otherwise an error has occured
+    int errorcode;
+
+    // Check if token matches without fetching the token itself
+    // Same size & capacity as .lexer_state.tokens
+    int *fast_match;
+
+    // Cache the results (enables packrat parsing)
+    // Same size & capacity as .lexer_state.tokens
+    token_memo_t **memoized_cache;
 
     // Allocate nodes in the same region so it can be freed all at once
     mem_region_t *region;
 
-    size_t pos;
+    // Use to get lazily scan the next token
+    lexer_t lexer_state;
+    lexer_func_t lexer_read_token;
 
-    // Debugging
+    // Debugging variables
     size_t max_reached_pos;
     char **tk_indices;
     char *tk_max_attempted;
@@ -109,7 +118,7 @@ typedef struct parser_state {
 
 
 void parser_init_state(parser_t *p, char *src, size_t len, 
-        lexer_func_t lexer_func, char **tk_indices);
+        lexer_func_t lexer_next_token, char **tk_indices);
 
 token_t *parser_fetch_token(parser_t *p, size_t pos);
 
@@ -132,7 +141,9 @@ static inline void *parser_alloc(parser_t *p, size_t size) {
 
 // Parser debugging tools
 
-token_t *parser_consume_debug(parser_t *p, int tk_type, const char *literal);
+void parser_matched_debug(parser_t *p, const char *literal);
+
+void parser_mismatch_debug(parser_t *p, const char *literal);
 
 void parser_enter_debug(parser_t *p, const char *f_rule);
 
