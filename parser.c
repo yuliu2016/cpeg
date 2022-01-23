@@ -461,23 +461,23 @@ static ast_primary_t *t_primary() {
     ast_primary_t *alt_255;
     size_t maxpos;
     ast_primary_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_255;
-            insert_memo(_pos, 255, max);
-            restore(_pos);
-            res_255 = (
-                (alt_255 = t_primary_1()) ||
-                (alt_255 = t_primary_2()) ||
-                (alt_255 = t_primary_3()) ||
-                (alt_255 = t_primary_4())
-            ) ? alt_255 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_255 = max;
-        insert_memo(_pos, 255, res_255);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_255;
+        insert_memo(_pos, 255, max);
+        restore(_pos);
+        res_255 = (
+            (alt_255 = t_primary_1()) ||
+            (alt_255 = t_primary_2()) ||
+            (alt_255 = t_primary_3()) ||
+            (alt_255 = t_primary_4())
+        ) ? alt_255 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_255 = max;
+    insert_memo(_pos, 255, res_255);
     return exit_frame(_pos, res_255, FUNC);
 }
 
@@ -1389,21 +1389,21 @@ static ast_expr_t *disjunction() {
     ast_expr_t *alt_410;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_410;
-            insert_memo(_pos, 410, max);
-            restore(_pos);
-            res_410 = (
-                (alt_410 = disjunction_1()) ||
-                (alt_410 = conjunction())
-            ) ? alt_410 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_410 = max;
-        insert_memo(_pos, 410, res_410);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_410;
+        insert_memo(_pos, 410, max);
+        restore(_pos);
+        res_410 = (
+            (alt_410 = disjunction_1()) ||
+            (alt_410 = conjunction())
+        ) ? alt_410 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_410 = max;
+    insert_memo(_pos, 410, res_410);
     return exit_frame(_pos, res_410, FUNC);
 }
 
@@ -1433,21 +1433,21 @@ static ast_expr_t *conjunction() {
     ast_expr_t *alt_462;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_462;
-            insert_memo(_pos, 462, max);
-            restore(_pos);
-            res_462 = (
-                (alt_462 = conjunction_1()) ||
-                (alt_462 = inversion())
-            ) ? alt_462 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_462 = max;
-        insert_memo(_pos, 462, res_462);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_462;
+        insert_memo(_pos, 462, max);
+        restore(_pos);
+        res_462 = (
+            (alt_462 = conjunction_1()) ||
+            (alt_462 = inversion())
+        ) ? alt_462 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_462 = max;
+    insert_memo(_pos, 462, res_462);
     return exit_frame(_pos, res_462, FUNC);
 }
 
@@ -1614,21 +1614,21 @@ static ast_expr_t *bitwise_or() {
     ast_expr_t *alt_201;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_201;
-            insert_memo(_pos, 201, max);
-            restore(_pos);
-            res_201 = (
-                (alt_201 = bitwise_or_1()) ||
-                (alt_201 = bitwise_xor())
-            ) ? alt_201 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_201 = max;
-        insert_memo(_pos, 201, res_201);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_201;
+        insert_memo(_pos, 201, max);
+        restore(_pos);
+        res_201 = (
+            (alt_201 = bitwise_or_1()) ||
+            (alt_201 = bitwise_xor())
+        ) ? alt_201 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_201 = max;
+    insert_memo(_pos, 201, res_201);
     return exit_frame(_pos, res_201, FUNC);
 }
 
@@ -1658,21 +1658,21 @@ static ast_expr_t *bitwise_xor() {
     ast_expr_t *alt_565;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_565;
-            insert_memo(_pos, 565, max);
-            restore(_pos);
-            res_565 = (
-                (alt_565 = bitwise_xor_1()) ||
-                (alt_565 = bitwise_and())
-            ) ? alt_565 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_565 = max;
-        insert_memo(_pos, 565, res_565);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_565;
+        insert_memo(_pos, 565, max);
+        restore(_pos);
+        res_565 = (
+            (alt_565 = bitwise_xor_1()) ||
+            (alt_565 = bitwise_and())
+        ) ? alt_565 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_565 = max;
+    insert_memo(_pos, 565, res_565);
     return exit_frame(_pos, res_565, FUNC);
 }
 
@@ -1702,21 +1702,21 @@ static ast_expr_t *bitwise_and() {
     ast_expr_t *alt_417;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_417;
-            insert_memo(_pos, 417, max);
-            restore(_pos);
-            res_417 = (
-                (alt_417 = bitwise_and_1()) ||
-                (alt_417 = bitwise_shift())
-            ) ? alt_417 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_417 = max;
-        insert_memo(_pos, 417, res_417);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_417;
+        insert_memo(_pos, 417, max);
+        restore(_pos);
+        res_417 = (
+            (alt_417 = bitwise_and_1()) ||
+            (alt_417 = bitwise_shift())
+        ) ? alt_417 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_417 = max;
+    insert_memo(_pos, 417, res_417);
     return exit_frame(_pos, res_417, FUNC);
 }
 
@@ -1747,22 +1747,22 @@ static ast_expr_t *bitwise_shift() {
     ast_expr_t *alt_532;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_532;
-            insert_memo(_pos, 532, max);
-            restore(_pos);
-            res_532 = (
-                (alt_532 = bitwise_shift_1()) ||
-                (alt_532 = bitwise_shift_2()) ||
-                (alt_532 = sum())
-            ) ? alt_532 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_532 = max;
-        insert_memo(_pos, 532, res_532);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_532;
+        insert_memo(_pos, 532, max);
+        restore(_pos);
+        res_532 = (
+            (alt_532 = bitwise_shift_1()) ||
+            (alt_532 = bitwise_shift_2()) ||
+            (alt_532 = sum())
+        ) ? alt_532 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_532 = max;
+    insert_memo(_pos, 532, res_532);
     return exit_frame(_pos, res_532, FUNC);
 }
 
@@ -1806,22 +1806,22 @@ static ast_expr_t *sum() {
     ast_expr_t *alt_252;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_252;
-            insert_memo(_pos, 252, max);
-            restore(_pos);
-            res_252 = (
-                (alt_252 = sum_1()) ||
-                (alt_252 = sum_2()) ||
-                (alt_252 = term())
-            ) ? alt_252 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_252 = max;
-        insert_memo(_pos, 252, res_252);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_252;
+        insert_memo(_pos, 252, max);
+        restore(_pos);
+        res_252 = (
+            (alt_252 = sum_1()) ||
+            (alt_252 = sum_2()) ||
+            (alt_252 = term())
+        ) ? alt_252 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_252 = max;
+    insert_memo(_pos, 252, res_252);
     return exit_frame(_pos, res_252, FUNC);
 }
 
@@ -1868,25 +1868,25 @@ static ast_expr_t *term() {
     ast_expr_t *alt_460;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_460;
-            insert_memo(_pos, 460, max);
-            restore(_pos);
-            res_460 = (
-                (alt_460 = term_1()) ||
-                (alt_460 = term_2()) ||
-                (alt_460 = term_3()) ||
-                (alt_460 = term_4()) ||
-                (alt_460 = term_5()) ||
-                (alt_460 = pipeline())
-            ) ? alt_460 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_460 = max;
-        insert_memo(_pos, 460, res_460);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_460;
+        insert_memo(_pos, 460, max);
+        restore(_pos);
+        res_460 = (
+            (alt_460 = term_1()) ||
+            (alt_460 = term_2()) ||
+            (alt_460 = term_3()) ||
+            (alt_460 = term_4()) ||
+            (alt_460 = term_5()) ||
+            (alt_460 = pipeline())
+        ) ? alt_460 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_460 = max;
+    insert_memo(_pos, 460, res_460);
     return exit_frame(_pos, res_460, FUNC);
 }
 
@@ -1968,21 +1968,21 @@ static ast_expr_t *pipeline() {
     ast_expr_t *alt_274;
     size_t maxpos;
     ast_expr_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_274;
-            insert_memo(_pos, 274, max);
-            restore(_pos);
-            res_274 = (
-                (alt_274 = pipeline_1()) ||
-                (alt_274 = factor())
-            ) ? alt_274 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_274 = max;
-        insert_memo(_pos, 274, res_274);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_274;
+        insert_memo(_pos, 274, max);
+        restore(_pos);
+        res_274 = (
+            (alt_274 = pipeline_1()) ||
+            (alt_274 = factor())
+        ) ? alt_274 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_274 = max;
+    insert_memo(_pos, 274, res_274);
     return exit_frame(_pos, res_274, FUNC);
 }
 
@@ -2113,23 +2113,23 @@ static ast_primary_t *primary() {
     ast_primary_t *alt_178;
     size_t maxpos;
     ast_primary_t *max;
-    if (enter_frame(FUNC)) {
-        do {
-            maxpos = pos();
-            max = res_178;
-            insert_memo(_pos, 178, max);
-            restore(_pos);
-            res_178 = (
-                (alt_178 = primary_1()) ||
-                (alt_178 = primary_2()) ||
-                (alt_178 = primary_3()) ||
-                (alt_178 = atom())
-            ) ? alt_178 : 0;
-        } while (pos() > maxpos);
-        restore(maxpos);
-        res_178 = max;
-        insert_memo(_pos, 178, res_178);
-    }
+    if (errorcode()) return NULL;
+    enter_frame(FUNC);
+    do {
+        maxpos = pos();
+        max = res_178;
+        insert_memo(_pos, 178, max);
+        restore(_pos);
+        res_178 = (
+            (alt_178 = primary_1()) ||
+            (alt_178 = primary_2()) ||
+            (alt_178 = primary_3()) ||
+            (alt_178 = atom())
+        ) ? alt_178 : 0;
+    } while (pos() > maxpos);
+    restore(maxpos);
+    res_178 = max;
+    insert_memo(_pos, 178, res_178);
     return exit_frame(_pos, res_178, FUNC);
 }
 

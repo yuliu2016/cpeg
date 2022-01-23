@@ -238,28 +238,6 @@ void parser_free_state(parser_t *p) {
     mbpurge(p->region);
 }
 
-int parser_advance_frame(parser_t *p) {
-    if (p->error || p->lexer_state.error) {
-        // Early exit the function when there is already an error
-        return 0;
-    }
-
-    if (p->level > PARSER_MAX_RECURSION) {
-        // Do not allow trees that are too deep.
-        p->error = "Max recursion depth reached";
-        return 0;
-    }
-
-    if (!parser_fetch_token(p, p->pos)) {
-        // there is no more tokens; no need to test anymore
-        // this avoids the infinite recursion problem caused by
-        // nonexistent token
-        return 0;
-    }
-
-    return 1;
-}
-
 
 memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
     memo_t *new_memo = parser_alloc(p, sizeof(memo_t));
@@ -302,9 +280,14 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node) {
     }
 }
 
+static memo_t __failed_memo = {0, NULL, 0, NULL};
+
 memo_t *parser_get_memo(parser_t *p, int f_type) {
     if (p->fast_match[p->pos] == 0) {
-        return NULL;
+        // Act as if memoized a failure. The token stream
+        // has finished already: returning NULL here will
+        // cause an infinite loop with left recursion.
+        return &__failed_memo;
     }
     memo_t *memo = p->memoized_cache[p->pos];
     while (memo) {

@@ -11,6 +11,10 @@ static inline size_t pos() {
     return __p.pos;
 }
 
+static inline int errorcode() {
+    return __p.errorcode;
+}
+
 static inline void restore(size_t pos) {
     __p.pos = pos;
 }
@@ -47,18 +51,6 @@ static inline memo_t *fetch_memo(int f_type, const char *f_rule) {
         parser_memo_debug(p, memo, f_rule);
     #endif
     return memo;
-}
-
-static inline int is_memoized(int f_type, void **resptr, const char *f_rule) {
-   memo_t *memo = parser_get_memo(p, f_type);
-    #ifdef PARSER_DEBUG
-        parser_memo_debug(p, memo, f_rule);
-    #endif
-    if (memo) {
-        *resptr = memo->node;
-        return 1;
-    }
-    return 0;
 }
 
 static inline int test_and_reset(size_t f_pos, void *node) {
