@@ -62,12 +62,17 @@ static double *sum_1() {
     size_t _pos = pos();
     double *_sum;
     double *_term;
-    return (
+
+    if (
         (_sum = sum()) &&
         (consume(21, "+")) &&
         (_term = term())
-    ) ? binop_add(p, _sum, _term) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_add(p, _sum, _term);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // sum '-' term
@@ -75,12 +80,17 @@ static double *sum_2() {
     size_t _pos = pos();
     double *_sum;
     double *_term;
-    return (
+
+    if (
         (_sum = sum()) &&
         (consume(22, "-")) &&
         (_term = term())
-    ) ? binop_sub(p, _sum, _term) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_sub(p, _sum, _term);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // term (left_recursive):
@@ -123,12 +133,17 @@ static double *term_1() {
     size_t _pos = pos();
     double *_term;
     double *_factor;
-    return (
+
+    if (
         (_term = term()) &&
         (consume(23, "*")) &&
         (_factor = factor())
-    ) ? binop_mul(p, _term, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_mul(p, _term, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // term '/' factor
@@ -136,12 +151,17 @@ static double *term_2() {
     size_t _pos = pos();
     double *_term;
     double *_factor;
-    return (
+
+    if (
         (_term = term()) &&
         (consume(24, "/")) &&
         (_factor = factor())
-    ) ? binop_div(p, _term, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_div(p, _term, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // term '%' factor
@@ -149,12 +169,17 @@ static double *term_3() {
     size_t _pos = pos();
     double *_term;
     double *_factor;
-    return (
+
+    if (
         (_term = term()) &&
         (consume(25, "%")) &&
         (_factor = factor())
-    ) ? binop_mod(p, _term, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_mod(p, _term, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // factor (memo):
@@ -184,32 +209,48 @@ static double *factor() {
 static double *factor_1() {
     size_t _pos = pos();
     double *_factor;
-    return (
+
+    if (
         (consume(21, "+")) &&
         (_factor = factor())
-    ) ? _factor : (restore(_pos), NULL);
+    ) {
+        return _factor;
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // '-' factor
 static double *factor_2() {
     size_t _pos = pos();
     double *_factor;
-    return (
+
+    if (
         (consume(22, "-")) &&
         (_factor = factor())
-    ) ? unary_minus(p, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return unary_minus(p, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // '~' factor
 static double *factor_3() {
     size_t _pos = pos();
     double *_factor;
-    return (
+
+    if (
         (consume(29, "~")) &&
         (_factor = factor())
-    ) ? unary_not(p, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return unary_not(p, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // power (memo):
@@ -236,12 +277,17 @@ static double *power_1() {
     size_t _pos = pos();
     double *_atom;
     double *_factor;
-    return (
+
+    if (
         (_atom = atom()) &&
         (consume(38, "**")) &&
         (_factor = factor())
-    ) ? binop_pow(p, _atom, _factor) :
-        (restore(_pos), NULL);
+    ) {
+        return binop_pow(p, _atom, _factor);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // parameters:
@@ -305,11 +351,17 @@ static double *atom() {
 static double *atom_1() {
     size_t _pos = pos();
     double *_sum;
-    return (
+
+    if (
         (consume(13, "(")) &&
         (_sum = sum()) &&
         (consume(14, ")"))
-    ) ? _sum : (restore(_pos), NULL);
+    ) {
+        return _sum;
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // NAME '(' [parameters] ')'
@@ -317,13 +369,18 @@ static double *atom_2() {
     size_t _pos = pos();
     token_t *_name;
     ast_list_t *_parameters;
-    return (
+
+    if (
         (_name = consume(3, "NAME")) &&
         (consume(13, "(")) &&
         (_parameters = parameters(), 1) &&
         (consume(14, ")"))
-    ) ? call_func(p, _name, _parameters) :
-        (restore(_pos), NULL);
+    ) {
+        return call_func(p, _name, _parameters);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 
