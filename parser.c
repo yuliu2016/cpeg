@@ -3,14 +3,13 @@
 
 
 static ast_list_t *single_input();
-static ast_list_t *single_input_3();
 static ast_list_t *file_input();
 static ast_list_t *eval_input();
 static ast_list_t *statement_list();
 static ast_list_t *line_statement_loop();
 static ast_list_t *line_statement();
-static ast_list_t *line_statement_1();
-static ast_list_t *line_statement_2();
+static ast_list_t *simple_line();
+static ast_list_t *compound_line();
 static ast_list_t *simple_statements();
 static ast_list_t *simple_statement_delimited();
 static ast_stmt_t *simple_statement();
@@ -163,34 +162,19 @@ static ast_stmt_t *ast_nop() {
 // single_input:
 //     | NEWLINE
 //     | simple_statements
-//     | compound_statement NEWLINE
+//     | compound_line
 static ast_list_t *single_input() {
     size_t _pos = pos();
     ast_list_t *res_251;
-    ast_list_t *_simple_statements;
     ast_list_t *alt_251;
     res_251 = enter_frame(FUNC) && ((
             (consume(2, "NEWLINE")) &&
             (alt_251 = ast_list_of(ast_nop()))
-        ) || (
-            (_simple_statements = simple_statements()) &&
-            (alt_251 = ast_list_of(_simple_statements))
         ) ||
-        (alt_251 = single_input_3())
+        (alt_251 = simple_statements()) ||
+        (alt_251 = compound_line())
     ) ? alt_251 : 0;
     return exit_frame(_pos, res_251, FUNC);
-}
-
-// compound_statement NEWLINE
-static ast_list_t *single_input_3() {
-    size_t _pos = pos();
-    ast_list_t *res_423;
-    void *_compound_statement;
-    res_423 = enter_frame(FUNC) && (
-        (_compound_statement = compound_statement()) &&
-        (consume(2, "NEWLINE"))
-    ) ? ast_list_of(_compound_statement) : 0;
-    return exit_frame(_pos, res_423, FUNC);
 }
 
 // file_input:
@@ -243,41 +227,51 @@ static ast_list_t *line_statement_loop() {
 }
 
 // line_statement:
-//     | simple_statements NEWLINE
-//     | compound_statement NEWLINE
+//     | simple_line
+//     | compound_line
 static ast_list_t *line_statement() {
     size_t _pos = pos();
     ast_list_t *res_260;
     ast_list_t *alt_260;
     res_260 = enter_frame(FUNC) && (
-        (alt_260 = line_statement_1()) ||
-        (alt_260 = line_statement_2())
+        (alt_260 = simple_line()) ||
+        (alt_260 = compound_line())
     ) ? alt_260 : 0;
     return exit_frame(_pos, res_260, FUNC);
 }
 
-// simple_statements NEWLINE
-static ast_list_t *line_statement_1() {
+// simple_line (inline):
+//     | simple_statements NEWLINE
+static ast_list_t *simple_line() {
     size_t _pos = pos();
-    ast_list_t *res_726;
     ast_list_t *_simple_statements;
-    res_726 = enter_frame(FUNC) && (
+
+    if (
         (_simple_statements = simple_statements()) &&
         (consume(2, "NEWLINE"))
-    ) ? _simple_statements : 0;
-    return exit_frame(_pos, res_726, FUNC);
+    ) {
+        return _simple_statements;
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
-// compound_statement NEWLINE
-static ast_list_t *line_statement_2() {
+// compound_line (inline):
+//     | compound_statement NEWLINE
+static ast_list_t *compound_line() {
     size_t _pos = pos();
-    ast_list_t *res_727;
     void *_compound_statement;
-    res_727 = enter_frame(FUNC) && (
+
+    if (
         (_compound_statement = compound_statement()) &&
         (consume(2, "NEWLINE"))
-    ) ? ast_list_of(_compound_statement) : 0;
-    return exit_frame(_pos, res_727, FUNC);
+    ) {
+        return ast_list_of(_compound_statement);
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // simple_statements:
@@ -588,11 +582,17 @@ static ast_primary_t *t_primary_4() {
 static void *t_lookahead() {
     size_t _pos = pos();
     void *alt;
-    return (
+
+    if (
         (alt = consume(6, ".")) ||
         (alt = consume(13, "(")) ||
         (alt = consume(17, "["))
-    ) ? alt : (restore(_pos), NULL);
+    ) {
+        return alt;
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // targets:
@@ -749,7 +749,8 @@ static void *assignment_3() {
 static int augmented_assign() {
     size_t _pos = pos();
     int alt;
-    return ((
+
+    if ((
             (consume(39, "+=")) &&
             (alt = BINOP_PLS)
         ) || (
@@ -788,7 +789,12 @@ static int augmented_assign() {
         ) || (
             (consume(53, ">>=")) &&
             (alt = BINOP_SHR))
-    ) ? alt : (restore(_pos), 0);
+    ) {
+        return alt;
+    } else {
+        restore(_pos);
+        return 0;
+    }
 }
 
 // compound_statement:
@@ -1723,7 +1729,8 @@ static ast_expr_t *comparison_1_2() {
 static int comparator() {
     size_t _pos = pos();
     int alt;
-    return ((
+
+    if ((
             (consume(19, "<")) &&
             (alt = CMP_LT)
         ) || (
@@ -1750,7 +1757,12 @@ static int comparator() {
             (alt = CMP_IS)
         ) ||
         (alt = comparator_10())
-    ) ? alt : (restore(_pos), 0);
+    ) {
+        return alt;
+    } else {
+        restore(_pos);
+        return 0;
+    }
 }
 
 // 'not' 'in'
@@ -2736,10 +2748,16 @@ static void *builder_generics() {
 static ast_primary_t *builder_expression() {
     size_t _pos = pos();
     ast_primary_t *alt;
-    return (
+
+    if (
         (alt = builder_expression_1()) ||
         (alt = builder_expression_2())
-    ) ? alt : (restore(_pos), NULL);
+    ) {
+        return alt;
+    } else {
+        restore(_pos);
+        return NULL;
+    }
 }
 
 // NAME [builder_generics] [builder_parameters] block_suite
