@@ -29,16 +29,20 @@ static double *atom_2();
 //     | sum '-' term
 //     | term
 static double *sum() {
-    size_t _pos = pos();
-    double *res_251 = 0;
+    if (errorcode()) return 0;
+
     memo_t *memo = fetch_memo(251, FUNC);
     if (memo) {
         return memo->node;
     }
+
+    size_t _pos = pos();
+    double *res_251 = 0;
     double *alt_251;
     size_t maxpos;
     double *max;
-    if (errorcode()) return NULL;
+
+
     enter_frame(FUNC);
     do {
         maxpos = pos();
@@ -51,9 +55,11 @@ static double *sum() {
             (alt_251 = term())
         ) ? alt_251 : 0;
     } while (pos() > maxpos);
+
     restore(maxpos);
     res_251 = max;
     insert_memo(_pos, 251, res_251);
+
     return exit_frame(_pos, res_251, FUNC);
 }
 
@@ -99,16 +105,20 @@ static double *sum_2() {
 //     | term '%' factor
 //     | factor
 static double *term() {
-    size_t _pos = pos();
-    double *res_460 = 0;
+    if (errorcode()) return 0;
+
     memo_t *memo = fetch_memo(460, FUNC);
     if (memo) {
         return memo->node;
     }
+
+    size_t _pos = pos();
+    double *res_460 = 0;
     double *alt_460;
     size_t maxpos;
     double *max;
-    if (errorcode()) return NULL;
+
+
     enter_frame(FUNC);
     do {
         maxpos = pos();
@@ -122,9 +132,11 @@ static double *term() {
             (alt_460 = factor())
         ) ? alt_460 : 0;
     } while (pos() > maxpos);
+
     restore(maxpos);
     res_460 = max;
     insert_memo(_pos, 460, res_460);
+
     return exit_frame(_pos, res_460, FUNC);
 }
 
@@ -188,19 +200,24 @@ static double *term_3() {
 //     | '~' factor
 //     | power
 static double *factor() {
-    size_t _pos = pos();
-    double *res_983;
+    if (errorcode()) return 0;
+
     memo_t *memo = fetch_memo(983, FUNC);
     if (memo) {
         return memo->node;
     }
+
+    size_t _pos = pos();
+    double *res_983;
     double *alt_983;
+
     res_983 = enter_frame(FUNC) && (
         (alt_983 = factor_1()) ||
         (alt_983 = factor_2()) ||
         (alt_983 = factor_3()) ||
         (alt_983 = power())
     ) ? alt_983 : 0;
+
     insert_memo(_pos, 983, res_983);
     return exit_frame(_pos, res_983, FUNC);
 }
@@ -257,17 +274,22 @@ static double *factor_3() {
 //     | atom '**' factor
 //     | atom
 static double *power() {
-    size_t _pos = pos();
-    double *res_757;
+    if (errorcode()) return 0;
+
     memo_t *memo = fetch_memo(757, FUNC);
     if (memo) {
         return memo->node;
     }
+
+    size_t _pos = pos();
+    double *res_757;
     double *alt_757;
+
     res_757 = enter_frame(FUNC) && (
         (alt_757 = power_1()) ||
         (alt_757 = atom())
     ) ? alt_757 : 0;
+
     insert_memo(_pos, 757, res_757);
     return exit_frame(_pos, res_757, FUNC);
 }
@@ -293,13 +315,17 @@ static double *power_1() {
 // parameters:
 //     | ','.sum+ [',']
 static ast_list_t *parameters() {
+    if (errorcode()) return 0;
+
     size_t _pos = pos();
     ast_list_t *res_106;
     ast_list_t *_sums;
+
     res_106 = enter_frame(FUNC) && (
         (_sums = sum_delimited()) &&
         (consume(7, ","), 1)
     ) ? _sums : 0;
+
     return exit_frame(_pos, res_106, FUNC);
 }
 
@@ -330,15 +356,19 @@ static ast_list_t *sum_delimited() {
 //     | NAME
 //     | NUMBER
 static double *atom() {
-    size_t _pos = pos();
-    double *res_753;
+    if (errorcode()) return 0;
+
     memo_t *memo = fetch_memo(753, FUNC);
     if (memo) {
         return memo->node;
     }
+
+    size_t _pos = pos();
+    double *res_753;
     token_t *_name;
     token_t *_number;
     double *alt_753;
+
     res_753 = enter_frame(FUNC) && (
         (alt_753 = atom_1()) ||
         (alt_753 = atom_2()) || (
@@ -348,6 +378,7 @@ static double *atom() {
             (_number = consume(4, "NUMBER")) &&
             (alt_753 = to_double(p, _number)))
     ) ? alt_753 : 0;
+
     insert_memo(_pos, 753, res_753);
     return exit_frame(_pos, res_753, FUNC);
 }
