@@ -170,15 +170,23 @@ static ast_list_t *single_input() {
     ast_list_t *res_251;
     ast_list_t *alt_251;
 
-    res_251 = enter_frame(FUNC) && ((
+    enter_frame(FUNC);
+
+    if ((
             (consume(2, "NEWLINE")) &&
             (alt_251 = ast_list_of(ast_nop()))
         ) ||
         (alt_251 = simple_statements()) ||
         (alt_251 = compound_line())
-    ) ? alt_251 : 0;
+    ) {
+        res_251 = alt_251;
+    } else {
+        restore(_pos);
+        res_251 = NULL;
+    }
 
-    return exit_frame(_pos, res_251, FUNC);
+    exit_frame(_pos, res_251, FUNC);
+    return res_251;
 }
 
 // file_input:
@@ -190,11 +198,19 @@ static ast_list_t *file_input() {
     ast_list_t *res_535;
     ast_list_t *_statement_list;
 
-    res_535 = enter_frame(FUNC) && (
-        (_statement_list = statement_list())
-    ) ? _statement_list : 0;
+    enter_frame(FUNC);
 
-    return exit_frame(_pos, res_535, FUNC);
+    if (
+        (_statement_list = statement_list())
+    ) {
+        res_535 = _statement_list;
+    } else {
+        restore(_pos);
+        res_535 = NULL;
+    }
+
+    exit_frame(_pos, res_535, FUNC);
+    return res_535;
 }
 
 // eval_input:
@@ -206,12 +222,20 @@ static ast_list_t *eval_input() {
     ast_list_t *res_471;
     ast_list_t *_expressions;
 
-    res_471 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_expressions = expressions()) &&
         (consume(2, "NEWLINE"), 1)
-    ) ? _expressions : 0;
+    ) {
+        res_471 = _expressions;
+    } else {
+        restore(_pos);
+        res_471 = NULL;
+    }
 
-    return exit_frame(_pos, res_471, FUNC);
+    exit_frame(_pos, res_471, FUNC);
+    return res_471;
 }
 
 // statement_list:
@@ -223,11 +247,19 @@ static ast_list_t *statement_list() {
     ast_list_t *res_398;
     ast_list_t *_line_statements;
 
-    res_398 = enter_frame(FUNC) && (
-        (_line_statements = line_statement_loop())
-    ) ? _line_statements : 0;
+    enter_frame(FUNC);
 
-    return exit_frame(_pos, res_398, FUNC);
+    if (
+        (_line_statements = line_statement_loop())
+    ) {
+        res_398 = _line_statements;
+    } else {
+        restore(_pos);
+        res_398 = NULL;
+    }
+
+    exit_frame(_pos, res_398, FUNC);
+    return res_398;
 }
 
 static ast_list_t *line_statement_loop() {
@@ -254,12 +286,20 @@ static ast_list_t *line_statement() {
     ast_list_t *res_260;
     ast_list_t *alt_260;
 
-    res_260 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_260 = simple_line()) ||
         (alt_260 = compound_line())
-    ) ? alt_260 : 0;
+    ) {
+        res_260 = alt_260;
+    } else {
+        restore(_pos);
+        res_260 = NULL;
+    }
 
-    return exit_frame(_pos, res_260, FUNC);
+    exit_frame(_pos, res_260, FUNC);
+    return res_260;
 }
 
 // simple_line (inline):
@@ -305,12 +345,20 @@ static ast_list_t *simple_statements() {
     ast_list_t *res_129;
     ast_list_t *_simple_statements;
 
-    res_129 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_simple_statements = simple_statement_delimited()) &&
         (consume(12, ";"), 1)
-    ) ? _simple_statements : 0;
+    ) {
+        res_129 = _simple_statements;
+    } else {
+        restore(_pos);
+        res_129 = NULL;
+    }
 
-    return exit_frame(_pos, res_129, FUNC);
+    exit_frame(_pos, res_129, FUNC);
+    return res_129;
 }
 
 static ast_list_t *simple_statement_delimited() {
@@ -370,7 +418,9 @@ static ast_stmt_t *simple_statement() {
     ast_stmt_t *res_930;
     ast_stmt_t *alt_930;
 
-    res_930 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_930 = assignment()) || (
             (starred_expressions()) &&
             (alt_930 = node())
@@ -387,9 +437,15 @@ static ast_stmt_t *simple_statement() {
         (alt_930 = simple_statement_6()) ||
         (alt_930 = simple_statement_7()) ||
         (alt_930 = simple_statement_8())
-    ) ? alt_930 : 0;
+    ) {
+        res_930 = alt_930;
+    } else {
+        restore(_pos);
+        res_930 = NULL;
+    }
 
-    return exit_frame(_pos, res_930, FUNC);
+    exit_frame(_pos, res_930, FUNC);
+    return res_930;
 }
 
 // 'return' [starred_expressions]
@@ -472,14 +528,22 @@ static void *target() {
     void *res_161;
     void *alt_161;
 
-    res_161 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_161 = target_1()) ||
         (alt_161 = target_2()) ||
         (alt_161 = consume(3, "NAME"))
-    ) ? alt_161 : 0;
+    ) {
+        res_161 = alt_161;
+    } else {
+        restore(_pos);
+        res_161 = NULL;
+    }
 
     insert_memo(_pos, 161, res_161);
-    return exit_frame(_pos, res_161, FUNC);
+    exit_frame(_pos, res_161, FUNC);
+    return res_161;
 }
 
 // t_primary '.' NAME !t_lookahead
@@ -553,7 +617,8 @@ static ast_primary_t *t_primary() {
     res_255 = max;
     insert_memo(_pos, 255, res_255);
 
-    return exit_frame(_pos, res_255, FUNC);
+    exit_frame(_pos, res_255, FUNC);
+    return res_255;
 }
 
 // t_primary '.' NAME &t_lookahead
@@ -650,12 +715,20 @@ static ast_list_t *targets() {
     ast_list_t *res_882;
     ast_list_t *_targets;
 
-    res_882 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_targets = target_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _targets : 0;
+    ) {
+        res_882 = _targets;
+    } else {
+        restore(_pos);
+        res_882 = NULL;
+    }
 
-    return exit_frame(_pos, res_882, FUNC);
+    exit_frame(_pos, res_882, FUNC);
+    return res_882;
 }
 
 static ast_list_t *target_delimited() {
@@ -690,13 +763,21 @@ static void *assignment() {
     void *res_733;
     void *alt_733;
 
-    res_733 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_733 = assignment_1()) ||
         (alt_733 = assignment_2()) ||
         (alt_733 = assignment_3())
-    ) ? alt_733 : 0;
+    ) {
+        res_733 = alt_733;
+    } else {
+        restore(_pos);
+        res_733 = NULL;
+    }
 
-    return exit_frame(_pos, res_733, FUNC);
+    exit_frame(_pos, res_733, FUNC);
+    return res_733;
 }
 
 // target ':' expression ['=' expressions]
@@ -871,15 +952,23 @@ static void *compound_statement() {
     void *res_147;
     void *alt_147;
 
-    res_147 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_147 = if_statement()) ||
         (alt_147 = while_statement()) ||
         (alt_147 = for_statement()) ||
         (alt_147 = try_statement()) ||
         (alt_147 = with_statement())
-    ) ? alt_147 : 0;
+    ) {
+        res_147 = alt_147;
+    } else {
+        restore(_pos);
+        res_147 = NULL;
+    }
 
-    return exit_frame(_pos, res_147, FUNC);
+    exit_frame(_pos, res_147, FUNC);
+    return res_147;
 }
 
 // if_statement:
@@ -894,15 +983,23 @@ static void *if_statement() {
     ast_list_t *_elif_statements;
     void *_else_suite;
 
-    res_621 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(56, "if")) &&
         (_named_expression = named_expression()) &&
         (_suite = suite()) &&
         (_elif_statements = elif_statement_loop()) &&
         (_else_suite = else_suite(), 1)
-    ) ? node() : 0;
+    ) {
+        res_621 = node();
+    } else {
+        restore(_pos);
+        res_621 = NULL;
+    }
 
-    return exit_frame(_pos, res_621, FUNC);
+    exit_frame(_pos, res_621, FUNC);
+    return res_621;
 }
 
 static ast_list_t *elif_statement_loop() {
@@ -926,13 +1023,21 @@ static void *elif_statement() {
     ast_named_t *_named_expression;
     void *_suite;
 
-    res_660 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(57, "elif")) &&
         (_named_expression = named_expression()) &&
         (_suite = suite())
-    ) ? node() : 0;
+    ) {
+        res_660 = node();
+    } else {
+        restore(_pos);
+        res_660 = NULL;
+    }
 
-    return exit_frame(_pos, res_660, FUNC);
+    exit_frame(_pos, res_660, FUNC);
+    return res_660;
 }
 
 // while_statement:
@@ -946,14 +1051,22 @@ static void *while_statement() {
     void *_suite;
     void *_else_suite;
 
-    res_865 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(71, "while")) &&
         (_named_expression = named_expression()) &&
         (_suite = suite()) &&
         (_else_suite = else_suite(), 1)
-    ) ? node() : 0;
+    ) {
+        res_865 = node();
+    } else {
+        restore(_pos);
+        res_865 = NULL;
+    }
 
-    return exit_frame(_pos, res_865, FUNC);
+    exit_frame(_pos, res_865, FUNC);
+    return res_865;
 }
 
 // for_statement:
@@ -968,16 +1081,24 @@ static void *for_statement() {
     void *_suite;
     void *_else_suite;
 
-    res_465 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(72, "for")) &&
         (_targets = targets()) &&
         (consume(63, "in")) &&
         (_expressions = expressions()) &&
         (_suite = suite()) &&
         (_else_suite = else_suite(), 1)
-    ) ? node() : 0;
+    ) {
+        res_465 = node();
+    } else {
+        restore(_pos);
+        res_465 = NULL;
+    }
 
-    return exit_frame(_pos, res_465, FUNC);
+    exit_frame(_pos, res_465, FUNC);
+    return res_465;
 }
 
 // try_statement:
@@ -990,13 +1111,21 @@ static void *try_statement() {
     void *_suite;
     void *_except_suite_or_finally_suite;
 
-    res_195 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(75, "try")) &&
         (_suite = suite()) &&
         (_except_suite_or_finally_suite = try_statement_3())
-    ) ? node() : 0;
+    ) {
+        res_195 = node();
+    } else {
+        restore(_pos);
+        res_195 = NULL;
+    }
 
-    return exit_frame(_pos, res_195, FUNC);
+    exit_frame(_pos, res_195, FUNC);
+    return res_195;
 }
 
 // except_suite | finally_suite
@@ -1007,12 +1136,20 @@ static void *try_statement_3() {
     void *res_663;
     void *alt_663;
 
-    res_663 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_663 = except_suite()) ||
         (alt_663 = finally_suite())
-    ) ? alt_663 : 0;
+    ) {
+        res_663 = alt_663;
+    } else {
+        restore(_pos);
+        res_663 = NULL;
+    }
 
-    return exit_frame(_pos, res_663, FUNC);
+    exit_frame(_pos, res_663, FUNC);
+    return res_663;
 }
 
 // with_statement:
@@ -1025,13 +1162,21 @@ static void *with_statement() {
     ast_list_t *_expression_as_names;
     void *_suite;
 
-    res_214 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(68, "with")) &&
         (_expression_as_names = expression_as_name_delimited()) &&
         (_suite = suite())
-    ) ? node() : 0;
+    ) {
+        res_214 = node();
+    } else {
+        restore(_pos);
+        res_214 = NULL;
+    }
 
-    return exit_frame(_pos, res_214, FUNC);
+    exit_frame(_pos, res_214, FUNC);
+    return res_214;
 }
 
 static ast_list_t *expression_as_name_delimited() {
@@ -1065,12 +1210,20 @@ static void *expression_as_name() {
     ast_expr_t *_expression;
     token_t *_as_name;
 
-    res_169 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_expression = expression()) &&
         (_as_name = expression_as_name_2(), 1)
-    ) ? node() : 0;
+    ) {
+        res_169 = node();
+    } else {
+        restore(_pos);
+        res_169 = NULL;
+    }
 
-    return exit_frame(_pos, res_169, FUNC);
+    exit_frame(_pos, res_169, FUNC);
+    return res_169;
 }
 
 // 'as' NAME
@@ -1099,12 +1252,20 @@ static void *block_suite() {
     void *res_206;
     void *alt_206;
 
-    res_206 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_206 = block_suite_1()) ||
         (alt_206 = block_suite_2())
-    ) ? alt_206 : 0;
+    ) {
+        res_206 = alt_206;
+    } else {
+        restore(_pos);
+        res_206 = NULL;
+    }
 
-    return exit_frame(_pos, res_206, FUNC);
+    exit_frame(_pos, res_206, FUNC);
+    return res_206;
 }
 
 // '{' NEWLINE statement_list '}'
@@ -1115,14 +1276,22 @@ static void *block_suite_1() {
     void *res_560;
     ast_list_t *_statement_list;
 
-    res_560 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(15, "{")) &&
         (consume(2, "NEWLINE")) &&
         (_statement_list = statement_list()) &&
         (consume(16, "}"))
-    ) ? _statement_list : 0;
+    ) {
+        res_560 = _statement_list;
+    } else {
+        restore(_pos);
+        res_560 = NULL;
+    }
 
-    return exit_frame(_pos, res_560, FUNC);
+    exit_frame(_pos, res_560, FUNC);
+    return res_560;
 }
 
 // '{' [simple_statements] '}'
@@ -1133,13 +1302,21 @@ static void *block_suite_2() {
     void *res_561;
     ast_list_t *_simple_statements;
 
-    res_561 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(15, "{")) &&
         (_simple_statements = simple_statements(), 1) &&
         (consume(16, "}"))
-    ) ? _simple_statements : 0;
+    ) {
+        res_561 = _simple_statements;
+    } else {
+        restore(_pos);
+        res_561 = NULL;
+    }
 
-    return exit_frame(_pos, res_561, FUNC);
+    exit_frame(_pos, res_561, FUNC);
+    return res_561;
 }
 
 // suite:
@@ -1152,12 +1329,20 @@ static void *suite() {
     void *res_64;
     void *alt_64;
 
-    res_64 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_64 = suite_1()) ||
         (alt_64 = block_suite())
-    ) ? alt_64 : 0;
+    ) {
+        res_64 = alt_64;
+    } else {
+        restore(_pos);
+        res_64 = NULL;
+    }
 
-    return exit_frame(_pos, res_64, FUNC);
+    exit_frame(_pos, res_64, FUNC);
+    return res_64;
 }
 
 // ':' simple_statements
@@ -1168,12 +1353,20 @@ static void *suite_1() {
     void *res_98;
     ast_list_t *_simple_statements;
 
-    res_98 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(9, ":")) &&
         (_simple_statements = simple_statements())
-    ) ? _simple_statements : 0;
+    ) {
+        res_98 = _simple_statements;
+    } else {
+        restore(_pos);
+        res_98 = NULL;
+    }
 
-    return exit_frame(_pos, res_98, FUNC);
+    exit_frame(_pos, res_98, FUNC);
+    return res_98;
 }
 
 // else_suite (inline):
@@ -1220,13 +1413,21 @@ static void *except_clause() {
     void *_expression_as_name;
     void *_suite;
 
-    res_357 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(76, "except")) &&
         (_expression_as_name = expression_as_name(), 1) &&
         (_suite = suite())
-    ) ? node() : 0;
+    ) {
+        res_357 = node();
+    } else {
+        restore(_pos);
+        res_357 = NULL;
+    }
 
-    return exit_frame(_pos, res_357, FUNC);
+    exit_frame(_pos, res_357, FUNC);
+    return res_357;
 }
 
 // except_suite:
@@ -1240,13 +1441,21 @@ static void *except_suite() {
     void *_else_suite;
     void *_finally_suite;
 
-    res_810 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_except_clauses = except_clause_loop()) &&
         (_else_suite = else_suite(), 1) &&
         (_finally_suite = finally_suite(), 1)
-    ) ? node() : 0;
+    ) {
+        res_810 = node();
+    } else {
+        restore(_pos);
+        res_810 = NULL;
+    }
 
-    return exit_frame(_pos, res_810, FUNC);
+    exit_frame(_pos, res_810, FUNC);
+    return res_810;
 }
 
 static ast_list_t *except_clause_loop() {
@@ -1272,13 +1481,21 @@ static void *invocation() {
     void *res_944;
     void *_invocation_2;
 
-    res_944 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(13, "(")) &&
         (_invocation_2 = invocation_2(), 1) &&
         (consume(14, ")"))
-    ) ? _invocation_2 : 0;
+    ) {
+        res_944 = _invocation_2;
+    } else {
+        restore(_pos);
+        res_944 = NULL;
+    }
 
-    return exit_frame(_pos, res_944, FUNC);
+    exit_frame(_pos, res_944, FUNC);
+    return res_944;
 }
 
 // ','.call_argument+ [',']
@@ -1289,12 +1506,20 @@ static void *invocation_2() {
     void *res_35;
     ast_list_t *_call_arguments;
 
-    res_35 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_call_arguments = call_argument_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _call_arguments : 0;
+    ) {
+        res_35 = _call_arguments;
+    } else {
+        restore(_pos);
+        res_35 = NULL;
+    }
 
-    return exit_frame(_pos, res_35, FUNC);
+    exit_frame(_pos, res_35, FUNC);
+    return res_35;
 }
 
 static ast_list_t *call_argument_delimited() {
@@ -1331,15 +1556,23 @@ static void *call_argument() {
     void *res_78;
     void *alt_78;
 
-    res_78 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_78 = call_argument_1()) ||
         (alt_78 = call_argument_2()) ||
         (alt_78 = call_argument_3()) ||
         (alt_78 = call_argument_4()) ||
         (alt_78 = expression())
-    ) ? alt_78 : 0;
+    ) {
+        res_78 = alt_78;
+    } else {
+        restore(_pos);
+        res_78 = NULL;
+    }
 
-    return exit_frame(_pos, res_78, FUNC);
+    exit_frame(_pos, res_78, FUNC);
+    return res_78;
 }
 
 // NAME ':=' expression
@@ -1419,14 +1652,22 @@ static ast_list_t *subscript() {
     ast_list_t *res_379;
     ast_list_t *_slices;
 
-    res_379 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(17, "[")) &&
         (_slices = slice_delimited()) &&
         (consume(7, ","), 1) &&
         (consume(18, "]"))
-    ) ? _slices : 0;
+    ) {
+        res_379 = _slices;
+    } else {
+        restore(_pos);
+        res_379 = NULL;
+    }
 
-    return exit_frame(_pos, res_379, FUNC);
+    exit_frame(_pos, res_379, FUNC);
+    return res_379;
 }
 
 static ast_list_t *slice_delimited() {
@@ -1460,12 +1701,20 @@ static void *slice() {
     void *res_418;
     void *alt_418;
 
-    res_418 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_418 = slice_1()) ||
         (alt_418 = expression())
-    ) ? alt_418 : 0;
+    ) {
+        res_418 = alt_418;
+    } else {
+        restore(_pos);
+        res_418 = NULL;
+    }
 
-    return exit_frame(_pos, res_418, FUNC);
+    exit_frame(_pos, res_418, FUNC);
+    return res_418;
 }
 
 // [expression] slice_expression [slice_expression]
@@ -1478,13 +1727,21 @@ static void *slice_1() {
     void *_slice_expression;
     void *_slice_expression_1;
 
-    res_292 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_expression = expression(), 1) &&
         (_slice_expression = slice_expression()) &&
         (_slice_expression_1 = slice_expression(), 1)
-    ) ? node() : 0;
+    ) {
+        res_292 = node();
+    } else {
+        restore(_pos);
+        res_292 = NULL;
+    }
 
-    return exit_frame(_pos, res_292, FUNC);
+    exit_frame(_pos, res_292, FUNC);
+    return res_292;
 }
 
 // slice_expression:
@@ -1496,12 +1753,20 @@ static void *slice_expression() {
     void *res_421;
     ast_expr_t *_expression;
 
-    res_421 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (consume(9, ":")) &&
         (_expression = expression(), 1)
-    ) ? _expression : 0;
+    ) {
+        res_421 = _expression;
+    } else {
+        restore(_pos);
+        res_421 = NULL;
+    }
 
-    return exit_frame(_pos, res_421, FUNC);
+    exit_frame(_pos, res_421, FUNC);
+    return res_421;
 }
 
 // expressions:
@@ -1513,12 +1778,20 @@ static ast_list_t *expressions() {
     ast_list_t *res_779;
     ast_list_t *_expressions;
 
-    res_779 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_expressions = expression_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _expressions : 0;
+    ) {
+        res_779 = _expressions;
+    } else {
+        restore(_pos);
+        res_779 = NULL;
+    }
 
-    return exit_frame(_pos, res_779, FUNC);
+    exit_frame(_pos, res_779, FUNC);
+    return res_779;
 }
 
 static ast_list_t *expression_delimited() {
@@ -1569,12 +1842,20 @@ static ast_expr_t *maybe_starred() {
     ast_expr_t *res_984;
     ast_expr_t *alt_984;
 
-    res_984 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_984 = starred_expression()) ||
         (alt_984 = expression())
-    ) ? alt_984 : 0;
+    ) {
+        res_984 = alt_984;
+    } else {
+        restore(_pos);
+        res_984 = NULL;
+    }
 
-    return exit_frame(_pos, res_984, FUNC);
+    exit_frame(_pos, res_984, FUNC);
+    return res_984;
 }
 
 // starred_expressions:
@@ -1586,12 +1867,20 @@ static ast_list_t *starred_expressions() {
     ast_list_t *res_171;
     ast_list_t *_maybe_starreds;
 
-    res_171 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_maybe_starreds = maybe_starred_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _maybe_starreds : 0;
+    ) {
+        res_171 = _maybe_starreds;
+    } else {
+        restore(_pos);
+        res_171 = NULL;
+    }
 
-    return exit_frame(_pos, res_171, FUNC);
+    exit_frame(_pos, res_171, FUNC);
+    return res_171;
 }
 
 static ast_list_t *maybe_starred_delimited() {
@@ -1645,13 +1934,21 @@ static ast_named_t *named_expression() {
     ast_expr_t *_expression;
     ast_named_t *alt_358;
 
-    res_358 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_358 = named_expression_1()) || (
             (_expression = expression()) &&
             (alt_358 = ast_unnamed(_expression)))
-    ) ? alt_358 : 0;
+    ) {
+        res_358 = alt_358;
+    } else {
+        restore(_pos);
+        res_358 = NULL;
+    }
 
-    return exit_frame(_pos, res_358, FUNC);
+    exit_frame(_pos, res_358, FUNC);
+    return res_358;
 }
 
 // NAME ':=' expression
@@ -1705,12 +2002,20 @@ static ast_expr_t *expression() {
     ast_expr_t *res_736;
     ast_expr_t *alt_736;
 
-    res_736 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_736 = conditional()) ||
         (alt_736 = disjunction())
-    ) ? alt_736 : 0;
+    ) {
+        res_736 = alt_736;
+    } else {
+        restore(_pos);
+        res_736 = NULL;
+    }
 
-    return exit_frame(_pos, res_736, FUNC);
+    exit_frame(_pos, res_736, FUNC);
+    return res_736;
 }
 
 // Construct a binary operation
@@ -1763,7 +2068,8 @@ static ast_expr_t *disjunction() {
     res_410 = max;
     insert_memo(_pos, 410, res_410);
 
-    return exit_frame(_pos, res_410, FUNC);
+    exit_frame(_pos, res_410, FUNC);
+    return res_410;
 }
 
 // disjunction 'or' conjunction
@@ -1818,7 +2124,8 @@ static ast_expr_t *conjunction() {
     res_462 = max;
     insert_memo(_pos, 462, res_462);
 
-    return exit_frame(_pos, res_462, FUNC);
+    exit_frame(_pos, res_462, FUNC);
+    return res_462;
 }
 
 // conjunction 'and' inversion
@@ -1849,12 +2156,20 @@ static ast_expr_t *inversion() {
     ast_expr_t *res_963;
     ast_expr_t *alt_963;
 
-    res_963 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_963 = inversion_1()) ||
         (alt_963 = comparison())
-    ) ? alt_963 : 0;
+    ) {
+        res_963 = alt_963;
+    } else {
+        restore(_pos);
+        res_963 = NULL;
+    }
 
-    return exit_frame(_pos, res_963, FUNC);
+    exit_frame(_pos, res_963, FUNC);
+    return res_963;
 }
 
 // 'not' inversion
@@ -1883,12 +2198,20 @@ static ast_expr_t *comparison() {
     ast_expr_t *res_529;
     ast_expr_t *alt_529;
 
-    res_529 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_529 = comparison_1()) ||
         (alt_529 = bitwise_or())
-    ) ? alt_529 : 0;
+    ) {
+        res_529 = alt_529;
+    } else {
+        restore(_pos);
+        res_529 = NULL;
+    }
 
-    return exit_frame(_pos, res_529, FUNC);
+    exit_frame(_pos, res_529, FUNC);
+    return res_529;
 }
 
 // bitwise_or comparison_pair+
@@ -2054,7 +2377,8 @@ static ast_expr_t *bitwise_or() {
     res_201 = max;
     insert_memo(_pos, 201, res_201);
 
-    return exit_frame(_pos, res_201, FUNC);
+    exit_frame(_pos, res_201, FUNC);
+    return res_201;
 }
 
 // bitwise_or '|' bitwise_xor
@@ -2109,7 +2433,8 @@ static ast_expr_t *bitwise_xor() {
     res_565 = max;
     insert_memo(_pos, 565, res_565);
 
-    return exit_frame(_pos, res_565, FUNC);
+    exit_frame(_pos, res_565, FUNC);
+    return res_565;
 }
 
 // bitwise_xor '^' bitwise_and
@@ -2164,7 +2489,8 @@ static ast_expr_t *bitwise_and() {
     res_417 = max;
     insert_memo(_pos, 417, res_417);
 
-    return exit_frame(_pos, res_417, FUNC);
+    exit_frame(_pos, res_417, FUNC);
+    return res_417;
 }
 
 // bitwise_and '&' bitwise_shift
@@ -2221,7 +2547,8 @@ static ast_expr_t *bitwise_shift() {
     res_532 = max;
     insert_memo(_pos, 532, res_532);
 
-    return exit_frame(_pos, res_532, FUNC);
+    exit_frame(_pos, res_532, FUNC);
+    return res_532;
 }
 
 // bitwise_shift '<<' sum
@@ -2296,7 +2623,8 @@ static ast_expr_t *sum() {
     res_252 = max;
     insert_memo(_pos, 252, res_252);
 
-    return exit_frame(_pos, res_252, FUNC);
+    exit_frame(_pos, res_252, FUNC);
+    return res_252;
 }
 
 // sum '+' term
@@ -2377,7 +2705,8 @@ static ast_expr_t *term() {
     res_460 = max;
     insert_memo(_pos, 460, res_460);
 
-    return exit_frame(_pos, res_460, FUNC);
+    exit_frame(_pos, res_460, FUNC);
+    return res_460;
 }
 
 // term '*' pipeline
@@ -2504,7 +2833,8 @@ static ast_expr_t *pipeline() {
     res_274 = max;
     insert_memo(_pos, 274, res_274);
 
-    return exit_frame(_pos, res_274, FUNC);
+    exit_frame(_pos, res_274, FUNC);
+    return res_274;
 }
 
 // pipeline '->' factor
@@ -2542,15 +2872,23 @@ static ast_expr_t *factor() {
     ast_expr_t *res_983;
     ast_expr_t *alt_983;
 
-    res_983 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_983 = factor_1()) ||
         (alt_983 = factor_2()) ||
         (alt_983 = factor_3()) ||
         (alt_983 = power())
-    ) ? alt_983 : 0;
+    ) {
+        res_983 = alt_983;
+    } else {
+        restore(_pos);
+        res_983 = NULL;
+    }
 
     insert_memo(_pos, 983, res_983);
-    return exit_frame(_pos, res_983, FUNC);
+    exit_frame(_pos, res_983, FUNC);
+    return res_983;
 }
 
 // '+' factor
@@ -2626,14 +2964,22 @@ static ast_expr_t *power() {
     ast_primary_t *_primary;
     ast_expr_t *alt_757;
 
-    res_757 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_757 = power_1()) || (
             (_primary = primary()) &&
             (alt_757 = ast_primary_expr(_primary)))
-    ) ? alt_757 : 0;
+    ) {
+        res_757 = alt_757;
+    } else {
+        restore(_pos);
+        res_757 = NULL;
+    }
 
     insert_memo(_pos, 757, res_757);
-    return exit_frame(_pos, res_757, FUNC);
+    exit_frame(_pos, res_757, FUNC);
+    return res_757;
 }
 
 // primary '**' factor
@@ -2692,7 +3038,8 @@ static ast_primary_t *primary() {
     res_178 = max;
     insert_memo(_pos, 178, res_178);
 
-    return exit_frame(_pos, res_178, FUNC);
+    exit_frame(_pos, res_178, FUNC);
+    return res_178;
 }
 
 // primary '.' NAME
@@ -2751,12 +3098,20 @@ static void *list_item() {
     void *res_756;
     void *alt_756;
 
-    res_756 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_756 = starred_expression()) ||
         (alt_756 = named_expression())
-    ) ? alt_756 : 0;
+    ) {
+        res_756 = alt_756;
+    } else {
+        restore(_pos);
+        res_756 = NULL;
+    }
 
-    return exit_frame(_pos, res_756, FUNC);
+    exit_frame(_pos, res_756, FUNC);
+    return res_756;
 }
 
 // list_items:
@@ -2768,12 +3123,20 @@ static ast_list_t *list_items() {
     ast_list_t *res_215;
     ast_list_t *_list_items;
 
-    res_215 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_list_items = list_item_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _list_items : 0;
+    ) {
+        res_215 = _list_items;
+    } else {
+        restore(_pos);
+        res_215 = NULL;
+    }
 
-    return exit_frame(_pos, res_215, FUNC);
+    exit_frame(_pos, res_215, FUNC);
+    return res_215;
 }
 
 static ast_list_t *list_item_delimited() {
@@ -2843,12 +3206,20 @@ static void *typed_parameter() {
     token_t *_name;
     void *_colon_expression;
 
-    res_868 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_name = consume(3, "NAME")) &&
         (_colon_expression = typed_parameter_2(), 1)
-    ) ? node() : 0;
+    ) {
+        res_868 = node();
+    } else {
+        restore(_pos);
+        res_868 = NULL;
+    }
 
-    return exit_frame(_pos, res_868, FUNC);
+    exit_frame(_pos, res_868, FUNC);
+    return res_868;
 }
 
 // ':' expression
@@ -2878,13 +3249,21 @@ static void *builder_parameter() {
     void *res_789;
     void *alt_789;
 
-    res_789 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_789 = builder_parameter_1()) ||
         (alt_789 = builder_parameter_2()) ||
         (alt_789 = builder_parameter_3())
-    ) ? alt_789 : 0;
+    ) {
+        res_789 = alt_789;
+    } else {
+        restore(_pos);
+        res_789 = NULL;
+    }
 
-    return exit_frame(_pos, res_789, FUNC);
+    exit_frame(_pos, res_789, FUNC);
+    return res_789;
 }
 
 // typed_parameter ['=' expression]
@@ -2896,12 +3275,20 @@ static void *builder_parameter_1() {
     void *_typed_parameter;
     void *_assign_expression;
 
-    res_887 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_typed_parameter = typed_parameter()) &&
         (_assign_expression = builder_parameter_1_2(), 1)
-    ) ? node() : 0;
+    ) {
+        res_887 = node();
+    } else {
+        restore(_pos);
+        res_887 = NULL;
+    }
 
-    return exit_frame(_pos, res_887, FUNC);
+    exit_frame(_pos, res_887, FUNC);
+    return res_887;
 }
 
 // '=' expression
@@ -2962,12 +3349,20 @@ static void *simple_parameter() {
     token_t *_name;
     void *_assign_expression;
 
-    res_524 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_name = consume(3, "NAME")) &&
         (_assign_expression = simple_parameter_2(), 1)
-    ) ? node() : 0;
+    ) {
+        res_524 = node();
+    } else {
+        restore(_pos);
+        res_524 = NULL;
+    }
 
-    return exit_frame(_pos, res_524, FUNC);
+    exit_frame(_pos, res_524, FUNC);
+    return res_524;
 }
 
 // '=' expression
@@ -3088,14 +3483,22 @@ static ast_primary_t *builder_expression_1() {
     void *_builder_parameters;
     void *_block_suite;
 
-    res_254 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_name = consume(3, "NAME")) &&
         (_builder_generics = builder_generics(), 1) &&
         (_builder_parameters = builder_parameters(), 1) &&
         (_block_suite = block_suite())
-    ) ? node() : 0;
+    ) {
+        res_254 = node();
+    } else {
+        restore(_pos);
+        res_254 = NULL;
+    }
 
-    return exit_frame(_pos, res_254, FUNC);
+    exit_frame(_pos, res_254, FUNC);
+    return res_254;
 }
 
 // NAME ','.simple_parameter+ ':' expression
@@ -3108,14 +3511,22 @@ static ast_primary_t *builder_expression_2() {
     ast_list_t *_simple_parameters;
     ast_expr_t *_expression;
 
-    res_256 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_name = consume(3, "NAME")) &&
         (_simple_parameters = simple_parameter_delimited()) &&
         (consume(9, ":")) &&
         (_expression = expression())
-    ) ? node() : 0;
+    ) {
+        res_256 = node();
+    } else {
+        restore(_pos);
+        res_256 = NULL;
+    }
 
-    return exit_frame(_pos, res_256, FUNC);
+    exit_frame(_pos, res_256, FUNC);
+    return res_256;
 }
 
 static ast_list_t *simple_parameter_delimited() {
@@ -3188,7 +3599,9 @@ static ast_primary_t *atom() {
     token_t *_string;
     ast_primary_t *alt_753;
 
-    res_753 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_753 = paren_expression()) ||
         (alt_753 = list_expression()) ||
         (alt_753 = builder_expression()) || (
@@ -3209,10 +3622,16 @@ static ast_primary_t *atom() {
         ) || (
             (consume(83, "False")) &&
             (alt_753 = ast_false()))
-    ) ? alt_753 : 0;
+    ) {
+        res_753 = alt_753;
+    } else {
+        restore(_pos);
+        res_753 = NULL;
+    }
 
     insert_memo(_pos, 753, res_753);
-    return exit_frame(_pos, res_753, FUNC);
+    exit_frame(_pos, res_753, FUNC);
+    return res_753;
 }
 
 

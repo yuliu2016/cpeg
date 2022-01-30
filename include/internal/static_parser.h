@@ -24,20 +24,15 @@ static inline void *palloc(size_t size) {
 }
 
 static inline int enter_frame(const char *f_rule) {
-    #ifdef PARSER_DEBUG
-        parser_enter_debug(p, f_rule);
-    #endif
-    return __p.errorcode == 0;
+#ifdef PARSER_DEBUG
+    parser_enter_debug(p, f_rule);
+#endif
 }
 
-static inline void *exit_frame(size_t f_pos, void *result, const char *f_rule) {
-    if (!result) {
-        __p.pos = f_pos;
-    }
-    #ifdef PARSER_DEBUG
-        parser_exit_debug(p, result, f_rule);
-    #endif
-    return result;
+static inline void exit_frame(size_t f_pos, void *result, const char *f_rule) {
+#ifdef PARSER_DEBUG
+    parser_exit_debug(p, result, f_rule);
+#endif
 }
 
 

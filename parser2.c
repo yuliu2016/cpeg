@@ -42,8 +42,8 @@ static double *sum() {
     size_t maxpos;
     double *max;
 
-
     enter_frame(FUNC);
+
     do {
         maxpos = pos();
         max = res_251;
@@ -60,7 +60,8 @@ static double *sum() {
     res_251 = max;
     insert_memo(_pos, 251, res_251);
 
-    return exit_frame(_pos, res_251, FUNC);
+    exit_frame(_pos, res_251, FUNC);
+    return res_251;
 }
 
 // sum '+' term
@@ -118,8 +119,8 @@ static double *term() {
     size_t maxpos;
     double *max;
 
-
     enter_frame(FUNC);
+
     do {
         maxpos = pos();
         max = res_460;
@@ -137,7 +138,8 @@ static double *term() {
     res_460 = max;
     insert_memo(_pos, 460, res_460);
 
-    return exit_frame(_pos, res_460, FUNC);
+    exit_frame(_pos, res_460, FUNC);
+    return res_460;
 }
 
 // term '*' factor
@@ -211,15 +213,23 @@ static double *factor() {
     double *res_983;
     double *alt_983;
 
-    res_983 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_983 = factor_1()) ||
         (alt_983 = factor_2()) ||
         (alt_983 = factor_3()) ||
         (alt_983 = power())
-    ) ? alt_983 : 0;
+    ) {
+        res_983 = alt_983;
+    } else {
+        restore(_pos);
+        res_983 = NULL;
+    }
 
     insert_memo(_pos, 983, res_983);
-    return exit_frame(_pos, res_983, FUNC);
+    exit_frame(_pos, res_983, FUNC);
+    return res_983;
 }
 
 // '+' factor
@@ -285,13 +295,21 @@ static double *power() {
     double *res_757;
     double *alt_757;
 
-    res_757 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_757 = power_1()) ||
         (alt_757 = atom())
-    ) ? alt_757 : 0;
+    ) {
+        res_757 = alt_757;
+    } else {
+        restore(_pos);
+        res_757 = NULL;
+    }
 
     insert_memo(_pos, 757, res_757);
-    return exit_frame(_pos, res_757, FUNC);
+    exit_frame(_pos, res_757, FUNC);
+    return res_757;
 }
 
 // atom '**' factor
@@ -321,12 +339,20 @@ static ast_list_t *parameters() {
     ast_list_t *res_106;
     ast_list_t *_sums;
 
-    res_106 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (_sums = sum_delimited()) &&
         (consume(7, ","), 1)
-    ) ? _sums : 0;
+    ) {
+        res_106 = _sums;
+    } else {
+        restore(_pos);
+        res_106 = NULL;
+    }
 
-    return exit_frame(_pos, res_106, FUNC);
+    exit_frame(_pos, res_106, FUNC);
+    return res_106;
 }
 
 static ast_list_t *sum_delimited() {
@@ -369,7 +395,9 @@ static double *atom() {
     token_t *_number;
     double *alt_753;
 
-    res_753 = enter_frame(FUNC) && (
+    enter_frame(FUNC);
+
+    if (
         (alt_753 = atom_1()) ||
         (alt_753 = atom_2()) || (
             (_name = consume(3, "NAME")) &&
@@ -377,10 +405,16 @@ static double *atom() {
         ) || (
             (_number = consume(4, "NUMBER")) &&
             (alt_753 = to_double(p, _number)))
-    ) ? alt_753 : 0;
+    ) {
+        res_753 = alt_753;
+    } else {
+        restore(_pos);
+        res_753 = NULL;
+    }
 
     insert_memo(_pos, 753, res_753);
-    return exit_frame(_pos, res_753, FUNC);
+    exit_frame(_pos, res_753, FUNC);
+    return res_753;
 }
 
 // '(' sum ')'
