@@ -306,15 +306,20 @@ static ast_list_t *parameters() {
 static ast_list_t *sum_delimited() {
     double *_sum = sum();
     if (!_sum) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _sum);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_sum = sum()));
+    } while (
+        consume(7, ",") &&
+        (_sum = sum())
+    );
+
     restore(_pos);
     return list;
 }

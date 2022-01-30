@@ -89,8 +89,8 @@ static ast_expr_t *inversion();
 static ast_expr_t *inversion_1();
 static ast_expr_t *comparison();
 static ast_expr_t *comparison_1();
-static ast_list_t *comparison_1_2_loop();
-static ast_expr_t *comparison_1_2();
+static ast_list_t *comparison_pair_loop();
+static ast_expr_t *comparison_pair();
 static int comparator();
 static int comparator_8();
 static int comparator_10();
@@ -219,10 +219,12 @@ static ast_list_t *line_statement_loop() {
     if (!_line_statement) {
         return 0;
     }
+
     ast_list_t *list = ast_list_new();
     do {
         ast_list_append(list, _line_statement);
     } while ((_line_statement = line_statement()));
+
     return list;
 }
 
@@ -290,15 +292,20 @@ static ast_list_t *simple_statements() {
 static ast_list_t *simple_statement_delimited() {
     ast_stmt_t *_simple_statement = simple_statement();
     if (!_simple_statement) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _simple_statement);
         _pos = pos();
-    } while (consume(12, ";") &&
-            (_simple_statement = simple_statement()));
+    } while (
+        consume(12, ";") &&
+        (_simple_statement = simple_statement())
+    );
+
     restore(_pos);
     return list;
 }
@@ -611,15 +618,20 @@ static ast_list_t *targets() {
 static ast_list_t *target_delimited() {
     void *_target = target();
     if (!_target) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _target);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_target = target()));
+    } while (
+        consume(7, ",") &&
+        (_target = target())
+    );
+
     restore(_pos);
     return list;
 }
@@ -693,10 +705,12 @@ static ast_list_t *assignment_2_1_loop() {
     if (!_targets_assign) {
         return 0;
     }
+
     ast_list_t *list = ast_list_new();
     do {
         ast_list_append(list, _targets_assign);
     } while ((_targets_assign = assignment_2_1()));
+
     return list;
 }
 
@@ -839,9 +853,11 @@ static void *if_statement() {
 static ast_list_t *elif_statement_loop() {
     ast_list_t *list = ast_list_new();
     void *_elif_statement;
+
     while ((_elif_statement = elif_statement())) {
         ast_list_append(list, _elif_statement);
     }
+
     return list;
 }
 
@@ -942,15 +958,20 @@ static void *with_statement() {
 static ast_list_t *expression_as_name_delimited() {
     void *_expression_as_name = expression_as_name();
     if (!_expression_as_name) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _expression_as_name);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_expression_as_name = expression_as_name()));
+    } while (
+        consume(7, ",") &&
+        (_expression_as_name = expression_as_name())
+    );
+
     restore(_pos);
     return list;
 }
@@ -1122,10 +1143,12 @@ static ast_list_t *except_clause_loop() {
     if (!_except_clause) {
         return 0;
     }
+
     ast_list_t *list = ast_list_new();
     do {
         ast_list_append(list, _except_clause);
     } while ((_except_clause = except_clause()));
+
     return list;
 }
 
@@ -1158,15 +1181,20 @@ static void *invocation_2() {
 static ast_list_t *call_argument_delimited() {
     void *_call_argument = call_argument();
     if (!_call_argument) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _call_argument);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_call_argument = call_argument()));
+    } while (
+        consume(7, ",") &&
+        (_call_argument = call_argument())
+    );
+
     restore(_pos);
     return list;
 }
@@ -1277,15 +1305,20 @@ static ast_list_t *subscript() {
 static ast_list_t *slice_delimited() {
     void *_slice = slice();
     if (!_slice) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _slice);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_slice = slice()));
+    } while (
+        consume(7, ",") &&
+        (_slice = slice())
+    );
+
     restore(_pos);
     return list;
 }
@@ -1348,15 +1381,20 @@ static ast_list_t *expressions() {
 static ast_list_t *expression_delimited() {
     ast_expr_t *_expression = expression();
     if (!_expression) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _expression);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_expression = expression()));
+    } while (
+        consume(7, ",") &&
+        (_expression = expression())
+    );
+
     restore(_pos);
     return list;
 }
@@ -1408,15 +1446,20 @@ static ast_list_t *starred_expressions() {
 static ast_list_t *maybe_starred_delimited() {
     ast_expr_t *_maybe_starred = maybe_starred();
     if (!_maybe_starred) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _maybe_starred);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_maybe_starred = maybe_starred()));
+    } while (
+        consume(7, ",") &&
+        (_maybe_starred = maybe_starred())
+    );
+
     restore(_pos);
     return list;
 }
@@ -1656,7 +1699,7 @@ static ast_expr_t *inversion_1() {
 }
 
 // comparison:
-//     | bitwise_or (comparator bitwise_or)+
+//     | bitwise_or comparison_pair+
 //     | bitwise_or
 static ast_expr_t *comparison() {
     size_t _pos = pos();
@@ -1669,37 +1712,40 @@ static ast_expr_t *comparison() {
     return exit_frame(_pos, res_529, FUNC);
 }
 
-// bitwise_or (comparator bitwise_or)+
+// bitwise_or comparison_pair+
 static ast_expr_t *comparison_1() {
     size_t _pos = pos();
     ast_expr_t *_bitwise_or;
-    ast_list_t *_comparator_bitwise_ors;
+    ast_list_t *_comparison_pairs;
 
     if (
         (_bitwise_or = bitwise_or()) &&
-        (_comparator_bitwise_ors = comparison_1_2_loop())
+        (_comparison_pairs = comparison_pair_loop())
     ) {
-        return ast_comparison(_bitwise_or, _comparator_bitwise_ors);
+        return ast_comparison(_bitwise_or, _comparison_pairs);
     } else {
         restore(_pos);
         return NULL;
     }
 }
 
-static ast_list_t *comparison_1_2_loop() {
-    ast_expr_t *_comparator_bitwise_or = comparison_1_2();
-    if (!_comparator_bitwise_or) {
+static ast_list_t *comparison_pair_loop() {
+    ast_expr_t *_comparison_pair = comparison_pair();
+    if (!_comparison_pair) {
         return 0;
     }
+
     ast_list_t *list = ast_list_new();
     do {
-        ast_list_append(list, _comparator_bitwise_or);
-    } while ((_comparator_bitwise_or = comparison_1_2()));
+        ast_list_append(list, _comparison_pair);
+    } while ((_comparison_pair = comparison_pair()));
+
     return list;
 }
 
-// comparator bitwise_or
-static ast_expr_t *comparison_1_2() {
+// comparison_pair (inline):
+//     | comparator bitwise_or
+static ast_expr_t *comparison_pair() {
     size_t _pos = pos();
     int _comparator;
     ast_expr_t *_bitwise_or;
@@ -2488,15 +2534,20 @@ static ast_list_t *list_items() {
 static ast_list_t *list_item_delimited() {
     void *_list_item = list_item();
     if (!_list_item) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _list_item);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_list_item = list_item()));
+    } while (
+        consume(7, ",") &&
+        (_list_item = list_item())
+    );
+
     restore(_pos);
     return list;
 }
@@ -2711,15 +2762,20 @@ static void *builder_parameters_2() {
 static ast_list_t *builder_parameter_delimited() {
     void *_builder_parameter = builder_parameter();
     if (!_builder_parameter) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _builder_parameter);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_builder_parameter = builder_parameter()));
+    } while (
+        consume(7, ",") &&
+        (_builder_parameter = builder_parameter())
+    );
+
     restore(_pos);
     return list;
 }
@@ -2796,15 +2852,20 @@ static ast_primary_t *builder_expression_2() {
 static ast_list_t *simple_parameter_delimited() {
     void *_simple_parameter = simple_parameter();
     if (!_simple_parameter) {
-        return 0;
+        return NULL;
     }
+
     ast_list_t *list = ast_list_new();
     size_t _pos;
+
     do {
         ast_list_append(list, _simple_parameter);
         _pos = pos();
-    } while (consume(7, ",") &&
-            (_simple_parameter = simple_parameter()));
+    } while (
+        consume(7, ",") &&
+        (_simple_parameter = simple_parameter())
+    );
+
     restore(_pos);
     return list;
 }
