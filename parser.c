@@ -605,12 +605,14 @@ static ast_primary_t *t_primary() {
         max = res_255;
         insert_memo(_pos, 255, max);
         restore(_pos);
-        res_255 = (
+
+        if (
             (alt_255 = t_primary_1()) ||
             (alt_255 = t_primary_2()) ||
             (alt_255 = t_primary_3()) ||
             (alt_255 = t_primary_4())
-        ) ? alt_255 : 0;
+        ) res_255 = alt_255;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2058,10 +2060,12 @@ static ast_expr_t *disjunction() {
         max = res_410;
         insert_memo(_pos, 410, max);
         restore(_pos);
-        res_410 = (
+
+        if (
             (alt_410 = disjunction_1()) ||
             (alt_410 = conjunction())
-        ) ? alt_410 : 0;
+        ) res_410 = alt_410;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2114,10 +2118,12 @@ static ast_expr_t *conjunction() {
         max = res_462;
         insert_memo(_pos, 462, max);
         restore(_pos);
-        res_462 = (
+
+        if (
             (alt_462 = conjunction_1()) ||
             (alt_462 = inversion())
-        ) ? alt_462 : 0;
+        ) res_462 = alt_462;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2367,10 +2373,12 @@ static ast_expr_t *bitwise_or() {
         max = res_201;
         insert_memo(_pos, 201, max);
         restore(_pos);
-        res_201 = (
+
+        if (
             (alt_201 = bitwise_or_1()) ||
             (alt_201 = bitwise_xor())
-        ) ? alt_201 : 0;
+        ) res_201 = alt_201;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2423,10 +2431,12 @@ static ast_expr_t *bitwise_xor() {
         max = res_565;
         insert_memo(_pos, 565, max);
         restore(_pos);
-        res_565 = (
+
+        if (
             (alt_565 = bitwise_xor_1()) ||
             (alt_565 = bitwise_and())
-        ) ? alt_565 : 0;
+        ) res_565 = alt_565;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2479,10 +2489,12 @@ static ast_expr_t *bitwise_and() {
         max = res_417;
         insert_memo(_pos, 417, max);
         restore(_pos);
-        res_417 = (
+
+        if (
             (alt_417 = bitwise_and_1()) ||
             (alt_417 = bitwise_shift())
-        ) ? alt_417 : 0;
+        ) res_417 = alt_417;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2536,11 +2548,13 @@ static ast_expr_t *bitwise_shift() {
         max = res_532;
         insert_memo(_pos, 532, max);
         restore(_pos);
-        res_532 = (
+
+        if (
             (alt_532 = bitwise_shift_1()) ||
             (alt_532 = bitwise_shift_2()) ||
             (alt_532 = sum())
-        ) ? alt_532 : 0;
+        ) res_532 = alt_532;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2612,11 +2626,13 @@ static ast_expr_t *sum() {
         max = res_252;
         insert_memo(_pos, 252, max);
         restore(_pos);
-        res_252 = (
+
+        if (
             (alt_252 = sum_1()) ||
             (alt_252 = sum_2()) ||
             (alt_252 = term())
-        ) ? alt_252 : 0;
+        ) res_252 = alt_252;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2691,14 +2707,16 @@ static ast_expr_t *term() {
         max = res_460;
         insert_memo(_pos, 460, max);
         restore(_pos);
-        res_460 = (
+
+        if (
             (alt_460 = term_1()) ||
             (alt_460 = term_2()) ||
             (alt_460 = term_3()) ||
             (alt_460 = term_4()) ||
             (alt_460 = term_5()) ||
             (alt_460 = pipeline())
-        ) ? alt_460 : 0;
+        ) res_460 = alt_460;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -2823,10 +2841,12 @@ static ast_expr_t *pipeline() {
         max = res_274;
         insert_memo(_pos, 274, max);
         restore(_pos);
-        res_274 = (
+
+        if (
             (alt_274 = pipeline_1()) ||
             (alt_274 = factor())
-        ) ? alt_274 : 0;
+        ) res_274 = alt_274;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -3026,12 +3046,14 @@ static ast_primary_t *primary() {
         max = res_178;
         insert_memo(_pos, 178, max);
         restore(_pos);
-        res_178 = (
+
+        if (
             (alt_178 = primary_1()) ||
             (alt_178 = primary_2()) ||
             (alt_178 = primary_3()) ||
             (alt_178 = atom())
-        ) ? alt_178 : 0;
+        ) res_178 = alt_178;
+
     } while (pos() > maxpos);
 
     restore(maxpos);

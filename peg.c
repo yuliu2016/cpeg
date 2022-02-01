@@ -240,7 +240,7 @@ void parser_free_state(parser_t *p) {
 
 
 memo_t *new_memo(parser_t *p, int f_type, void *node, size_t end) {
-    memo_t *new_memo = parser_alloc(p, sizeof(memo_t));
+    memo_t *new_memo = mballoc(p->region, sizeof(memo_t));
     if (!new_memo) {
         return NULL;
     }

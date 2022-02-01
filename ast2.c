@@ -33,23 +33,23 @@ parameters[ast_list_t]:
     | ','.sum+ [','] { a }
     */
 
-double *binop_add(parser_t *p, double *a, double *b) {
-    double *r = parser_alloc(p, sizeof(double));
-    *r = *a + *b;
+static double *doubleptr(parser_t *p, double v) {
+    double *r = mballoc(p->region, sizeof(double));
+    if (r) *r = v;
     return r;
 }
 
+double *binop_add(parser_t *p, double *a, double *b) {
+    return doubleptr(p, *a + *b);
+}
+
 double *binop_sub(parser_t *p, double *a, double *b) {
-    double *r = parser_alloc(p, sizeof(double));
-    *r = *a - *b;
-    return r;
+    return doubleptr(p, *a - *b);
 }
 
 
 double *binop_mul(parser_t *p, double *a, double *b) {
-    double *r = parser_alloc(p, sizeof(double));
-    *r = *a * *b;
-    return r;
+    return doubleptr(p, *a * *b);
 }
 
 
@@ -58,25 +58,19 @@ double *binop_div(parser_t *p, double *a, double *b) {
         p->error = "Division by zero";
         return 0;
     }
-    double *r = parser_alloc(p, sizeof(double));
-    *r = *a / *b;
-    return r;
+    return doubleptr(p, *a / *b);
 }
 
 double *binop_mod(parser_t *p, double *a, double *b) {
     if (*b == 0) {
         return 0;
     }
-    double *r = parser_alloc(p, sizeof(double));
-    *r = fmod(*a, *b);
-    return r;
+    return doubleptr(p, fmod(*a, *b));
 }
 
 
 double *binop_pow(parser_t *p, double *a, double *b) {
-    double *r = parser_alloc(p, sizeof(double));
-    *r = pow(*a, *b);
-    return r;
+    return doubleptr(p, pow(*a, *b));
 }
 
 double *unary_plus(parser_t *p, double *a) {
@@ -84,9 +78,7 @@ double *unary_plus(parser_t *p, double *a) {
 }
 
 double *unary_minus(parser_t *p, double *a) {
-    double *r = parser_alloc(p, sizeof(double));
-    *r = -*a;
-    return r;
+    return doubleptr(p, -*a);
 }
 
 double *unary_not(parser_t *p, double *a) {
@@ -100,14 +92,11 @@ double *load_const(parser_t *p, token_t *token) {
     char *v = token_nullterm_view(token);
     double *r = 0;
     if (strncmp("pi", v, 3) == 0) {
-        r = parser_alloc(p, sizeof(double));
-        *r = 3.141592653589793; 
+        r = doubleptr(p, 3.141592653589793);
     } else if (strncmp("e", v, 2) == 0) {
-        r = parser_alloc(p, sizeof(double));
-        *r = 2.718281828459045; 
+        r = doubleptr(p, 2.718281828459045);
     } else if (strncmp("rand", v, 5) == 0) {
-         r = parser_alloc(p, sizeof(double));
-         *r = rand() / (double) RAND_MAX;
+        r = doubleptr(p, rand() / (double) RAND_MAX);
     }
     token_nullterm_restore();
     return r;
@@ -201,15 +190,12 @@ double *call_func(parser_t *p, token_t *name, ast_list_t *params) {
         return 0;
     }
 
-    double *res = parser_alloc(p, sizeof(double));
-    *res = r;
-    return res;
+    return doubleptr(p, r);
 }
 
 double *to_double(parser_t *p, token_t *tok) {
-    double *r = parser_alloc(p, sizeof(double));
     char *v = token_nullterm_view(tok);
-    *r = strtod(v, NULL);
+    double *r = doubleptr(p, strtod(v, NULL));
     token_nullterm_restore();
     return r;
 }

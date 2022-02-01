@@ -49,11 +49,13 @@ static double *sum() {
         max = res_251;
         insert_memo(_pos, 251, max);
         restore(_pos);
-        res_251 = (
+
+        if (
             (alt_251 = sum_1()) ||
             (alt_251 = sum_2()) ||
             (alt_251 = term())
-        ) ? alt_251 : 0;
+        ) res_251 = alt_251;
+
     } while (pos() > maxpos);
 
     restore(maxpos);
@@ -126,12 +128,14 @@ static double *term() {
         max = res_460;
         insert_memo(_pos, 460, max);
         restore(_pos);
-        res_460 = (
+
+        if (
             (alt_460 = term_1()) ||
             (alt_460 = term_2()) ||
             (alt_460 = term_3()) ||
             (alt_460 = factor())
-        ) ? alt_460 : 0;
+        ) res_460 = alt_460;
+
     } while (pos() > maxpos);
 
     restore(maxpos);

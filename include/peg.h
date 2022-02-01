@@ -131,10 +131,6 @@ memo_t *parser_get_memo(parser_t *p, int f_type);
 
 void parser_verify_eof(parser_t *p);
 
-static inline void *parser_alloc(parser_t *p, size_t size) {
-    return mballoc(p->region, size);
-}
-
 
 // Parser debugging tools
 
