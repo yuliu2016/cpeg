@@ -185,7 +185,7 @@ static ast_list_t *single_input() {
         res_251 = NULL;
     }
 
-    exit_frame(_pos, res_251, FUNC);
+    exit_frame(res_251, FUNC);
     return res_251;
 }
 
@@ -209,7 +209,7 @@ static ast_list_t *file_input() {
         res_535 = NULL;
     }
 
-    exit_frame(_pos, res_535, FUNC);
+    exit_frame(res_535, FUNC);
     return res_535;
 }
 
@@ -234,7 +234,7 @@ static ast_list_t *eval_input() {
         res_471 = NULL;
     }
 
-    exit_frame(_pos, res_471, FUNC);
+    exit_frame(res_471, FUNC);
     return res_471;
 }
 
@@ -258,7 +258,7 @@ static ast_list_t *statement_list() {
         res_398 = NULL;
     }
 
-    exit_frame(_pos, res_398, FUNC);
+    exit_frame(res_398, FUNC);
     return res_398;
 }
 
@@ -298,7 +298,7 @@ static ast_list_t *line_statement() {
         res_260 = NULL;
     }
 
-    exit_frame(_pos, res_260, FUNC);
+    exit_frame(res_260, FUNC);
     return res_260;
 }
 
@@ -357,7 +357,7 @@ static ast_list_t *simple_statements() {
         res_129 = NULL;
     }
 
-    exit_frame(_pos, res_129, FUNC);
+    exit_frame(res_129, FUNC);
     return res_129;
 }
 
@@ -444,7 +444,7 @@ static ast_stmt_t *simple_statement() {
         res_930 = NULL;
     }
 
-    exit_frame(_pos, res_930, FUNC);
+    exit_frame(res_930, FUNC);
     return res_930;
 }
 
@@ -542,7 +542,7 @@ static void *target() {
     }
 
     insert_memo(_pos, 161, res_161);
-    exit_frame(_pos, res_161, FUNC);
+    exit_frame(res_161, FUNC);
     return res_161;
 }
 
@@ -619,7 +619,7 @@ static ast_primary_t *t_primary() {
     res_255 = max;
     insert_memo(_pos, 255, res_255);
 
-    exit_frame(_pos, res_255, FUNC);
+    exit_frame(res_255, FUNC);
     return res_255;
 }
 
@@ -729,7 +729,7 @@ static ast_list_t *targets() {
         res_882 = NULL;
     }
 
-    exit_frame(_pos, res_882, FUNC);
+    exit_frame(res_882, FUNC);
     return res_882;
 }
 
@@ -778,7 +778,7 @@ static void *assignment() {
         res_733 = NULL;
     }
 
-    exit_frame(_pos, res_733, FUNC);
+    exit_frame(res_733, FUNC);
     return res_733;
 }
 
@@ -969,7 +969,7 @@ static void *compound_statement() {
         res_147 = NULL;
     }
 
-    exit_frame(_pos, res_147, FUNC);
+    exit_frame(res_147, FUNC);
     return res_147;
 }
 
@@ -1000,7 +1000,7 @@ static void *if_statement() {
         res_621 = NULL;
     }
 
-    exit_frame(_pos, res_621, FUNC);
+    exit_frame(res_621, FUNC);
     return res_621;
 }
 
@@ -1038,7 +1038,7 @@ static void *elif_statement() {
         res_660 = NULL;
     }
 
-    exit_frame(_pos, res_660, FUNC);
+    exit_frame(res_660, FUNC);
     return res_660;
 }
 
@@ -1067,7 +1067,7 @@ static void *while_statement() {
         res_865 = NULL;
     }
 
-    exit_frame(_pos, res_865, FUNC);
+    exit_frame(res_865, FUNC);
     return res_865;
 }
 
@@ -1099,7 +1099,7 @@ static void *for_statement() {
         res_465 = NULL;
     }
 
-    exit_frame(_pos, res_465, FUNC);
+    exit_frame(res_465, FUNC);
     return res_465;
 }
 
@@ -1126,7 +1126,7 @@ static void *try_statement() {
         res_195 = NULL;
     }
 
-    exit_frame(_pos, res_195, FUNC);
+    exit_frame(res_195, FUNC);
     return res_195;
 }
 
@@ -1150,7 +1150,7 @@ static void *try_statement_3() {
         res_663 = NULL;
     }
 
-    exit_frame(_pos, res_663, FUNC);
+    exit_frame(res_663, FUNC);
     return res_663;
 }
 
@@ -1177,7 +1177,7 @@ static void *with_statement() {
         res_214 = NULL;
     }
 
-    exit_frame(_pos, res_214, FUNC);
+    exit_frame(res_214, FUNC);
     return res_214;
 }
 
@@ -1224,7 +1224,7 @@ static void *expression_as_name() {
         res_169 = NULL;
     }
 
-    exit_frame(_pos, res_169, FUNC);
+    exit_frame(res_169, FUNC);
     return res_169;
 }
 
@@ -1266,7 +1266,7 @@ static void *block_suite() {
         res_206 = NULL;
     }
 
-    exit_frame(_pos, res_206, FUNC);
+    exit_frame(res_206, FUNC);
     return res_206;
 }
 
@@ -1292,7 +1292,7 @@ static void *block_suite_1() {
         res_560 = NULL;
     }
 
-    exit_frame(_pos, res_560, FUNC);
+    exit_frame(res_560, FUNC);
     return res_560;
 }
 
@@ -1317,7 +1317,7 @@ static void *block_suite_2() {
         res_561 = NULL;
     }
 
-    exit_frame(_pos, res_561, FUNC);
+    exit_frame(res_561, FUNC);
     return res_561;
 }
 
@@ -1343,7 +1343,7 @@ static void *suite() {
         res_64 = NULL;
     }
 
-    exit_frame(_pos, res_64, FUNC);
+    exit_frame(res_64, FUNC);
     return res_64;
 }
 
@@ -1367,7 +1367,7 @@ static void *suite_1() {
         res_98 = NULL;
     }
 
-    exit_frame(_pos, res_98, FUNC);
+    exit_frame(res_98, FUNC);
     return res_98;
 }
 
@@ -1428,7 +1428,7 @@ static void *except_clause() {
         res_357 = NULL;
     }
 
-    exit_frame(_pos, res_357, FUNC);
+    exit_frame(res_357, FUNC);
     return res_357;
 }
 
@@ -1456,7 +1456,7 @@ static void *except_suite() {
         res_810 = NULL;
     }
 
-    exit_frame(_pos, res_810, FUNC);
+    exit_frame(res_810, FUNC);
     return res_810;
 }
 
@@ -1496,7 +1496,7 @@ static void *invocation() {
         res_944 = NULL;
     }
 
-    exit_frame(_pos, res_944, FUNC);
+    exit_frame(res_944, FUNC);
     return res_944;
 }
 
@@ -1520,7 +1520,7 @@ static void *invocation_2() {
         res_35 = NULL;
     }
 
-    exit_frame(_pos, res_35, FUNC);
+    exit_frame(res_35, FUNC);
     return res_35;
 }
 
@@ -1573,7 +1573,7 @@ static void *call_argument() {
         res_78 = NULL;
     }
 
-    exit_frame(_pos, res_78, FUNC);
+    exit_frame(res_78, FUNC);
     return res_78;
 }
 
@@ -1668,7 +1668,7 @@ static ast_list_t *subscript() {
         res_379 = NULL;
     }
 
-    exit_frame(_pos, res_379, FUNC);
+    exit_frame(res_379, FUNC);
     return res_379;
 }
 
@@ -1715,7 +1715,7 @@ static void *slice() {
         res_418 = NULL;
     }
 
-    exit_frame(_pos, res_418, FUNC);
+    exit_frame(res_418, FUNC);
     return res_418;
 }
 
@@ -1742,7 +1742,7 @@ static void *slice_1() {
         res_292 = NULL;
     }
 
-    exit_frame(_pos, res_292, FUNC);
+    exit_frame(res_292, FUNC);
     return res_292;
 }
 
@@ -1767,7 +1767,7 @@ static void *slice_expression() {
         res_421 = NULL;
     }
 
-    exit_frame(_pos, res_421, FUNC);
+    exit_frame(res_421, FUNC);
     return res_421;
 }
 
@@ -1792,7 +1792,7 @@ static ast_list_t *expressions() {
         res_779 = NULL;
     }
 
-    exit_frame(_pos, res_779, FUNC);
+    exit_frame(res_779, FUNC);
     return res_779;
 }
 
@@ -1856,7 +1856,7 @@ static ast_expr_t *maybe_starred() {
         res_984 = NULL;
     }
 
-    exit_frame(_pos, res_984, FUNC);
+    exit_frame(res_984, FUNC);
     return res_984;
 }
 
@@ -1881,7 +1881,7 @@ static ast_list_t *starred_expressions() {
         res_171 = NULL;
     }
 
-    exit_frame(_pos, res_171, FUNC);
+    exit_frame(res_171, FUNC);
     return res_171;
 }
 
@@ -1949,7 +1949,7 @@ static ast_named_t *named_expression() {
         res_358 = NULL;
     }
 
-    exit_frame(_pos, res_358, FUNC);
+    exit_frame(res_358, FUNC);
     return res_358;
 }
 
@@ -2016,7 +2016,7 @@ static ast_expr_t *expression() {
         res_736 = NULL;
     }
 
-    exit_frame(_pos, res_736, FUNC);
+    exit_frame(res_736, FUNC);
     return res_736;
 }
 
@@ -2072,7 +2072,7 @@ static ast_expr_t *disjunction() {
     res_410 = max;
     insert_memo(_pos, 410, res_410);
 
-    exit_frame(_pos, res_410, FUNC);
+    exit_frame(res_410, FUNC);
     return res_410;
 }
 
@@ -2130,7 +2130,7 @@ static ast_expr_t *conjunction() {
     res_462 = max;
     insert_memo(_pos, 462, res_462);
 
-    exit_frame(_pos, res_462, FUNC);
+    exit_frame(res_462, FUNC);
     return res_462;
 }
 
@@ -2174,7 +2174,7 @@ static ast_expr_t *inversion() {
         res_963 = NULL;
     }
 
-    exit_frame(_pos, res_963, FUNC);
+    exit_frame(res_963, FUNC);
     return res_963;
 }
 
@@ -2216,7 +2216,7 @@ static ast_expr_t *comparison() {
         res_529 = NULL;
     }
 
-    exit_frame(_pos, res_529, FUNC);
+    exit_frame(res_529, FUNC);
     return res_529;
 }
 
@@ -2385,7 +2385,7 @@ static ast_expr_t *bitwise_or() {
     res_201 = max;
     insert_memo(_pos, 201, res_201);
 
-    exit_frame(_pos, res_201, FUNC);
+    exit_frame(res_201, FUNC);
     return res_201;
 }
 
@@ -2443,7 +2443,7 @@ static ast_expr_t *bitwise_xor() {
     res_565 = max;
     insert_memo(_pos, 565, res_565);
 
-    exit_frame(_pos, res_565, FUNC);
+    exit_frame(res_565, FUNC);
     return res_565;
 }
 
@@ -2501,7 +2501,7 @@ static ast_expr_t *bitwise_and() {
     res_417 = max;
     insert_memo(_pos, 417, res_417);
 
-    exit_frame(_pos, res_417, FUNC);
+    exit_frame(res_417, FUNC);
     return res_417;
 }
 
@@ -2561,7 +2561,7 @@ static ast_expr_t *bitwise_shift() {
     res_532 = max;
     insert_memo(_pos, 532, res_532);
 
-    exit_frame(_pos, res_532, FUNC);
+    exit_frame(res_532, FUNC);
     return res_532;
 }
 
@@ -2639,7 +2639,7 @@ static ast_expr_t *sum() {
     res_252 = max;
     insert_memo(_pos, 252, res_252);
 
-    exit_frame(_pos, res_252, FUNC);
+    exit_frame(res_252, FUNC);
     return res_252;
 }
 
@@ -2723,7 +2723,7 @@ static ast_expr_t *term() {
     res_460 = max;
     insert_memo(_pos, 460, res_460);
 
-    exit_frame(_pos, res_460, FUNC);
+    exit_frame(res_460, FUNC);
     return res_460;
 }
 
@@ -2853,7 +2853,7 @@ static ast_expr_t *pipeline() {
     res_274 = max;
     insert_memo(_pos, 274, res_274);
 
-    exit_frame(_pos, res_274, FUNC);
+    exit_frame(res_274, FUNC);
     return res_274;
 }
 
@@ -2907,7 +2907,7 @@ static ast_expr_t *factor() {
     }
 
     insert_memo(_pos, 983, res_983);
-    exit_frame(_pos, res_983, FUNC);
+    exit_frame(res_983, FUNC);
     return res_983;
 }
 
@@ -2998,7 +2998,7 @@ static ast_expr_t *power() {
     }
 
     insert_memo(_pos, 757, res_757);
-    exit_frame(_pos, res_757, FUNC);
+    exit_frame(res_757, FUNC);
     return res_757;
 }
 
@@ -3060,7 +3060,7 @@ static ast_primary_t *primary() {
     res_178 = max;
     insert_memo(_pos, 178, res_178);
 
-    exit_frame(_pos, res_178, FUNC);
+    exit_frame(res_178, FUNC);
     return res_178;
 }
 
@@ -3132,7 +3132,7 @@ static void *list_item() {
         res_756 = NULL;
     }
 
-    exit_frame(_pos, res_756, FUNC);
+    exit_frame(res_756, FUNC);
     return res_756;
 }
 
@@ -3157,7 +3157,7 @@ static ast_list_t *list_items() {
         res_215 = NULL;
     }
 
-    exit_frame(_pos, res_215, FUNC);
+    exit_frame(res_215, FUNC);
     return res_215;
 }
 
@@ -3240,7 +3240,7 @@ static void *typed_parameter() {
         res_868 = NULL;
     }
 
-    exit_frame(_pos, res_868, FUNC);
+    exit_frame(res_868, FUNC);
     return res_868;
 }
 
@@ -3284,7 +3284,7 @@ static void *builder_parameter() {
         res_789 = NULL;
     }
 
-    exit_frame(_pos, res_789, FUNC);
+    exit_frame(res_789, FUNC);
     return res_789;
 }
 
@@ -3309,7 +3309,7 @@ static void *builder_parameter_1() {
         res_887 = NULL;
     }
 
-    exit_frame(_pos, res_887, FUNC);
+    exit_frame(res_887, FUNC);
     return res_887;
 }
 
@@ -3383,7 +3383,7 @@ static void *simple_parameter() {
         res_524 = NULL;
     }
 
-    exit_frame(_pos, res_524, FUNC);
+    exit_frame(res_524, FUNC);
     return res_524;
 }
 
@@ -3519,7 +3519,7 @@ static ast_primary_t *builder_expression_1() {
         res_254 = NULL;
     }
 
-    exit_frame(_pos, res_254, FUNC);
+    exit_frame(res_254, FUNC);
     return res_254;
 }
 
@@ -3547,7 +3547,7 @@ static ast_primary_t *builder_expression_2() {
         res_256 = NULL;
     }
 
-    exit_frame(_pos, res_256, FUNC);
+    exit_frame(res_256, FUNC);
     return res_256;
 }
 
@@ -3652,7 +3652,7 @@ static ast_primary_t *atom() {
     }
 
     insert_memo(_pos, 753, res_753);
-    exit_frame(_pos, res_753, FUNC);
+    exit_frame(res_753, FUNC);
     return res_753;
 }
 

@@ -29,7 +29,7 @@ static inline int enter_frame(const char *f_rule) {
 #endif
 }
 
-static inline void exit_frame(size_t f_pos, void *result, const char *f_rule) {
+static inline void exit_frame(void *result, const char *f_rule) {
 #ifdef PARSER_DEBUG
     parser_exit_debug(p, result, f_rule);
 #endif

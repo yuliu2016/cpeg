@@ -62,7 +62,7 @@ static double *sum() {
     res_251 = max;
     insert_memo(_pos, 251, res_251);
 
-    exit_frame(_pos, res_251, FUNC);
+    exit_frame(res_251, FUNC);
     return res_251;
 }
 
@@ -142,7 +142,7 @@ static double *term() {
     res_460 = max;
     insert_memo(_pos, 460, res_460);
 
-    exit_frame(_pos, res_460, FUNC);
+    exit_frame(res_460, FUNC);
     return res_460;
 }
 
@@ -232,7 +232,7 @@ static double *factor() {
     }
 
     insert_memo(_pos, 983, res_983);
-    exit_frame(_pos, res_983, FUNC);
+    exit_frame(res_983, FUNC);
     return res_983;
 }
 
@@ -312,7 +312,7 @@ static double *power() {
     }
 
     insert_memo(_pos, 757, res_757);
-    exit_frame(_pos, res_757, FUNC);
+    exit_frame(res_757, FUNC);
     return res_757;
 }
 
@@ -355,7 +355,7 @@ static ast_list_t *parameters() {
         res_106 = NULL;
     }
 
-    exit_frame(_pos, res_106, FUNC);
+    exit_frame(res_106, FUNC);
     return res_106;
 }
 
@@ -417,7 +417,7 @@ static double *atom() {
     }
 
     insert_memo(_pos, 753, res_753);
-    exit_frame(_pos, res_753, FUNC);
+    exit_frame(res_753, FUNC);
     return res_753;
 }
 
