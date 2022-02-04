@@ -55,7 +55,7 @@ double *binop_mul(parser_t *p, double *a, double *b) {
 
 double *binop_div(parser_t *p, double *a, double *b) {
     if (*b == 0) {
-        p->error = "Division by zero";
+        p->errorcode = -1;
         return 0;
     }
     return doubleptr(p, *a / *b);
@@ -82,7 +82,7 @@ double *unary_minus(parser_t *p, double *a) {
 }
 
 double *unary_not(parser_t *p, double *a) {
-    p->error = "~ operator not allowed";
+    p->errorcode = -1;
     return 0;
 }
 

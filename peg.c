@@ -104,6 +104,10 @@ token_t *parser_fetch_token(parser_t *p, size_t pos) {
         p->lexer_read_token(ls);
         if (ls->next_token) {
             parser_append_token(p);
+        } else if (ls->error) {
+            parser_set_error(p, 1, ls->error);
+            // prevent freeing pointer twice
+            ls->error = NULL;
         }
     }
 
@@ -213,7 +217,7 @@ void parser_init_state(
     p->region = region;
     p->pos = 0;
     p->level = 0;
-    p->error = 0;
+    p->error_object = 0;
     p->tk_indices = tk_indices;
     p->errorcode = 0;
 
@@ -235,6 +239,9 @@ void parser_init_state(
 
 void parser_free_state(parser_t *p) {
     lexer_free_state(&p->lexer_state);
+    if (p->errorcode == 1) {
+        free(p->error_object);
+    }
     mbpurge(p->region);
 }
 
@@ -305,6 +312,15 @@ memo_t *parser_get_memo(parser_t *p, int f_type) {
 }
 
 
+void parser_set_error(parser_t *p, int code, void *object) {
+    if (p->errorcode) {
+        fprintf(stderr, "fatal: parser error code not reset");
+        exit(EXIT_FAILURE);
+    }
+    p->errorcode = code;
+    p->error_object = object;
+}
+
 
 void parser_verify_eof(parser_t *p) {
     lexer_t *ls = &p->lexer_state;
@@ -360,7 +376,7 @@ void parser_verify_eof(parser_t *p) {
     sprintf(err_buf, "line %zu\n    %s\n%s\nError: %s", 
             lineno + 1, line_buf, highlight, error_msg);
 
-    p->error = err_buf;
+    parser_set_error(p, 1, err_buf);
 
     free(line_buf);
     free(highlight);

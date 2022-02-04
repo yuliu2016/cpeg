@@ -327,18 +327,17 @@ parser_t *get_calc_parser();
 
 static int print_if_error(parser_t *p, void *result) {
     lexer_t *ls = &p->lexer_state;
-    if (p->error) {
-        printf("======================\n\033[31;1m");
-        printf("parser error: %s\n\033[0m", p->error);
+    if (p->errorcode == 1) {
+        printf("======================\n\033[31m");
+        printf("parser: %s\n\033[0m", (char *) p->error_object);
         printf("======================");
         return 1;
-    } else if (ls->error) {
-        printf("======================\n\033[31;1m");
-        printf("lexer error: %s\n\033[0m", ls->error);
+    } else if (p->errorcode) {
+        printf("======================\n\033[31m");
+        printf("unknown error code: %d\n\033[0m", p->errorcode);
         printf("======================");
-        return 1;
     } else if (!result) {
-        printf("======================\n\033[31;1m");
+        printf("======================\n\033[31m");
         printf("Not a valid parse tree\n\033[0m");
         printf("======================");
         return 1;

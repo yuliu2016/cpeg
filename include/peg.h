@@ -108,9 +108,9 @@ typedef struct parser_state {
     lexer_func_t lexer_read_token;
 
     // Debugging variables
+    void *error_object;
     char **tk_indices;
     char *tk_max_attempted;
-    char *error;
     size_t level;
 
 } parser_t;
@@ -130,6 +130,8 @@ void parser_memoize(parser_t *p, size_t token_pos, int f_type, void *node);
 memo_t *parser_get_memo(parser_t *p, int f_type);
 
 void parser_verify_eof(parser_t *p);
+
+void parser_set_error(parser_t *p, int code, void *object);
 
 
 // Parser debugging tools
