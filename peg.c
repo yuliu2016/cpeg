@@ -91,10 +91,13 @@ static void parser_append_token(parser_t *p) {
                 cap * sizeof(memo_t *));
     }
     token_t *token = ls->next_token;
-    p->fast_match[ls->token_len] = token->tk_type;
+    if (token) {
+        p->fast_match[ls->token_len] = token->tk_type;
+    } else {
+        p->fast_match[ls->token_len] = 0;
+    }
     p->memoized_cache[ls->token_len] = NULL;
     lexer_append_token(ls, token);
-
 }
 
 token_t *parser_fetch_token(parser_t *p, size_t pos) {
@@ -102,12 +105,12 @@ token_t *parser_fetch_token(parser_t *p, size_t pos) {
 
     if (pos == ls->token_len - 1) {
         p->lexer_read_token(ls);
-        if (ls->next_token) {
-            parser_append_token(p);
-        } else if (ls->error) {
+        if (ls->error) {
             parser_set_error(p, 1, ls->error);
             // prevent freeing pointer twice
             ls->error = NULL;
+        } else {
+            parser_append_token(p);
         }
     }
 
@@ -324,26 +327,27 @@ void parser_set_error(parser_t *p, int code, void *object) {
 
 void parser_verify_eof(parser_t *p) {
     lexer_t *ls = &p->lexer_state;
-    if (p->pos >= ls->token_len && !ls->next_token) {
+    size_t max_reached_index = ls->token_len - 1;
+
+    if (p->pos >= max_reached_index && !ls->next_token) {
         // Everything is parsed; No problem.
         return;
     }
     
     // There are more unparsed tokens; produce an error
-    size_t pos = ls->token_len - 2;
 
     token_t *tok;
     size_t col_start;
     size_t col_end;
-    
-    if (pos == ls->token_len - 1) {
-        // Last token: Move caret to just 
-        tok = ls->tokens[pos];
+
+    if (p->fast_match[max_reached_index] == 0) {
+        // highlight the space right after the last token
+        tok = ls->tokens[max_reached_index - 1];
         col_start = tok->column + tok->len;
         col_end = col_start + 1;
     } else {
-        // Highlight the next token
-        tok = ls->tokens[pos + 1];
+        // highlight the max reached token
+        tok = ls->tokens[max_reached_index];
         col_start = tok->column;
         col_end = col_start + tok->len;
     }
